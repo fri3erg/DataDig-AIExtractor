@@ -63,6 +63,7 @@ dependencies {
     implementation(libs.androidx.camera.core)
     implementation ("com.github.Gurupreet:FontAwesomeCompose:1.0.0")
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.material3.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

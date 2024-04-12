@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
+import com.example.tesifrigo.ui.common.NavBar
 import com.example.tesifrigo.ui.theme.TesiFrigoTheme
 import com.example.tesifrigo.viewmodels.TemplateViewModel
 
@@ -25,14 +26,14 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
     ***REMOVED*** {
-                    MainAppComposable()
+                    MainAppScreen()
                 ***REMOVED***
             ***REMOVED***
         ***REMOVED***
     ***REMOVED***
 ***REMOVED***
 @Composable
-fun MainAppComposable() {
+fun MainAppScreen() {
 
     val navController = rememberNavController()
     val viewModel = viewModel<TemplateViewModel>()
@@ -47,6 +48,6 @@ fun MainAppComposable() {
 @Composable
 fun Preview() {
     TesiFrigoTheme {
-        MainAppComposable()
+        MainAppScreen()
     ***REMOVED***
 ***REMOVED***

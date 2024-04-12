@@ -12,9 +12,9 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.tesifrigo.ui.camera.CameraComposable
-import com.example.tesifrigo.ui.settings.SettingsComposable
-import com.example.tesifrigo.ui.storage.StorageComposable
+import com.example.tesifrigo.ui.camera.CameraScreen
+import com.example.tesifrigo.ui.settings.SettingsScreen
+import com.example.tesifrigo.ui.storage.StorageScreen
 import com.example.tesifrigo.ui.template.EditTemplateScreen
 import com.example.tesifrigo.ui.template.TemplateScreen
 import com.example.tesifrigo.viewmodels.TemplateViewModel
@@ -25,9 +25,9 @@ import com.guru.fontawesomecomposelib.FaIcons
 @Composable
 fun AppNavigation(viewModel: TemplateViewModel, navController: NavHostController) {
     NavHost(navController = navController, startDestination = "Templates") {
-        composable("Camera") { CameraComposable() ***REMOVED***
-        composable("Storage") { StorageComposable() ***REMOVED***
-        composable("Settings") { SettingsComposable() ***REMOVED***
+        composable("Camera") { CameraScreen() ***REMOVED***
+        composable("Storage") { StorageScreen() ***REMOVED***
+        composable("Settings") { SettingsScreen() ***REMOVED***
         composable("Templates") {
             TemplateScreen(navController, viewModel)
         ***REMOVED***
