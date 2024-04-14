@@ -14,16 +14,22 @@ class TemplateViewModel : ViewModel() {
     init {
         // Load templates from the database
         // For now, let's add some test templates:
-        addTemplate(Template(title = "Product Entry", fields = listOf(
-            Field("Product Name", "Enter the product's name"),
-            Field("Quantity", "Enter the quantity of the product"),
-            Field("Expiration Date", "Enter the expiration date (optional)")
+        _templates.clear()
+
+        // New Test Template 1: Item Registration
+        addTemplate(Template(title = "Item Registration", fields = listOf(
+            Field("Item Name", "Enter the item's name"),
+            Field("Description", "Brief description of the item"),
+            Field("Quantity", "Enter the quantity"),
+            Field("Storage Location", "Where is the item stored?")
         )))
 
-        addTemplate(Template(title = "Inventory Check", fields = listOf(
-            Field("Barcode", "Scan or enter product barcode"),
-            Field("Location", "Enter the storage location"),
-            Field("Notes", "Any additional notes (optional)")
+        // New Test Template 2: Stocktaking
+        addTemplate(Template(title = "Stocktaking", fields = listOf(
+            Field("Product Code", "Product code or SKU"),
+            Field("Location", "Storage location"),
+            Field("Current Quantity", "Quantity in stock"),
+            Field("Notes", "Any relevant notes")
         )))
     ***REMOVED***
     fun addTemplate(template: Template) {
