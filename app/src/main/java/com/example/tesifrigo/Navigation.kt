@@ -1,12 +1,7 @@
 package com.example.tesifrigo
 
-import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -18,18 +13,17 @@ import com.example.tesifrigo.ui.storage.StorageScreen
 import com.example.tesifrigo.ui.template.EditTemplateScreen
 import com.example.tesifrigo.ui.template.TemplateScreen
 import com.example.tesifrigo.viewmodels.TemplateViewModel
-import com.guru.fontawesomecomposelib.FaIcon
-import com.guru.fontawesomecomposelib.FaIcons
 
 
 @Composable
-fun AppNavigation(viewModel: TemplateViewModel, navController: NavHostController) {
-    NavHost(navController = navController, startDestination = "Templates") {
+fun AppNavigation( navController: NavHostController, modifier: Modifier = Modifier) {
+
+    NavHost(navController = navController, startDestination = "Templates", modifier = modifier) {
         composable("Camera") { CameraScreen() ***REMOVED***
         composable("Storage") { StorageScreen() ***REMOVED***
         composable("Settings") { SettingsScreen() ***REMOVED***
         composable("Templates") {
-            TemplateScreen(navController, viewModel)
+            TemplateScreen(navController)
         ***REMOVED***
         composable(
             "editTemplate/{templateId***REMOVED***",
@@ -37,7 +31,7 @@ fun AppNavigation(viewModel: TemplateViewModel, navController: NavHostController
         ) { backStackEntry ->
             val templateId = backStackEntry.arguments?.getInt("templateId")
                 ?: throw IllegalArgumentException("Missing templateId argument")
-            EditTemplateScreen(navController, viewModel, templateId)
+            EditTemplateScreen(navController, templateId)
         ***REMOVED***
 
 ***REMOVED***

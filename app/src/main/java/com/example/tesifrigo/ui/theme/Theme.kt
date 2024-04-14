@@ -20,6 +20,7 @@ val AppShapes = Shapes(
     large = RoundedCornerShape(16.dp) // Add as needed
 )
 @Composable
+
 fun TesiFrigoTheme(content: @Composable () -> Unit) {
     MaterialTheme(
         colorScheme = LightColorScheme,

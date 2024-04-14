@@ -3,9 +3,10 @@ package com.example.tesifrigo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -26,7 +27,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
     ***REMOVED*** {
-                    MainAppScreen()
+                        MainAppScreen()
                 ***REMOVED***
             ***REMOVED***
         ***REMOVED***
@@ -37,10 +38,14 @@ fun MainAppScreen() {
 
     val navController = rememberNavController()
     val viewModel = viewModel<TemplateViewModel>()
-    Column {
-        AppNavigation(viewModel,navController)
-        NavBar(navController)
-    ***REMOVED***
+
+    Scaffold(
+        bottomBar = { NavBar(navController) ***REMOVED***,
+        modifier = Modifier.fillMaxSize(),
+        content = { innerPadding -> // Important for content overlap
+            AppNavigation( navController, modifier = Modifier.padding(innerPadding))
+        ***REMOVED***
+    )
 ***REMOVED***
 
 
