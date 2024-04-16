@@ -9,6 +9,7 @@ pluginManagement {
         ***REMOVED***
         mavenCentral()
         gradlePluginPortal()
+
     ***REMOVED***
 ***REMOVED***
 dependencyResolutionManagement {

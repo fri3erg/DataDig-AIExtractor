@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    id("com.chaquo.python")
+
 ***REMOVED***
 
 
@@ -8,7 +10,13 @@ android {
     namespace = "com.example.tesifrigo"
     compileSdk = 34
 
+
+
     defaultConfig {
+        ndk {
+            // On Apple silicon, you can omit x86_64.
+            abiFilters += listOf("arm64-v8a", "x86_64")
+        ***REMOVED***
         applicationId = "com.example.tesifrigo"
         minSdk = 24
         targetSdk = 34
@@ -48,6 +56,16 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1***REMOVED***"
         ***REMOVED***
     ***REMOVED***
+    flavorDimensions += "pyVersion"
+    productFlavors {
+        create("py311") { dimension = "pyVersion" ***REMOVED***
+    ***REMOVED***
+    chaquopy {
+        productFlavors {
+            getByName("py311") { version = "3.11" ***REMOVED***
+        ***REMOVED***
+
+    ***REMOVED***
 ***REMOVED***
 
 dependencies {
@@ -60,10 +78,16 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-
+    implementation("com.google.accompanist:accompanist-permissions:0.28.0") // Replace with your desired version
+    implementation("androidx.camera:camera-camera2:1.3.0") // Or latest stable version
     implementation(libs.androidx.camera.core)
     implementation ("com.github.Gurupreet:FontAwesomeCompose:1.0.0")
+
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.cronet.embedded)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

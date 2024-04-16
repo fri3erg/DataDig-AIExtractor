@@ -17,7 +17,6 @@ fun SettingsScreen() {
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Settings", style = MaterialTheme.typography.headlineMedium)
-        // Settings options (e.g., Switch, TextFields)
+
     ***REMOVED***
 ***REMOVED***

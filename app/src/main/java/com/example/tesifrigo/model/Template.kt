@@ -1,6 +1,7 @@
 package com.example.tesifrigo.model
 
 data class Field(
+    val id: Int = 0, // Optionally add an ID for persistence
     val title: String,
     val description: String,
     val extraDescription: String =" ",
