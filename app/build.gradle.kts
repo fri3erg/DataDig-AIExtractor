@@ -64,6 +64,17 @@ android {
         productFlavors {
             getByName("py311") { version = "3.11" ***REMOVED***
         ***REMOVED***
+        defaultConfig{
+            version = "3.11"
+        ***REMOVED***
+        sourceSets {
+            getByName("main") {
+                srcDir("src/main/python")
+            ***REMOVED***
+        ***REMOVED***
+
+
+
 
     ***REMOVED***
 ***REMOVED***
@@ -79,10 +90,14 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation("com.google.accompanist:accompanist-permissions:0.28.0") // Replace with your desired version
-    implementation("androidx.camera:camera-camera2:1.3.0") // Or latest stable version
+    implementation("androidx.camera:camera-camera2:1.3.3") // Or latest stable version
     implementation(libs.androidx.camera.core)
-    implementation ("com.github.Gurupreet:FontAwesomeCompose:1.0.0")
+    implementation("androidx.compose.ui:ui:1.4.0") // Or a more recent version
+    implementation("androidx.compose.runtime:runtime-livedata:1.4.0") // Or same version
 
+    implementation("androidx.localbroadcastmanager:localbroadcastmanager:1.1.0")
+    implementation ("com.github.Gurupreet:FontAwesomeCompose:1.0.0")
+    implementation("io.coil-kt:coil-compose:2.2.2")
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.cronet.embedded)

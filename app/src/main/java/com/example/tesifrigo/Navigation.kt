@@ -7,6 +7,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.tesifrigo.ui.camera.CameraOpenScreen
 import com.example.tesifrigo.ui.camera.CameraScreen
 import com.example.tesifrigo.ui.settings.SettingsScreen
 import com.example.tesifrigo.ui.storage.StorageScreen
@@ -19,7 +20,7 @@ import com.example.tesifrigo.viewmodels.TemplateViewModel
 fun AppNavigation( navController: NavHostController, modifier: Modifier = Modifier) {
 
     NavHost(navController = navController, startDestination = "Templates", modifier = modifier) {
-        composable("Camera") { CameraScreen() ***REMOVED***
+        composable("Camera") { CameraOpenScreen() ***REMOVED***
         composable("Storage") { StorageScreen() ***REMOVED***
         composable("Settings") { SettingsScreen() ***REMOVED***
         composable("Templates") {
