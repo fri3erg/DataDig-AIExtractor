@@ -13,6 +13,9 @@ import androidx.work.WorkerParameters
 import com.chaquo.python.PyException
 import com.chaquo.python.Python
 import com.chaquo.python.android.AndroidPlatform
+import com.chaquo.python.android.PyApplication
+import dagger.hilt.android.HiltAndroidApp
+
 
 class ExtractionService : Service() {
 
@@ -40,6 +43,7 @@ class ExtractionService : Service() {
             .putInt("param2", param2)
             .build()
     ***REMOVED***
+
     class PythonWorker(context: Context, params: WorkerParameters) : Worker(context, params) {
         override fun doWork(): Result {
             // Load your Python module using Chaquopy

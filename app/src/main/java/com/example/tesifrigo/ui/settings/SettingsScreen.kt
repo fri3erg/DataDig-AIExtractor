@@ -3,6 +3,7 @@ package com.example.tesifrigo.ui.settings
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,6 +18,14 @@ fun SettingsScreen() {
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
+        Text(
+            text = "Settings",
+        )
+        Button(onClick = { /*TODO*/ ***REMOVED***) {
+            Text("Change Theme")
+        ***REMOVED***
+        Button(onClick = { /*TODO*/ ***REMOVED***) {
+            Text("Change Language")
+        ***REMOVED***
     ***REMOVED***
 ***REMOVED***

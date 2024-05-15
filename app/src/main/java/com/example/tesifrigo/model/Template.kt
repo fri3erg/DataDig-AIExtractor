@@ -1,24 +1,24 @@
 package com.example.tesifrigo.model
 
-data class Field(
-    val id: Int = 0, // Optionally add an ID for persistence
-    val title: String,
-    val description: String,
-    val extraDescription: String =" ",
-    val tags: List<FieldTags> = emptyList()
-)
+import io.realm.kotlin.ext.realmListOf
+import io.realm.kotlin.types.RealmList
+import io.realm.kotlin.types.RealmObject
+import org.mongodb.kbson.ObjectId
 
-data class FieldTags(
-    val tag: String
-)
+class Field : RealmObject {
+    var id: ObjectId = ObjectId()
+    var title: String= ""
+    var description: String = ""
+    var extraDescription: String = ""
+    var tags: RealmList<String> = realmListOf()
 
-data class Template(
-    val id: Int = 0, // Optionally add an ID for persistence
-    val title: String,
-    val fields: List<Field>,
-    val tags: List<TemplateTags> = emptyList()
-)
+***REMOVED***
 
-data class TemplateTags(
-    val tag: String
-)
+class Template: RealmObject {
+    var id: ObjectId = ObjectId()
+    var title: String = ""
+    var description: String = ""
+    var fields: RealmList<Field> = realmListOf()
+    var tags: RealmList<String> = realmListOf()
+
+***REMOVED***

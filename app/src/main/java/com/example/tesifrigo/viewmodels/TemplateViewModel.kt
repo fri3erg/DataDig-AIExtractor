@@ -2,73 +2,117 @@ package com.example.tesifrigo.viewmodels
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.tesifrigo.MyApp
+import com.example.tesifrigo.model.Extraction
 import com.example.tesifrigo.model.Field
 import com.example.tesifrigo.model.Template
-import com.example.tesifrigo.model.TemplateTags
+import io.realm.kotlin.UpdatePolicy
+import io.realm.kotlin.ext.query
+import io.realm.kotlin.ext.realmListOf
+import io.realm.kotlin.notifications.ResultsChange
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 class TemplateViewModel : ViewModel() {
 
+    private  val realm = MyApp.realm
 
-    private val _templates = mutableStateListOf<Template>()
-    val templates: List<Template> = _templates
+    val templates = realm
+        .query<Template>()
+        .asFlow()
+        .map {
+            it.list.toList()
+        ***REMOVED***
+        .stateIn(viewModelScope,
+            SharingStarted.WhileSubscribed(),
+            emptyList())
 
     init {
-        // Load templates from the database
-        // For now, let's add some test templates:
-        _templates.clear()
-
-        // New Test Template 1: Item Registration
-        addTemplate(Template(title = "Item Registration", fields = listOf(
-            Field(0,"Item Name", "Enter the item's name"),
-            Field(0,"Description", "Brief description of the item"),
-            Field(0,"Quantity", "Enter the quantity"),
-            Field(0,"Storage Location", "Where is the item stored?")
-        ),
-        tags = listOf(TemplateTags("Inventory"))
-        ))
-
-        // New Test Template 2: Stocktaking
-        addTemplate(Template(title = "Stocktaking", fields = listOf(
-            Field(0,"Product Code", "Product code or SKU"),
-            Field(0,"Location", "Storage location"),
-            Field(0,"Current Quantity", "Quantity in stock"),
-            Field(0,"Notes", "Any relevant notes")
-        )))
+        createSampleTemplates()
     ***REMOVED***
-    fun addTemplate(template: Template) {
-        _templates.add(template)
+    fun queryTemplate(id: Int): StateFlow<List<Template>?> {
+        return realm.query<Template>("id == $id").asFlow().map { result->result.list.toList() ***REMOVED***.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(),
+            emptyList()
+        )
     ***REMOVED***
 
-    fun updateTemplate(template: Template) {
-        val index = _templates.indexOfFirst { it.id == template.id ***REMOVED***
-        if (index != -1) {
-            _templates[index] = template
+    private fun createSampleTemplates() {
+        viewModelScope.launch {
+            realm.write {
+
+                val field1= Field().apply {
+                    title = "Field 1"
+                    description = "This is a sample field"
+                    tags = realmListOf("freezer")
+                ***REMOVED***
+                val field2= Field().apply {
+                    title = "Field 2"
+                    description = "This is a sample field 2"
+                    tags = realmListOf("freezer")
+                ***REMOVED***
+                val field3= Field().apply {
+                    title = "Field 3"
+                    description = "This is a sample field 3"
+                    tags = realmListOf("freezer")
+                ***REMOVED***
+                val template1 = Template().apply {
+                    title = "Sample Template"
+                    description = "This is a sample template"
+                    fields = realmListOf(
+                        field1,
+                        field2,
+                        field3
         ***REMOVED***
-    ***REMOVED***
-
-    fun deleteTemplate(template: Template) {
-        _templates.remove(template)
-    ***REMOVED***
-    fun deleteTemplateById(id: Int) {
-        val index = _templates.indexOfFirst { it.id == id ***REMOVED***
-        if (index != -1) {
-            _templates.removeAt(index)
-            // Consider adding logic to persist the change in your database if needed
+                    tags = realmListOf("freezer")
+                ***REMOVED***
+                val template2 = Template().apply {
+                    title = "Sample Template 2"
+                    description = "This is a sample template 2"
+                    fields = realmListOf(
+                        field1,
+                        field2,
         ***REMOVED***
+                    tags = realmListOf("freezer")
+                ***REMOVED***
+                val template3 = Template().apply {
+                    title = "Sample Template 3"
+                    description = "This is a sample template 3"
+                    fields = realmListOf(
+                        field2,
+                        field3
+        ***REMOVED***
+                    tags = realmListOf("freezer")
+                ***REMOVED***
+                copyToRealm(field1)
+                copyToRealm(field2)
+                copyToRealm(field3)
+                copyToRealm(template1)
+                copyToRealm(template2)
+                copyToRealm(template3)
 
-    ***REMOVED***
-
-    fun updateTemplateItem(templateId: Int, itemId: Int, newText: String) {
-        val templateIndex = _templates.indexOfFirst { it.id == templateId ***REMOVED***
-        if (templateIndex != -1) {
-            val itemIndex = _templates[templateIndex].fields.indexOfFirst { it.id == itemId ***REMOVED***
-            if (itemIndex != -1) {
-                val updatedItem = _templates[templateIndex].fields[itemIndex].copy(title = newText)
-                val updatedTemplate = _templates[templateIndex].copy(fields = _templates[templateIndex].fields.toMutableList().apply {
-                    set(itemIndex, updatedItem)
-                ***REMOVED***)
-                _templates[templateIndex] = updatedTemplate
             ***REMOVED***
         ***REMOVED***
+
+    ***REMOVED***
+
+    fun deleteTemplateById(id: String) {
+        viewModelScope.launch {
+            realm.write {
+                val template = realm.query<Template>("id == $id")
+            ***REMOVED***
+        ***REMOVED***
+    ***REMOVED***
+
+    fun updateTemplateItem(templateId: Int, id: String, newText: String) {
+        viewModelScope.launch {
+
+        ***REMOVED***
+
     ***REMOVED***
 ***REMOVED***

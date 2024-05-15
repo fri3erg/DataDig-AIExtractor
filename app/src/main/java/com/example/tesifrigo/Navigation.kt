@@ -13,15 +13,16 @@ import com.example.tesifrigo.ui.settings.SettingsScreen
 import com.example.tesifrigo.ui.storage.StorageScreen
 import com.example.tesifrigo.ui.template.EditTemplateScreen
 import com.example.tesifrigo.ui.template.TemplateScreen
+import com.example.tesifrigo.viewmodels.ExtractionViewModel
 import com.example.tesifrigo.viewmodels.TemplateViewModel
 
 
 @Composable
-fun AppNavigation( navController: NavHostController, modifier: Modifier = Modifier) {
+fun AppNavigation( navController: NavHostController, modifier: Modifier = Modifier, templateViewModel: TemplateViewModel, extractionViewModel: ExtractionViewModel) {
 
     NavHost(navController = navController, startDestination = "Templates", modifier = modifier) {
         composable("Camera") { CameraOpenScreen() ***REMOVED***
-        composable("Storage") { StorageScreen() ***REMOVED***
+        composable("Storage") { StorageScreen(extractionViewModel) ***REMOVED***
         composable("Settings") { SettingsScreen() ***REMOVED***
         composable("Templates") {
             TemplateScreen(navController)

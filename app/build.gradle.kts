@@ -2,7 +2,9 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     id("com.chaquo.python")
-
+    id("kotlin-kapt")
+    id("dagger.hilt.android.plugin")
+    id("io.realm.kotlin")
 ***REMOVED***
 
 
@@ -42,6 +44,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     ***REMOVED***
+
     kotlinOptions {
         jvmTarget = "1.8"
     ***REMOVED***
@@ -80,7 +83,15 @@ android {
 ***REMOVED***
 
 dependencies {
-
+    implementation("com.google.dagger:hilt-android:2.51")
+    implementation(libs.androidx.room.ktx)
+    kapt("com.google.dagger:hilt-android-compiler:2.51")
+    annotationProcessor("com.google.dagger:hilt-android:2.51")
+    implementation("androidx.hilt:hilt-work:1.0.0")
+    kapt("androidx.hilt:hilt-compiler:1.0.0")
+    implementation("androidx.work:work-runtime-ktx:2.8.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.5.0") // Use the latest version
+    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -103,6 +114,7 @@ dependencies {
     implementation(libs.cronet.embedded)
     implementation(libs.androidx.camera.lifecycle)
     implementation(libs.androidx.camera.view)
+    implementation(libs.androidx.room.common)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -110,4 +122,8 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation("io.realm.kotlin:library-base:1.11.0")
+***REMOVED***
+kapt {
+    correctErrorTypes = true
 ***REMOVED***

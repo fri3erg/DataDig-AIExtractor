@@ -17,6 +17,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,16 +35,17 @@ import com.example.tesifrigo.viewmodels.TemplateViewModel
 @Composable
 fun TemplateScreen(navController: NavHostController) {
     val viewModel = viewModel<TemplateViewModel>()
+    val templates by viewModel.templates.collectAsState()
     LazyColumn {
-        items(viewModel.templates) { template ->  // Iterate directly over templates
-            TemplateItem(template = template,navController, templateId = template.id)
+        items(templates) { template ->  // Iterate directly over templates
+            TemplateItem(template = template,navController, templateId = template.id.toString())
         ***REMOVED***
     ***REMOVED***
 ***REMOVED***
 
 
 @Composable
-fun TemplateItem(template: Template,navController: NavHostController, templateId: Int) {
+fun TemplateItem(template: Template,navController: NavHostController, templateId: String) {
     Card( // Consider using a Card for visual structure
         modifier = Modifier
             .fillMaxWidth() // Occupy full width
@@ -62,7 +64,7 @@ fun TemplateItem(template: Template,navController: NavHostController, templateId
             LazyRow {
                 items(template.tags) { field ->
                     Box(modifier = Modifier.padding(8.dp)) {
-                        Text(text = field.tag, modifier = Modifier.padding(8.dp))
+                        Text(text = field, modifier = Modifier.padding(8.dp))
                     ***REMOVED***
                 ***REMOVED***
                 // Add other template details here if needed
@@ -72,7 +74,7 @@ fun TemplateItem(template: Template,navController: NavHostController, templateId
 ***REMOVED***
 
 @Composable
-fun DropdownWithNavigation(navController: NavHostController, id: Int) {
+fun DropdownWithNavigation(navController: NavHostController, id: String) {
     var expanded by remember { mutableStateOf(false) ***REMOVED***
     var showDeleteDialog by remember { mutableStateOf(false) ***REMOVED***
 
