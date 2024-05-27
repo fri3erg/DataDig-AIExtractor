@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.first
 @Composable
 fun EditTemplateScreen(
     navController: NavHostController,
-    templateId: Int
+    templateId: String
 ) {
     val viewModel = viewModel<TemplateViewModel>()
 

@@ -1,7 +1,8 @@
 package com.example.tesifrigo.ui.storage
 
-import androidx.activity.viewModels
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,9 +13,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -22,22 +24,23 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import com.example.tesifrigo.SingleExtraction
 import com.example.tesifrigo.model.Extraction
 import com.example.tesifrigo.viewmodels.ExtractionViewModel
-import com.example.tesifrigo.viewmodels.TemplateViewModel
-
+import com.example.tesifrigo.Storage
 @Composable
-fun StorageScreen(extractionViewModel: ExtractionViewModel) {
+fun StorageScreen(navController: NavHostController) {
+
 
     val extractionViewModel = viewModel<ExtractionViewModel>()
 
@@ -48,23 +51,19 @@ fun StorageScreen(extractionViewModel: ExtractionViewModel) {
         items(extractions) { extraction ->
             ExtractionItem(
                 extraction = extraction,
-                onEdit = extractionViewModel::updateExtraction,
-                onDelete = extractionViewModel::deleteExtraction
+                viewModel =extractionViewModel,
+                navController = navController
 ***REMOVED***
         ***REMOVED***
     ***REMOVED***
 
-    // LaunchedEffect to add initial extractions when the ViewModel is first created
-    LaunchedEffect(Unit) {
-        if (extractions.isEmpty()) {
-            //extractionViewModel.addInitialExtractions()
-        ***REMOVED***
-    ***REMOVED***
+
 ***REMOVED***
 
 @Composable
-fun ExtractionItem(extraction: Extraction, onEdit: (Extraction) -> Unit, onDelete: (Extraction) -> Unit) {
+fun ExtractionItem(extraction: Extraction, viewModel:ExtractionViewModel, navController: NavHostController) {
     var showMenu by remember { mutableStateOf(false) ***REMOVED***
+    var showDeleteDialog by remember { mutableStateOf(false) ***REMOVED***
 
     Card(
         modifier = Modifier
@@ -93,14 +92,53 @@ fun ExtractionItem(extraction: Extraction, onEdit: (Extraction) -> Unit, onDelet
                     expanded = showMenu,
                     onDismissRequest = { showMenu = false ***REMOVED***
     ***REMOVED*** {
-                    DropdownMenuItem(onClick = { onEdit(extraction); showMenu = false ***REMOVED***,
+                    DropdownMenuItem(onClick = { navController.navigate(
+                        SingleExtraction(extraction.id.toHexString())
+        ***REMOVED***;
+                    showMenu = false ***REMOVED***,
                     text= { Text("Edit") ***REMOVED***
         ***REMOVED***
-                    DropdownMenuItem(onClick = { onDelete(extraction); showMenu = false ***REMOVED***,
+                    DropdownMenuItem(onClick = {showDeleteDialog=true; showMenu = false ***REMOVED***,
                         text ={Text("Delete") ***REMOVED***)
+                ***REMOVED***
+            ***REMOVED***
+            Row {
+                val template = extraction.template // Create a local copy
+
+                if (template != null) {
+                    Box(modifier = Modifier.padding(8.dp).background(color = Color.Blue)) {
+                        Text(text = template.title, modifier = Modifier.padding(8.dp))
+                    ***REMOVED***
+                ***REMOVED***
+                Box(modifier = Modifier.padding(8.dp).background(color = Color.Blue)) {
+                    Text(text = extraction.type, modifier = Modifier.padding(8.dp))
                 ***REMOVED***
             ***REMOVED***
         ***REMOVED***
     ***REMOVED***
+
+
+
+// Confirmation Dialog
+    if (showDeleteDialog) {
+    AlertDialog(
+        onDismissRequest = { showDeleteDialog = false ***REMOVED***,
+        title = { Text("Confirm Delete") ***REMOVED***, // Confirm the action
+        text = { Text("Are you sure you want to delete this extraction?") ***REMOVED***,
+        confirmButton = {
+            Button(onClick = {
+                viewModel.deleteExtraction(extraction.id.toHexString()) // Delete the template
+                showDeleteDialog = false // Close dialog
+            ***REMOVED***) {
+                Text("Delete")
+            ***REMOVED***
+        ***REMOVED***,
+        dismissButton = {
+            Button(onClick = { showDeleteDialog = false ***REMOVED***) {
+                Text("Cancel")
+            ***REMOVED***
+        ***REMOVED***
+    )
+***REMOVED***
 ***REMOVED***
 

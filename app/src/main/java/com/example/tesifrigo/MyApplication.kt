@@ -23,14 +23,18 @@ class MyApp: Application(){
 
     override fun onCreate(){
         super.onCreate()
-        realm = Realm.open(
-            configuration = RealmConfiguration.create(
-                schema = setOf(
-                    Extraction::class,
-                    Template::class,
-                    Field::class,
-    ***REMOVED***
+
+
+        val configuration = RealmConfiguration.Builder(
+            schema = setOf(
+                Extraction::class,
+                Template::class,
+                Field::class,
 ***REMOVED***
+        ).schemaVersion(2).build()
+
+        realm = Realm.open(
+        configuration
         )
     ***REMOVED***
 

@@ -10,13 +10,16 @@ class Extraction: RealmObject {
     var shortDescription: String = ""
     var longDescription: String = ""
     var image: String = ""
+    var type: String = ""
     var template: Template? = null
 
-    /*constructor(title: String, shortDescription: String, longDescription: String, image: String) {
+
+    /*constructor(title: String, shortDescription: String, longDescription: String, image: String, type: String) {
         this.title = title
         this.shortDescription = shortDescription
         this.longDescription = longDescription
         this.image = image
+        this.type = type
     ***REMOVED****/
 ***REMOVED***
 

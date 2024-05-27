@@ -1,21 +1,18 @@
 package com.example.tesifrigo.viewmodels
 
-import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tesifrigo.MyApp
-import com.example.tesifrigo.model.Extraction
 import com.example.tesifrigo.model.Field
 import com.example.tesifrigo.model.Template
-import io.realm.kotlin.UpdatePolicy
 import io.realm.kotlin.ext.query
 import io.realm.kotlin.ext.realmListOf
-import io.realm.kotlin.notifications.ResultsChange
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import org.mongodb.kbson.ObjectId
 
 class TemplateViewModel : ViewModel() {
 
@@ -34,8 +31,8 @@ class TemplateViewModel : ViewModel() {
     init {
         createSampleTemplates()
     ***REMOVED***
-    fun queryTemplate(id: Int): StateFlow<List<Template>?> {
-        return realm.query<Template>("id == $id").asFlow().map { result->result.list.toList() ***REMOVED***.stateIn(
+    fun queryTemplate(id: String): StateFlow<List<Template>?> {
+        return realm.query<Template>("id == ${ObjectId(id)***REMOVED***").asFlow().map { result->result.list.toList() ***REMOVED***.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(),
             emptyList()
@@ -45,6 +42,14 @@ class TemplateViewModel : ViewModel() {
     private fun createSampleTemplates() {
         viewModelScope.launch {
             realm.write {
+
+
+                val templateToDelete = query<Template>().find()
+                delete(templateToDelete)
+
+                val fieldsToDelete = query<Field>().find()
+                delete(fieldsToDelete)
+
 
                 val field1= Field().apply {
                     title = "Field 1"
@@ -78,7 +83,7 @@ class TemplateViewModel : ViewModel() {
                         field1,
                         field2,
         ***REMOVED***
-                    tags = realmListOf("freezer")
+                    tags = realmListOf("freezer", "fridge")
                 ***REMOVED***
                 val template3 = Template().apply {
                     title = "Sample Template 3"
@@ -87,7 +92,7 @@ class TemplateViewModel : ViewModel() {
                         field2,
                         field3
         ***REMOVED***
-                    tags = realmListOf("freezer")
+                    tags = realmListOf("freezer", "fridge")
                 ***REMOVED***
                 copyToRealm(field1)
                 copyToRealm(field2)
@@ -104,12 +109,13 @@ class TemplateViewModel : ViewModel() {
     fun deleteTemplateById(id: String) {
         viewModelScope.launch {
             realm.write {
-                val template = realm.query<Template>("id == $id")
+                val template =  query<Template>("id == $0", ObjectId(id)).find().first()
+                delete(template)
             ***REMOVED***
         ***REMOVED***
     ***REMOVED***
 
-    fun updateTemplateItem(templateId: Int, id: String, newText: String) {
+    fun updateTemplateItem(templateId: String, id: String, newText: String) {
         viewModelScope.launch {
 
         ***REMOVED***

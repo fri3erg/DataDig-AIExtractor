@@ -1,5 +1,6 @@
 package com.example.tesifrigo.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tesifrigo.MyApp
@@ -12,6 +13,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import org.mongodb.kbson.ObjectId
 
 class ExtractionViewModel: ViewModel(){
     private  val realm =MyApp.realm
@@ -33,23 +35,40 @@ class ExtractionViewModel: ViewModel(){
     private fun createSampleExtraction() {
         viewModelScope.launch {
             realm.write {
+
+                val extractionToDelete = query<Extraction>().find()
+                delete(extractionToDelete)
+
+
+                var template1= Template().apply {
+                    title = "Sample Template"
+                    description = "This is a sample template"
+                ***REMOVED***
+
+
                 val extraction1 = Extraction().apply {
                     title = "Sample Extraction"
                     shortDescription = "This is a sample extraction"
                     longDescription = "This is a sample extraction with a long description"
                     image = "https://www.example.com/image.jpg"
+                    type= "cvs"
+                    template = template1
                 ***REMOVED***
                 val extraction2 = Extraction().apply {
                     title = "Sample Extraction 2"
                     shortDescription = "This is a sample extraction 2"
                     longDescription = "This is a sample extraction 2 with a long description"
                     image = "https://www.example.com/image2.jpg"
+                    type= "cvs"
+                    template = template1
                 ***REMOVED***
                 val extraction3 = Extraction().apply {
                     title = "Sample Extraction 3"
                     shortDescription = "This is a sample extraction 3"
                     longDescription = "This is a sample extraction 3 with a long description"
                     image = "https://www.example.com/image3.jpg"
+                    type= "json"
+                    template = template1
                 ***REMOVED***
 
                 copyToRealm(extraction1)
@@ -67,10 +86,13 @@ class ExtractionViewModel: ViewModel(){
             ***REMOVED***
         ***REMOVED***
     ***REMOVED***
-    fun deleteExtraction(extraction: Extraction){
+    fun deleteExtraction(id:String){
         viewModelScope.launch {
             realm.write {
-            ***REMOVED***
+                    val extractionToDelete = query<Extraction>("id == $0", ObjectId(id)).find().first()
+                    // Delete the parent object (deletes all embedded objects)
+                    delete(extractionToDelete)
+                ***REMOVED***
         ***REMOVED***
     ***REMOVED***
 ***REMOVED***

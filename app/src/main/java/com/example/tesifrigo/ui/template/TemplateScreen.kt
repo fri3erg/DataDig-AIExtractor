@@ -1,5 +1,6 @@
 package com.example.tesifrigo.ui.template
 
+import androidx.compose.foundation.background
 import  androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,22 +24,26 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.example.tesifrigo.Camera
+import com.example.tesifrigo.EditTemplate
 import com.example.tesifrigo.model.Template
 import com.example.tesifrigo.viewmodels.TemplateViewModel
 
 
+
+
 @Composable
-fun TemplateScreen(navController: NavHostController) {
+fun TemplateScreen(navController: NavHostController, photos: String?) {
     val viewModel = viewModel<TemplateViewModel>()
     val templates by viewModel.templates.collectAsState()
     LazyColumn {
         items(templates) { template ->  // Iterate directly over templates
-            TemplateItem(template = template,navController, templateId = template.id.toString())
+            TemplateItem(template = template,navController, templateId = template.id.toHexString())
         ***REMOVED***
     ***REMOVED***
 ***REMOVED***
@@ -50,21 +55,21 @@ fun TemplateItem(template: Template,navController: NavHostController, templateId
         modifier = Modifier
             .fillMaxWidth() // Occupy full width
             .clickable {
-                navController.navigate("editTemplate/${template.id***REMOVED***")
+                navController.navigate(EditTemplate(template.id.toHexString()))
             ***REMOVED*** // Make the entire item clickable
             .padding(16.dp),
     ) {
         Column(modifier = Modifier.padding(16.dp)) { // Inner Column for content
             Row {
 
-                Text(text = template.title,)
+                Text(text = template.title)
                 Spacer(modifier = Modifier.weight(1f)) // Creates space between text and button
                 DropdownWithNavigation(navController, templateId)
             ***REMOVED***
             LazyRow {
                 items(template.tags) { field ->
                     Box(modifier = Modifier.padding(8.dp)) {
-                        Text(text = field, modifier = Modifier.padding(8.dp))
+                        Text(text = field, modifier = Modifier.padding(8.dp).background(Color.Blue))
                     ***REMOVED***
                 ***REMOVED***
                 // Add other template details here if needed
@@ -88,21 +93,18 @@ fun DropdownWithNavigation(navController: NavHostController, id: String) {
 
     DropdownMenu(
         expanded = expanded,
-        offset = DpOffset(x = 300.dp, y = -50.dp), // Example offset values
+        offset = DpOffset(x = 300.dp, y = (-50).dp), // Example offset values
         modifier = Modifier.padding(horizontal =16.dp),
         onDismissRequest = { expanded = false ***REMOVED***
     ) {
-        Button(onClick = {
-            navController.navigate("camera/${id***REMOVED***") // Navigate to edit screen
-            expanded = false // Close dropdown
-        ***REMOVED***) {
-            Text("Use")
-        ***REMOVED***
 
-        Button(onClick = { showDeleteDialog = true  ***REMOVED***) {
-            Text("Delete")
-        ***REMOVED***
+        DropdownMenuItem(onClick = {navController.navigate(Camera(id)); expanded = false ***REMOVED***,
+            text= { Text("Use") ***REMOVED***
+        )
+        DropdownMenuItem(onClick = {showDeleteDialog=true; expanded = false ***REMOVED***,
+            text ={Text("Delete") ***REMOVED***)
     ***REMOVED***
+
 
     // Confirmation Dialog
     if (showDeleteDialog) {

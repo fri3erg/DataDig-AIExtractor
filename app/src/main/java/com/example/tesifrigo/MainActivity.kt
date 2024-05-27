@@ -23,8 +23,6 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val extractionViewModel : ExtractionViewModel by viewModels()
-    private val templateViewModel : TemplateViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -34,14 +32,14 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
     ***REMOVED*** {
-                        MainAppScreen(templateViewModel, extractionViewModel)
+                        MainAppScreen()
                 ***REMOVED***
             ***REMOVED***
         ***REMOVED***
     ***REMOVED***
 ***REMOVED***
 @Composable
-fun MainAppScreen(templateViewModel: TemplateViewModel, extractionViewModel: ExtractionViewModel) {
+fun MainAppScreen() {
 
     val navController = rememberNavController()
 
@@ -49,7 +47,7 @@ fun MainAppScreen(templateViewModel: TemplateViewModel, extractionViewModel: Ext
         bottomBar = { NavBar(navController) ***REMOVED***,
         modifier = Modifier.fillMaxSize(),
         content = { innerPadding -> // Important for content overlap
-            AppNavigation( navController, modifier = Modifier.padding(innerPadding), templateViewModel, extractionViewModel)
+            AppNavigation( navController, modifier = Modifier.padding(innerPadding))
         ***REMOVED***
     )
 ***REMOVED***

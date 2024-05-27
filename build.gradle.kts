@@ -5,6 +5,7 @@ plugins {
     id("com.chaquo.python") version "15.0.1" apply false
     id("com.google.dagger.hilt.android") version "2.51" apply false
     id("io.realm.kotlin") version "1.11.0" apply false
+    id ("org.jetbrains.kotlin.plugin.serialization") version "1.9.0" apply false
 
 ***REMOVED***
 buildscript {

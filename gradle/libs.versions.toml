@@ -1,5 +1,5 @@
 [versions]
-agp = "8.3.2"
+agp = "8.4.1"
 kotlin = "1.9.0"
 coreKtx = "1.12.0"
 junit = "4.13.2"
@@ -18,6 +18,8 @@ cameraLifecycle = "1.3.2"
 cameraView = "1.3.2"
 roomCommon = "2.6.1"
 roomKtx = "2.6.1"
+composeNavigation = "2.8.0-alpha08"
+serialization = "1.6.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" ***REMOVED***
@@ -44,8 +46,10 @@ androidx-camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycl
 androidx-camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "cameraView" ***REMOVED***
 androidx-room-common = { group = "androidx.room", name = "room-common", version.ref = "roomCommon" ***REMOVED***
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" ***REMOVED***
+navigation-compose = { module="androidx.navigation:navigation-compose", version.ref = "composeNavigation" ***REMOVED***
+kotlinx-serialization-json = { module="org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization"***REMOVED***
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" ***REMOVED***
 jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" ***REMOVED***
-
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" ***REMOVED***

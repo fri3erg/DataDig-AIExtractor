@@ -11,6 +11,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import com.example.tesifrigo.Camera
+import com.example.tesifrigo.Storage
+import com.example.tesifrigo.Templates
 import com.guru.fontawesomecomposelib.FaIcon
 import com.guru.fontawesomecomposelib.FaIcons
 
@@ -18,28 +21,38 @@ import com.guru.fontawesomecomposelib.FaIcons
 @Composable
 fun NavBar(navController: NavHostController) {
 
-    val items = listOf(
-        NavItem("Templates","Templates") { FaIcon(faIcon = FaIcons.Table, tint = LocalContentColor.current) ***REMOVED***,
-        NavItem("Camera","Camera") { FaIcon(faIcon = FaIcons.Camera, tint = LocalContentColor.current) ***REMOVED***,
-        NavItem("Storage", "Storage") { FaIcon(faIcon = FaIcons.CloudDownloadAlt, tint = LocalContentColor.current) ***REMOVED***
-    )
-    val (selectedItem, setSelectedItem) =  remember { mutableStateOf(0) ***REMOVED*** // Hoisted state
+    val (selectedItem, setSelectedItem) =  remember { mutableStateOf("Templates") ***REMOVED*** // Hoisted state
 
     NavigationBar {
-        items.forEachIndexed { index, item ->
-            NavigationBarItem(
-                icon = item.icon,
-                label = { Text(item.label) ***REMOVED***,
-                selected = selectedItem == index,
-                onClick = {
-                    setSelectedItem(index)
-                    navController.navigate(item.route)
-                ***REMOVED***
-***REMOVED***
-        ***REMOVED***
+        NavigationBarItem(
+            icon = { FaIcon(faIcon = FaIcons.Table, tint = LocalContentColor.current) ***REMOVED***,
+            label = { Text("Templates") ***REMOVED***,
+            selected = selectedItem == "Templates",
+            onClick = {
+                setSelectedItem("Templates")
+                navController.navigate(Templates(null))
+            ***REMOVED***
+        )
+        NavigationBarItem(
+            icon = { FaIcon(faIcon = FaIcons.Camera, tint = LocalContentColor.current) ***REMOVED***,
+            label = { Text("Camera") ***REMOVED***,
+            selected = selectedItem == "Camera",
+            onClick = {
+                setSelectedItem("Camera")
+                navController.navigate(Camera(null))
+            ***REMOVED***
+        )
+        NavigationBarItem(
+            icon = { FaIcon(faIcon = FaIcons.CloudDownloadAlt, tint = LocalContentColor.current) ***REMOVED***,
+            label = { Text("Storage") ***REMOVED***,
+            selected = selectedItem == "Storage",
+            onClick = {
+                setSelectedItem("Storage")
+                navController.navigate(Storage)
+            ***REMOVED***
+        )
         ***REMOVED***
     ***REMOVED***
 
 
 
-data class NavItem(val label: String, val route: String = label, val icon: @Composable () -> Unit)

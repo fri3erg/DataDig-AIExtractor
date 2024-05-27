@@ -1,10 +1,12 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    alias(libs.plugins.kotlin.serialization)
     id("com.chaquo.python")
     id("kotlin-kapt")
     id("dagger.hilt.android.plugin")
     id("io.realm.kotlin")
+    id ("kotlinx-serialization")
 ***REMOVED***
 
 
@@ -123,6 +125,8 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation("io.realm.kotlin:library-base:1.11.0")
+    implementation(libs.navigation.compose)
+    implementation(libs.kotlinx.serialization.json)
 ***REMOVED***
 kapt {
     correctErrorTypes = true
