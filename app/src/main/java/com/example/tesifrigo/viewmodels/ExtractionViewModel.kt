@@ -5,11 +5,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tesifrigo.MyApp
 import com.example.tesifrigo.model.Extraction
-import com.example.tesifrigo.model.Field
+import com.example.tesifrigo.model.ExtractionField
 import com.example.tesifrigo.model.Template
 import io.realm.kotlin.UpdatePolicy
 import io.realm.kotlin.ext.query
+import io.realm.kotlin.ext.realmListOf
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -29,7 +31,15 @@ class ExtractionViewModel: ViewModel(){
             emptyList())
 
     init {
-        createSampleExtraction()
+        //createSampleExtraction()
+    ***REMOVED***
+    fun queryTemplate(id: String): StateFlow<Extraction?> {
+        return extractions.map { extractionList ->
+            extractionList.find {
+                Log.d("TemplateViewModel", "Querying template with ID: ${it.id.toHexString()***REMOVED*** and title: ${id***REMOVED*** and ${extractionList***REMOVED***")
+                it.id.toHexString() == id ***REMOVED***
+        ***REMOVED***.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
+
     ***REMOVED***
 
     private fun createSampleExtraction() {
@@ -38,37 +48,80 @@ class ExtractionViewModel: ViewModel(){
 
                 val extractionToDelete = query<Extraction>().find()
                 delete(extractionToDelete)
+                val extractionFieldToDelete = query<ExtractionField>().find()
+                delete(extractionFieldToDelete)
 
 
                 var template1= Template().apply {
                     title = "Sample Template"
                     description = "This is a sample template"
+
                 ***REMOVED***
+                var template2= Template().apply {
+                    title = "Sample Template 2"
+                    description = "This is a sample template 2"
+                ***REMOVED***
+                var template3= Template().apply {
+                    title = "Sample Template 3"
+                    description = "This is a sample template 3"
+                ***REMOVED***
+
+                val extractionField1 = ExtractionField().apply {
+                    title = "Field 1"
+                    description = "This is a sample field"
+                    extraDescription = "This is an extra description"
+                    extracted = "This is an extracted value"
+                    type = "text"
+                    tags = realmListOf("Tag 1",
+                        "Tag 2"
+        ***REMOVED***
+                ***REMOVED***
+                val extractionField2 = ExtractionField().apply {
+                    title = "Field 2"
+                    description = "This is a sample field 2"
+                    extraDescription = "This is an extra description 2"
+                    extracted = "This is an extracted value 2"
+                    type = "text"
+                    tags = realmListOf("Tag 1",
+                        "Tag 2"
+        ***REMOVED***
+                ***REMOVED***
+                val extractionField3 = ExtractionField().apply {
+                    title = "Field 3"
+                    description = "This is a sample field 3"
+                    extraDescription = "This is an extra description 3"
+                    extracted = "This is an extracted value 3"
+                    type = "text"
+                    tags = realmListOf("Tag 1",
+                        "Tag 2"
+        ***REMOVED***
+                ***REMOVED***
+
 
 
                 val extraction1 = Extraction().apply {
                     title = "Sample Extraction"
-                    shortDescription = "This is a sample extraction"
-                    longDescription = "This is a sample extraction with a long description"
+                    description = "This is a sample extraction"
                     image = "https://www.example.com/image.jpg"
-                    type= "cvs"
+                    format= "cvs"
+                    fields = realmListOf(extractionField1)
                     template = template1
                 ***REMOVED***
                 val extraction2 = Extraction().apply {
                     title = "Sample Extraction 2"
-                    shortDescription = "This is a sample extraction 2"
-                    longDescription = "This is a sample extraction 2 with a long description"
+                    description = "This is a sample extraction 2"
                     image = "https://www.example.com/image2.jpg"
-                    type= "cvs"
-                    template = template1
+                    format= "cvs"
+                    fields = realmListOf( extractionField2)
+                    template = template2
                 ***REMOVED***
                 val extraction3 = Extraction().apply {
                     title = "Sample Extraction 3"
-                    shortDescription = "This is a sample extraction 3"
-                    longDescription = "This is a sample extraction 3 with a long description"
+                    description = "This is a sample extraction 3"
                     image = "https://www.example.com/image3.jpg"
-                    type= "json"
-                    template = template1
+                    format= "json"
+                    fields = realmListOf(extractionField3)
+                    template = template3
                 ***REMOVED***
 
                 copyToRealm(extraction1)
@@ -79,13 +132,23 @@ class ExtractionViewModel: ViewModel(){
         ***REMOVED***
 
     ***REMOVED***
-    fun updateExtraction(extraction: Extraction){
+    fun updateExtraction(extraction: Extraction) {
         viewModelScope.launch {
-            realm.write {
-                copyToRealm(extraction, updatePolicy = UpdatePolicy.ALL)
+            realm.write { // Start a write transaction
+                val latestExtraction = findLatest(extraction) ?: copyToRealm(extraction) // Find or create the latest extraction
+
+                // Update properties on latestExtraction, not extraction
+                latestExtraction.apply {
+                    title = extraction.title
+                    description = extraction.description
+                    format = extraction.format
+                    // fields = extraction.fields // Don't update RealmList directly
+                ***REMOVED***
             ***REMOVED***
         ***REMOVED***
     ***REMOVED***
+
+
     fun deleteExtraction(id:String){
         viewModelScope.launch {
             realm.write {

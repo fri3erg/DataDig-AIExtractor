@@ -1,14 +1,17 @@
 package com.example.tesifrigo.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tesifrigo.MyApp
-import com.example.tesifrigo.model.Field
+import com.example.tesifrigo.model.TemplateField
 import com.example.tesifrigo.model.Template
 import io.realm.kotlin.ext.query
 import io.realm.kotlin.ext.realmListOf
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -29,14 +32,15 @@ class TemplateViewModel : ViewModel() {
             emptyList())
 
     init {
-        createSampleTemplates()
+        //createSampleTemplates()
     ***REMOVED***
-    fun queryTemplate(id: String): StateFlow<List<Template>?> {
-        return realm.query<Template>("id == ${ObjectId(id)***REMOVED***").asFlow().map { result->result.list.toList() ***REMOVED***.stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(),
-            emptyList()
-        )
+    fun queryTemplate(id: String): StateFlow<Template?> {
+        return templates.map { templateList ->
+            templateList.find {
+                Log.d("TemplateViewModel", "Querying template with ID: ${it.id.toHexString()***REMOVED*** and title: ${id***REMOVED*** and ${templateList***REMOVED***")
+                it.id.toHexString() == id ***REMOVED***
+        ***REMOVED***.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
+
     ***REMOVED***
 
     private fun createSampleTemplates() {
@@ -47,21 +51,21 @@ class TemplateViewModel : ViewModel() {
                 val templateToDelete = query<Template>().find()
                 delete(templateToDelete)
 
-                val fieldsToDelete = query<Field>().find()
+                val fieldsToDelete = query<TemplateField>().find()
                 delete(fieldsToDelete)
 
 
-                val field1= Field().apply {
+                val templateField1= TemplateField().apply {
                     title = "Field 1"
                     description = "This is a sample field"
                     tags = realmListOf("freezer")
                 ***REMOVED***
-                val field2= Field().apply {
+                val templateField2= TemplateField().apply {
                     title = "Field 2"
                     description = "This is a sample field 2"
                     tags = realmListOf("freezer")
                 ***REMOVED***
-                val field3= Field().apply {
+                val templateField3= TemplateField().apply {
                     title = "Field 3"
                     description = "This is a sample field 3"
                     tags = realmListOf("freezer")
@@ -70,9 +74,7 @@ class TemplateViewModel : ViewModel() {
                     title = "Sample Template"
                     description = "This is a sample template"
                     fields = realmListOf(
-                        field1,
-                        field2,
-                        field3
+                        templateField1,
         ***REMOVED***
                     tags = realmListOf("freezer")
                 ***REMOVED***
@@ -80,8 +82,7 @@ class TemplateViewModel : ViewModel() {
                     title = "Sample Template 2"
                     description = "This is a sample template 2"
                     fields = realmListOf(
-                        field1,
-                        field2,
+                        templateField2,
         ***REMOVED***
                     tags = realmListOf("freezer", "fridge")
                 ***REMOVED***
@@ -89,14 +90,10 @@ class TemplateViewModel : ViewModel() {
                     title = "Sample Template 3"
                     description = "This is a sample template 3"
                     fields = realmListOf(
-                        field2,
-                        field3
+                        templateField3
         ***REMOVED***
                     tags = realmListOf("freezer", "fridge")
                 ***REMOVED***
-                copyToRealm(field1)
-                copyToRealm(field2)
-                copyToRealm(field3)
                 copyToRealm(template1)
                 copyToRealm(template2)
                 copyToRealm(template3)
@@ -115,9 +112,11 @@ class TemplateViewModel : ViewModel() {
         ***REMOVED***
     ***REMOVED***
 
-    fun updateTemplateItem(templateId: String, id: String, newText: String) {
+    fun updateTemplateItem(template: Template) {
         viewModelScope.launch {
-
+            realm.write {
+                copyToRealm(template, updatePolicy = io.realm.kotlin.UpdatePolicy.ALL)
+            ***REMOVED***
         ***REMOVED***
 
     ***REMOVED***

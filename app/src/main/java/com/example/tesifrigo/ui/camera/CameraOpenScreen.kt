@@ -33,7 +33,7 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun CameraOpenScreen(templateId: String) {
+fun CameraOpenScreen(templateId: String?) {
 
     var serviceResponse by remember { mutableStateOf("placeholder") ***REMOVED***
 

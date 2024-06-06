@@ -11,9 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
-import com.example.tesifrigo.Camera
-import com.example.tesifrigo.Storage
-import com.example.tesifrigo.Templates
+import com.example.tesifrigo.Screen
 import com.guru.fontawesomecomposelib.FaIcon
 import com.guru.fontawesomecomposelib.FaIcons
 
@@ -30,7 +28,7 @@ fun NavBar(navController: NavHostController) {
             selected = selectedItem == "Templates",
             onClick = {
                 setSelectedItem("Templates")
-                navController.navigate(Templates(null))
+                navController.navigate(Screen.Templates.route)
             ***REMOVED***
         )
         NavigationBarItem(
@@ -39,7 +37,7 @@ fun NavBar(navController: NavHostController) {
             selected = selectedItem == "Camera",
             onClick = {
                 setSelectedItem("Camera")
-                navController.navigate(Camera(null))
+                navController.navigate( Screen.Camera.route)
             ***REMOVED***
         )
         NavigationBarItem(
@@ -48,7 +46,7 @@ fun NavBar(navController: NavHostController) {
             selected = selectedItem == "Storage",
             onClick = {
                 setSelectedItem("Storage")
-                navController.navigate(Storage)
+                navController.navigate(Screen.Storage.route)
             ***REMOVED***
         )
         ***REMOVED***

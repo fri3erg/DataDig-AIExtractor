@@ -1,5 +1,7 @@
 package com.example.tesifrigo.model
 
+import io.realm.kotlin.ext.realmListOf
+import io.realm.kotlin.types.RealmList
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
 import org.mongodb.kbson.ObjectId
@@ -7,11 +9,12 @@ import org.mongodb.kbson.ObjectId
 class Extraction: RealmObject {
     @PrimaryKey var id: ObjectId = ObjectId()
     var title: String = ""
-    var shortDescription: String = ""
-    var longDescription: String = ""
+    var description: String = ""
     var image: String = ""
-    var type: String = ""
     var template: Template? = null
+    var format: String = ""
+    var fields: RealmList<ExtractionField> = realmListOf()
+    var tags: RealmList<String> = realmListOf()
 
 
     /*constructor(title: String, shortDescription: String, longDescription: String, image: String, type: String) {
@@ -21,5 +24,16 @@ class Extraction: RealmObject {
         this.image = image
         this.type = type
     ***REMOVED****/
+***REMOVED***
+class ExtractionField : RealmObject {
+    @PrimaryKey
+    var id: ObjectId = ObjectId()
+    var title: String= ""
+    var description: String = ""
+    var extraDescription: String = ""
+    var extracted: String = ""
+    var type: String = ""
+    var tags: RealmList<String> = realmListOf()
+
 ***REMOVED***
 

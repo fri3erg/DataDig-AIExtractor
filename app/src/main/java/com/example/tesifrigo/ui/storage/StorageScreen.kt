@@ -34,10 +34,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.example.tesifrigo.SingleExtraction
+import com.example.tesifrigo.Screen
 import com.example.tesifrigo.model.Extraction
 import com.example.tesifrigo.viewmodels.ExtractionViewModel
-import com.example.tesifrigo.Storage
 @Composable
 fun StorageScreen(navController: NavHostController) {
 
@@ -78,7 +77,7 @@ fun ExtractionItem(extraction: Extraction, viewModel:ExtractionViewModel, navCon
         ) {
             Text(extraction.title, style = MaterialTheme.typography.headlineMedium)
             Spacer(Modifier.height(4.dp))
-            Text(extraction.shortDescription, style = MaterialTheme.typography.bodyMedium)
+            Text(extraction.description, style = MaterialTheme.typography.bodyMedium)
             Spacer(Modifier.height(8.dp))
 
             Row(
@@ -92,9 +91,7 @@ fun ExtractionItem(extraction: Extraction, viewModel:ExtractionViewModel, navCon
                     expanded = showMenu,
                     onDismissRequest = { showMenu = false ***REMOVED***
     ***REMOVED*** {
-                    DropdownMenuItem(onClick = { navController.navigate(
-                        SingleExtraction(extraction.id.toHexString())
-        ***REMOVED***;
+                    DropdownMenuItem(onClick = { navController.navigate(Screen.SingleExtraction.withArgs("extractionId" to extraction.id.toHexString()));
                     showMenu = false ***REMOVED***,
                     text= { Text("Edit") ***REMOVED***
         ***REMOVED***
@@ -111,7 +108,7 @@ fun ExtractionItem(extraction: Extraction, viewModel:ExtractionViewModel, navCon
                     ***REMOVED***
                 ***REMOVED***
                 Box(modifier = Modifier.padding(8.dp).background(color = Color.Blue)) {
-                    Text(text = extraction.type, modifier = Modifier.padding(8.dp))
+                    Text(text = extraction.format, modifier = Modifier.padding(8.dp))
                 ***REMOVED***
             ***REMOVED***
         ***REMOVED***

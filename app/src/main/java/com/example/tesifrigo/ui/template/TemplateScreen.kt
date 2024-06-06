@@ -29,12 +29,11 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.example.tesifrigo.Camera
-import com.example.tesifrigo.EditTemplate
+import com.example.tesifrigo.Screen
 import com.example.tesifrigo.model.Template
 import com.example.tesifrigo.viewmodels.TemplateViewModel
-
-
+import org.mongodb.kbson.BsonObjectId
+import org.mongodb.kbson.serialization.Bson
 
 
 @Composable
@@ -43,19 +42,19 @@ fun TemplateScreen(navController: NavHostController, photos: String?) {
     val templates by viewModel.templates.collectAsState()
     LazyColumn {
         items(templates) { template ->  // Iterate directly over templates
-            TemplateItem(template = template,navController, templateId = template.id.toHexString())
+            TemplateItem(template = template,navController)
         ***REMOVED***
     ***REMOVED***
 ***REMOVED***
 
 
 @Composable
-fun TemplateItem(template: Template,navController: NavHostController, templateId: String) {
+fun TemplateItem(template: Template,navController: NavHostController) {
     Card( // Consider using a Card for visual structure
         modifier = Modifier
             .fillMaxWidth() // Occupy full width
             .clickable {
-                navController.navigate(EditTemplate(template.id.toHexString()))
+                navController.navigate(Screen.EditTemplate.routeWithOptionalArgs("templateId" to template.id.toHexString()))
             ***REMOVED*** // Make the entire item clickable
             .padding(16.dp),
     ) {
@@ -64,7 +63,7 @@ fun TemplateItem(template: Template,navController: NavHostController, templateId
 
                 Text(text = template.title)
                 Spacer(modifier = Modifier.weight(1f)) // Creates space between text and button
-                DropdownWithNavigation(navController, templateId)
+                DropdownWithNavigation(navController, template.id.toHexString())
             ***REMOVED***
             LazyRow {
                 items(template.tags) { field ->
@@ -98,9 +97,11 @@ fun DropdownWithNavigation(navController: NavHostController, id: String) {
         onDismissRequest = { expanded = false ***REMOVED***
     ) {
 
-        DropdownMenuItem(onClick = {navController.navigate(Camera(id)); expanded = false ***REMOVED***,
+        DropdownMenuItem(onClick = {navController.navigate(Screen.Camera.routeWithOptionalArgs( "templateId" to id) ); expanded = false ***REMOVED***,
             text= { Text("Use") ***REMOVED***
         )
+        DropdownMenuItem(onClick = {navController.navigate(Screen.EditTemplate.withArgs("templateId" to id) ); expanded = false ***REMOVED***,
+            text ={Text("Edit") ***REMOVED***)
         DropdownMenuItem(onClick = {showDeleteDialog=true; expanded = false ***REMOVED***,
             text ={Text("Delete") ***REMOVED***)
     ***REMOVED***

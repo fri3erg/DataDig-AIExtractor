@@ -1,12 +1,11 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-    alias(libs.plugins.kotlin.serialization)
     id("com.chaquo.python")
     id("kotlin-kapt")
     id("dagger.hilt.android.plugin")
     id("io.realm.kotlin")
-    id ("kotlinx-serialization")
+    kotlin("plugin.serialization") version "1.9.23"
 ***REMOVED***
 
 
@@ -85,6 +84,11 @@ android {
 ***REMOVED***
 
 dependencies {
+
+    val nav_version = "2.8.0-alpha08"
+    implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
+    implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
+    implementation("androidx.navigation:navigation-compose:$nav_version")
     implementation("com.google.dagger:hilt-android:2.51")
     implementation(libs.androidx.room.ktx)
     kapt("com.google.dagger:hilt-android-compiler:2.51")
@@ -93,7 +97,6 @@ dependencies {
     kapt("androidx.hilt:hilt-compiler:1.0.0")
     implementation("androidx.work:work-runtime-ktx:2.8.1")
     implementation("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.5.0") // Use the latest version
-    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -111,7 +114,6 @@ dependencies {
     implementation("androidx.localbroadcastmanager:localbroadcastmanager:1.1.0")
     implementation ("com.github.Gurupreet:FontAwesomeCompose:1.0.0")
     implementation("io.coil-kt:coil-compose:2.2.2")
-    implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.cronet.embedded)
     implementation(libs.androidx.camera.lifecycle)
@@ -125,8 +127,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation("io.realm.kotlin:library-base:1.11.0")
-    implementation(libs.navigation.compose)
-    implementation(libs.kotlinx.serialization.json)
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 ***REMOVED***
 kapt {
     correctErrorTypes = true

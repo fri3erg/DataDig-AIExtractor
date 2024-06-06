@@ -23,27 +23,28 @@ fun EditTemplateScreen(
 ) {
     val viewModel = viewModel<TemplateViewModel>()
 
-    val templates by  viewModel.queryTemplate(templateId).collectAsState()
-    val template= templates?.first()
+    val template by  viewModel.queryTemplate(templateId).collectAsState(initial = null)
     Text(text = "${template?.title***REMOVED***")
     LazyColumn {
         if (template != null) {
-            items(template.fields.size) { index ->  // Iterate over fields directly
-                EditableTextWithTitle(
-                    title = template.fields[index].title,
-                    text = template.fields[index].description,
-                    modifier= Modifier.padding(6.dp),
-                    onTextChange = { newText ->
-                            viewModel.updateTemplateItem(templateId, template.fields[index].id.toString(), newText)
+            items(template?.fields?.size?:0) { index ->  // Iterate over fields directly
+                template?.fields?.get(index)?.let {
+                    EditableTextWithTitle(
+                        title = it.title,
+                        text = template?.fields!![index].description,
+                        modifier= Modifier.padding(6.dp),
+                        onTextChange = { newText ->
+                            viewModel.updateTemplateItem(template!!)
                         ***REMOVED***
-    ***REMOVED***
-                    if(template.fields[index].extraDescription!=""){
+        ***REMOVED***
+                ***REMOVED***
+                    if(template!!.fields[index].extraDescription!=""){
                         EditableTextWithTitle(
                             title = "extra description",
-                            text = template.fields[index].extraDescription,
+                            text = template!!.fields[index].extraDescription,
                             modifier= Modifier.padding(0.dp),
                             onTextChange = { newText ->
-                                viewModel.updateTemplateItem(templateId, template.fields[index].id.toString(), newText)
+                                viewModel.updateTemplateItem(template!!)
                 ***REMOVED***
             ***REMOVED***
             ***REMOVED***
