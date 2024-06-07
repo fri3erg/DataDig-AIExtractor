@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import coil.compose.rememberAsyncImagePainter
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
@@ -118,10 +119,13 @@ fun CameraOpenScreen(templateId: String?) {
         ***REMOVED***
         if (imageUri != null) {
         Button(onClick = {
-            Log.d("CameraOpenScreen", "Sending image to service ${imageUri***REMOVED***")
-                val intent = Intent(context, TestService::class.java)
-                intent.putExtra("imageUri", imageUri)
-                context.startService(intent)
+            Log.d("CameraOpenScreen", "Sending image to service $imageUri")
+            val intent = Intent(context, TestService::class.java).also {
+                it.action = TestService.Actions.START.toString()
+                it.putExtra("imageUri", imageUri) // Pass the image URI to the service
+            ***REMOVED***
+
+            ContextCompat.startForegroundService(context, intent)
         ***REMOVED***) {
             Text("Send Image to Service")
         ***REMOVED***

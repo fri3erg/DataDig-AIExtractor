@@ -32,8 +32,6 @@ import androidx.navigation.NavHostController
 import com.example.tesifrigo.Screen
 import com.example.tesifrigo.model.Template
 import com.example.tesifrigo.viewmodels.TemplateViewModel
-import org.mongodb.kbson.BsonObjectId
-import org.mongodb.kbson.serialization.Bson
 
 
 @Composable
@@ -45,8 +43,13 @@ fun TemplateScreen(navController: NavHostController, photos: String?) {
             TemplateItem(template = template,navController)
         ***REMOVED***
     ***REMOVED***
+    Button(onClick = {
+        val newId= viewModel.addTemplate()
+        navController.navigate(Screen.EditTemplate.withArgs("templateId" to newId))
+    ***REMOVED***) {
+        Text("Add Template")
+    ***REMOVED***
 ***REMOVED***
-
 
 @Composable
 fun TemplateItem(template: Template,navController: NavHostController) {

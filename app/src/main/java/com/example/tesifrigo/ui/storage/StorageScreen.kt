@@ -91,7 +91,7 @@ fun ExtractionItem(extraction: Extraction, viewModel:ExtractionViewModel, navCon
                     expanded = showMenu,
                     onDismissRequest = { showMenu = false ***REMOVED***
     ***REMOVED*** {
-                    DropdownMenuItem(onClick = { navController.navigate(Screen.SingleExtraction.withArgs("extractionId" to extraction.id.toHexString()));
+                    DropdownMenuItem(onClick = { navController.navigate(Screen.SingleExtraction.withArgs("extractionId" to extraction.id.toHexString()))
                     showMenu = false ***REMOVED***,
                     text= { Text("Edit") ***REMOVED***
         ***REMOVED***

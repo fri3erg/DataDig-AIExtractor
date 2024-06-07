@@ -1,6 +1,10 @@
 package com.example.tesifrigo  // Update with your actual package name
 
 import android.app.Application
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
+import android.os.Build
 import com.chaquo.python.android.PyApplication
 import com.example.tesifrigo.model.Extraction
 import com.example.tesifrigo.model.ExtractionField
@@ -38,6 +42,17 @@ class MyApp: Application(){
         realm = Realm.open(
         configuration
         )
+
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            val channel= NotificationChannel(
+                "extracting_data",
+                "Extracting Data",
+                NotificationManager.IMPORTANCE_HIGH
+***REMOVED***
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        ***REMOVED***
     ***REMOVED***
 
 ***REMOVED***

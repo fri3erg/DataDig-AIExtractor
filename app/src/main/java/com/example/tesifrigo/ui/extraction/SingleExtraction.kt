@@ -12,7 +12,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.tesifrigo.utils.EditableTextWithTitle
 import com.example.tesifrigo.viewmodels.ExtractionViewModel
-import com.example.tesifrigo.viewmodels.TemplateViewModel
 
 
 
@@ -34,8 +33,7 @@ fun SingleExtractionScreen(
                     text = extraction!!.fields[index].description,
                     modifier= Modifier.padding(6.dp),
                     onTextChange = { newText ->
-                        extraction!!.fields[index].description = newText
-                        viewModel.updateExtraction(extraction!!)
+                        viewModel.updateExtraction(extraction!!, "description" to newText , index)
                     ***REMOVED***
     ***REMOVED***
                 if(extraction!!.fields[index].extraDescription!=""){
@@ -44,8 +42,7 @@ fun SingleExtractionScreen(
                         text = extraction!!.fields[index].extraDescription,
                         modifier= Modifier.padding(0.dp),
                         onTextChange = { newText ->
-                            extraction!!.fields[index].extraDescription = newText
-                            viewModel.updateExtraction(extraction!!)
+                            viewModel.updateExtraction(extraction!!, "extra" to newText , index)
                         ***REMOVED***
         ***REMOVED***
                 ***REMOVED***
@@ -54,8 +51,7 @@ fun SingleExtractionScreen(
                     text = extraction!!.fields[index].extracted,
                     modifier= Modifier.padding(6.dp),
                     onTextChange = { newText ->
-                        extraction!!.fields[index].extracted = newText
-                        viewModel.updateExtraction(extraction!!)
+                        viewModel.updateExtraction(extraction!!, "extracted" to newText , index)
                     ***REMOVED***
     ***REMOVED***
             ***REMOVED***

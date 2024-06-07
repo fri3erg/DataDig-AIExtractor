@@ -7,7 +7,6 @@ import com.example.tesifrigo.MyApp
 import com.example.tesifrigo.model.Extraction
 import com.example.tesifrigo.model.ExtractionField
 import com.example.tesifrigo.model.Template
-import io.realm.kotlin.UpdatePolicy
 import io.realm.kotlin.ext.query
 import io.realm.kotlin.ext.realmListOf
 import kotlinx.coroutines.flow.SharingStarted
@@ -36,7 +35,7 @@ class ExtractionViewModel: ViewModel(){
     fun queryTemplate(id: String): StateFlow<Extraction?> {
         return extractions.map { extractionList ->
             extractionList.find {
-                Log.d("TemplateViewModel", "Querying template with ID: ${it.id.toHexString()***REMOVED*** and title: ${id***REMOVED*** and ${extractionList***REMOVED***")
+                Log.d("TemplateViewModel", "Querying template with ID: ${it.id.toHexString()***REMOVED*** and title: $id and $extractionList")
                 it.id.toHexString() == id ***REMOVED***
         ***REMOVED***.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
@@ -52,16 +51,16 @@ class ExtractionViewModel: ViewModel(){
                 delete(extractionFieldToDelete)
 
 
-                var template1= Template().apply {
+                val template1= Template().apply {
                     title = "Sample Template"
                     description = "This is a sample template"
 
                 ***REMOVED***
-                var template2= Template().apply {
+                val template2= Template().apply {
                     title = "Sample Template 2"
                     description = "This is a sample template 2"
                 ***REMOVED***
-                var template3= Template().apply {
+                val template3= Template().apply {
                     title = "Sample Template 3"
                     description = "This is a sample template 3"
                 ***REMOVED***
@@ -132,10 +131,26 @@ class ExtractionViewModel: ViewModel(){
         ***REMOVED***
 
     ***REMOVED***
-    fun updateExtraction(extraction: Extraction) {
+    fun updateExtraction(extraction: Extraction, modifiedValue: Pair<String, String>, index: Int) {
         viewModelScope.launch {
             realm.write { // Start a write transaction
-                val latestExtraction = findLatest(extraction) ?: copyToRealm(extraction) // Find or create the latest extraction
+                val latestExtraction = findLatest(extraction) ?: copyToRealm(extraction)  // Find or create the latest extraction
+                modifiedValue.let { (field, newText) ->
+                    when (field) {
+                        "extra" -> {
+                            latestExtraction.fields[index].extraDescription = newText
+                        ***REMOVED***
+                        "description" -> {
+                            latestExtraction.fields[index].description = newText
+                        ***REMOVED***
+                        "extracted" -> {
+                            latestExtraction.fields[index].extracted = newText
+                    ***REMOVED***
+                        else -> {
+                            // Handle other cases if needed
+                        ***REMOVED***
+                    ***REMOVED***
+                ***REMOVED***
 
                 // Update properties on latestExtraction, not extraction
                 latestExtraction.apply {

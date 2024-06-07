@@ -8,10 +8,8 @@ import com.example.tesifrigo.model.TemplateField
 import com.example.tesifrigo.model.Template
 import io.realm.kotlin.ext.query
 import io.realm.kotlin.ext.realmListOf
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -37,7 +35,7 @@ class TemplateViewModel : ViewModel() {
     fun queryTemplate(id: String): StateFlow<Template?> {
         return templates.map { templateList ->
             templateList.find {
-                Log.d("TemplateViewModel", "Querying template with ID: ${it.id.toHexString()***REMOVED*** and title: ${id***REMOVED*** and ${templateList***REMOVED***")
+                Log.d("TemplateViewModel", "Querying template with ID: ${it.id.toHexString()***REMOVED*** and title: $id and $templateList")
                 it.id.toHexString() == id ***REMOVED***
         ***REMOVED***.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
@@ -112,12 +110,67 @@ class TemplateViewModel : ViewModel() {
         ***REMOVED***
     ***REMOVED***
 
-    fun updateTemplateItem(template: Template) {
+    fun updateTemplateItem(template: Template, modifiedValue: Pair<String, String>, index: Int) {
         viewModelScope.launch {
             realm.write {
-                copyToRealm(template, updatePolicy = io.realm.kotlin.UpdatePolicy.ALL)
+                val latestTemplate = findLatest(template) ?: copyToRealm(template)  // Find or create the latest extraction
+                modifiedValue.let { (field, newText) ->
+                    when (field) {
+                        "extra" -> {
+                            latestTemplate.fields[index].extraDescription = newText
+                        ***REMOVED***
+                        "description" -> {
+                            latestTemplate.fields[index].description = newText
+                        ***REMOVED***
+                        else -> {
+                            // Handle other cases if needed
+                        ***REMOVED***
+                    ***REMOVED***
+                ***REMOVED***
+
+                // Update properties on latestExtraction, not extraction
+                latestTemplate.apply {
+                    title = template.title
+                    description = template.description
+                    // fields = extraction.fields // Don't update RealmList directly
+                ***REMOVED***
             ***REMOVED***
         ***REMOVED***
 
+    ***REMOVED***
+
+    fun addTemplate(): String {
+        val newField = TemplateField().apply {
+            title = "New Field"
+            description = "This is a new field"
+            tags = realmListOf("tag1 ")
+        ***REMOVED***
+        val newTemplate = Template().apply {
+            title = "New Template"
+            description = "This is a new template"
+            tags = realmListOf("freezer")
+            fields = realmListOf(newField)
+        ***REMOVED***
+        viewModelScope.launch {
+            realm.write {
+                copyToRealm(newTemplate)
+
+            ***REMOVED***
+        ***REMOVED***
+        return newTemplate.id.toHexString()
+    ***REMOVED***
+
+    fun addField(template: Template) {
+        val newField = TemplateField().apply {
+            title = "New Field"
+            description = "This is a new field"
+            tags = realmListOf("tag1 ")
+        ***REMOVED***
+        viewModelScope.launch {
+            realm.write {
+                val latestTemplate = findLatest(template) ?: return@write
+                latestTemplate.fields.add(newField)
+            ***REMOVED***
+        ***REMOVED***
     ***REMOVED***
 ***REMOVED***

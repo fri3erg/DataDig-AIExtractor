@@ -7,14 +7,12 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import androidx.navigation.toRoute
 import com.example.tesifrigo.ui.camera.CameraOpenScreen
 import com.example.tesifrigo.ui.extraction.SingleExtractionScreen
 import com.example.tesifrigo.ui.settings.SettingsScreen
 import com.example.tesifrigo.ui.storage.StorageScreen
 import com.example.tesifrigo.ui.template.EditTemplateScreen
 import com.example.tesifrigo.ui.template.TemplateScreen
-import kotlinx.serialization.Serializable
 
 
 @Composable
