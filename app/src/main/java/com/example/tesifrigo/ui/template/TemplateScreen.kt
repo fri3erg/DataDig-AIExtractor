@@ -57,7 +57,7 @@ fun TemplateItem(template: Template,navController: NavHostController) {
         modifier = Modifier
             .fillMaxWidth() // Occupy full width
             .clickable {
-                navController.navigate(Screen.EditTemplate.routeWithOptionalArgs("templateId" to template.id.toHexString()))
+                navController.navigate(Screen.EditTemplate.withArgs("templateId" to template.id.toHexString()))
             ***REMOVED*** // Make the entire item clickable
             .padding(16.dp),
     ) {

@@ -6,7 +6,7 @@ sealed class Screen(val route:String) {
     data object Settings: Screen("settings")
     data object Templates: Screen("templates")
     data object EditTemplate: Screen("editTemplate")
-    data object SingleExtraction: Screen("singleExtraction")
+     data object SingleExtraction: Screen("singleExtraction")
 
     fun withArgs(vararg args: Pair<String, String>): String {
         return buildString {

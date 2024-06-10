@@ -1,5 +1,8 @@
 import time
 
+
+n=10 
+
 def process_data(data, progress_callback):
   """
   Funzione che elabora i dati e invia messaggi di avanzamento a Chaquopy.

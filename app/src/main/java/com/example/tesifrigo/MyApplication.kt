@@ -5,6 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
+import androidx.compose.runtime.mutableIntStateOf
 import com.chaquo.python.android.PyApplication
 import com.example.tesifrigo.model.Extraction
 import com.example.tesifrigo.model.ExtractionField

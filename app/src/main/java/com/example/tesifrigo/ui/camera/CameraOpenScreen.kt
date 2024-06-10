@@ -2,9 +2,11 @@ package com.example.tesifrigo.ui.camera
 
 import android.Manifest
 import android.app.Activity
+import android.content.BroadcastReceiver
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.MediaStore
@@ -19,6 +21,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -26,7 +29,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import coil.compose.rememberAsyncImagePainter
+import com.example.tesifrigo.viewmodels.ExtractionViewModel
+import com.example.tesifrigo.viewmodels.PythonViewModel
+import com.example.tesifrigo.viewmodels.TemplateViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -47,9 +56,26 @@ fun CameraOpenScreen(templateId: String?) {
 ***REMOVED***
         )
 
+
+
     var imageUri by remember { mutableStateOf<Uri?>(null) ***REMOVED***
 
     var showImage by remember { mutableStateOf(false) ***REMOVED***
+
+    val sharedPreferences = context.getSharedPreferences("progress", Context.MODE_PRIVATE)
+
+
+    var progress by remember { mutableStateOf(sharedPreferences.getInt("progress", 0)) ***REMOVED***
+
+    LaunchedEffect(Unit) {
+        sharedPreferences.registerOnSharedPreferenceChangeListener { _, key ->
+            if (key == "progress") {
+                progress = sharedPreferences.getInt("progress", 0)
+            ***REMOVED***
+        ***REMOVED***
+    ***REMOVED***
+
+
 
     val takePhotoLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
@@ -87,6 +113,14 @@ fun CameraOpenScreen(templateId: String?) {
             ***REMOVED***
     ***REMOVED***
 
+    LaunchedEffect(Unit) {
+        sharedPreferences.registerOnSharedPreferenceChangeListener { _, key ->
+            if (key == "progress") {
+                progress = sharedPreferences.getInt("progress", 0) // Update the state
+            ***REMOVED***
+        ***REMOVED***
+    ***REMOVED***
+
     val selectImageLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri ->
@@ -109,6 +143,10 @@ fun CameraOpenScreen(templateId: String?) {
     ***REMOVED***
             ***REMOVED***
         ***REMOVED***
+
+
+        LinearProgressIndicator(progress = progress / 100f)  // Example
+
 
         Spacer(modifier = Modifier.height(16.dp))
 

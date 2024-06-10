@@ -70,11 +70,15 @@ android {
         ***REMOVED***
         defaultConfig{
             version = "3.11"
+            pip {
+                // "-r"` followed by a requirements filename, relative to the
+                // project directory:
+                install("numpy")
+                install("pandas")
+                install("-r", projectDir.absolutePath + "/src/main/python/requirements.txt")
+            ***REMOVED***
         ***REMOVED***
         sourceSets {
-            getByName("main") {
-                srcDir("src/main/python")
-            ***REMOVED***
         ***REMOVED***
 
 
