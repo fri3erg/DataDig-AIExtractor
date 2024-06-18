@@ -51,6 +51,7 @@ android {
     ***REMOVED***
     buildFeatures {
         compose = true
+        viewBinding = true
     ***REMOVED***
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -89,6 +90,7 @@ android {
 
 dependencies {
 
+    implementation(libs.androidx.material3.android)
     val nav_version = "2.8.0-alpha08"
     implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
     implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
@@ -98,6 +100,7 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:2.51")
     annotationProcessor("com.google.dagger:hilt-android:2.51")
     implementation("androidx.hilt:hilt-work:1.0.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
     kapt("androidx.hilt:hilt-compiler:1.0.0")
     implementation("androidx.work:work-runtime-ktx:2.8.1")
     implementation("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.5.0") // Use the latest version
@@ -108,7 +111,6 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
     implementation("com.google.accompanist:accompanist-permissions:0.28.0") // Replace with your desired version
     implementation("androidx.camera:camera-camera2:1.3.3") // Or latest stable version
     implementation(libs.androidx.camera.core)

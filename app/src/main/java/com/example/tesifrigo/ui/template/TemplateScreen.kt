@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.tesifrigo.Screen
-import com.example.tesifrigo.model.Template
+import com.example.tesifrigo.models.Template
 import com.example.tesifrigo.viewmodels.TemplateViewModel
 
 

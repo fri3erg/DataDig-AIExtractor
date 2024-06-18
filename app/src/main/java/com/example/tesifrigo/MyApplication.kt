@@ -5,20 +5,14 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
-import androidx.compose.runtime.mutableIntStateOf
-import com.chaquo.python.android.PyApplication
-import com.example.tesifrigo.model.Extraction
-import com.example.tesifrigo.model.ExtractionField
-import com.example.tesifrigo.model.TemplateField
-import com.example.tesifrigo.model.Template
+import com.example.tesifrigo.models.Extraction
+import com.example.tesifrigo.models.ExtractionField
+import com.example.tesifrigo.models.TemplateField
+import com.example.tesifrigo.models.Template
 import dagger.hilt.android.HiltAndroidApp
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
 
-
-class MyApplication : PyApplication() {
-    // Add any other initialization code you might need here
-***REMOVED***
 
 
 @HiltAndroidApp
@@ -26,6 +20,7 @@ class MyApp: Application(){
     companion object{
         lateinit var realm: Realm
     ***REMOVED***
+
 
     override fun onCreate(){
         super.onCreate()
@@ -55,5 +50,7 @@ class MyApp: Application(){
             notificationManager.createNotificationChannel(channel)
         ***REMOVED***
     ***REMOVED***
+
+
 
 ***REMOVED***

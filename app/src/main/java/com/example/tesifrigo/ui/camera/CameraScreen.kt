@@ -1,229 +1,328 @@
 package com.example.tesifrigo.ui.camera
 
 import android.Manifest
-import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Environment
-import android.util.Log
-import android.view.TextureView
-import android.view.ViewGroup
-import androidx.annotation.OptIn
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ExperimentalGetImage
-import androidx.camera.core.ImageCapture
-import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.ImageProxy
-import androidx.camera.core.Preview
-import androidx.camera.lifecycle.ProcessCameraProvider
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material.icons.filled.Place
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.LifecycleOwner
+import androidx.core.content.FileProvider
+import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
+import com.example.tesifrigo.services.ExtractionService
+import com.example.tesifrigo.viewmodels.ServiceViewModel
 import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-import java.util.concurrent.Executors
+
+
 @Composable
-fun CameraScreen() {
+fun CameraScreen(templateId: String?) {
+
+
     val context = LocalContext.current
-    var imageFilePath by remember { mutableStateOf<String?>(null) ***REMOVED***
-    val cameraExecutor = remember { Executors.newSingleThreadExecutor() ***REMOVED***
-    val cameraPermissionState = remember { mutableStateOf(false) ***REMOVED***
 
-    // Check camera permission
-    if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-        cameraPermissionState.value = true
-    ***REMOVED***
+    var imageUri by remember { mutableStateOf<Uri?>(null) ***REMOVED***
 
-    if (cameraPermissionState.value) {
-        // Initialize CameraX
-        val cameraProviderFuture = remember { ProcessCameraProvider.getInstance(context) ***REMOVED***
-        LaunchedEffect(cameraProviderFuture) {
-            cameraProviderFuture.addListener(
-                {
-                    val cameraProvider = cameraProviderFuture.get()
-                    bindCameraPreview(context, cameraProvider, textureView = TextureView(context))
-                ***REMOVED***,
-                ContextCompat.getMainExecutor(context)
-***REMOVED***
+    Column (modifier = Modifier.fillMaxSize()){
+
+        MyImageArea(
+            uri = imageUri,
+            directory = context.getExternalFilesDir("images")
+        ) { uri ->
+            imageUri = uri
         ***REMOVED***
+        if (imageUri != null) {
+            Button(onClick = {
+                val intent = Intent(context, ExtractionService::class.java).also {
+                    it.action = ExtractionService.Actions.START.toString()
+                    it.putExtra("imageUri", imageUri) // Pass the image URI to the service
+                ***REMOVED***
 
-        // Composable for Camera Preview
-        AndroidView(
-            modifier = Modifier.fillMaxSize(),
-            factory = { context ->
-                TextureView(context).apply {
-                    layoutParams = ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT
-        ***REMOVED***
-                ***REMOVED***
-            ***REMOVED***,
-            update = { view ->
-                imageFilePath?.let { filePath ->
-                    // Display captured image
-                    // Example: load image into ImageView
-                    // view.setImageBitmap(BitmapFactory.decodeFile(filePath))
-                    imageFilePath = null
-                ***REMOVED***
+                ContextCompat.startForegroundService(context, intent)
+            ***REMOVED***) {
+            Text(text = "Start Service")
             ***REMOVED***
-        )
 
-        // Capture Button
-        Button(
-            onClick = {
-                bindCameraPreview(context, cameraProviderFuture.get(), textureView = TextureView(context))
+            ProgressBar()
+        ***REMOVED***
 
-            ***REMOVED***,
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Text("Capture Image")
-        ***REMOVED***
-    ***REMOVED*** else {
-        // Request camera permission
-        Button(
-            onClick = {
-                ActivityCompat.requestPermissions(
-                    context as Activity,
-                    arrayOf(Manifest.permission.CAMERA),
-                    CAMERA_PERMISSION_REQUEST_CODE
+
     ***REMOVED***
-            ***REMOVED***,
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Text("Request Camera Permission")
-        ***REMOVED***
-    ***REMOVED***
+
+
 ***REMOVED***
-fun bindCameraPreview(
-    context: Context,
-    cameraProvider: ProcessCameraProvider,
-    textureView: TextureView
+
+
+
+@Composable
+fun ProgressBar() {
+    val serviceViewModel = hiltViewModel<ServiceViewModel>()
+    val progress by serviceViewModel.progress.collectAsState()
+    val result by serviceViewModel.result.collectAsState()
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        LinearProgressIndicator(
+            progress = { progress ***REMOVED***,
+        ) // Use state
+        Text("Progress: ${progress*100***REMOVED***%")
+    ***REMOVED***
+
+***REMOVED***
+
+@Composable
+fun MyImageArea(
+    uri: Uri? = null, //target url to preview
+    directory: File? = null, // stored directory
+    onSetUri : (Uri) -> Unit = {***REMOVED***, // selected / taken uri
 ) {
-    val lifecycleOwner = context as LifecycleOwner // Assume context is Activity or Fragment
-    val preview = Preview.Builder().build()
+    val context = LocalContext.current
+    val tempUri = remember { mutableStateOf<Uri?>(null) ***REMOVED***
+    val authority = "com.example.tesifrigo.fileprovider"
 
-    // ... Your surface provider setup ...
 
-    val cameraSelector = CameraSelector.Builder()
-        .requireLensFacing(CameraSelector.LENS_FACING_BACK)
-        .build()
+    // for takePhotoLauncher used
+    fun getTempUri(): Uri? {
+        val imagesFolder = File(context.cacheDir, "images") // Create the "images" subdirectory if it doesn't exist
+        imagesFolder.mkdirs()
 
-    val imageCapture = ImageCapture.Builder()
-        .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
-        .build() // For image capture
+        val file = File(
+            imagesFolder,
+            "image_" + System.currentTimeMillis().toString() + ".jpg",
+***REMOVED***
 
-    try {
-        cameraProvider.unbindAll()
-        cameraProvider.bindToLifecycle(
-            lifecycleOwner,
-            cameraSelector,
-            preview,
-            imageCapture // Bind image capture
-        )
-    ***REMOVED*** catch (exc: Exception) {
-        // Handle exceptions
+        return FileProvider.getUriForFile(
+                context,
+                authority,
+                file
+***REMOVED***
     ***REMOVED***
 
-    imageCapture.takePicture(
-        ContextCompat.getMainExecutor(context),
-        object : ImageCapture.OnImageCapturedCallback() {
-            @OptIn(ExperimentalGetImage::class) override fun onCaptureSuccess(image: ImageProxy) {
-                // Handle captured image
-                val imageFile = createImageFile(context)
-                val savedUri = imageFile?.let { file ->
-                    try {
-                        FileOutputStream(file).use { outputStream ->
-                            image.image?.let {
-                                it.planes[0].buffer.apply {
-                                    rewind()
-                                    val data = ByteArray(remaining())
-                                    get(data)
-                                    outputStream.write(data)
-                                ***REMOVED***
-                            ***REMOVED***
-                        file.absolutePath
-                        ***REMOVED***
-                    ***REMOVED*** catch (ex: IOException) {
-                        // Handle IOException
-                        null
-                    ***REMOVED***
-                ***REMOVED***
-                image.close()
-
-                savedUri?.let {
-                    // Use the captured image path here
-                    Log.d("CameraCapture", "Image saved: $it")
-                ***REMOVED***
-            ***REMOVED***
-
-            override fun onError(exc: ImageCaptureException) {
-                // Handle errors
+    val imagePicker = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = {
+            it?.let {
+                onSetUri.invoke(it)
             ***REMOVED***
         ***REMOVED***
     )
-***REMOVED***
 
-private fun createImageFile(context: Context): File? {
-    val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-    val storageDir: File? = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-    return File.createTempFile(
-        "JPEG_${timeStamp***REMOVED***_", /* prefix */
-        ".jpg", /* suffix */
-        storageDir /* directory */
+    val takePhotoLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture(),
+        onResult = {_ ->
+            tempUri.value?.let {
+                onSetUri.invoke(it)
+            ***REMOVED***
+        ***REMOVED***
     )
-***REMOVED***
 
-
-
-private const val CAMERA_PERMISSION_REQUEST_CODE = 1001
-
-private fun startPythonService(context: Context, imagePath: String) {
-    // Start the Python service with the captured image path
-    val intent = Intent(context, ExtractionService::class.java).apply {
-        putExtra("imagePath", imagePath)
+    val cameraPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            // Permission is granted, launch takePhotoLauncher
+            val tmpUri = getTempUri()
+            tempUri.value = tmpUri
+            takePhotoLauncher.launch(tempUri.value)
+        ***REMOVED*** else {
+            // Permission is denied, handle it accordingly
+        ***REMOVED***
     ***REMOVED***
-    ContextCompat.startForegroundService(context, intent)
+
+    var showBottomSheet by remember { mutableStateOf(false) ***REMOVED***
+    if (showBottomSheet){
+        MyModalBottomSheet(
+            onDismiss = {
+                showBottomSheet = false
+            ***REMOVED***,
+            onTakePhotoClick = {
+                showBottomSheet = false
+
+                val permission = Manifest.permission.CAMERA
+                if (ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
+    ***REMOVED*** {
+                    // Permission is already granted, proceed to step 2
+                    val tmpUri = getTempUri()
+                    tempUri.value = tmpUri
+                    takePhotoLauncher.launch(tempUri.value)
+                ***REMOVED*** else {
+                    // Permission is not granted, request it
+                    cameraPermissionLauncher.launch(permission)
+                ***REMOVED***
+            ***REMOVED***,
+            onPhotoGalleryClick = {
+                showBottomSheet = false
+                imagePicker.launch(
+                    PickVisualMediaRequest(
+                        ActivityResultContracts.PickVisualMedia.ImageOnly
+        ***REMOVED***
+    ***REMOVED***
+            ***REMOVED***,
+        )
+    ***REMOVED***
+
+    Column (
+        modifier = Modifier.fillMaxWidth()
+    ) {
+
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            Button(
+                onClick = {
+                    showBottomSheet = true
+                ***REMOVED***
+***REMOVED*** {
+                Text(text = "Select / Take")
+            ***REMOVED***
+        ***REMOVED***
+
+        //preview selfie
+        uri?.let {
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+***REMOVED*** {
+                AsyncImage(
+                    model = it,
+                    modifier = Modifier
+                        .height(200.dp)
+                        .width(200.dp),
+                    contentDescription = null,
+    ***REMOVED***
+            ***REMOVED***
+            Spacer(modifier = Modifier.height(16.dp))
+        ***REMOVED***
+
+    ***REMOVED***
 ***REMOVED***
+
 @Composable
-fun ButtonandBar() {
-    val context = LocalContext.current
-    val progress = remember { mutableStateOf(0) ***REMOVED***
-
-    Button(onClick = { // ... inside your onClick handler in Compose
-    val intent = Intent(context, ExtractionService::class.java).apply {
-        putExtra("param1", "value1")
-        putExtra("param2", 42)
-        putExtra("file_path", 42) // Pass the file path
-    ***REMOVED***
-    context.startService(intent)
-***REMOVED***) {
-
-***REMOVED***
-    LinearProgressIndicator(
-        progress = progress.value / 100f, // Convert to a float value between 0 and 1
-        modifier = Modifier.padding(16.dp)
+fun MyModalBottomSheet(
+    onDismiss: () -> Unit,
+    onTakePhotoClick: () -> Unit,
+    onPhotoGalleryClick: () -> Unit
+) {
+    MyModalBottomSheetContent(
+        header = "Choose Option",
+        onDismiss = {
+            onDismiss.invoke()
+        ***REMOVED***,
+        items = listOf(
+            BottomSheetItem(
+                title = "Take Photo",
+                icon = Icons.Default.AccountBox,
+                onClick = {
+                    onTakePhotoClick.invoke()
+                ***REMOVED***
+***REMOVED***,
+            BottomSheetItem(
+                title = "select image",
+                icon = Icons.Default.Place,
+                onClick = {
+                    onPhotoGalleryClick.invoke()
+                ***REMOVED***
+***REMOVED***,
+        )
     )
-    
-
-
 ***REMOVED***
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MyModalBottomSheetContent(
+    onDismiss: () -> Unit,
+    //header
+    header: String = "Choose Option",
+
+    items: List<BottomSheetItem> = listOf(),
+) {
+    val skipPartiallyExpanded by remember { mutableStateOf(false) ***REMOVED***
+    val bottomSheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = skipPartiallyExpanded
+    )
+    val edgeToEdgeEnabled by remember { mutableStateOf(false) ***REMOVED***
+    val windowInsets = if (edgeToEdgeEnabled)
+        WindowInsets(0) else BottomSheetDefaults.windowInsets
+
+    ModalBottomSheet(
+        shape = MaterialTheme.shapes.medium.copy(
+            bottomStart = CornerSize(0),
+            bottomEnd = CornerSize(0)
+        ),
+        onDismissRequest = { onDismiss.invoke() ***REMOVED***,
+        sheetState = bottomSheetState,
+        windowInsets = windowInsets
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp),
+                text = header,
+                style = MaterialTheme.typography.titleLarge,
+                textAlign = TextAlign.Center
+***REMOVED***
+            items.forEach {item ->
+                androidx.compose.material3.ListItem(
+                    modifier = Modifier.clickable {
+                        item.onClick.invoke()
+                    ***REMOVED***,
+                    headlineContent = {
+                        Text(
+                            text = item.title,
+                            style = MaterialTheme.typography.titleMedium,
+            ***REMOVED***
+                    ***REMOVED***,
+                    leadingContent = {
+                        Icon(
+                            imageVector = item.icon,
+                            contentDescription = item.title
+            ***REMOVED***
+                    ***REMOVED***,
+    ***REMOVED***
+            ***REMOVED***
+        ***REMOVED***
+    ***REMOVED***
+***REMOVED***
+
+data class BottomSheetItem(
+    val title: String = "",
+    val icon: ImageVector,
+    val onClick: () -> Unit
+)

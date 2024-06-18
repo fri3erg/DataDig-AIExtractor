@@ -4,8 +4,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tesifrigo.MyApp
-import com.example.tesifrigo.model.TemplateField
-import com.example.tesifrigo.model.Template
+import com.example.tesifrigo.models.TemplateField
+import com.example.tesifrigo.models.Template
 import io.realm.kotlin.ext.query
 import io.realm.kotlin.ext.realmListOf
 import kotlinx.coroutines.flow.SharingStarted

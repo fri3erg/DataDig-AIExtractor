@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.tesifrigo.Screen
-import com.example.tesifrigo.model.Extraction
+import com.example.tesifrigo.models.Extraction
 import com.example.tesifrigo.viewmodels.ExtractionViewModel
 @Composable
 fun StorageScreen(navController: NavHostController) {

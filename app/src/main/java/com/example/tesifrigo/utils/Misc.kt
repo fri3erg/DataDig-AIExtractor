@@ -6,6 +6,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
+const val PROGRESS_UPDATE_ACTION = "com.your.app.PROGRESS_UPDATE"
+const val PROGRESS_EXTRA = "progress"
+
+
 @Composable
 fun EditableTextWithTitle(
     title: String,

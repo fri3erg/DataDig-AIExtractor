@@ -1,9 +1,10 @@
-package com.example.tesifrigo.model
+package com.example.tesifrigo.models
 
 import io.realm.kotlin.ext.realmListOf
 import io.realm.kotlin.types.RealmList
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
+import kotlinx.serialization.Serializable
 import org.mongodb.kbson.ObjectId
 
 class Extraction: RealmObject {
@@ -37,3 +38,10 @@ class ExtractionField : RealmObject {
 
 ***REMOVED***
 
+@Serializable
+data class Extracted (val title: String, val description: String, val tags: List<String>){
+    constructor(): this("", "", listOf())
+
+
+
+    ***REMOVED***

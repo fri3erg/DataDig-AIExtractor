@@ -14,14 +14,14 @@ def process_data(data, progress_callback):
 
   # Simulare l'elaborazione dei dati (invio di messaggi di avanzamento al 10%)
   for i in range(1, 11):
-    progress_callback(i * 10)
-    time.sleep(0.1)  # Simula il tempo di elaborazione
+    progress_callback(i / 10)
+    time.sleep(1)
 
   # Elaborazione effettiva dei dati (sostituisci con la tua logica)
   processed_data = data
 
   # Invia messaggio di avanzamento al 100%
-  progress_callback(100)
+  progress_callback(1.0)
 
   # Restituisci i dati elaborati
   return processed_data

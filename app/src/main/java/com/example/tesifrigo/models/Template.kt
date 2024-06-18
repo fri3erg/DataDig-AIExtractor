@@ -1,4 +1,4 @@
-package com.example.tesifrigo.model
+package com.example.tesifrigo.models
 
 import io.realm.kotlin.ext.realmListOf
 import io.realm.kotlin.types.RealmList
