@@ -8,6 +8,7 @@ import com.example.tesifrigo.models.TemplateField
 import com.example.tesifrigo.models.Template
 import io.realm.kotlin.ext.query
 import io.realm.kotlin.ext.realmListOf
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -18,6 +19,9 @@ import org.mongodb.kbson.ObjectId
 class TemplateViewModel : ViewModel() {
 
     private  val realm = MyApp.realm
+
+    val sortOrder = MutableStateFlow(SortOrder.BY_TITLE)
+    val ascending = MutableStateFlow(true)
 
     val templates = realm
         .query<Template>()
@@ -173,4 +177,10 @@ class TemplateViewModel : ViewModel() {
             ***REMOVED***
         ***REMOVED***
     ***REMOVED***
+***REMOVED***
+
+
+enum class SortOrder{
+    BY_TITLE,
+    BY_DATE,
 ***REMOVED***

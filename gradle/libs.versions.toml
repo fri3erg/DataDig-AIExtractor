@@ -1,5 +1,5 @@
 [versions]
-agp = "8.4.2"
+agp = "8.5.0"
 kotlin = "1.9.0"
 coreKtx = "1.12.0"
 junit = "4.13.2"
@@ -20,6 +20,7 @@ roomCommon = "2.6.1"
 roomKtx = "2.6.1"
 composeNavigation = "2.8.0-alpha08"
 serialization = "1.6.3"
+securityCryptoKtx = "1.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" ***REMOVED***
@@ -48,6 +49,7 @@ androidx-room-common = { group = "androidx.room", name = "room-common", version.
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" ***REMOVED***
 navigation-compose = { module="androidx.navigation:navigation-compose", version.ref = "composeNavigation" ***REMOVED***
 kotlinx-serialization-json = { module="org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization"***REMOVED***
+androidx-security-crypto-ktx = { group = "androidx.security", name = "security-crypto-ktx", version.ref = "securityCryptoKtx" ***REMOVED***
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" ***REMOVED***

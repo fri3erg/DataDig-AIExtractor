@@ -11,11 +11,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -31,6 +36,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.tesifrigo.Screen
 import com.example.tesifrigo.models.Template
+import com.example.tesifrigo.viewmodels.SortOrder
 import com.example.tesifrigo.viewmodels.TemplateViewModel
 
 
@@ -38,17 +44,78 @@ import com.example.tesifrigo.viewmodels.TemplateViewModel
 fun TemplateScreen(navController: NavHostController, photos: String?) {
     val viewModel = viewModel<TemplateViewModel>()
     val templates by viewModel.templates.collectAsState()
-    LazyColumn {
-        items(templates) { template ->  // Iterate directly over templates
-            TemplateItem(template = template,navController)
+    var searchText by remember { mutableStateOf("") ***REMOVED***
+    var expanded by remember { mutableStateOf(false) ***REMOVED***
+    val ascending by viewModel.ascending.collectAsState()
+    val sortOrder by viewModel.sortOrder.collectAsState()
+    Column {
+        Row {
+            SearchBar(
+                text = searchText,
+                onTextChange = { viewModel.filterAndSortTemplates(it, sortOrder) ***REMOVED***,
+                onSearch = { viewModel.filterAndSortTemplates(it, sortOrder) ***REMOVED***
+***REMOVED***
+
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false ***REMOVED***
+***REMOVED*** {
+                DropdownMenuItem(
+                    text = { Text("Title") ***REMOVED***,
+                    onClick = {
+                    sortOrder.value = SortOrder.BY_TITLE
+                    //viewModel.filterAndSortTemplates(searchText, viewModel.sortOrder.value)
+                    expanded = false
+                ***REMOVED***)
+                DropdownMenuItem(
+                    text = { Text("Date") ***REMOVED***,
+                    onClick = {
+                    sortOrder.value = SortOrder.BY_DATE
+                    //viewModel.filterAndSortTemplates(searchText, viewModel.sortOrder.value)
+                    expanded = false
+                ***REMOVED***)
+            ***REMOVED***
+            Spacer(modifier = Modifier.weight(1f))
+            Button(onClick = {
+                navController.navigate(Screen.Settings.route)
+            ***REMOVED***) {
+                Icon(imageVector = Icons.Default.Settings, contentDescription = "Settings")
+            ***REMOVED***
+        ***REMOVED***
+        LazyColumn {
+            items(templates) { template ->  // Iterate directly over templates
+                TemplateItem(template = template, navController)
+            ***REMOVED***
+        ***REMOVED***
+        Button(onClick = {
+            val newId = viewModel.addTemplate()
+            navController.navigate(Screen.EditTemplate.withArgs("templateId" to newId))
+        ***REMOVED***) {
+            Text("Add Template")
         ***REMOVED***
     ***REMOVED***
-    Button(onClick = {
-        val newId= viewModel.addTemplate()
-        navController.navigate(Screen.EditTemplate.withArgs("templateId" to newId))
-    ***REMOVED***) {
-        Text("Add Template")
-    ***REMOVED***
+***REMOVED***
+
+@Composable
+fun SearchBar(text: String, onTextChange: (String) -> Unit, onSearch: (String) -> Unit) {
+    OutlinedTextField(
+        value = text,
+        onValueChange = {
+            onTextChange(it) // Update the ViewModel's searchText state
+            onSearch(it) // Trigger the search function (optional)
+        ***REMOVED***,
+        label = { Text("Search") ***REMOVED***,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        singleLine = true, // Ensure single-line input
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.Search,
+                contentDescription = "Search Icon"
+***REMOVED***
+        ***REMOVED***
+    )
 ***REMOVED***
 
 @Composable
@@ -71,7 +138,9 @@ fun TemplateItem(template: Template,navController: NavHostController) {
             LazyRow {
                 items(template.tags) { field ->
                     Box(modifier = Modifier.padding(8.dp)) {
-                        Text(text = field, modifier = Modifier.padding(8.dp).background(Color.Blue))
+                        Text(text = field, modifier = Modifier
+                            .padding(8.dp)
+                            .background(Color.Blue))
                     ***REMOVED***
                 ***REMOVED***
                 // Add other template details here if needed

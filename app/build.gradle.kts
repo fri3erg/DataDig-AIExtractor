@@ -116,7 +116,7 @@ dependencies {
     implementation(libs.androidx.camera.core)
     implementation("androidx.compose.ui:ui:1.4.0") // Or a more recent version
     implementation("androidx.compose.runtime:runtime-livedata:1.4.0") // Or same version
-
+    implementation("androidx.security:security-crypto:1.1.0-alpha03") // Or the latest version
     implementation("androidx.localbroadcastmanager:localbroadcastmanager:1.1.0")
     implementation ("com.github.Gurupreet:FontAwesomeCompose:1.0.0")
     implementation("io.coil-kt:coil-compose:2.2.2")

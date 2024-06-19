@@ -12,6 +12,7 @@ import com.chaquo.python.Python
 import com.chaquo.python.android.AndroidPlatform
 import com.example.tesifrigo.R
 import com.example.tesifrigo.models.Extracted
+import com.example.tesifrigo.repositories.KeyManager
 import com.example.tesifrigo.repositories.ServiceRepository
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -26,6 +27,10 @@ class ExtractionService : Service(){
 
     @Inject
     lateinit var serviceRepository: ServiceRepository
+
+
+    @Inject
+    lateinit var apiKeyManager: KeyManager
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
 
