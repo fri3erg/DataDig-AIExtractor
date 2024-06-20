@@ -11,17 +11,32 @@ import io.realm.kotlin.ext.realmListOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.mongodb.kbson.ObjectId
+import com.example.tesifrigo.utils.calculateCloseness
 
 class TemplateViewModel : ViewModel() {
 
-    private  val realm = MyApp.realm
+    private val realm = MyApp.realm
 
-    val sortOrder = MutableStateFlow(SortOrder.BY_TITLE)
-    val ascending = MutableStateFlow(true)
+    private val _sortOrder = MutableStateFlow(SortOrder.BY_TITLE)
+    val sortOrder: StateFlow<SortOrder> = _sortOrder.asStateFlow()
+
+    private val _ascending = MutableStateFlow(true)
+    val ascending: StateFlow<Boolean> = _ascending.asStateFlow()
+
+    private val _searchText = MutableStateFlow("")
+    val searchText: StateFlow<String> = _searchText.asStateFlow()
+
+    // ... other StateFlows (sortOrder, ascending) ...
+
+    // Function to update search text
+
+
 
     val templates = realm
         .query<Template>()
@@ -29,18 +44,54 @@ class TemplateViewModel : ViewModel() {
         .map {
             it.list.toList()
         ***REMOVED***
-        .stateIn(viewModelScope,
+        .stateIn(
+            viewModelScope,
             SharingStarted.WhileSubscribed(),
-            emptyList())
+            emptyList()
+        )
+
+    val sortedTemplates: StateFlow<List<Template>> = combine(
+        templates, sortOrder, ascending, searchText
+    ) { templateList, order, isAscending, searchQuery ->
+        templateList.sortedWith { t1, t2 ->
+            if (searchQuery.isBlank()) { // Check if searchQuery is empty
+                // Default sorting if searchQuery is empty
+                when (order) {
+                    SortOrder.BY_TITLE -> compareValuesBy(t1, t2) { it.title ***REMOVED*** * if (isAscending) 1 else -1
+                    SortOrder.BY_DATE -> compareValuesBy(t1, t2) { it.id ***REMOVED*** * if (isAscending) 1 else -1
+                ***REMOVED***
+            ***REMOVED*** else {
+                // Closeness-based sorting if searchQuery is not empty
+                val closenessComparison = compareValuesBy(t1, t2) { template ->
+                    calculateCloseness(template.title, searchQuery)
+                ***REMOVED***
+                if (closenessComparison == 0) {
+                    // If a tie, apply secondary comparison
+                    when (order) {
+                        SortOrder.BY_TITLE -> compareValuesBy(t1, t2) { it.title ***REMOVED*** * if (isAscending) 1 else -1
+                        SortOrder.BY_DATE -> compareValuesBy(t1, t2) { it.id ***REMOVED*** * if (isAscending) 1 else -1
+                    ***REMOVED***
+                ***REMOVED*** else {
+                    closenessComparison
+                ***REMOVED***
+            ***REMOVED***
+        ***REMOVED***
+    ***REMOVED***.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
 
     init {
         //createSampleTemplates()
     ***REMOVED***
+
     fun queryTemplate(id: String): StateFlow<Template?> {
         return templates.map { templateList ->
             templateList.find {
-                Log.d("TemplateViewModel", "Querying template with ID: ${it.id.toHexString()***REMOVED*** and title: $id and $templateList")
-                it.id.toHexString() == id ***REMOVED***
+                Log.d(
+                    "TemplateViewModel",
+                    "Querying template with ID: ${it.id.toHexString()***REMOVED*** and title: $id and $templateList"
+    ***REMOVED***
+                it.id.toHexString() == id
+            ***REMOVED***
         ***REMOVED***.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
     ***REMOVED***
@@ -57,17 +108,17 @@ class TemplateViewModel : ViewModel() {
                 delete(fieldsToDelete)
 
 
-                val templateField1= TemplateField().apply {
+                val templateField1 = TemplateField().apply {
                     title = "Field 1"
                     description = "This is a sample field"
                     tags = realmListOf("freezer")
                 ***REMOVED***
-                val templateField2= TemplateField().apply {
+                val templateField2 = TemplateField().apply {
                     title = "Field 2"
                     description = "This is a sample field 2"
                     tags = realmListOf("freezer")
                 ***REMOVED***
-                val templateField3= TemplateField().apply {
+                val templateField3 = TemplateField().apply {
                     title = "Field 3"
                     description = "This is a sample field 3"
                     tags = realmListOf("freezer")
@@ -108,7 +159,7 @@ class TemplateViewModel : ViewModel() {
     fun deleteTemplateById(id: String) {
         viewModelScope.launch {
             realm.write {
-                val template =  query<Template>("id == $0", ObjectId(id)).find().first()
+                val template = query<Template>("id == $0", ObjectId(id)).find().first()
                 delete(template)
             ***REMOVED***
         ***REMOVED***
@@ -117,15 +168,18 @@ class TemplateViewModel : ViewModel() {
     fun updateTemplateItem(template: Template, modifiedValue: Pair<String, String>, index: Int) {
         viewModelScope.launch {
             realm.write {
-                val latestTemplate = findLatest(template) ?: copyToRealm(template)  // Find or create the latest extraction
+                val latestTemplate = findLatest(template)
+                    ?: copyToRealm(template)  // Find or create the latest extraction
                 modifiedValue.let { (field, newText) ->
                     when (field) {
                         "extra" -> {
                             latestTemplate.fields[index].extraDescription = newText
                         ***REMOVED***
+
                         "description" -> {
                             latestTemplate.fields[index].description = newText
                         ***REMOVED***
+
                         else -> {
                             // Handle other cases if needed
                         ***REMOVED***
@@ -177,7 +231,25 @@ class TemplateViewModel : ViewModel() {
             ***REMOVED***
         ***REMOVED***
     ***REMOVED***
+    fun updateSearchText(newText: String) {
+        _searchText.value = newText
+    ***REMOVED***
+
+    // Function to update sort order
+    fun updateSortOrder(newOrder: SortOrder) {
+        _sortOrder.value = newOrder
+    ***REMOVED***
+
+    // Function to toggle ascending/descending order
+    fun toggleAscending() {
+        _ascending.value = !_ascending.value
+    ***REMOVED***
+
+
+
+
 ***REMOVED***
+
 
 
 enum class SortOrder{

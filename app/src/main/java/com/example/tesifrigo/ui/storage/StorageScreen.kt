@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -36,15 +37,63 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.tesifrigo.Screen
 import com.example.tesifrigo.models.Extraction
+import com.example.tesifrigo.ui.template.SearchBar
 import com.example.tesifrigo.viewmodels.ExtractionViewModel
+import com.example.tesifrigo.viewmodels.SortOrder
+
 @Composable
 fun StorageScreen(navController: NavHostController) {
 
 
     val extractionViewModel = viewModel<ExtractionViewModel>()
+    val searchText by extractionViewModel.searchText.collectAsState()
+    var expanded by remember { mutableStateOf(true) ***REMOVED***
+    val ascending by extractionViewModel.ascending.collectAsState()
+    val sortOrder : SortOrder by extractionViewModel.sortOrder.collectAsState()
 
-    val extractions by extractionViewModel.extractions.collectAsState()
+    val extractions by extractionViewModel.sortedExtractions.collectAsState()
+    Column {
+        Row {
+            SearchBar(
+                text = searchText,
+                onTextChange = { extractionViewModel.updateSearchText(it)***REMOVED***,
+                onSearch = {  extractionViewModel.updateSearchText(it) ***REMOVED***
+***REMOVED***
 
+
+            Spacer(modifier = Modifier.weight(1f))
+            Button(onClick = {
+                navController.navigate(Screen.Settings.route)
+            ***REMOVED***) {
+                Icon(imageVector = Icons.Default.Settings, contentDescription = "Settings")
+            ***REMOVED***
+        ***REMOVED***
+        Button(onClick = { expanded = true ***REMOVED***) {
+            Text("Sort")
+        ***REMOVED***
+        DropdownMenu(
+            modifier = Modifier.padding(start = 16.dp),
+
+            expanded = expanded,
+            onDismissRequest = { expanded = false ***REMOVED***
+        ) {
+
+            DropdownMenuItem(
+                text = { Text("Title") ***REMOVED***,
+                onClick = {
+                    extractionViewModel.updateSortOrder(SortOrder.BY_TITLE)
+                    expanded = false
+                ***REMOVED***)
+            DropdownMenuItem(
+                text = { Text("Date") ***REMOVED***,
+                onClick = {
+                    extractionViewModel.updateSortOrder(SortOrder.BY_DATE)
+                    expanded = false
+                ***REMOVED***)
+        ***REMOVED***
+        Button(onClick = { extractionViewModel.toggleAscending()***REMOVED***) {
+            Text(if (ascending) "A" else "V")
+        ***REMOVED***
     LazyColumn (modifier = Modifier.padding(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)){
         items(extractions) { extraction ->
@@ -55,6 +104,7 @@ fun StorageScreen(navController: NavHostController) {
 ***REMOVED***
         ***REMOVED***
     ***REMOVED***
+        ***REMOVED***
 
 
 ***REMOVED***

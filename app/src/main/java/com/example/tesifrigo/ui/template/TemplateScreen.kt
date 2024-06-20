@@ -43,44 +43,56 @@ import com.example.tesifrigo.viewmodels.TemplateViewModel
 @Composable
 fun TemplateScreen(navController: NavHostController, photos: String?) {
     val viewModel = viewModel<TemplateViewModel>()
-    val templates by viewModel.templates.collectAsState()
-    var searchText by remember { mutableStateOf("") ***REMOVED***
-    var expanded by remember { mutableStateOf(false) ***REMOVED***
+    val searchText by viewModel.searchText.collectAsState()
+    var expanded by remember { mutableStateOf(true) ***REMOVED***
     val ascending by viewModel.ascending.collectAsState()
-    val sortOrder by viewModel.sortOrder.collectAsState()
+    val sortOrder : SortOrder by viewModel.sortOrder.collectAsState()
+    val templates by viewModel.sortedTemplates.collectAsState()
+
+
     Column {
         Row {
             SearchBar(
                 text = searchText,
-                onTextChange = { viewModel.filterAndSortTemplates(it, sortOrder) ***REMOVED***,
-                onSearch = { viewModel.filterAndSortTemplates(it, sortOrder) ***REMOVED***
+                onTextChange = { viewModel.updateSearchText(it)***REMOVED***,
+                onSearch = {  viewModel.updateSearchText(it) ***REMOVED***
 ***REMOVED***
 
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false ***REMOVED***
-***REMOVED*** {
-                DropdownMenuItem(
-                    text = { Text("Title") ***REMOVED***,
-                    onClick = {
-                    sortOrder.value = SortOrder.BY_TITLE
-                    //viewModel.filterAndSortTemplates(searchText, viewModel.sortOrder.value)
-                    expanded = false
-                ***REMOVED***)
-                DropdownMenuItem(
-                    text = { Text("Date") ***REMOVED***,
-                    onClick = {
-                    sortOrder.value = SortOrder.BY_DATE
-                    //viewModel.filterAndSortTemplates(searchText, viewModel.sortOrder.value)
-                    expanded = false
-                ***REMOVED***)
-            ***REMOVED***
+
             Spacer(modifier = Modifier.weight(1f))
             Button(onClick = {
                 navController.navigate(Screen.Settings.route)
             ***REMOVED***) {
                 Icon(imageVector = Icons.Default.Settings, contentDescription = "Settings")
             ***REMOVED***
+        ***REMOVED***
+        Button(onClick = { expanded = true ***REMOVED***) {
+            Text("Sort")
+        ***REMOVED***
+        DropdownMenu(
+                modifier = Modifier.padding(start = 16.dp),
+
+        expanded = expanded,
+        onDismissRequest = { expanded = false ***REMOVED***
+        ) {
+
+        DropdownMenuItem(
+            text = { Text("Title") ***REMOVED***,
+            onClick = {
+                viewModel.updateSortOrder(SortOrder.BY_TITLE)
+                //viewModel.filterAndSortTemplates(searchText, viewModel.sortOrder.value)
+                expanded = false
+            ***REMOVED***)
+        DropdownMenuItem(
+            text = { Text("Date") ***REMOVED***,
+            onClick = {
+                viewModel.updateSortOrder(SortOrder.BY_DATE)
+                //viewModel.filterAndSortTemplates(searchText, viewModel.sortOrder.value)
+                expanded = false
+            ***REMOVED***)
+    ***REMOVED***
+        Button(onClick = { viewModel.toggleAscending()***REMOVED***) {
+            Text(if (ascending) "A" else "V")
         ***REMOVED***
         LazyColumn {
             items(templates) { template ->  // Iterate directly over templates
@@ -106,7 +118,6 @@ fun SearchBar(text: String, onTextChange: (String) -> Unit, onSearch: (String) -
         ***REMOVED***,
         label = { Text("Search") ***REMOVED***,
         modifier = Modifier
-            .fillMaxWidth()
             .padding(16.dp),
         singleLine = true, // Ensure single-line input
         leadingIcon = {
