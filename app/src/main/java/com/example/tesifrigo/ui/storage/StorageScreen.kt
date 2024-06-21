@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
@@ -141,12 +142,14 @@ fun ExtractionItem(extraction: Extraction, viewModel:ExtractionViewModel, navCon
                     expanded = showMenu,
                     onDismissRequest = { showMenu = false ***REMOVED***
     ***REMOVED*** {
-                    DropdownMenuItem(onClick = { navController.navigate(Screen.SingleExtraction.withArgs("extractionId" to extraction.id.toHexString()))
-                    showMenu = false ***REMOVED***,
-                    text= { Text("Edit") ***REMOVED***
+                    DropdownMenuItem(onClick = {
+                        navController.navigate(Screen.SingleExtraction.withArgs("extractionId" to extraction.id.toHexString()))
+                        showMenu = false
+                    ***REMOVED***,
+                        text = { Text("Edit") ***REMOVED***
         ***REMOVED***
-                    DropdownMenuItem(onClick = {showDeleteDialog=true; showMenu = false ***REMOVED***,
-                        text ={Text("Delete") ***REMOVED***)
+                    DropdownMenuItem(onClick = { showDeleteDialog = true; showMenu = false ***REMOVED***,
+                        text = { Text("Delete") ***REMOVED***)
                 ***REMOVED***
             ***REMOVED***
             Row {
@@ -157,35 +160,45 @@ fun ExtractionItem(extraction: Extraction, viewModel:ExtractionViewModel, navCon
                         Text(text = template.title, modifier = Modifier.padding(8.dp))
                     ***REMOVED***
                 ***REMOVED***
-                Box(modifier = Modifier.padding(8.dp).background(color = Color.Blue)) {
+                Box(modifier = Modifier.padding(8.dp).background(color = Color.Yellow)) {
                     Text(text = extraction.format, modifier = Modifier.padding(8.dp))
+                ***REMOVED***
+                LazyRow {
+                    items(extraction.tags) { field ->
+                        Box(modifier = Modifier.padding(8.dp)) {
+                            Text(
+                                text = field, modifier = Modifier
+                                    .padding(8.dp)
+                                    .background(Color.Blue)
+                ***REMOVED***
+                        ***REMOVED***
+                    ***REMOVED***
+
                 ***REMOVED***
             ***REMOVED***
         ***REMOVED***
-    ***REMOVED***
-
 
 
 // Confirmation Dialog
-    if (showDeleteDialog) {
-    AlertDialog(
-        onDismissRequest = { showDeleteDialog = false ***REMOVED***,
-        title = { Text("Confirm Delete") ***REMOVED***, // Confirm the action
-        text = { Text("Are you sure you want to delete this extraction?") ***REMOVED***,
-        confirmButton = {
-            Button(onClick = {
-                viewModel.deleteExtraction(extraction.id.toHexString()) // Delete the template
-                showDeleteDialog = false // Close dialog
-            ***REMOVED***) {
-                Text("Delete")
-            ***REMOVED***
-        ***REMOVED***,
-        dismissButton = {
-            Button(onClick = { showDeleteDialog = false ***REMOVED***) {
-                Text("Cancel")
-            ***REMOVED***
-        ***REMOVED***
-    )
+        if (showDeleteDialog) {
+            AlertDialog(
+                onDismissRequest = { showDeleteDialog = false ***REMOVED***,
+                title = { Text("Confirm Delete") ***REMOVED***, // Confirm the action
+                text = { Text("Are you sure you want to delete this extraction?") ***REMOVED***,
+                confirmButton = {
+                    Button(onClick = {
+                        viewModel.deleteExtraction(extraction.id.toHexString()) // Delete the template
+                        showDeleteDialog = false // Close dialog
+                    ***REMOVED***) {
+                        Text("Delete")
+                    ***REMOVED***
+                ***REMOVED***,
+                dismissButton = {
+                    Button(onClick = { showDeleteDialog = false ***REMOVED***) {
+                        Text("Cancel")
+                    ***REMOVED***
+                ***REMOVED***
 ***REMOVED***
+        ***REMOVED*** ***REMOVED***
 ***REMOVED***
 

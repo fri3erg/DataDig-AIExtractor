@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -138,6 +139,8 @@ fun TemplateItem(template: Template,navController: NavHostController) {
                 navController.navigate(Screen.EditTemplate.withArgs("templateId" to template.id.toHexString()))
             ***REMOVED*** // Make the entire item clickable
             .padding(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp) // Add elevation for better visuals
+
     ) {
         Column(modifier = Modifier.padding(16.dp)) { // Inner Column for content
             Row {
