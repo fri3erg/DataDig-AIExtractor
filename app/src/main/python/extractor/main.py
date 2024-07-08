@@ -1,66 +1,31 @@
-import json
-import os
-from AWSInteraction.EnvVarSetter import EnvVarSetter
-from ExtractionHandler import ThreadedFunction
-from extractors.general_extractors.custom_extractors.certificates.issuers.BNP.BNP_extractor import (
-    BNPDerivatiKidExtractor,
-)
 
-from extractors.general_extractors.custom_extractors.certificates.issuers.Vontobel.Vontobel_extractor import (
-    VontobelDerivatiKidExtractor,
-)
-from extractors.general_extractors.custom_extractors.kid.insurance.kid.kid_extractor import InsuranceKidExtractor
-from extractors.general_extractors.custom_extractors.kid.insurance.gkid.gkid_extractor import InsuranceGKidExtractor
-from extractors.general_extractors.custom_extractors.certificates.issuers.Leonteq.Leonteq_extractor import (
-    LeonteqDerivatiKidExtractor,
-)
-
+from extractors.general_extractors.custom_extractors.kid.insurance.kid.kid_extractor import DataExtractor
 # from extractors.Derivati.Spot_KID_extractor import write_info
 # from extractors.Derivati.Global_KID_extractor import GlobalExtractor
 from extractors.models import Models
-import glob
 import logging
+import base64
+from PIL import Image
+from io import BytesIO
+import asyncio
 import pandas as pd
+from typing import Callable
+from classes.Template import Template, TemplateField, TemplateTable
+from test.variables import images
+from dotenv import load_dotenv
+import os
+
+
+# Now use the 'api_key' and 'db_password' variables in your code
+
+
 
 logging.basicConfig(filename="logging.log", encoding="utf-8", level=logging.DEBUG)
 
-"""
-def process_file(file_path, file_type):
-    instanciate a KidExtractor and process the file
-
-    Args:
-        file_path (str): path of pdf file to process
-
-    Returns:
-        dict(filename,dict()): dictionary containing the results for the file
-        
-    try:
-        match file_type:
-            case "kid":
-                extractor = InsuranceKidExtractor(file_path)
-            case "g-kid":
-                extractor = InsuranceGKidExtractor(file_path)
-            case "leonteq":
-                extractor = LeonteqDerivatiKidExtractor(file_path)
-            case "bnp":
-                extractor = BNPDerivatiKidExtractor(file_path)
-            case "vontobel":
-                extractor = VontobelDerivatiKidExtractor(file_path)
-            case _:
-                raise ValueError("type not supported")
-            
-        return asyncio.run(extractor.process())
-    
-    
-    except Exception as error:
-        print("ERROR: {***REMOVED***".format(file_path) + repr(error))
-        filename = os.path.splitext(os.path.basename(file_path))[0]
-        return dict((filename, dict()))
-
-"""
 
 
-def main(doc_folder):
+
+def main(base64_images : list , template: Template, progress_callback: Callable, model: str, language:str):
     """main loop, instanciate 10 async process(more causes errors) for 10 files at the time,
     puts results in an excel file
 
@@ -68,80 +33,79 @@ def main(doc_folder):
         doc_folder (str): folder containing the pdf files
     """
     try:
-        env_setter = EnvVarSetter(tenant="insurance")
-        env_setter.configure_local_env_vars()
+        #env_setter = EnvVarSetter(tenant="insurance")
+        #env_setter.configure_local_env_vars()
+        
+        images_data = [base64.b64decode(base64_image) for base64_image in base64_images]
+        images = [Image.open(BytesIO(image_data)) for image_data in images_data]
 
         # testing
-        file_type = "vontobel"
         batch_size = 5
-        parallel = False
-        all_files = []
+        parallel = True
         # list all the pdf files in the folder
         print("START")
-        all_files = glob.glob(os.path.join(doc_folder, "**\\*.pdf"), recursive=True)
 
-        match file_type:
-            case "kid":
-                extractor = InsuranceKidExtractor  # bugged with performance,no prompt?
-            case "g-kid":
-                extractor = InsuranceGKidExtractor
-            case "leonteq":
-                extractor = LeonteqDerivatiKidExtractor
-            case "bnp":
-                extractor = BNPDerivatiKidExtractor  # bugged with performance,no prompt?
-            case "vontobel":
-                extractor = VontobelDerivatiKidExtractor
-            case _:
-                raise ValueError("type not supported")
-
-        threads = {***REMOVED***
         extractions = {***REMOVED***
-        if parallel:
-            batches = [all_files[i : i + batch_size] for i in range(0, len(all_files), batch_size)]
-            for files in batches:
-                for idx, file_path in enumerate(files):
-                    thread = ThreadedFunction(extractor, file_path)
-                    threads[idx] = thread
-                    thread.start()
+        try: 
+            extractor= DataExtractor(images, template,progress_callback, model, language) 
+            
+            extractions= asyncio.run(extractor.process())
+    
+    
+        except Exception as error:
+            print("process_file error" + repr(error))
 
-                for _, thread in threads.items():
-                    thread.join()
-
-                for file_key, thread in threads.items():
-                    # result to dict
-                    dict_result = json.loads(thread.result)
-                    dict_result["extraction_time"] = thread.total_runtime
-                    extractions[file_key] = json.dumps(thread.result)
-
-        else:
-            for file_path in all_files:
-                real_extractor = extractor(file_path)
-                result = real_extractor.process()
-                filename = os.path.splitext(os.path.basename(file_path))[0]
-                extractions[filename] = json.dumps(result)
 
         # give request id
         Models.clear_resources_group(str(-1))
         # orders results
-        results = pd.DataFrame(results)
+        results = pd.DataFrame(extractions)
         # ordered = [col for col in column_order[file_type] if col in results.columns]
         # results = results[ordered]
-        excel_path = os.path.join(doc_folder + ".xlsx")
+        #excel_path = os.path.join(doc_folder + ".xlsx")
         # saves results
-        results.to_excel(excel_path, header=True, index=False)
+        #results.to_excel(excel_path, header=True, index=False)
         print(results)
 
     except Exception as error:
         print("top level error:" + repr(error))
 
 
+
+
+def create_test_template():
+    """Creates a test instance of the Template class with sample data."""
+
+    # Create sample TemplateField objects
+    field1 = TemplateField(1, "Name", "Enter your full name", "", ["personal", "identification"])
+    field2 = TemplateField(2, "Email", "Provide your email", "", ["contact", "personal"])
+    field3 = TemplateField(3, "Date of Birth", "Your birthdate (YYYY-MM-DD)", "", ["personal", "date"])
+
+    # Create sample TemplateTable objects
+    table1 = TemplateTable(1, "Personal Information", ["personal", "info"], [field1, field2, field3])
+
+    # Create the Template instance
+    template = Template(
+        1,
+        "Basic Information Template",
+        "Collects essential personal details",
+        [field1, field2],  # Fields directly associated with the template
+        [table1],         # Tables within the template
+        ["general", "personal"],
+    )
+
+    return template
+
+def fake_callback(progress):
+    print(progress)
+
 ***REMOVED***
-    folder = "kid\\documents\\testdoc\\Vontobel"
+
+    
+    template :Template = create_test_template()
 
     # for root, dirs, files in os.walk(folder):
     # Check if there are PDF files in the current directory
     # if any(file.endswith(".pdf") for file in files):
     # Call your existing function to process PDFs in the folder
-    main(folder)
-
-    # main(folder)
+    main(images, template, fake_callback, "gpt-3.5-turbo", "it")

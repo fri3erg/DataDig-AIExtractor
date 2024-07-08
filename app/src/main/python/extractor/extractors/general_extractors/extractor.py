@@ -1,4 +1,5 @@
 from abc import abstractmethod
+from typing import List
 from ..models import Models
 from .config.cost_config import cost_per_token
 from .utils import get_document_text, upload_df_as_excel
@@ -10,6 +11,7 @@ from extractors.general_extractors.llm_functions import general_table_inspection
 
 from .config.JsonClasses import JSONExtraction
 import threading
+from classes.Template import Template
 
 
 class ThreadFunction(threading.Thread):
@@ -28,15 +30,17 @@ class ThreadFunction(threading.Thread):
         return self.result
 
 
-class Extractor:
+class GeneralScanner:
     """parent class for all extractors"""
 
-    def __init__(self, doc_path, predefined_language=False):
-        self.file_id = doc_path
-        self.doc_path = doc_path
-        self.text = get_document_text(doc_path)
-        if predefined_language:
-            self.language = predefined_language
+    def __init__(self, images,template:Template, language="it", model= "gpt-3.5-turbo"):
+        self.file_id = template.title
+        self.images = images
+        self.text: List[str] = get_document_text(images)
+        self.template = template
+        self.model= model
+        if language:
+            self.language = language
         else:
             self.language = get_doc_language(self.text, self.file_id)
 
@@ -83,7 +87,7 @@ class Extractor:
             # Get all the tables from the page
             if self.di_tables_pages is not None and page not in self.di_tables_pages.keys():
                 page_num = int(page) + 1
-                tables, raw_data = get_tables_from_doc(self.doc_path, specific_pages=page_num, language=self.language)
+                tables, raw_data = get_tables_from_doc(self.images, specific_pages=page_num, language=self.language)
                 self.di_tables_pages[page] = tables
                 self.raw_data_pages[page] = raw_data
             else:
@@ -99,20 +103,19 @@ class Extractor:
             return None
             # @ELIA?
 
-    def fill_tables(self, pages):
-        """experimental for faster runs, fills the tables in the document asynchronously all in one
+    """def fill_tables(self, pages):
+        #experimental for faster runs, fills the tables in the document asynchronously all in one
 
-        Args:
-            page (_type_): _description_
-        """
-        fill, raw_data = get_tables_from_doc(self.doc_path, specific_pages=pages, language=self.language)
+        #Args:
+            #page (_type_): _description_
+        
+        fill, raw_data = get_tables_from_doc(self.images, specific_pages=pages, language=self.language)
         for idx, table in enumerate(fill):
-            safe_number = getattr(
-                raw_data.tables[idx] if idx < len(raw_data.tables) else None, "bounding_regions", None
-***REMOVED***[0].get("pageNumber", None)
+            safe_number = getattr(raw_data.tables[idx] if idx < len(raw_data.tables) else None, "bounding_regions", None)[0].get("pageNumber", None)
             if safe_number:
                 self.di_tables_pages.setdefault(str(safe_number - 1), []).append(table)
                 self.raw_data_pages.setdefault(str(safe_number - 1), []).append(raw_data)
+        """
 
     def _process_costs(self):
         """processes the cost of the calls given local config and prepares them for the output
@@ -194,7 +197,7 @@ class Extractor:
 
         # return complete
 
-        extraction = JSONExtraction(doc_type=type, results=results, doc_path=self.doc_path)
+        extraction = JSONExtraction(doc_type=type, results=results, doc_path=self.images)
 
         json_output = extraction.to_json()
 

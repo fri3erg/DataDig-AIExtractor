@@ -1,18 +1,19 @@
 import os
 
 from extractors.models import Models
-from extractors.general_extractors.custom_extractors.kid.kid_extractor import KidExtractor
+from extractors.general_extractors.custom_extractors.kid.kid_extractor import Extractor
 
 from .....config.json_config.json_kid import renaming
+from classes.Template import Template
+from typing import Callable
 
+class DataExtractor(Extractor):
 
-class InsuranceKidExtractor(KidExtractor):
+    def __init__(self, images, template: Template, progress_callback: Callable, language="it", model="gpt-3.5-turbo") -> None:
+        self.progress_callback = progress_callback
+        super().__init__(images,template, language, model)
 
-    def __init__(self, doc_path) -> None:
-        self.doc_path = doc_path
-        super().__init__(doc_path, "it")
-
-    def process(self):
+    async def process(self):
         """main processor in different phases, first phases extracts the tables and general information,
         and target market, second phase extracts the rest of the fields.
 
@@ -21,37 +22,37 @@ class InsuranceKidExtractor(KidExtractor):
         """
         # FIRST STAGE: get tables and general information
         try:
+            tables_present: bool = any(self.template.tables)
+            #complex_info_present: bool = any(field.extra_description for field in self.template.fields)
 
             functions_parameters = {
-                "tables": {"function": self.get_tables***REMOVED***,
-                "basic_information": {"function": self.extract_general_data***REMOVED***,
-                "market": {"function": self.extract_market***REMOVED***,
+                "basic_info": {"function": self.extract_basic_info***REMOVED***,
             ***REMOVED***
+            if tables_present:
+                functions_parameters.update({"tables": {"function": self.get_tables***REMOVED******REMOVED***)
+                
             results = self.threader(functions_parameters)
 
             tables = results["tables"]
-            basic_information = results["basic_information"]
-            market = results["market"]
+            basic_info = results["basic_info"]
 
         except Exception as error:
             print("first stage error" + repr(error))
 
         # SECOND STAGE: extract RIY, costs, commissions and performances
         try:
-            functions_parameters = {
-                "riy": {"function": self.extract_riy***REMOVED***,
-                "costs": {"function": self.extract_entryexit_costs, "args": {"table": tables["costi_ingresso"]***REMOVED******REMOVED***,
-                "management_costs": {
-                    "function": self.extract_management_costs,
-                    "args": {"table": tables["costi_gestione"]***REMOVED***,
-                ***REMOVED***,
-                "performance": {"function": self.extract_performances, "args": {"table": tables["performance"]***REMOVED******REMOVED***,
-            ***REMOVED***
-            results = self.threader(functions_parameters)
-            riy = results["riy"]
-            exit_entry_costs = results["costs"]
-            management_costs = results["management_costs"]
-            performance = results["performance"]
+            functions_parameters = {***REMOVED***
+            if tables_present:
+                functions_parameters.update({"info_from_tables": {"function": self.extract_from_tables, "args": {"table": tables***REMOVED******REMOVED******REMOVED***)
+                
+            #if complex_info_present:
+            #    functions_parameters.update({"complex_info": {"function": self.extract_complex_info, "args": {"results": results***REMOVED******REMOVED******REMOVED***)
+                
+            if functions_parameters:
+                results = self.threader(functions_parameters)
+                
+            info_from_tables = results.get("info_from_tables") or {***REMOVED***
+            complex_info = results.get("complex_info") or {***REMOVED***
 
         except Exception as error:
             print("second stage error" + repr(error))
@@ -59,7 +60,7 @@ class InsuranceKidExtractor(KidExtractor):
         try:
 
             # REVIEW: what name do they need?
-            filename = os.path.splitext(os.path.basename(self.doc_path))[0]
+            filename = self.template.title
 
             api_costs = self._process_costs()
 
@@ -67,12 +68,9 @@ class InsuranceKidExtractor(KidExtractor):
             complete = self.raccorda(
                 {
                     "file_name": filename,
-                    **dict(basic_information),
-                    **dict(performance),
-                    **dict(riy),
-                    **dict(exit_entry_costs),
-                    **dict(management_costs),
-                    **dict(market),
+                    **dict(basic_info),
+                    **dict(complex_info),
+                    **dict(info_from_tables),
                     **dict(api_costs),
                 ***REMOVED***,
                 renaming,
@@ -81,12 +79,9 @@ class InsuranceKidExtractor(KidExtractor):
             complete = self.create_json(
                 {
                     "file_name": filename,
-                    **dict(basic_information),
-                    **dict(performance),
-                    **dict(riy),
-                    **dict(exit_entry_costs),
-                    **dict(management_costs),
-                    **dict(market),
+                    **dict(basic_info),
+                    **dict(complex_info),
+                    **dict(info_from_tables),
                     **dict(api_costs),
                 ***REMOVED***,
                 "kid",

@@ -26,7 +26,7 @@ class LeonteqDerivatiKidExtractor(DerivatiKidExtractor):
         self.doc_path = doc_path
         super().__init__(doc_path, "it")
 
-    def extract_general_data(self):
+    def extract_basic_info(self):
         """
         Extract general data from the document (ISIN, description, issuer_desc).
 
@@ -463,7 +463,7 @@ class LeonteqDerivatiKidExtractor(DerivatiKidExtractor):
 
             functions_parameters = {
                 "tables": {"function": self.get_tables***REMOVED***,
-                "basic_information": {"function": self.extract_general_data***REMOVED***,
+                "basic_information": {"function": self.extract_basic_info***REMOVED***,
                 "is_callable": {"function": self.extract_callable***REMOVED***,
             ***REMOVED***
             results = self.threader(functions_parameters)

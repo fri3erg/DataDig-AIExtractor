@@ -1,12 +1,12 @@
 import os
 
 from extractors.models import Models
-from extractors.general_extractors.custom_extractors.kid.kid_extractor import KidExtractor
+from extractors.general_extractors.custom_extractors.kid.kid_extractor import Extractor
 from extractors.general_extractors.llm_functions import complex_table_inspection
 from extractors.general_extractors.custom_extractors.kid.kid_utils import clean_response_regex
 
 
-class InsuranceKidCredemExtractor(KidExtractor):
+class InsuranceKidCredemExtractor(Extractor):
 
     def __init__(self, doc_path) -> None:
         self.doc_path = doc_path
@@ -81,7 +81,7 @@ class InsuranceKidCredemExtractor(KidExtractor):
 
             functions_parameters = {
                 "tables": {"function": self.get_tables***REMOVED***,
-                "basic_information": {"function": self.extract_general_data***REMOVED***,
+                "basic_information": {"function": self.extract_basic_info***REMOVED***,
             ***REMOVED***
             results = self.threader(functions_parameters)
 
@@ -94,7 +94,7 @@ class InsuranceKidCredemExtractor(KidExtractor):
         # SECOND STAGE: extract RIY, costs, commissions and performances
         try:
             functions_parameters = {
-                "riy": {"function": self.extract_riy***REMOVED***,
+                "riy": {"function": self.extract_from_tables***REMOVED***,
                 "performance": {"function": self.extract_performances, "args": {"table": tables["performance"]***REMOVED******REMOVED***,
             ***REMOVED***
             results = self.threader(functions_parameters)

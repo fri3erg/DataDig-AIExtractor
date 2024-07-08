@@ -33,7 +33,7 @@ class MyApp: Application(){
                 TemplateField::class,
                 ExtractionField::class
 ***REMOVED***
-        ).schemaVersion(3).build()
+        ).schemaVersion(4).build()
 
         realm = Realm.open(
         configuration

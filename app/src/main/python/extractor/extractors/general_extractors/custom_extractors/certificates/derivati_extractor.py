@@ -1,9 +1,9 @@
 from extractors.azure.document_intelligence import get_tables_from_doc
-from extractors.general_extractors.custom_extractors.kid.kid_extractor import KidExtractor
+from extractors.general_extractors.custom_extractors.kid.kid_extractor import Extractor
 from extractors.general_extractors.utils import is_in_text, select_desired_table_only_header
 
 
-class DerivatiKidExtractor(KidExtractor):
+class DerivatiKidExtractor(Extractor):
 
     def __init__(self, doc_path, predefined_language=False) -> None:
         self.doc_path = doc_path

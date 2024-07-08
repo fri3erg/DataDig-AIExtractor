@@ -3,9 +3,10 @@ from extractors.general_extractors.utils import num_tokens_from_string
 from langchain.prompts import PromptTemplate
 from .config.basic_tags import *
 from ..models import Models
+from configs.configs import prompts
 
 
-def get_doc_language(pages, file_id):
+def get_doc_language(text, file_id):
     """Get the language of the document.
 
     Args:
@@ -16,8 +17,7 @@ def get_doc_language(pages, file_id):
         str: language of the document
     """
     # Analyze first page
-    page = pages[0].page_content[:500]
-    language = Models.tag(page, DocLanguage, file_id, model="gpt-3.5-turbo")
+    language = Models.tag(text[:300], DocLanguage, file_id, model="gpt-3.5-turbo")
 
     # Check if language is mapped
     # NOTE: need to add more languages
@@ -28,7 +28,7 @@ def get_doc_language(pages, file_id):
     return doc_language
 
 
-def llm_extraction(page, template, file_id, model="gpt-4-turbo", rhp=None):
+def llm_extraction(page, template, file_id, model="gpt-3.5-turbo", language="it"):
     """extracts data from a document text
 
     Args:
@@ -42,20 +42,18 @@ def llm_extraction(page, template, file_id, model="gpt-4-turbo", rhp=None):
     Returns:
         dict(): data extracted
     """
-    if rhp is not None:
-        input_variables = ["rhp", "context"]
-    else:
-        input_variables = ["context"]
-    prompt = PromptTemplate(input_variables=input_variables, template=template)
+    initial_prompt: str= prompts[language]
+    input_variables: list[str] = ["template","context"]
+    prompt = PromptTemplate(input_variables=input_variables, template=initial_prompt)
     # Select model size based on context
     if model == "gpt-3.5-turbo":
-        total_token = num_tokens_from_string(prompt.template.format(context=page))
+        total_token = num_tokens_from_string(prompt.template.format(context=page, template=template))
         if total_token > 4000:
             model = "gpt-3.5-turbo-16k"
         else:
             model = "gpt-3.5-turbo"
     # Construct chain and extract relevan info
-    response = Models.extract(file_id, model, prompt, [page], rhp)
+    response = Models.extract(file_id, model, prompt, page, template)
     return response
 
 
@@ -125,7 +123,7 @@ def complex_table_inspection(table, rhp, prompt, pydantic_class, file_id, direct
     return extraction_adapted
 
 
-def tag_only(pages, keywords, pydantic_class, file_id, rhp="multiple"):
+def tag_only(pages, keywords, pydantic_class, file_id):
     """
     Extracts basic information from a document, the basic information are the ones contained
     in the InformazioniBase class.
@@ -144,39 +142,40 @@ def tag_only(pages, keywords, pydantic_class, file_id, rhp="multiple"):
     page = pages[int(page)]
 
     # To ensure optimal data standardization
-    total_prompt = "RHP={***REMOVED*** EXTRACTION={***REMOVED***".format(rhp, page.page_content)
+    total_prompt = "EXTRACTION={***REMOVED***".format(page)
     extraction = Models.tag(total_prompt, pydantic_class, file_id)
 
     return extraction
 
 
-def llm_extraction_and_tag(pages, template, pydantic_class, file_id):
-    """
-    extracts information from pages using a language model and tags it using a schema
-    creates prompt and schema based on language and type
+def llm_extraction_and_tag(page, template, file_id, pydantic_class, model="gpt-3.5-turbo", language="it"):
+    """extracts data from a document text
 
     Args:
-        pages (): The text of the document to extract information from.
-        template (str): prompt to use for extraction
-        pydantic_class(PydanticModel): schema to use for tagging
+        page ([str]): page in which data is found
+        type (str): type of data to extract
         file_id (str): file_id for costs
+        template (str): prompt to use for extraction
+        model (str, optional): model to use for extraction. Defaults to 'gpt-4'.
+        rhp (str, optional): rhp of the document. Defaults to None.
 
     Returns:
-        str: The extracted basic information.
+        dict(): data extracted
     """
-    # Create template
-    prompt = PromptTemplate(input_variables=["context"], template=template)
-
+    initial_prompt: str= prompts[language]
+    
+    input_variables: list[str] = ["template","context"]
+    prompt = PromptTemplate(input_variables=input_variables, template=initial_prompt)
     # Select model size based on context
-    total_token = num_tokens_from_string(prompt.template.format(context=pages))
-    if total_token > 4000:
-        model = "gpt-3.5-turbo-16k"
-    else:
-        model = "gpt-3.5-turbo"
+    if model == "gpt-3.5-turbo":
+        total_token = num_tokens_from_string(prompt.template.format(context=page, template=template))
+        if total_token > 4000:
+            model = "gpt-3.5-turbo-16k"
+        else:
+            model = "gpt-3.5-turbo"
     # Construct chain and extract relevan info
-    extraction = Models.extract(file_id, model, prompt, pages)
-
+    response = Models.extract(file_id, model, prompt, page, template)
     # To ensure optimal data standardization
-    tagged = Models.tag(extraction, pydantic_class, file_id)
+    tagged = Models.tag(response, pydantic_class, file_id)
 
     return tagged

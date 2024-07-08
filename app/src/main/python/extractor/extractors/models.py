@@ -38,7 +38,6 @@ class Models:
         """
         # thread safe singleton
         group_id = str(group_id)
-        temperature = str(temperature)
         with cls._lock:
             if not cls._models.get(group_id, {***REMOVED***).get(model_name, {***REMOVED***).get(temperature, None):
                 cls._models.setdefault(group_id, {***REMOVED***).setdefault(model_name, {***REMOVED***)[temperature] = azure_openai_model(
@@ -50,7 +49,7 @@ class Models:
             return cls._models[group_id][model_name][temperature]
 
     @classmethod
-    def tag(cls, text, schema, file_id, model="gpt-4-turbo"):
+    def tag(cls, text, schema, file_id, model="gpt-3.5-turbo"):
         """Extract tags from text using a schema and a language model.
         It uses the function create_tagging_chain_pydantic from langchain.
 
@@ -70,7 +69,7 @@ class Models:
         return output["text"]
 
     @classmethod
-    def extract(cls, file_id, model, prompt, pages, rhp=None):
+    def extract(cls, file_id, model, prompt, pages, template):
         """
         extracts information from pages using a language model
 
@@ -86,10 +85,8 @@ class Models:
         """
         llm = Models(model)
         chain = LLMChain(llm=llm, prompt=prompt)
-        response = chain.run(context=pages, rhp=rhp)
-        if not isinstance(pages, str) and isinstance(pages, list):
-            page_content = "".join(getattr(page, "page_content", "") for page in pages)
-        cls.calc_costs(file_id, model, inputs=[page_content, prompt], outputs=[response])
+        response = chain.run(context=pages, template=template)
+        cls.calc_costs(file_id, model, inputs=[pages, prompt], outputs=[response])
         return response
 
     @classmethod

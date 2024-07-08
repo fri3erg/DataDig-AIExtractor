@@ -21,7 +21,7 @@ class InsuranceGKidExtractor(GKidExtractor):
         try:
             functions_parameters = {
                 "tables": {"function": self.get_tables***REMOVED***,
-                "basic_information": {"function": self.extract_general_data***REMOVED***,
+                "basic_information": {"function": self.extract_basic_info***REMOVED***,
                 "market": {"function": self.extract_market, "args": {"market_type": "market_gkid"***REMOVED******REMOVED***,
             ***REMOVED***
             results = self.threader(functions_parameters)
@@ -32,7 +32,7 @@ class InsuranceGKidExtractor(GKidExtractor):
         # second phase for all the rest
         try:
             functions_parameters = {
-                "riy": {"function": self.extract_riy, "args": {"table": tables["riy_table"]***REMOVED******REMOVED***,
+                "riy": {"function": self.extract_from_tables, "args": {"table": tables["riy_table"]***REMOVED******REMOVED***,
                 "costs": {
                     "function": self.extract_cost_commissions,
                     "args": {"table_ingresso": tables["costi_ingresso"], "table_gestione": tables["costi_gestione"]***REMOVED***,

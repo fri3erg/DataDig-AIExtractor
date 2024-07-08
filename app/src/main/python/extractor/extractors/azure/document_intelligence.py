@@ -1,7 +1,10 @@
 import os
 import pandas as pd
-from azure.ai.documentintelligence import DocumentIntelligenceClient
+from azure.ai.formrecognizer import DocumentAnalysisClient
 from azure.core.credentials import AzureKeyCredential
+from typing import List, Union
+from io import BytesIO
+from PIL import Image
 
 from extractors.general_extractors.utils import format_pages_num
 
@@ -10,7 +13,7 @@ from extractors.general_extractors.utils import format_pages_num
 
 
 def analyze_general_documents(
-    doc_path, specific_pages=None, language="it", api_version="2023-10-31-preview", query_list=None
+    images, specific_pages=None, language="it", api_version="2023-10-31-preview", query_list=None
 ):
     """Analyze a document with the Azure Form Recognizer API.
 
@@ -43,18 +46,28 @@ def analyze_general_documents(
 
     specific_pages = format_pages_num(specific_pages)
 
-    with open(doc_path, "rb") as pdf_file:
+    image_bytes = []
+    for image in images:
+        if isinstance(image, Image.Image):
+            with BytesIO() as output:
+                image.save(output, format="PNG")
+                image_bytes.append(output.getvalue())
+        elif isinstance(image, bytes):
+            image_bytes.append(image)
+        else:
+            raise TypeError("Unsupported image type. Expected PIL Image or bytes.")
+
         # Analyze full document or specific pages
-        poller = document_analysis_client.begin_analyze_document(
-            analyze_request=pdf_file,
-            content_type="application/octet-stream",
-            model_id="prebuilt-layout",
-            locale=language_locale,
-            features=features_chosen,
-            query_fields=query_list,
-            pages=specific_pages,
-        )
-        result = poller.result()
+    poller = document_analysis_client.begin_analyze_document(
+        analyze_request=image_bytes,
+        content_type="image/png",  # Use "image/png" or appropriate content type
+        model_id="prebuilt-layout",
+        locale=language_locale,
+        features=features_chosen,
+        query_fields=query_list,
+        pages=specific_pages,
+    )
+    result = poller.result()
     return result
 
 
@@ -85,7 +98,7 @@ def table_json_to_df(json_data):
 
 
 def get_tables_from_doc(
-    doc_path, specific_pages=None, language="it", api_version="2023-10-31-preview", query_list=None
+    images, specific_pages=None, language="it", api_version="2023-10-31-preview", query_list=None
 ):
     """Get tables from a document, can be used generally to save, or directly for query_list, in that case, return query_list also
 
@@ -100,7 +113,7 @@ def get_tables_from_doc(
     """
     # Analyze document
     result = analyze_general_documents(
-        doc_path, specific_pages=specific_pages, language=language, api_version=api_version, query_list=query_list
+        images, specific_pages=specific_pages, language=language, api_version=api_version, query_list=query_list
     )
     # Get tables
     df_tables = []

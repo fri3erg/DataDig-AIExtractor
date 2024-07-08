@@ -15,8 +15,19 @@ class Template: RealmObject {
     var description: String = ""
     var fields: RealmList<TemplateField> = realmListOf()
     var tags: RealmList<String> = realmListOf()
+    var tables: RealmList<TemplateTable> = realmListOf()  // Add this line
+
 
 ***REMOVED***
+
+class TemplateTable : RealmObject {
+    @PrimaryKey
+    var id: ObjectId = ObjectId()
+    var title: String = ""
+    var keywords: RealmList<String> = realmListOf()
+    var fields: RealmList<TemplateField> = realmListOf()
+***REMOVED***
+
 class TemplateField : RealmObject {
     @PrimaryKey
     var id: ObjectId = ObjectId()

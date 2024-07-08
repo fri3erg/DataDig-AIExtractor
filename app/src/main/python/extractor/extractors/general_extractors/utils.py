@@ -3,7 +3,11 @@ import os
 import re
 import uuid
 from langchain_community.document_loaders import PyPDFLoader
-
+from typing import List, Union
+from PIL import Image
+from io import BytesIO
+import pytesseract
+from pdf2image import convert_from_bytes
 from langchain_community.document_loaders import UnstructuredExcelLoader
 import tiktoken
 import pandas as pd
@@ -26,7 +30,7 @@ def select_desired_page(text, words_repr):
             continue
 
         # Remove punctuation and replace \n with space
-        content = page.page_content.lower().replace("\n", " ")
+        content = page.lower().replace("\n", " ")
         for word in words_repr:
             # count how many times the word is in the page
             counter[str(i)] += content.count(word)
@@ -181,8 +185,8 @@ def _decode_second_condition(text):
     return "".join([chr(int(code)) for code in content if code and 32 <= int(code) <= 110000000])
 
 
-def get_document_text(file_path):
-    """Uploads a file to the server and returns the pages.
+def get_document_text_old(images):
+    """returns the text in the page
 
     Args:
         file_name (path): _description_
@@ -191,7 +195,7 @@ def get_document_text(file_path):
         _type_: _description_
     """
     try:
-        loader = PyPDFLoader(file_path)
+        loader = PyPDFLoader(images)
         pages = loader.load()
         del loader
 
@@ -211,6 +215,48 @@ def get_document_text(file_path):
     except Exception as error:
         print("get document text error" + repr(error))
         raise error
+
+
+
+
+def get_document_text(images: List[Union[Image.Image, bytes]]) -> List[str]:
+    """Extracts text from a list of PIL Image objects or bytes (base64 images).
+
+    Args:
+        images: List of PIL Image objects or bytes representing base64 encoded images.
+
+    Returns:
+        str: Concatenated text extracted from all images.
+    """
+
+    all_text = []
+    for image in images:
+        if isinstance(image, bytes):  
+            try:
+                image = Image.open(BytesIO(image))
+            except Exception as e:
+                # Handle potential errors like invalid base64 or unsupported image format
+                print(f"Error loading base64 image: {e***REMOVED***")
+                continue
+        elif isinstance(image, Image.Image):
+            pass  
+        else:
+            raise TypeError("Unsupported image type. Expected PIL Image or bytes (base64 image).")
+
+        # Extract text from the image
+        try:
+            text = pytesseract.image_to_string(image)
+            all_text += [all_text, text]
+        except Exception as e:
+            print(f"Error extracting text from image: {e***REMOVED***")
+
+    return all_text
+
+
+
+def get_document_text_pdf(file_path: str) -> List[str]:
+    images = convert_from_bytes(open(file_path, "rb").read())
+    return get_document_text(images)
 
 
 def is_in_text(pattern, text) -> bool:
@@ -403,3 +449,4 @@ def search_reg(search, text):
     """
     match = re.search(search, text, re.IGNORECASE)
     return match is not None
+

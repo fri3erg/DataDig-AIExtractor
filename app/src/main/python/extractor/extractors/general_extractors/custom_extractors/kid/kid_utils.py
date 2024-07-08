@@ -2,6 +2,8 @@ import re
 
 from extractors.general_extractors.utils import divide_regex
 from extractors.general_extractors.utils import search_reg
+from pydantic import BaseModel, Field
+
 
 # strips to cut from the text
 exc_multiple_lines = ["commissione_gestione", "costi_totali", "incidenza"]
@@ -127,3 +129,12 @@ def handle_exc(table, a, search):
         ret = " ".join([ret, str(table.iloc[a, -1])])
         a = a + 1
     return ret
+
+
+def create_pydantic_class(field_info):
+    fields = {
+        field['name']: (field['type'], Field(default_factory=lambda: field['default'], description = field.get('extra_description') or field['description']
+))
+        for field in field_info
+    ***REMOVED***
+    return type('DynamicModel', (BaseModel,), fields)

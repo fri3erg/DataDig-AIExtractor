@@ -1,12 +1,12 @@
 from .insurance.gkid.cleaning_gkid import regex_cleaning, regex_search, strips_cleaning
 from extractors.general_extractors.custom_extractors.kid.insurance.gkid.tags_gkid import InformazioniBaseGkid
-from .kid_extractor import KidExtractor
+from .kid_extractor import Extractor
 from .kid_utils import clean_response_strips, clean_response_regex, regex_extract
 from ...llm_functions import llm_extraction_and_tag
 from .insurance.gkid.config_gkid import prompts, word_representation
 
 
-class GKidExtractor(KidExtractor):
+class GKidExtractor(Extractor):
 
     def __init__(self, doc_path, predefined_language="it") -> None:
         super().__init__(doc_path, predefined_language)
@@ -39,7 +39,7 @@ class GKidExtractor(KidExtractor):
             ]
         )
 
-    def extract_general_data(self):
+    def extract_basic_info(self):
         """
         Extract general data from the document. Namely ISIN, RHP and SRI.
 
@@ -78,7 +78,7 @@ class GKidExtractor(KidExtractor):
 
         return extraction
 
-    def extract_riy(self, table):
+    def extract_from_tables(self, table):
         """
         Extracts the riy from the given table.
 

@@ -16,6 +16,15 @@ class Extraction: RealmObject {
     var format: String = ""
     var fields: RealmList<ExtractionField> = realmListOf()
     var tags: RealmList<String> = realmListOf()
+    var tables: RealmList<ExtractionTable> = realmListOf()  // Add this line
+
+
+    class ExtractionTable : RealmObject {
+        @PrimaryKey
+        var id: ObjectId = ObjectId()
+        var title: String = ""
+        var fields: RealmList<ExtractionField> = realmListOf()
+    ***REMOVED***
 
 
     /*constructor(title: String, shortDescription: String, longDescription: String, image: String, type: String) {

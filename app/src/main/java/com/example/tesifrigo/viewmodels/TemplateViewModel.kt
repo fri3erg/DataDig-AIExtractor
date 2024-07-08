@@ -80,7 +80,7 @@ class TemplateViewModel : ViewModel() {
 
 
     init {
-        //createSampleTemplates()
+        createSampleTemplates()
     ***REMOVED***
 
     fun queryTemplate(id: String): StateFlow<Template?> {
@@ -130,6 +130,7 @@ class TemplateViewModel : ViewModel() {
                         templateField1,
         ***REMOVED***
                     tags = realmListOf("freezer")
+                    tables = realmListOf()
                 ***REMOVED***
                 val template2 = Template().apply {
                     title = "Sample Template 2"
@@ -138,6 +139,8 @@ class TemplateViewModel : ViewModel() {
                         templateField2,
         ***REMOVED***
                     tags = realmListOf("freezer", "fridge")
+                    tables = realmListOf()
+
                 ***REMOVED***
                 val template3 = Template().apply {
                     title = "Sample Template 3"
@@ -146,6 +149,7 @@ class TemplateViewModel : ViewModel() {
                         templateField3
         ***REMOVED***
                     tags = realmListOf("freezer", "fridge")
+                    tables = realmListOf()
                 ***REMOVED***
                 copyToRealm(template1)
                 copyToRealm(template2)

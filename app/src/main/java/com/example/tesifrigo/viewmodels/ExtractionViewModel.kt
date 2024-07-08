@@ -73,7 +73,7 @@ class ExtractionViewModel: ViewModel(){
     ***REMOVED***.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     init {
-        //createSampleExtraction()
+        createSampleExtraction()
     ***REMOVED***
     fun queryTemplate(id: String): StateFlow<Extraction?> {
         return extractions.map { extractionList ->

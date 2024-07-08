@@ -1,5 +1,8 @@
 import os
 import re
+***REMOVED***
+print(sys.path)
+
 import pandas as pd
 from extractors.general_extractors.custom_extractors.certificates.derivati_extractor import DerivatiKidExtractor
 from extractors.general_extractors.custom_extractors.kid.insurance.kid.tags_kid import (
@@ -56,7 +59,7 @@ class BNPDerivatiKidExtractor(DerivatiKidExtractor):
             ]
         )
 
-    def extract_general_data(self):
+    def extract_basic_info(self):
         """
         Extract general data from the document (ISIN, RHP...ecc...).
 
@@ -373,7 +376,7 @@ class BNPDerivatiKidExtractor(DerivatiKidExtractor):
 
             functions_parameters = {
                 "tables": {"function": self.get_tables***REMOVED***,
-                "basic_information": {"function": self.extract_general_data***REMOVED***,
+                "basic_information": {"function": self.extract_basic_info***REMOVED***,
                 "deductables": {"function": self.extract_deductables***REMOVED***,
             ***REMOVED***
             result = self.threader(functions_parameters)
@@ -391,7 +394,7 @@ class BNPDerivatiKidExtractor(DerivatiKidExtractor):
                 "sottostanti": {"function": self.extract_sottostanti***REMOVED***,
                 "main_info": {"function": self.extract_main_info***REMOVED***,
                 "first_info": {"function": self.extract_first_info***REMOVED***,
-                "riy": {"function": self.extract_riy, "args": {"page": 2***REMOVED******REMOVED***,
+                "riy": {"function": self.extract_from_tables, "args": {"page": 2***REMOVED******REMOVED***,
                 "exit_entry_management_costs": {"function": self.extract_entryexit_management_costs***REMOVED***,
                 "performance": {"function": self.extract_performances, "args": {"table": tables["performance"]***REMOVED******REMOVED***,
             ***REMOVED***

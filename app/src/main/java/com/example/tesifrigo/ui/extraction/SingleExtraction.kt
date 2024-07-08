@@ -35,7 +35,7 @@ fun SingleExtractionScreen(
     Text(text = extraction!!.title)
     LazyColumn {
             items(extraction!!.fields.size) { index ->  // Iterate over fields directly
-
+                ExtractionField(extraction!!, index, viewModel)
             ***REMOVED***
         ***REMOVED***
     ***REMOVED***    else{
