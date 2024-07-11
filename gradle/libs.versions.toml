@@ -12,6 +12,7 @@ cameraCore = "1.3.2"
 datastoreCoreAndroid = "1.1.0-rc01"
 navigationCompose = "2.7.7"
 material3Android = "1.2.1"
+tessTwo = "9.1.0"
 workRuntimeKtx = "2.9.0"
 cronetEmbedded = "119.6045.31"
 cameraLifecycle = "1.3.2"
@@ -50,6 +51,7 @@ androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = 
 navigation-compose = { module="androidx.navigation:navigation-compose", version.ref = "composeNavigation" ***REMOVED***
 kotlinx-serialization-json = { module="org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization"***REMOVED***
 androidx-security-crypto-ktx = { group = "androidx.security", name = "security-crypto-ktx", version.ref = "securityCryptoKtx" ***REMOVED***
+tess-two = { module = "com.rmtheis:tess-two", version.ref = "tessTwo" ***REMOVED***
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" ***REMOVED***

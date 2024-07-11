@@ -25,7 +25,7 @@ from .kid_utils import clean_response_regex, clean_response_strips
 
 class Extractor(GeneralScanner):
 
-    def __init__(self, images,template: Template, language= "it", model= "gpt-3.5-turbo") -> None:
+    def __init__(self, images,template: Template, language:str|None, model= "gpt-3.5-turbo") -> None:
         super().__init__(images,template, language, model)
 
     def get_tables(self):

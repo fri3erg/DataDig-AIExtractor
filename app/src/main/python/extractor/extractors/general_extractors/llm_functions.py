@@ -17,7 +17,8 @@ def get_doc_language(text, file_id):
         str: language of the document
     """
     # Analyze first page
-    language = Models.tag(text[:300], DocLanguage, file_id, model="gpt-3.5-turbo")
+    sample_text = text[0][:300]
+    language = Models.tag(sample_text, DocLanguage, file_id, model="gpt-3.5-turbo")
 
     # Check if language is mapped
     # NOTE: need to add more languages

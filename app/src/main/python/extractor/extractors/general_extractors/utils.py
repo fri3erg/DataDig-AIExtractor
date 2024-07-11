@@ -4,9 +4,11 @@ import re
 import uuid
 from langchain_community.document_loaders import PyPDFLoader
 from typing import List, Union
-from PIL import Image
+from PIL import Image, ImageOps
+import numpy as np
 from io import BytesIO
 import pytesseract
+import cv2
 from pdf2image import convert_from_bytes
 from langchain_community.document_loaders import UnstructuredExcelLoader
 import tiktoken
@@ -219,7 +221,7 @@ def get_document_text_old(images):
 
 
 
-def get_document_text(images: List[Union[Image.Image, bytes]]) -> List[str]:
+def get_document_text(images: List[Image.Image],language:str|None,  context=None) -> List[str]:
     """Extracts text from a list of PIL Image objects or bytes (base64 images).
 
     Args:
@@ -230,25 +232,70 @@ def get_document_text(images: List[Union[Image.Image, bytes]]) -> List[str]:
     """
 
     all_text = []
-    for image in images:
-        if isinstance(image, bytes):  
-            try:
-                image = Image.open(BytesIO(image))
-            except Exception as e:
-                # Handle potential errors like invalid base64 or unsupported image format
-                print(f"Error loading base64 image: {e***REMOVED***")
-                continue
-        elif isinstance(image, Image.Image):
-            pass  
-        else:
-            raise TypeError("Unsupported image type. Expected PIL Image or bytes (base64 image).")
+    temp_file = None
+    
 
-        # Extract text from the image
+    if context:
+    # We're running in Chaquopy
         try:
-            text = pytesseract.image_to_string(image)
-            all_text += [all_text, text]
+            from java import io
+            assets = context.getAssets()
+            input_stream = assets.open("tessdata/eng.traineddata")
+            temp_file = io.File.createTempFile("tessdata", None)
+            output_stream = io.FileOutputStream(temp_file)
+            input_stream.copyTo(output_stream)
+            input_stream.close()
+            
+            tessdata_path = temp_file.getParent()
+        except ImportError:
+            raise RuntimeError("Could not import 'java.io'. Make sure you're running this in Chaquopy.")
+    else:
+        # We're running as a standalone Python script
+        tessdata_path = None  # Use the default Tesseract data path
+        pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+        
+    # Initialize pytesseract with the tessdata path
+    tessdata_dir_config = f'--tessdata-dir "{tessdata_path***REMOVED***"' if tessdata_path else ''
+
+    for image in images:
+        try:
+            if isinstance(image, bytes):  
+                image = Image.open(BytesIO(image))
+            elif not isinstance(image, Image.Image):
+                raise TypeError("Unsupported image type. Expected PIL Image or bytes (base64 image).")
+            
+
+            """image_cv = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)  # Convert to OpenCV format
+            gray = cv2.cvtColor(image_cv, cv2.COLOR_BGR2GRAY)
+
+            # Adaptive thresholding
+            adaptive_thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
+
+            # Convert back to PIL Image
+            image = Image.fromarray(cv2.cvtColor(adaptive_thresh, cv2.COLOR_BGR2RGB))
+            """
+            
+            
+            
+            
+            """image = ImageOps.grayscale(image) 
+            image = image.convert("L")
+            img_array = np.array(image)
+            threshold = 128  
+            img_array = (img_array > threshold) * 255
+            image = Image.fromarray(img_array) """
+            
+            
+            all_text += [pytesseract.image_to_string(image, config=tessdata_dir_config, lang=language)]
         except Exception as e:
-            print(f"Error extracting text from image: {e***REMOVED***")
+            print(f"Error processing image: {e***REMOVED***")
+            all_text += [""]
+
+    if 'tempFile' in locals():
+        try:
+            temp_file.delete()
+        except Exception as e:
+            print("Error deleting temporary file:", e)
 
     return all_text
 

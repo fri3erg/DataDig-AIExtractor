@@ -25,7 +25,7 @@ logging.basicConfig(filename="logging.log", encoding="utf-8", level=logging.DEBU
 
 
 
-def main(base64_images : list , template: Template, progress_callback: Callable, model: str, language:str):
+def main(base64_images : list , template: Template, progress_callback: Callable, model: str, language:str|None= None):
     """main loop, instanciate 10 async process(more causes errors) for 10 files at the time,
     puts results in an excel file
 
@@ -47,7 +47,7 @@ def main(base64_images : list , template: Template, progress_callback: Callable,
 
         extractions = {***REMOVED***
         try: 
-            extractor= DataExtractor(images, template,progress_callback, model, language) 
+            extractor= DataExtractor(images, template,progress_callback, language, model) 
             
             extractions= asyncio.run(extractor.process())
     
@@ -57,7 +57,6 @@ def main(base64_images : list , template: Template, progress_callback: Callable,
 
 
         # give request id
-        Models.clear_resources_group(str(-1))
         # orders results
         results = pd.DataFrame(extractions)
         # ordered = [col for col in column_order[file_type] if col in results.columns]
@@ -90,7 +89,7 @@ def create_test_template():
         "Basic Information Template",
         "Collects essential personal details",
         [field1, field2],  # Fields directly associated with the template
-        [table1],         # Tables within the template
+        [],         # Tables within the template
         ["general", "personal"],
     )
 
@@ -108,4 +107,4 @@ def fake_callback(progress):
     # Check if there are PDF files in the current directory
     # if any(file.endswith(".pdf") for file in files):
     # Call your existing function to process PDFs in the folder
-    main(images, template, fake_callback, "gpt-3.5-turbo", "it")
+    main(images, template, fake_callback, "gpt-3.5-turbo")

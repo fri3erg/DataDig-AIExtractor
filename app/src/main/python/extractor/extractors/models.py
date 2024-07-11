@@ -4,9 +4,31 @@ from langchain.chains.openai_functions.tagging import create_tagging_chain_pydan
 import tiktoken
 from .general_extractors.config.cost_config import cost_per_token
 from langchain.chains import LLMChain
+import openai
+from langchain.schema import (
+    AIMessage,
+    HumanMessage,
+    SystemMessage
+)
+from langchain.llms.base import LLM
+from typing import List, Optional, Any, Dict
+from langchain.prompts import ChatPromptTemplate
+from langchain_community.llms import OpenAI as LangChainOpenAI
+from langchain.chat_models import ChatOpenAI # use ChatOpenAI from the core library
+import os
+
+import openai
+import threading
+import tiktoken
+from langchain.llms.base import LLM
+from langchain.schema import SystemMessage
+from langchain.prompts import ChatPromptTemplate
+
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+openai.api_key = OPENAI_API_KEY 
 
 
-class Models:
+class Models(LLM):
     """create an instance for each model to avoid loading it multiple times
     was a singleton but not variegated enough
     now holds static vars
@@ -18,77 +40,76 @@ class Models:
     Returns:
         Model : instance of the model
     """
-
-    _costs = {***REMOVED***  # variable to store the costs of the calls, indexed by file_id, needs locks for parallel calls
-    _models = {***REMOVED***  # models for each group_id(tenant), model_name, temperature
-    _file_locks = {***REMOVED***  # lock for each file_id, for costs
+    _costs = {***REMOVED***
+    _file_locks = {***REMOVED***
     _lock = threading.Lock()
-    # randomint=None
-
-    def __new__(cls, model_name, group_id=-1, temperature=0):
-        """return the instance of the model if it exists, otherwise creates it
-        index the models by group_id(tenant), model_name, temperature
-        Args:
-            model_name (str): name of the model to load
-            group_id (int or str, optional): request id, id of group of files to use the models on. Defaults to -1.
-            temperature (int or str, optional): temperature for the model. Defaults to 0.
-
-        Returns:
-            Azure model: model to use for the extraction
-        """
-        # thread safe singleton
-        group_id = str(group_id)
+    _instance: Optional["Models"] = None
+    _models: Dict[str, Dict[float, ChatOpenAI]] = {***REMOVED***
+    _lock = threading.Lock()
+    
+    def __new__(cls, model_name: str, temperature: float = 0.0, **kwargs):
         with cls._lock:
-            if not cls._models.get(group_id, {***REMOVED***).get(model_name, {***REMOVED***).get(temperature, None):
-                cls._models.setdefault(group_id, {***REMOVED***).setdefault(model_name, {***REMOVED***)[temperature] = azure_openai_model(
-                    model=model_name, temperature=temperature
-    ***REMOVED***
-                # for testing
-                # cls.randomint=random.randint(0, 1000)
+            if cls._instance is None:
+                cls._instance = super().__new__(cls)
+            return cls._instance
 
-            return cls._models[group_id][model_name][temperature]
+    def __init__(self, model_name: str, temperature: float = 0.0, **kwargs):
+        if model_name not in self._models:
+            self._models[model_name] = {***REMOVED***
+        if temperature not in self._models[model_name]:
+            model_kwargs = {
+                "model_name": model_name,
+                "temperature": temperature,
+                **kwargs  # Include any additional keyword arguments
+            ***REMOVED***
+            self._models[model_name][temperature] = ChatOpenAI(
+                model_name=model_name,
+                temperature=temperature,
+                **kwargs  # Include any additional keyword arguments
+***REMOVED***
 
+    @property
+    def _llm_type(self) -> str:
+        return "openai-chat" 
+
+    def _call(self, prompt: str, stop: Optional[List[str]] = None, run_manager: Optional[Any] = None, **kwargs: Any) -> str:
+        # Extract model name and temperature from kwargs if provided
+        model_name = kwargs.get("model_name", self.__class__.__name__)  
+        temperature = kwargs.get("temperature", 0.0)
+
+        # Get the correct model instance
+        model_instance = self._models[model_name][temperature]
+
+        response = model_instance(prompt, stop=stop)
+                
+        return response or ""
+
+
+    
     @classmethod
-    def tag(cls, text, schema, file_id, model="gpt-3.5-turbo"):
-        """Extract tags from text using a schema and a language model.
-        It uses the function create_tagging_chain_pydantic from langchain.
-
-        Args:
-            text (str): document to extract information from
-            schema (pydantic object): Pydantic schema with fieds to extract
-            file_id (str): file_id for costs
-            model (str, optional): name of the model to use for the extractio. Defaults to 'gpt-3.5-turbo'.
-
-        Returns:
-            Schema: schema with the extracted information
-        """
-        llm_tag = Models(model)
-        chain = create_tagging_chain_pydantic(schema, llm_tag)
-        output = chain(text)
-        cls.calc_costs(file_id, model, inputs=[text], outputs=[output["text"]])
-        return output["text"]
-
+    def tag(cls, text, schema, file_id, model="gpt-3.5-turbo", temperature=0):
+        llm = cls(model, temperature)._models[model][temperature]
+        prompt = ChatPromptTemplate.from_template(
+            "Extract information from the following text based on this schema:\n\n{schema***REMOVED***\n\nText:{text***REMOVED***"
+        )
+        chain = LLMChain(llm=llm, prompt=prompt)
+        try:
+            output = chain.run(schema=schema, text=text)
+        except Exception as e:
+            print("Error in tag:", e)
+            output = schema
+        cls.calc_costs(file_id, model, inputs=[text], outputs=[output])
+        return output  
+    
+    # Updated extract() method
     @classmethod
-    def extract(cls, file_id, model, prompt, pages, template):
-        """
-        extracts information from pages using a language model
-
-        Args:
-            file_id (str): file_id for costs
-            model (str): type of model to use
-            prompt (PromptTemplate Object): prompt to ask
-            pages ([str]): pages to search
-            rhp (str, optional): rhp to insert. Defaults to None.
-
-        Returns:
-            str: response from the model
-        """
-        llm = Models(model)
+    def extract(cls, file_id, model, prompt, pages, template, temperature=0):
+        llm = cls(model, temperature)  # Get the singleton instance
         chain = LLMChain(llm=llm, prompt=prompt)
         response = chain.run(context=pages, template=template)
         cls.calc_costs(file_id, model, inputs=[pages, prompt], outputs=[response])
         return response
-
+    
     @classmethod
     def calc_costs(cls, file_id, model, inputs=[], outputs=[]):
         """
@@ -140,17 +161,8 @@ class Models:
         """
         ret = cls._costs.get(file_id, {***REMOVED***)
         return ret
-
-    @classmethod
-    def clear_resources_group(cls, group_id):
-        """clears the static resources of the object associated with the group_id, call if using multiple tenants for runs
-
-        Args:
-            group_id (str): id of the file to clear the resources from
-        """
-        if group_id in cls._models:
-            del cls._models[group_id]
-
+    
+    
     @classmethod
     def clear_resources_file(cls, file_id):
         """clears the static resources of the object associated with the file_id, call after each file

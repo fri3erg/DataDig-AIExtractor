@@ -92,11 +92,13 @@ dependencies {
 
     implementation(libs.androidx.material3.android)
     val nav_version = "2.8.0-alpha08"
+
     implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
     implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
     implementation("androidx.navigation:navigation-compose:$nav_version")
     implementation("com.google.dagger:hilt-android:2.51")
     implementation(libs.androidx.room.ktx)
+    implementation(libs.tess.two) // Or latest version
     kapt("com.google.dagger:hilt-android-compiler:2.51")
     annotationProcessor("com.google.dagger:hilt-android:2.51")
     implementation("androidx.hilt:hilt-work:1.0.0")

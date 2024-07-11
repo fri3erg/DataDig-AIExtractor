@@ -28,6 +28,8 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
+import com.googlecode.tesseract.android.TessBaseAPI
+
 @AndroidEntryPoint
 class ExtractionService : Service(){
 
@@ -117,6 +119,12 @@ class ExtractionService : Service(){
             ***REMOVED***
             val py = Python.getInstance()
             val module = py.getModule("main_test")
+            val tessBaseAPI = TessBaseAPI()
+            val dataPath = py.getAssets().getAbsolutePath("tessdata")
+
+            val dataPath = "$filesDir/tesseract/" // Path to your assets folder
+            tessBaseAPI.init(dataPath, "eng") // Initialize with English language data
+
 
 
             val builtinsModule = py.getModule("builtins")

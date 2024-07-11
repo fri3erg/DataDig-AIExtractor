@@ -1,4 +1,4 @@
-from langchain_openai import AzureChatOpenAI
+from langchain.chat_models import AzureChatOpenAI # Correct
 import os
 
 

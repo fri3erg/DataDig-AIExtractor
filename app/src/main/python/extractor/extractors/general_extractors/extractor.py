@@ -33,10 +33,10 @@ class ThreadFunction(threading.Thread):
 class GeneralScanner:
     """parent class for all extractors"""
 
-    def __init__(self, images,template:Template, language="it", model= "gpt-3.5-turbo"):
+    def __init__(self, images,template:Template, language:str|None, model= "gpt-3.5-turbo"):
         self.file_id = template.title
         self.images = images
-        self.text: List[str] = get_document_text(images)
+        self.text: List[str] = get_document_text(images, language)
         self.template = template
         self.model= model
         if language:
@@ -222,4 +222,4 @@ class GeneralScanner:
         return new_dict
 
     @abstractmethod
-    def process(self): ...
+    async def process(self): ...

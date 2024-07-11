@@ -9,7 +9,7 @@ from typing import Callable
 
 class DataExtractor(Extractor):
 
-    def __init__(self, images, template: Template, progress_callback: Callable, language="it", model="gpt-3.5-turbo") -> None:
+    def __init__(self, images, template: Template, progress_callback: Callable, language:str|None, model="gpt-3.5-turbo") -> None:
         self.progress_callback = progress_callback
         super().__init__(images,template, language, model)
 
