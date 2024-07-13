@@ -1,6 +1,8 @@
 import re
+from typing import List
 
-from classes.Template import Template
+from classes.Extracted import ExtractedField, ExtractedTable
+from classes.Template import Template, template_to_readable_string
 from .insurance.kid.cleaning_kid import regex_cleaning, strips_cleaning
 
 
@@ -20,7 +22,7 @@ from ..kid.kid_utils import create_pydantic_class
 from ...llm_functions import (
     llm_extraction_and_tag,
 )
-from .kid_utils import clean_response_regex, clean_response_strips
+from .kid_utils import clean_response_regex, clean_response_strips, extracted_from_pydantic
 
 
 class Extractor(GeneralScanner):
@@ -34,8 +36,8 @@ class Extractor(GeneralScanner):
         Returns:
             dict([pandas.dataframe]): tables as dataframe
         """
+        tables=dict()
         try:
-            tables=dict()
             for table in self.template.tables:
                 tables.update({table.title: self._extract_table(table.keywords)***REMOVED***)
 
@@ -49,27 +51,26 @@ class Extractor(GeneralScanner):
 
         return dict(tables)
 
-    def extract_basic_info(self):
+    def extract_basic_info(self) -> List[ExtractedField]:
         """
         Extract general data from the document. Namely RHP and SRI.
 
-
-        Returns: dict(): data extracted
+        Returns:
+            List[ExtractedField]: extracted data
         """
-        extraction = dict()
+        extraction={***REMOVED***
         try:
             # extract and clean
             extraction = llm_extraction_and_tag(
-                self.text, self.template, self.file_id, create_pydantic_class(self.template), self.model, self.language
+                self.text, template_to_readable_string(self.template), self.file_id, create_pydantic_class(self.template), self.model, self.language
 ***REMOVED***
             #extraction = clean_response_regex(regex_cleaning, extraction)
-            extraction = dict(extraction)
+            extraction_fields: List[ExtractedField] = extracted_from_pydantic(self, extraction)
             
 
         except Exception as error:
             print("basic info extraction error" + repr(error))
-            error_list = ["indicatore_sintetico_rischio", "periodo_detenzione_raccomandato", "indicatore_sintetico_rischio_max"]
-            extraction = {key: (extraction[key] if extraction.get(key) is not None else "ERROR") for key in error_list***REMOVED***
+            extraction = []
 
         return extraction
 
@@ -80,13 +81,17 @@ class Extractor(GeneralScanner):
         Returns:
             dict(): riy extracted
         """
-        extraction = dict()
+        extraction = []
         try:
             for table in self.template.tables:
             # Select page with RIY
                 extraction = tag_only(
                     self.text[page:], table.fields, create_pydantic_class(table.fields), self.file_id
     ***REMOVED***
+                extracted_fields: List[ExtractedField]= extracted_from_pydantic(self, extraction)
+                extracted_table= ExtractedTable(table,rows=extracted_fields, model_used=self.model)
+                extraction.append(extracted_table)
+                
                 #extraction = clean_response_regex(regex_cleaning, extraction)
         except Exception as error:
             print("extract riy error" + repr(error))

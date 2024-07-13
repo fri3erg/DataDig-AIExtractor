@@ -1,8 +1,11 @@
 import re
+from typing import List, Optional
 
+from classes.Extracted import ExtractedField
+from classes.Template import Template
 from extractors.general_extractors.utils import divide_regex
 from extractors.general_extractors.utils import search_reg
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, create_model
 
 
 # strips to cut from the text
@@ -131,10 +134,35 @@ def handle_exc(table, a, search):
     return ret
 
 
-def create_pydantic_class(field_info):
-    fields = {
-        field['name']: (field['type'], Field(default_factory=lambda: field['default'], description = field.get('extra_description') or field['description']
-))
-        for field in field_info
-    ***REMOVED***
-    return type('DynamicModel', (BaseModel,), fields)
+def create_pydantic_class(template: DynamicModel):
+    """Creates a Pydantic model based on the provided Template object."""
+
+    fields = {***REMOVED***
+    for template_field in template.fields:
+        field_type:type = template_field.type
+        if template_field.required:  # Assuming TemplateField has a 'required' attribute
+            fields[template_field.title] = (field_type, Field(...))
+        else:
+            fields[template_field.title] = (Optional[field_type], Field(...))
+
+
+    model = create_model("DynamicModel", **fields)  # Use create_model for dynamic creation
+    return model
+
+
+
+def extracted_from_pydantic(self, tagged) -> List[ExtractedField]:
+    """Extracts the fields from a tagged object.
+
+    Args:
+        tagged: Tagged object to extract fields from.
+
+    Returns:
+        List[ExtractedField]: List of extracted fields.
+    """
+    extracted = []
+    for field in tagged.__fields__:
+        value = getattr(tagged, field)
+        if value:
+            extracted.append(ExtractedField(value=value, template_field=self.template_fields.get(field, None), model_used=self.model))
+    return extracted

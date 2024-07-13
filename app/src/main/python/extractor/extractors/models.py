@@ -1,3 +1,5 @@
+import json
+from pydantic import BaseModel, ValidationError,parse_obj_as
 from .azure.openai import azure_openai_model
 import threading
 from langchain.chains.openai_functions.tagging import create_tagging_chain_pydantic
@@ -16,7 +18,6 @@ from langchain.prompts import ChatPromptTemplate
 from langchain_community.llms import OpenAI as LangChainOpenAI
 from langchain.chat_models import ChatOpenAI # use ChatOpenAI from the core library
 import os
-
 import openai
 import threading
 import tiktoken
@@ -26,6 +27,13 @@ from langchain.prompts import ChatPromptTemplate
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 openai.api_key = OPENAI_API_KEY 
+
+from langchain.output_parsers import StructuredOutputParser, PydanticOutputParser
+from langchain.schema import OutputParserException
+from langchain.output_parsers.structured import ResponseSchema
+
+from typing import Any
+
 
 
 class Models(LLM):
@@ -90,11 +98,19 @@ class Models(LLM):
     def tag(cls, text, schema, file_id, model="gpt-3.5-turbo", temperature=0):
         llm = cls(model, temperature)._models[model][temperature]
         prompt = ChatPromptTemplate.from_template(
-            "Extract information from the following text based on this schema:\n\n{schema***REMOVED***\n\nText:{text***REMOVED***"
+        "Extract information from the following text based on this schema:\n\n{schema***REMOVED***\n\nText:{text***REMOVED***\n\n"
+        "Please ensure your response strictly adheres to the schema.\n"
+        "remember to adhere to the enums in the schema, use one of the allowed values listed in the schema."         
         )
-        chain = LLMChain(llm=llm, prompt=prompt)
+        output = {***REMOVED***
+        output_parser = PydanticOutputParser(pydantic_object=schema)  # Use PydanticOutputParser here
+
+        chain = LLMChain(llm=llm, prompt=prompt,output_parser=output_parser)
         try:
-            output = chain.run(schema=schema, text=text)
+            output = chain.run(schema=schema.schema_json(), text=text)            
+        except ValidationError as e:
+            print("Validation Error:", e)
+
         except Exception as e:
             print("Error in tag:", e)
             output = schema
@@ -104,7 +120,7 @@ class Models(LLM):
     # Updated extract() method
     @classmethod
     def extract(cls, file_id, model, prompt, pages, template, temperature=0):
-        llm = cls(model, temperature)  # Get the singleton instance
+        llm = cls(model, temperature)._models[model][temperature]  # Get the singleton instance
         chain = LLMChain(llm=llm, prompt=prompt)
         response = chain.run(context=pages, template=template)
         cls.calc_costs(file_id, model, inputs=[pages, prompt], outputs=[response])

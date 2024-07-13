@@ -14,6 +14,8 @@ from langchain_community.document_loaders import UnstructuredExcelLoader
 import tiktoken
 import pandas as pd
 
+from classes.Extracted import ExtractedField
+
 
 def select_desired_page(text, words_repr):
     """Select the page with the most occurrences of the words in words_repr.
@@ -496,4 +498,3 @@ def search_reg(search, text):
     """
     match = re.search(search, text, re.IGNORECASE)
     return match is not None
-

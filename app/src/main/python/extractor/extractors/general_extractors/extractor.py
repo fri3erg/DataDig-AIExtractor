@@ -1,5 +1,7 @@
 from abc import abstractmethod
 from typing import List
+
+from classes.Extracted import Extracted
 from ..models import Models
 from .config.cost_config import cost_per_token
 from .utils import get_document_text, upload_df_as_excel
@@ -222,4 +224,4 @@ class GeneralScanner:
         return new_dict
 
     @abstractmethod
-    async def process(self): ...
+    async def process(self)->Extracted: ...

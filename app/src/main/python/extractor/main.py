@@ -76,9 +76,9 @@ def create_test_template():
     """Creates a test instance of the Template class with sample data."""
 
     # Create sample TemplateField objects
-    field1 = TemplateField(1, "Name", "Enter your full name", "", ["personal", "identification"])
-    field2 = TemplateField(2, "Email", "Provide your email", "", ["contact", "personal"])
-    field3 = TemplateField(3, "Date of Birth", "Your birthdate (YYYY-MM-DD)", "", ["personal", "date"])
+    field1 = TemplateField(1, "Name", "Enter your full name", "", ["personal", "identification"],str,True)
+    field2 = TemplateField(2, "Email", "Provide your email", "", ["contact", "personal"],str,True)
+    field3 = TemplateField(3, "Date of Birth", "Your birthdate (YYYY-MM-DD)", "", ["personal", "date"],str,True)
 
     # Create sample TemplateTable objects
     table1 = TemplateTable(1, "Personal Information", ["personal", "info"], [field1, field2, field3])
@@ -88,7 +88,7 @@ def create_test_template():
         1,
         "Basic Information Template",
         "Collects essential personal details",
-        [field1, field2],  # Fields directly associated with the template
+        [field1, field2, field3],  # Fields directly associated with the template
         [],         # Tables within the template
         ["general", "personal"],
     )

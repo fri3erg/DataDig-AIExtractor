@@ -1,3 +1,4 @@
+from extractors.general_extractors.custom_extractors.kid.kid_utils import extracted_from_pydantic
 from extractors.general_extractors.utils import select_desired_page, upload_df_as_excel
 from extractors.general_extractors.utils import num_tokens_from_string
 from langchain.prompts import PromptTemplate
@@ -22,7 +23,7 @@ def get_doc_language(text, file_id):
 
     # Check if language is mapped
     # NOTE: need to add more languages
-    doc_language = language.language
+    doc_language = getattr(language, "language", "it")
     if doc_language not in ["it", "en", "fr", "de", "es"]:
         doc_language = "it"
 
@@ -178,5 +179,6 @@ def llm_extraction_and_tag(page, template, file_id, pydantic_class, model="gpt-3
     response = Models.extract(file_id, model, prompt, page, template)
     # To ensure optimal data standardization
     tagged = Models.tag(response, pydantic_class, file_id)
+    extracted= extracted_from_pydantic(tagged)
 
     return tagged
