@@ -1,22 +1,24 @@
+from math import cos
 import os
 
 from attr import field
 
-from classes.Extracted import Extracted
+from classes.Extracted import Extracted, ExtractedField
+from classes.Options import Options
 from extractors.models import Models
 from extractors.general_extractors.custom_extractors.kid.kid_extractor import Extractor
 
 from .....config.json_config.json_kid import renaming
-from classes.Template import Template
-from typing import Callable, List
+from classes.Template import Template, TemplateTable, split_template
+from typing import Any, Callable, List
 
 class DataExtractor(Extractor):
 
-    def __init__(self, images, template: Template, progress_callback: Callable, language:str|None, model="gpt-3.5-turbo") -> None:
+    def __init__(self, images, template: Template, progress_callback: Callable, options:Options) -> None:
         self.progress_callback = progress_callback
-        self.extracted_tables:List= []
-        self.extracted_fields:List= []
-        super().__init__(images,template, language, model)
+        super().__init__(images,template, options)
+        
+        
 
     async def process(self) -> Extracted:
         """main processor in different phases, first phases extracts the tables and general information,
@@ -31,20 +33,21 @@ class DataExtractor(Extractor):
         results = {***REMOVED***
         tables = {***REMOVED***
         try:
-            tables_present: bool = any(self.template.tables)
+            tables_present: bool = self.template.tables != [] or self.options.azure_ocr
             #complex_info_present: bool = any(field.extra_description for field in self.template.fields)
 
+            if tables_present:
+                tables:dict[TemplateTable, Any] =self.get_tables()  or {***REMOVED***
+            
+            intelligent_template, basic_template = self.template.split_template()
+            
             functions_parameters = {
-                "basic_info": {"function": self.extract_basic_info***REMOVED***,
-                **({"tables": {"function": self.get_tables***REMOVED******REMOVED*** if tables_present else {***REMOVED***),
+                "basic_info": {"function": self.extract_basic_info, "args": {"template": basic_template***REMOVED******REMOVED***,
+                "intelligent_info": {"function": self.extract_intelligent_info, "args": {"template": intelligent_template***REMOVED******REMOVED***,
             ***REMOVED***
-
-
-                
             results = self.threader(functions_parameters)
-
-            tables = results["tables"]
-            basic_info = results["basic_info"]
+            self.extracted_fields += results["basic_info"] or []
+            self.extracted_fields += results["intelligent_info"] or []
 
         except Exception as error:
             print("first stage error" + repr(error))
@@ -52,18 +55,15 @@ class DataExtractor(Extractor):
         # SECOND STAGE: extract RIY, costs, commissions and performances
         try:
             functions_parameters = {
-                **({"info_from_tables": {"function": self.extract_from_tables, "args": {"table": tables***REMOVED******REMOVED******REMOVED*** if tables_present else {***REMOVED***)
+                **({"info_from_tables": {"function": self.extract_from_tables, "args": {"table": tables***REMOVED******REMOVED******REMOVED*** if tables_present else {***REMOVED***),
+                **({"complex_info": {"function": self.extract_complex_info, "args": {"results": results***REMOVED******REMOVED******REMOVED*** if complex_info_present else {***REMOVED***)
                 ***REMOVED***
-
-                
-            #if complex_info_present:
-            #    functions_parameters.update({"complex_info": {"function": self.extract_complex_info, "args": {"results": results***REMOVED******REMOVED******REMOVED***)
                 
             if functions_parameters:
                 results = self.threader(functions_parameters)
                 
-            info_from_tables = results.get("info_from_tables") or {***REMOVED***
-            complex_info = results.get("complex_info") or {***REMOVED***
+            self.extracted_tables += results.get("info_from_tables") or []
+            self.extracted_fields += results.get("complex_info") or []
 
         except Exception as error:
             print("second stage error" + repr(error))
@@ -74,39 +74,16 @@ class DataExtractor(Extractor):
             filename = self.template.title
 
             api_costs = self._process_costs()
-
-            # raccordo
-            complete = self.raccorda(
-                {
-                    "file_name": filename,
-                    **dict(basic_info),
-                    **dict(complex_info),
-                    **dict(info_from_tables),
-                    **dict(api_costs),
-                ***REMOVED***,
-                renaming,
-***REMOVED***
-
-            complete = self.create_json(
-                {
-                    "file_name": filename,
-                    **dict(basic_info),
-                    **dict(complex_info),
-                    **dict(info_from_tables),
-                    **dict(api_costs),
-                ***REMOVED***,
-                "kid",
-***REMOVED***
             
-            
-            complete= Extracted(template=self.template, fields=self.extracted_fields, tables=self.extracted_tables)
+            self.extraction= Extracted(template=self.template, fields=self.extracted_fields, tables=self.extracted_tables, costs=api_costs)
+
 
         except Exception as error:
             print("dictionary error" + repr(error))
-            complete = Extracted(template=self.template, fields=self.extracted_fields, tables=self.extracted_tables)
+            self.extraction = Extracted(template=self.template, fields=self.extracted_fields, tables=self.extracted_tables)
             filename = self.template.title
 
-        print(complete)
+        print(self.extraction)
         Models.clear_resources_file(filename)
 
-        return complete
+        return self.extraction

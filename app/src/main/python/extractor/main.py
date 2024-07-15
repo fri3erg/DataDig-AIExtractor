@@ -1,4 +1,5 @@
 
+from classes.Options import Options
 from extractors.general_extractors.custom_extractors.kid.insurance.kid.kid_extractor import DataExtractor
 # from extractors.Derivati.Spot_KID_extractor import write_info
 # from extractors.Derivati.Global_KID_extractor import GlobalExtractor
@@ -25,7 +26,7 @@ logging.basicConfig(filename="logging.log", encoding="utf-8", level=logging.DEBU
 
 
 
-def main(base64_images : list , template: Template, progress_callback: Callable, model: str, language:str|None= None):
+def main(base64_images : list , template: Template, progress_callback: Callable, options: Options):
     """main loop, instanciate 10 async process(more causes errors) for 10 files at the time,
     puts results in an excel file
 
@@ -47,7 +48,7 @@ def main(base64_images : list , template: Template, progress_callback: Callable,
 
         extractions = {***REMOVED***
         try: 
-            extractor= DataExtractor(images, template,progress_callback, language, model) 
+            extractor= DataExtractor(images, template,progress_callback, options) 
             
             extractions= asyncio.run(extractor.process())
     
@@ -82,6 +83,7 @@ def create_test_template():
 
     # Create sample TemplateTable objects
     table1 = TemplateTable(1, "Personal Information", ["personal", "info"], [field1, field2, field3])
+    table2 = TemplateTable(2, "Contact Information", ["contact", "info"], [field1, field2])
 
     # Create the Template instance
     template = Template(
@@ -89,7 +91,7 @@ def create_test_template():
         "Basic Information Template",
         "Collects essential personal details",
         [field1, field2, field3],  # Fields directly associated with the template
-        [],         # Tables within the template
+        [table1,table2],         # Tables within the template
         ["general", "personal"],
     )
 

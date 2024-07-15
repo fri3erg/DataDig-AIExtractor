@@ -25,13 +25,13 @@ class ExtractedTable:
         self.extraction_cost = {***REMOVED***  # To be filled in later
 
 class Extracted:
-    def __init__(self, template: Template, fields: Optional[List[ExtractedField]] = None, tables: Optional[List[ExtractedTable]] = None):
+    def __init__(self, template: Template, fields: Optional[List[ExtractedField]] = None, tables: Optional[List[ExtractedTable]] = None, costs:dict = {***REMOVED***):
         self.template_id = template.id
         self.template_title = template.title
         self.template_description = template.description
         self.extracted_fields = fields or []
         self.extracted_tables = tables or []
-        self.extraction_costs = {***REMOVED***  # Costs per model and total
+        self.extraction_costs = costs or {***REMOVED***
 
     def add_field(self, extracted_field: ExtractedField):
         self.extracted_fields.append(extracted_field)

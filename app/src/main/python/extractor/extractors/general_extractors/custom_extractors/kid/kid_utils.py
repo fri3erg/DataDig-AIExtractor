@@ -2,7 +2,7 @@ import re
 from typing import List, Optional
 
 from classes.Extracted import ExtractedField
-from classes.Template import Template
+from classes.Template import Template, TemplateField
 from extractors.general_extractors.utils import divide_regex
 from extractors.general_extractors.utils import search_reg
 from pydantic import BaseModel, Field, create_model
@@ -134,7 +134,23 @@ def handle_exc(table, a, search):
     return ret
 
 
-def create_pydantic_class(template: DynamicModel):
+def create_pydantic_class(template: Template):
+    """Creates a Pydantic model based on the provided Template object."""
+
+    fields = {***REMOVED***
+    for template_field in template.fields:
+        field_type:type = template_field.type
+        description=template_field.extra_description or template_field.description
+        if template_field.required:  # Assuming TemplateField has a 'required' attribute
+            fields[template_field.title] = (field_type, Field(...,description=description))
+        else:
+            fields[template_field.title] = (Optional[field_type], Field(...,description=description))
+
+
+    model = create_model("DynamicModel", **fields)  # Use create_model for dynamic creation
+    return model
+
+def create_intelligent_pydantic_class(template: Template):
     """Creates a Pydantic model based on the provided Template object."""
 
     fields = {***REMOVED***
@@ -163,6 +179,29 @@ def extracted_from_pydantic(self, tagged) -> List[ExtractedField]:
     extracted = []
     for field in tagged.__fields__:
         value = getattr(tagged, field)
-        if value:
-            extracted.append(ExtractedField(value=value, template_field=self.template_fields.get(field, None), model_used=self.model))
+        matching_template_field:TemplateField | None = next(
+            (tf for tf in self.template.fields if tf.title == field), None
+        )  
+        if matching_template_field:
+            extracted.append(ExtractedField(value=value, template_field=matching_template_field, model_used=self.model))
+        else:
+            print(f"Field '{field***REMOVED***' not found in template '{self.template.title***REMOVED***'")
     return extracted
+
+
+
+def get_object_by_title(obj_list, target_title):
+    """
+    Finds and returns the first object in a list that has the specified title.
+
+    Args:
+        obj_list: The list of objects to search through.
+        target_title: The title string to match.
+
+    Returns:
+        The object with the matching title, or None if no match is found.
+    """
+    for obj in obj_list:
+        if hasattr(obj, 'title') and obj.title == target_title:
+            return obj
+    return None

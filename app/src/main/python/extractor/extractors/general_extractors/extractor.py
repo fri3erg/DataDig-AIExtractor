@@ -1,7 +1,8 @@
 from abc import abstractmethod
 from typing import List
 
-from classes.Extracted import Extracted
+from classes.Extracted import Extracted, ExtractedField, ExtractedTable
+from classes.Options import ExceptionsExtracted, Options
 from ..models import Models
 from .config.cost_config import cost_per_token
 from .utils import get_document_text, upload_df_as_excel
@@ -35,20 +36,22 @@ class ThreadFunction(threading.Thread):
 class GeneralScanner:
     """parent class for all extractors"""
 
-    def __init__(self, images,template:Template, language:str|None, model= "gpt-3.5-turbo"):
+    def __init__(self, images,template:Template, options:Options):
         self.file_id = template.title
         self.images = images
-        self.text: List[str] = get_document_text(images, language)
-        self.template = template
-        self.model= model
-        if language:
-            self.language = language
-        else:
-            self.language = get_doc_language(self.text, self.file_id)
+        if not options.azure_ocr:
+            self.text: List[str] = get_document_text(images, options.language)
+        self.template: Template = template
+        self.options = options
+        if not options.language:
+            self.options.language = get_doc_language(self.text, self.file_id)
 
         self.di_tables_pages = {***REMOVED***
         self.raw_data_pages = {***REMOVED***
-        self.extraction = {***REMOVED***
+        self.exceptions_occurred: List[ExceptionsExtracted] = []
+        self.extracted_tables:List[ExtractedTable]= []
+        self.extracted_fields:List[ExtractedField]= []
+        self.extraction:Extracted = Extracted(template)
 
     # DOCSTRING MISSING
     def threader(self, functions_parameters):
@@ -84,12 +87,17 @@ class GeneralScanner:
             # Select page with table
 
             text = [page if i not in black_list_pages else "" for i, page in enumerate(self.text)]
-            page = select_desired_page(text, keywords)
+            page, _ = select_desired_page(text, keywords)
 
             # Get all the tables from the page
             if self.di_tables_pages is not None and page not in self.di_tables_pages.keys():
                 page_num = int(page) + 1
-                tables, raw_data = get_tables_from_doc(self.images, specific_pages=page_num, language=self.language)
+                tables, raw_data = get_tables_from_doc(self.images, specific_pages=page_num, language=self.options.language or "it")
+                document=getattr(raw_data,"pages", None)
+                all_text = ""
+                for line in getattr(document[int(page)] if document else [],"lines"):
+                    all_text += line.content + "\n"
+                self.text[int(page)] = all_text
                 self.di_tables_pages[page] = tables
                 self.raw_data_pages[page] = raw_data
             else:
@@ -105,19 +113,25 @@ class GeneralScanner:
             return None
             # @ELIA?
 
-    """def fill_tables(self, pages):
+    def fill_tables(self, pages:str|None= None):
         #experimental for faster runs, fills the tables in the document asynchronously all in one
 
         #Args:
             #page (_type_): _description_
         
-        fill, raw_data = get_tables_from_doc(self.images, specific_pages=pages, language=self.language)
-        for idx, table in enumerate(fill):
-            safe_number = getattr(raw_data.tables[idx] if idx < len(raw_data.tables) else None, "bounding_regions", None)[0].get("pageNumber", None)
-            if safe_number:
-                self.di_tables_pages.setdefault(str(safe_number - 1), []).append(table)
-                self.raw_data_pages.setdefault(str(safe_number - 1), []).append(raw_data)
-        """
+        tables, raw_data = get_tables_from_doc(self.images, specific_pages=pages, language=self.options.language if self.options.language else "it")
+        for document in getattr(raw_data, "pages", []):
+            all_text = ""
+            for line in getattr(document, "lines"):
+                all_text += line.content + "\n"
+            self.text.append(all_text)
+            
+        for table in tables:
+            self.di_tables_pages[table] = tables
+            self.raw_data_pages[table] = raw_data
+            
+            
+        
 
     def _process_costs(self):
         """processes the cost of the calls given local config and prepares them for the output

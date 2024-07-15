@@ -1,4 +1,5 @@
 from collections import defaultdict
+from itertools import count
 import os
 import re
 import uuid
@@ -40,9 +41,9 @@ def select_desired_page(text, words_repr):
             counter[str(i)] += content.count(word)
 
     # Page with most occurrences
-    pg_number = max(counter, key=counter.get)
+    pg_number = max(counter, key=lambda page: counter[page])
 
-    return pg_number
+    return pg_number, counter[pg_number]
 
 
 def select_desired_table(tables, words_repr):

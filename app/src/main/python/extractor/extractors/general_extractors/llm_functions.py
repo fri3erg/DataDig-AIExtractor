@@ -1,10 +1,14 @@
+from typing import List
+from classes.Extracted import ExtractedField
+from classes.Options import Options
+from classes.Template import Template
 from extractors.general_extractors.custom_extractors.kid.kid_utils import extracted_from_pydantic
 from extractors.general_extractors.utils import select_desired_page, upload_df_as_excel
 from extractors.general_extractors.utils import num_tokens_from_string
 from langchain.prompts import PromptTemplate
 from .config.basic_tags import *
 from ..models import Models
-from configs.configs import prompts
+from configs.configs import prompts, prompts_intelligent
 
 
 def get_doc_language(text, file_id):
@@ -30,7 +34,7 @@ def get_doc_language(text, file_id):
     return doc_language
 
 
-def llm_extraction(page, template, file_id, model="gpt-3.5-turbo", language="it"):
+def llm_extraction(page, template:Template, file_id, options:Options):
     """extracts data from a document text
 
     Args:
@@ -44,18 +48,21 @@ def llm_extraction(page, template, file_id, model="gpt-3.5-turbo", language="it"
     Returns:
         dict(): data extracted
     """
-    initial_prompt: str= prompts[language]
+    initial_prompt: str= prompts[options.language or "it"]
+    template_readable=template.template_to_readable_string()
+    
     input_variables: list[str] = ["template","context"]
     prompt = PromptTemplate(input_variables=input_variables, template=initial_prompt)
     # Select model size based on context
-    if model == "gpt-3.5-turbo":
-        total_token = num_tokens_from_string(prompt.template.format(context=page, template=template))
+    if options.model == "gpt-3.5-turbo":
+        total_token = num_tokens_from_string(prompt.template.format(context=page, template=template_readable))
         if total_token > 4000:
-            model = "gpt-3.5-turbo-16k"
+           options.model = "gpt-3.5-turbo-16k"
         else:
-            model = "gpt-3.5-turbo"
+            options.model = "gpt-3.5-turbo"
     # Construct chain and extract relevan info
-    response = Models.extract(file_id, model, prompt, page, template)
+    response = Models.extract(file_id, options.model, prompt, page, template_readable)
+    
     return response
 
 
@@ -140,7 +147,7 @@ def tag_only(pages, keywords, pydantic_class, file_id):
         str: The extracted basic information.
     """
     # Select page with RIY
-    page = select_desired_page(pages, keywords)
+    page, _ = select_desired_page(pages, keywords)
     page = pages[int(page)]
 
     # To ensure optimal data standardization
@@ -150,7 +157,7 @@ def tag_only(pages, keywords, pydantic_class, file_id):
     return extraction
 
 
-def llm_extraction_and_tag(page, template, file_id, pydantic_class, model="gpt-3.5-turbo", language="it"):
+def llm_extraction_and_tag(page, template:Template, file_id, pydantic_class, options:Options):
     """extracts data from a document text
 
     Args:
@@ -164,21 +171,21 @@ def llm_extraction_and_tag(page, template, file_id, pydantic_class, model="gpt-3
     Returns:
         dict(): data extracted
     """
-    initial_prompt: str= prompts[language]
+    initial_prompt: str= prompts[options.language or "it"]
+    template_readable=template.template_to_readable_string()
     
     input_variables: list[str] = ["template","context"]
     prompt = PromptTemplate(input_variables=input_variables, template=initial_prompt)
     # Select model size based on context
-    if model == "gpt-3.5-turbo":
-        total_token = num_tokens_from_string(prompt.template.format(context=page, template=template))
+    if options.model == "gpt-3.5-turbo":
+        total_token = num_tokens_from_string(prompt.template.format(context=page, template=template_readable))
         if total_token > 4000:
-            model = "gpt-3.5-turbo-16k"
+           options.model = "gpt-3.5-turbo-16k"
         else:
-            model = "gpt-3.5-turbo"
+            options.model = "gpt-3.5-turbo"
     # Construct chain and extract relevan info
-    response = Models.extract(file_id, model, prompt, page, template)
+    response = Models.extract(file_id, options.model, prompt, page, template_readable)
     # To ensure optimal data standardization
     tagged = Models.tag(response, pydantic_class, file_id)
-    extracted= extracted_from_pydantic(tagged)
 
     return tagged
