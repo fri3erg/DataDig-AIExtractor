@@ -14,7 +14,7 @@ from extractors.general_extractors.utils import format_pages_num
 
 
 def analyze_general_documents(
-    images, specific_pages=None, language="it", api_version="2023-07-31", query_list=None
+    image:bytes, specific_pages=None, language="it", api_version="2023-07-31", query_list=None
 ) -> AnalyzeResult:
     """Analyze a document with the Azure Form Recognizer API.
 
@@ -47,24 +47,15 @@ def analyze_general_documents(
 
     specific_pages = format_pages_num(specific_pages)
 
-    combined_image_bytes = b""  # Initialize an empty bytes object
-    for image in images:
-        if isinstance(image, Image.Image):
-            with BytesIO() as output:
-                image.save(output, format="PNG")
-                combined_image_bytes += output.getvalue()  # Concatenate
-        elif isinstance(image, bytes):
-            combined_image_bytes += image  # Concatenate
-        else:
-            raise TypeError("Unsupported image type. Expected PIL Image or bytes.")
+
 
         # Analyze full document or specific pages
     poller = document_analysis_client.begin_analyze_document(
-        document=combined_image_bytes,
+        document=image,
         model_id="prebuilt-layout",
         locale=language_locale,
         features=features_chosen,
-        pages=specific_pages,
+        #pages=specific_pages,
     )
     result = poller.result()
     return result
@@ -97,7 +88,7 @@ def table_json_to_df(json_data):
 
 
 def get_tables_from_doc(
-    images, specific_pages:str|None =None, language="it", api_version="2023-07-31", query_list=None
+    image:bytes, specific_pages:str|None =None, language="it", api_version="2023-07-31", query_list=None
 ):
     """Get tables from a document, can be used generally to save, or directly for query_list, in that case, return query_list also
 
@@ -112,9 +103,9 @@ def get_tables_from_doc(
     """
     # Analyze document
     result = analyze_general_documents(
-        images, specific_pages=specific_pages, language=language, api_version=api_version, query_list=query_list
+        image, specific_pages=specific_pages, language=language, api_version=api_version, query_list=query_list
     )
-    # Get tables
+# Get tables
     df_tables = []
     for table in getattr(result, "tables", []):
         df_tab = table_json_to_df_v2(table)

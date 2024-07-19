@@ -224,7 +224,7 @@ def get_document_text_old(images):
 
 
 
-def get_document_text(images: List[Image.Image],language:str|None,  context=None) -> List[str]:
+def get_document_text(images: list[bytes],language:str|None,  context=None) -> List[str]:
     """Extracts text from a list of PIL Image objects or bytes (base64 images).
 
     Args:
@@ -262,7 +262,9 @@ def get_document_text(images: List[Image.Image],language:str|None,  context=None
 
     for image in images:
         try:
-            if isinstance(image, bytes):  
+            if isinstance(image, BytesIO):  
+                image = Image.open(image)
+            elif isinstance(image, bytes):
                 image = Image.open(BytesIO(image))
             elif not isinstance(image, Image.Image):
                 raise TypeError("Unsupported image type. Expected PIL Image or bytes (base64 image).")
@@ -305,8 +307,8 @@ def get_document_text(images: List[Image.Image],language:str|None,  context=None
 
 
 def get_document_text_pdf(file_path: str) -> List[str]:
-    images = convert_from_bytes(open(file_path, "rb").read())
-    return get_document_text(images)
+    images:list[BytesIO] = convert_from_bytes(open(file_path, "rb").read())
+    return get_document_text(images,"it")
 
 
 def is_in_text(pattern, text) -> bool:

@@ -1,3 +1,4 @@
+import re
 from typing import List
 from classes.Extracted import ExtractedField
 from classes.Options import Options
@@ -83,8 +84,8 @@ def general_table_inspection(table, pydantic_class, file_id, add_text=""):
 
         # First normal extraction, then tagging
         tag_model = "gpt-4-turbo"
-        if not add_text:
-            table = f"considera questo quando analizzi la tabella=-> {add_text***REMOVED*** TABELLA-> {table***REMOVED***"
+        add_text= f"descrizione della tabella=-> {add_text***REMOVED*** " if add_text else ""
+        table = f"{add_text***REMOVED*** TABELLA-> {table***REMOVED***"
 
         extraction_adapted = Models.tag(table, pydantic_class, file_id, model=tag_model)
     except Exception as error:
@@ -185,6 +186,7 @@ def llm_extraction_and_tag(page, template:Template, file_id, pydantic_class, opt
             options.model = "gpt-3.5-turbo"
     # Construct chain and extract relevan info
     response = Models.extract(file_id, options.model, prompt, page, template_readable)
+    response = str.replace(r"\*\*", "", response)
     # To ensure optimal data standardization
     tagged = Models.tag(response, pydantic_class, file_id)
 

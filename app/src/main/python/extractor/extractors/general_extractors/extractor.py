@@ -1,6 +1,8 @@
 from abc import abstractmethod
-from typing import List
-
+from io import BytesIO
+from typing import Any, List
+from PIL.ImageFile import ImageFile
+from PIL import Image
 from classes.Extracted import Extracted, ExtractedField, ExtractedTable
 from classes.Options import ExceptionsExtracted, Options
 from ..models import Models
@@ -36,15 +38,14 @@ class ThreadFunction(threading.Thread):
 class GeneralScanner:
     """parent class for all extractors"""
 
-    def __init__(self, images,template:Template, options:Options):
+    def __init__(self, images:list[bytes],template:Template, options:Options):
         self.file_id = template.title
         self.images = images
-        if not options.azure_ocr:
-            self.text: List[str] = get_document_text(images, options.language)
-        self.template: Template = template
         self.options = options
+        self.text: List[str] = get_document_text(images, options.language)
         if not options.language:
             self.options.language = get_doc_language(self.text, self.file_id)
+        self.template: Template = template
 
         self.di_tables_pages = {***REMOVED***
         self.raw_data_pages = {***REMOVED***
@@ -70,7 +71,7 @@ class GeneralScanner:
             results[function_name] = thread.get_result()
         return results
 
-    def _extract_table(self, keywords, black_list_pages=[]):
+    def _extract_table(self, keywords, black_list_pages=[]) -> Any:
         """General table extractor, given a table type it first finds the page within
         the document where the table is located, it then extracts all the tables from
         that page and returns the one with the most occurrences of the words of the table
@@ -91,8 +92,8 @@ class GeneralScanner:
 
             # Get all the tables from the page
             if self.di_tables_pages is not None and page not in self.di_tables_pages.keys():
-                page_num = int(page) + 1
-                tables, raw_data = get_tables_from_doc(self.images, specific_pages=page_num, language=self.options.language or "it")
+                page_num = str(int(page) + 1)
+                tables, raw_data = get_tables_from_doc(self.images[page], specific_pages=page_num, language=self.options.language or "it")
                 document=getattr(raw_data,"pages", None)
                 all_text = ""
                 for line in getattr(document[int(page)] if document else [],"lines"):
@@ -106,29 +107,34 @@ class GeneralScanner:
 
             # Select the right table
             table_nr = select_desired_table(tables, keywords)
-            return tables[int(table_nr)], raw_data
+            return tables[int(table_nr)]
 
         except Exception as error:
             print("extract table error" + repr(error))
-            return None
+            return "", ""
             # @ELIA?
 
-    def fill_tables(self, pages:str|None= None):
+    def fill_tables(self, pages:List[int] | None = None):
         #experimental for faster runs, fills the tables in the document asynchronously all in one
 
         #Args:
             #page (_type_): _description_
-        
-        tables, raw_data = get_tables_from_doc(self.images, specific_pages=pages, language=self.options.language if self.options.language else "it")
-        for document in getattr(raw_data, "pages", []):
-            all_text = ""
-            for line in getattr(document, "lines"):
-                all_text += line.content + "\n"
-            self.text.append(all_text)
+        function_parameters = {***REMOVED***
+        for i, image in enumerate(self.images):
+            pages_exists= pages and i in pages
+            if str(i) not in self.di_tables_pages.keys() and (pages_exists or not pages):
+                function_parameters[f"{i***REMOVED***"] = {"function": get_tables_from_doc, "args": {"image": image, "language": self.options.language if self.options.language else "it"***REMOVED******REMOVED***
+        result = self.threader(function_parameters)
+        for key, value in result.items():
+            tables, raw_data = value
+            self.di_tables_pages[key] = tables
+            self.raw_data_pages[key] = raw_data
+            for document in getattr(raw_data, "pages", []):
+                all_text = ""
+                for line in getattr(document, "lines"):
+                    all_text += line.content + "\n"
+                self.text.append(all_text)
             
-        for table in tables:
-            self.di_tables_pages[table] = tables
-            self.raw_data_pages[table] = raw_data
             
             
         

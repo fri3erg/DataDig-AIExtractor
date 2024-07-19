@@ -1,8 +1,11 @@
 import re
-from typing import List, Optional
+from types import UnionType
+from typing import Dict, List, Literal, Optional
+
+from sqlalchemy import desc
 
 from classes.Extracted import ExtractedField
-from classes.Template import Template, TemplateField
+from classes.Template import Template, TemplateField, TemplateTable
 from extractors.general_extractors.utils import divide_regex
 from extractors.general_extractors.utils import search_reg
 from pydantic import BaseModel, Field, create_model
@@ -139,12 +142,30 @@ def create_pydantic_class(template: Template):
 
     fields = {***REMOVED***
     for template_field in template.fields:
-        field_type:type = template_field.type
+        field_type = template_field.type or str
         description=template_field.extra_description or template_field.description
         if template_field.required:  # Assuming TemplateField has a 'required' attribute
-            fields[template_field.title] = (field_type, Field(...,description=description))
-        else:
-            fields[template_field.title] = (Optional[field_type], Field(...,description=description))
+            description +=" ,should be present,check well"
+        fields[template_field.title] = (Optional[field_type]| str, Field(default='N/A',description=description))
+
+
+    model = create_model("DynamicModel", **fields)  # Use create_model for dynamic creation
+    return model
+
+def create_pydantic_table_class(template: TemplateTable):
+    """Creates a Pydantic model based on the provided Template object."""
+
+    fields = {***REMOVED***
+    for  row in template.rows:
+        for column in template.columns:
+            
+            field_type:type = row.type or column.type or str
+            required= column.required or row.required
+            description=f"row:{row.title***REMOVED***|column:{column.title***REMOVED***|"
+            
+            if required:  # Assuming TemplateField has a 'required' attribute
+                description +=",should be present,check well"
+            fields[description] = (Optional[field_type]| str, Field(default="N/A",description=description))
 
 
     model = create_model("DynamicModel", **fields)  # Use create_model for dynamic creation
@@ -154,12 +175,12 @@ def create_intelligent_pydantic_class(template: Template):
     """Creates a Pydantic model based on the provided Template object."""
 
     fields = {***REMOVED***
+    description= ""
     for template_field in template.fields:
-        field_type:type = template_field.type
+        field_type:type = template_field.type or str
         if template_field.required:  # Assuming TemplateField has a 'required' attribute
-            fields[template_field.title] = (field_type, Field(...))
-        else:
-            fields[template_field.title] = (Optional[field_type], Field(...))
+            description="should be present,check well"
+        fields[template_field.title] = (Optional[field_type], Field(description=description))
 
 
     model = create_model("DynamicModel", **fields)  # Use create_model for dynamic creation
@@ -183,11 +204,46 @@ def extracted_from_pydantic(self, tagged) -> List[ExtractedField]:
             (tf for tf in self.template.fields if tf.title == field), None
         )  
         if matching_template_field:
-            extracted.append(ExtractedField(value=value, template_field=matching_template_field, model_used=self.model))
+            extracted.append(ExtractedField(value=value, template_field=matching_template_field, model_used=self.options.model))
         else:
             print(f"Field '{field***REMOVED***' not found in template '{self.template.title***REMOVED***'")
     return extracted
 
+
+def extracted_from_pydantic_table(self,tagged_data, template: TemplateTable) -> Dict[str, Dict[str, ExtractedField]]:
+    """Extracts structured data from a tagged Pydantic model into a matrix."""
+
+    result_matrix: Dict[str, Dict[str, ExtractedField]] = {***REMOVED***
+
+    # Initialize empty dicts for each row
+    for row in template.rows:
+        result_matrix[row.title] = {***REMOVED***
+
+    # Parse field names and create ExtractedField instances
+    for field_name, value in tagged_data.__fields__.items():  
+        # Extract row and column names from field name
+        row_name, col_name, _ = field_name.split("|") 
+        row_name = row_name[4:]
+        col_name = col_name[7:]
+
+
+        # Find matching row and column in template
+        matching_row = next((r for r in template.rows if r.title in row_name), None)
+        matching_col = next((c for c in template.columns if c.title in col_name), None)
+        
+        if matching_row and matching_col:
+            # Create ExtractedField instance
+            extracted_field = ExtractedField(
+                template_field=matching_col,  # Use the column as the template field
+                value=value,
+                model_used=self.options.model
+***REMOVED***
+
+            # Store in result matrix
+            result_matrix[matching_row.title][matching_col.title] = extracted_field
+
+    return result_matrix
+    
 
 
 def get_object_by_title(obj_list, target_title):

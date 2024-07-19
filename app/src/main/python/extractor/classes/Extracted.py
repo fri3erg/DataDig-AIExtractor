@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 from .Template import TemplateField, TemplateTable, Template
 
 class ExtractedField:
@@ -11,16 +11,12 @@ class ExtractedField:
         self.model_used = model_used
 
 class ExtractedTable:
-    def __init__(self, template_table: TemplateTable, rows: List[Dict[str, str]], model_used: str):
+    def __init__(self, template_table: TemplateTable, fields: Dict[str,Dict[str,ExtractedField]],dataframe:Any, model_used: str):
         self.id = template_table.id
         self.title = template_table.title
         self.keywords = template_table.keywords
-        self.rows = []
-        for row_data in rows:
-            row = {***REMOVED***
-            for field in template_table.fields:
-                row[field.title] = row_data.get(field.title, "")  # Default to empty string if not extracted
-            self.rows.append(row)
+        self.fields: Dict[str,Dict[str,ExtractedField]] = fields  # List of TemplateField objects
+        self.dataframe = dataframe
         self.model_used = model_used
         self.extraction_cost = {***REMOVED***  # To be filled in later
 

@@ -1,4 +1,7 @@
 
+from datetime import date
+from PIL.ImageFile import ImageFile
+from pypdf import PdfReader, PdfWriter
 from classes.Options import Options
 from extractors.general_extractors.custom_extractors.kid.insurance.kid.kid_extractor import DataExtractor
 # from extractors.Derivati.Spot_KID_extractor import write_info
@@ -36,10 +39,7 @@ def main(base64_images : list , template: Template, progress_callback: Callable,
     try:
         #env_setter = EnvVarSetter(tenant="insurance")
         #env_setter.configure_local_env_vars()
-        
-        images_data = [base64.b64decode(base64_image) for base64_image in base64_images]
-        images = [Image.open(BytesIO(image_data)) for image_data in images_data]
-
+        images: list[bytes]= [base64.b64decode(image) for image in base64_images]
         # testing
         batch_size = 5
         parallel = True
@@ -70,20 +70,31 @@ def main(base64_images : list , template: Template, progress_callback: Callable,
     except Exception as error:
         print("top level error:" + repr(error))
 
+def base64_images_to_tiff(base64_images: list) -> BytesIO:
+    """Converts a list of base64 images to a single TIFF file in a BytesIO object."""
+
+    images = []
+    for base64_image in base64_images:
+        image_data = base64.b64decode(base64_image)
+        images.append(Image.open(BytesIO(image_data)))
+
+    tiff_bytes = BytesIO()
+    images[0].save(tiff_bytes, format="TIFF", save_all=True, append_images=images[1:])
+    tiff_bytes.seek(0)
+    return tiff_bytes
 
 
-
-def create_test_template():
+def create_test() -> tuple[Template, Options]:
     """Creates a test instance of the Template class with sample data."""
 
     # Create sample TemplateField objects
     field1 = TemplateField(1, "Name", "Enter your full name", "", ["personal", "identification"],str,True)
     field2 = TemplateField(2, "Email", "Provide your email", "", ["contact", "personal"],str,True)
-    field3 = TemplateField(3, "Date of Birth", "Your birthdate (YYYY-MM-DD)", "", ["personal", "date"],str,True)
+    field3 = TemplateField(3, "Date of Birth", "Your birthdate (YYYY-MM-DD)", "", ["personal", "date"],date,True)
 
     # Create sample TemplateTable objects
-    table1 = TemplateTable(1, "Personal Information", ["personal", "info"], [field1, field2, field3])
-    table2 = TemplateTable(2, "Contact Information", ["contact", "info"], [field1, field2])
+    table1 = TemplateTable(1, "Personal Information", ["personal", "info"],"table that describes personal info", [field1, field2, field3], [field1, field2, field3])
+    table2 = TemplateTable(2, "Contact Information", ["contact", "info"],"", [field1, field2],[field1, field2, field3])
 
     # Create the Template instance
     template = Template(
@@ -94,8 +105,10 @@ def create_test_template():
         [table1,table2],         # Tables within the template
         ["general", "personal"],
     )
+    
+    option= Options(model="gpt-3.5-turbo",azure_ocr=True)
 
-    return template
+    return template, option
 
 def fake_callback(progress):
     print(progress)
@@ -103,10 +116,10 @@ def fake_callback(progress):
 ***REMOVED***
 
     
-    template :Template = create_test_template()
+    template, option= create_test()
 
     # for root, dirs, files in os.walk(folder):
     # Check if there are PDF files in the current directory
     # if any(file.endswith(".pdf") for file in files):
     # Call your existing function to process PDFs in the folder
-    main(images, template, fake_callback, "gpt-3.5-turbo")
+    main(images, template, fake_callback, option)

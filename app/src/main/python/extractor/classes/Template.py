@@ -1,7 +1,7 @@
 
-from typing import List, Tuple
+from typing import Dict, List, Tuple
 class TemplateField:
-    def __init__(self, id, title: str, description:str, extra_description: str, tags: List[str], type: type, required: bool, intelligent_extraction= False):
+    def __init__(self, id, title: str, description:str, extra_description: str, tags: List[str], type: type | None, required: bool, intelligent_extraction= False):
         self.id = id
         self.title = title
         self.description = description
@@ -13,11 +13,13 @@ class TemplateField:
 
 
 class TemplateTable:
-    def __init__(self, id, title:str, keywords: List[str], fields: List[TemplateField]):
+    def __init__(self, id, title:str, keywords: List[str],description:str, rows: List[TemplateField], columns:List[TemplateField]):
         self.id = id
         self.title = title
         self.keywords = keywords
-        self.fields = fields  # List of TemplateField objects
+        self.description = description
+        self.rows = rows
+        self.columns = columns
         
         
         
@@ -78,6 +80,15 @@ class Template:
             fields=non_intelligent_fields,
             tables=[],  # Exclude tables
             tags=self.tags,
+            
         )
 
         return intelligent_template, non_intelligent_template
+    
+    def sanitize(self):
+        for table in self.tables:
+            for row in table.rows:
+                row.title.replace("|", "\\")
+            for column in table.columns:
+                column.title.replace("|", "\\")
+        

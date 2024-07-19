@@ -1,3 +1,4 @@
+from io import BytesIO
 from math import cos
 import os
 
@@ -9,12 +10,12 @@ from extractors.models import Models
 from extractors.general_extractors.custom_extractors.kid.kid_extractor import Extractor
 
 from .....config.json_config.json_kid import renaming
-from classes.Template import Template, TemplateTable, split_template
+from classes.Template import Template, TemplateTable
 from typing import Any, Callable, List
-
+from PIL import Image, ImageFile
 class DataExtractor(Extractor):
 
-    def __init__(self, images, template: Template, progress_callback: Callable, options:Options) -> None:
+    def __init__(self, images:list[bytes], template: Template, progress_callback: Callable, options:Options) -> None:
         self.progress_callback = progress_callback
         super().__init__(images,template, options)
         
@@ -43,11 +44,11 @@ class DataExtractor(Extractor):
             
             functions_parameters = {
                 "basic_info": {"function": self.extract_basic_info, "args": {"template": basic_template***REMOVED******REMOVED***,
-                "intelligent_info": {"function": self.extract_intelligent_info, "args": {"template": intelligent_template***REMOVED******REMOVED***,
+                **({"intelligent_info": {"function": self.extract_intelligent_info, "args": {"template": intelligent_template***REMOVED******REMOVED******REMOVED*** if intelligent_template.fields else {***REMOVED***)
             ***REMOVED***
             results = self.threader(functions_parameters)
-            self.extracted_fields += results["basic_info"] or []
-            self.extracted_fields += results["intelligent_info"] or []
+            self.extracted_fields += results.get("basic_info") or []
+            self.extracted_fields += results.get("intelligent_info") or []
 
         except Exception as error:
             print("first stage error" + repr(error))
@@ -55,8 +56,8 @@ class DataExtractor(Extractor):
         # SECOND STAGE: extract RIY, costs, commissions and performances
         try:
             functions_parameters = {
-                **({"info_from_tables": {"function": self.extract_from_tables, "args": {"table": tables***REMOVED******REMOVED******REMOVED*** if tables_present else {***REMOVED***),
-                **({"complex_info": {"function": self.extract_complex_info, "args": {"results": results***REMOVED******REMOVED******REMOVED*** if complex_info_present else {***REMOVED***)
+                **({"info_from_tables": {"function": self.extract_from_tables, "args": {"tables": tables***REMOVED******REMOVED******REMOVED*** if tables_present else {***REMOVED***),
+                **({"complex_info": {"function": self.extract_complex_info, "args": {"extracted": results***REMOVED******REMOVED******REMOVED*** if complex_info_present else {***REMOVED***)
                 ***REMOVED***
                 
             if functions_parameters:

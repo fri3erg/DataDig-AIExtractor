@@ -100,7 +100,8 @@ class Models(LLM):
         prompt = ChatPromptTemplate.from_template(
         "Extract information from the following text based on this schema:\n\n{schema***REMOVED***\n\nText:{text***REMOVED***\n\n"
         "Please ensure your response strictly adheres to the schema.\n"
-        "remember to adhere to the enums in the schema, use one of the allowed values listed in the schema."         
+        "remember to adhere to the enums in the schema, use one of the allowed values listed in the schema."
+        "there could be possibilities where all the fields or some are missing, in that case use their default values\n\n"         
         )
         output = {***REMOVED***
         output_parser = PydanticOutputParser(pydantic_object=schema)  # Use PydanticOutputParser here
