@@ -6,6 +6,8 @@ from azure.core.credentials import AzureKeyCredential
 from typing import List, Union
 from io import BytesIO
 from PIL import Image
+from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError
+
 
 from extractors.general_extractors.utils import format_pages_num
 
@@ -47,17 +49,21 @@ def analyze_general_documents(
 
     specific_pages = format_pages_num(specific_pages)
 
-
+    try:
 
         # Analyze full document or specific pages
-    poller = document_analysis_client.begin_analyze_document(
-        document=image,
-        model_id="prebuilt-layout",
-        locale=language_locale,
-        features=features_chosen,
-        #pages=specific_pages,
-    )
-    result = poller.result()
+        poller = document_analysis_client.begin_analyze_document(
+            document=image,
+            model_id="prebuilt-layout",
+            locale=language_locale,
+            features=features_chosen,
+            #pages=specific_pages,
+        )
+        result = poller.result()
+    except ClientAuthenticationError as auth_err:
+        raise ValueError("Invalid Azure credentials (endpoint or key).") from auth_err
+    except ServiceRequestError as req_err:
+        raise ValueError(f"Error communicating with Azure Form Recognizer: {req_err***REMOVED***") from req_err
     return result
 
 

@@ -105,8 +105,15 @@ class Models(LLM):
         )
         output = {***REMOVED***
         output_parser = PydanticOutputParser(pydantic_object=schema)  # Use PydanticOutputParser here
-
-        chain = LLMChain(llm=llm, prompt=prompt,output_parser=output_parser)
+        try:
+            chain = LLMChain(llm=llm, prompt=prompt,output_parser=output_parser)
+        except openai.AuthenticationError as auth_err:
+            print("Authentication Error (Invalid API key?):", auth_err)
+            raise ValueError("invalid OpenAI key")
+        # Handle invalid API key (e.g., log, raise a custom exception, prompt for a new key)
+        except Exception as e:
+            print("Error in tag:", e)
+            raise e
         try:
             output = chain.run(schema=schema.schema_json(), text=text)            
         except ValidationError as e:
@@ -122,7 +129,15 @@ class Models(LLM):
     @classmethod
     def extract(cls, file_id, model, prompt, pages, template, temperature=0):
         llm = cls(model, temperature)._models[model][temperature]  # Get the singleton instance
-        chain = LLMChain(llm=llm, prompt=prompt)
+        try:
+            chain = LLMChain(llm=llm, prompt=prompt)
+        except openai.AuthenticationError as auth_err:
+            print("Authentication Error (Invalid API key?):", auth_err)
+            raise ValueError("invalid OpenAI key")
+        except Exception as e:
+            print("Error in extract:", e)
+            raise e
+        
         response = chain.run(context=pages, template=template)
         cls.calc_costs(file_id, model, inputs=[pages, prompt], outputs=[response])
         return response

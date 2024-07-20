@@ -5,7 +5,7 @@ import os
 from attr import field
 
 from classes.Extracted import Extracted, ExtractedField
-from classes.Options import Options
+from classes.Options import ExceptionsExtracted, Options
 from extractors.models import Models
 from extractors.general_extractors.custom_extractors.kid.kid_extractor import Extractor
 
@@ -21,7 +21,7 @@ class DataExtractor(Extractor):
         
         
 
-    async def process(self) -> Extracted:
+    async def process(self) -> tuple[Extracted, List[ExceptionsExtracted]]:
         """main processor in different phases, first phases extracts the tables and general information,
         and target market, second phase extracts the rest of the fields.
 
@@ -51,6 +51,7 @@ class DataExtractor(Extractor):
             self.extracted_fields += results.get("intelligent_info") or []
 
         except Exception as error:
+            self.exceptions_occurred.append(ExceptionsExtracted(error=error, error_location="first stage",error_description=repr(error)))
             print("first stage error" + repr(error))
 
         # SECOND STAGE: extract RIY, costs, commissions and performances
@@ -67,6 +68,7 @@ class DataExtractor(Extractor):
             self.extracted_fields += results.get("complex_info") or []
 
         except Exception as error:
+            self.exceptions_occurred.append(ExceptionsExtracted(error=error, error_location="second stage",error_description=repr(error)))
             print("second stage error" + repr(error))
 
         try:
@@ -80,11 +82,12 @@ class DataExtractor(Extractor):
 
 
         except Exception as error:
-            print("dictionary error" + repr(error))
+            print("final phase error" + repr(error))
+            self.exceptions_occurred.append(ExceptionsExtracted(error=error, error_location="final stage",error_description=repr(error)))
             self.extraction = Extracted(template=self.template, fields=self.extracted_fields, tables=self.extracted_tables)
             filename = self.template.title
 
         print(self.extraction)
         Models.clear_resources_file(filename)
 
-        return self.extraction
+        return self.extraction, self.exceptions_occurred

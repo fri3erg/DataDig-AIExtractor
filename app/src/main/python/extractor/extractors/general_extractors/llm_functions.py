@@ -185,9 +185,17 @@ def llm_extraction_and_tag(page, template:Template, file_id, pydantic_class, opt
         else:
             options.model = "gpt-3.5-turbo"
     # Construct chain and extract relevan info
-    response = Models.extract(file_id, options.model, prompt, page, template_readable)
+    try:
+        response = Models.extract(file_id, options.model, prompt, page, template_readable)
+    except Exception as e:
+        print("error in extraction", e)
+        response = page
     response = str.replace(r"\*\*", "", response)
     # To ensure optimal data standardization
-    tagged = Models.tag(response, pydantic_class, file_id)
+    try:
+        tagged = Models.tag(response, pydantic_class, file_id)
+    except Exception as e:
+        print("error in tagging", e)
+        raise e
 
     return tagged

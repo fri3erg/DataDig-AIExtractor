@@ -2,6 +2,7 @@
 from datetime import date
 from PIL.ImageFile import ImageFile
 from pypdf import PdfReader, PdfWriter
+from classes.Extracted import Extracted
 from classes.Options import Options
 from extractors.general_extractors.custom_extractors.kid.insurance.kid.kid_extractor import DataExtractor
 # from extractors.Derivati.Spot_KID_extractor import write_info
@@ -43,46 +44,39 @@ def main(base64_images : list , template: Template, progress_callback: Callable,
         # testing
         batch_size = 5
         parallel = True
+        exceptions_occurred = []
         # list all the pdf files in the folder
         print("START")
 
-        extractions = {***REMOVED***
-        try: 
-            extractor= DataExtractor(images, template,progress_callback, options) 
+        extraction: Extracted | None = None
+        
+        try:
+            extractor= DataExtractor(images, template,progress_callback, options)
             
-            extractions= asyncio.run(extractor.process())
+        except Exception as error:
+            raise Exception("error in initializing DataExtractor" + repr(error))
+        
+        try: 
+            extraction, exceptions_occurred= asyncio.run(extractor.process())
     
     
         except Exception as error:
-            print("process_file error" + repr(error))
+            print("main phase error" + repr(error))
 
 
         # give request id
         # orders results
-        results = pd.DataFrame(extractions)
+        #results = pd.DataFrame(extractions)
         # ordered = [col for col in column_order[file_type] if col in results.columns]
         # results = results[ordered]
         #excel_path = os.path.join(doc_folder + ".xlsx")
         # saves results
         #results.to_excel(excel_path, header=True, index=False)
-        print(results)
+        print(extraction)
+        return extraction
 
     except Exception as error:
         print("top level error:" + repr(error))
-
-def base64_images_to_tiff(base64_images: list) -> BytesIO:
-    """Converts a list of base64 images to a single TIFF file in a BytesIO object."""
-
-    images = []
-    for base64_image in base64_images:
-        image_data = base64.b64decode(base64_image)
-        images.append(Image.open(BytesIO(image_data)))
-
-    tiff_bytes = BytesIO()
-    images[0].save(tiff_bytes, format="TIFF", save_all=True, append_images=images[1:])
-    tiff_bytes.seek(0)
-    return tiff_bytes
-
 
 def create_test() -> tuple[Template, Options]:
     """Creates a test instance of the Template class with sample data."""

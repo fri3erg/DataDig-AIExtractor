@@ -29,14 +29,3 @@ class Extracted:
         self.extracted_tables = tables or []
         self.extraction_costs = costs or {***REMOVED***
 
-    def add_field(self, extracted_field: ExtractedField):
-        self.extracted_fields.append(extracted_field)
-
-    def add_table(self, extracted_table: ExtractedTable):
-        self.extracted_tables.append(extracted_table)
-
-    def add_extraction_cost(self, model: str, cost: float):
-        self.extraction_costs[model] = self.extraction_costs.get(model, 0) + cost
-
-    def get_total_cost(self) -> float:
-        return sum(self.extraction_costs.values())

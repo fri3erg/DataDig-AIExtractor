@@ -3,7 +3,7 @@ import re
 from typing import Any, Dict, List
 from PIL import Image, ImageFile
 from classes.Extracted import ExtractedField, ExtractedTable
-from classes.Options import Options
+from classes.Options import ExceptionsExtracted, Options
 from classes.Template import Template, TemplateTable
 from .insurance.kid.cleaning_kid import regex_cleaning, strips_cleaning
 
@@ -44,25 +44,19 @@ class Extractor(GeneralScanner):
                 self.fill_tables()
             except Exception as error:
                 print("calc table error" + repr(error))
-                error_list = [table.title for table in self.template.tables]
-                for i, key in enumerate(error_list):
-                    if not key:
-                        tables[i] = dict([("ERROR", "ERROR")])
-                        
-        try:
-            for table in self.template.tables:
+                self.exceptions_occurred.append(ExceptionsExtracted( error, "filling tables",repr(error)))
+                    
+        for table in self.template.tables:    
+            try:
                 tables.update({table: self._extract_table(table.keywords)***REMOVED***)
 
-        except Exception as error:
-            #REDO ERROR HANDLING
-            print("calc table error" + repr(error))
-            error_list = [table.title for table in self.template.tables]
-            for i, key in enumerate(error_list):
-                if not key:
-                    tables[i] = dict([("ERROR", "ERROR")])
+            except Exception as error:
+                #REDO ERROR HANDLING
+                print("calc table error" + repr(error))
+                self.exceptions_occurred.append(ExceptionsExtracted( error, f"extracting tables: {table.title***REMOVED***",repr(error)))
 
 
-        return dict(tables)
+        return tables
     
     
     def extract_intelligent_info(self, template:Template) -> List[ExtractedField]:
@@ -78,7 +72,8 @@ class Extractor(GeneralScanner):
             
         except Exception as error:
             print("intelligent info extraction error" + repr(error))
-            extraction = []
+            self.exceptions_occurred.append(ExceptionsExtracted( error, "intelligent_info",repr(error)))
+            
         return extraction_fields
         
 
@@ -100,8 +95,8 @@ class Extractor(GeneralScanner):
             
 
         except Exception as error:
+            self.exceptions_occurred.append(ExceptionsExtracted( error, "basic_info",repr(error)))
             print("basic info extraction error" + repr(error))
-            extraction = []
 
         return extraction_fields
 
@@ -113,8 +108,9 @@ class Extractor(GeneralScanner):
             dict(): riy extracted
         """
         extracted_table = []
-        try:
-            for template, table in tables.items():
+        
+        for template, table in tables.items():
+            try:
             # Select page with RIY
             
                 extraction = general_table_inspection(table, create_pydantic_table_class(template), self.file_id, add_text=template.description)
@@ -123,22 +119,25 @@ class Extractor(GeneralScanner):
                 
                 
                 #extraction = clean_response_regex(regex_cleaning, extraction)
-        except Exception as error:
-            print("extract riy error" + repr(error))
+            except Exception as error:
+                print("extract riy error" + repr(error))
+                self.exceptions_occurred.append(ExceptionsExtracted( error, f"extracting tables: {template.title***REMOVED***",repr(error)))
 
 
         return extracted_table
 
     # REVIEW: NEED TO UPLOAD TABLE AS DF
-    def extract_complex_info(self, extracted):
-
+    def extract_complex_info(self, extracted) -> List[ExtractedField]:
+        
+        extraction: List[ExtractedField] =[]
         try:
-            extraction = llm_extraction_and_tag(
+            extracted = llm_extraction_and_tag(
                 extracted, self.template, self.file_id, create_pydantic_class(self.template), self.options
 ***REMOVED***
-            extraction = clean_response_regex(regex_cleaning, extraction)
+            extraction= extracted_from_pydantic(self, extracted)
         except Exception as error:
             print("extract entry exit costs error" + repr(error))
+            self.exceptions_occurred.append(ExceptionsExtracted( error, "complex_info",repr(error)))
 
         return extraction
         
