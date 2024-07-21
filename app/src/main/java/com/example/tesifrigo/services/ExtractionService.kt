@@ -2,6 +2,7 @@ package com.example.tesifrigo.services
 
 import android.app.Notification
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -29,6 +30,8 @@ import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 import com.googlecode.tesseract.android.TessBaseAPI
+import java.io.File
+import java.io.FileOutputStream
 
 @AndroidEntryPoint
 class ExtractionService : Service(){
@@ -105,6 +108,14 @@ class ExtractionService : Service(){
                     BitmapFactory.decodeStream(inputStream)
                 ***REMOVED***
             ***REMOVED***
+            val tessdataDir = File(filesDir, "tesseract/tessdata") // Store in app's filesDir
+            if (!tessdataDir.exists()) {
+                tessdataDir.mkdirs()
+            ***REMOVED***
+            if (tessdataDir.listFiles()?.isEmpty() == true) {
+                // If tessdata is empty, copy from assets to filesDir
+                copyAssetsToStorage(applicationContext, "tessdata", tessdataDir.absolutePath)
+            ***REMOVED***
 
             val base64Image = bitmap?.let {
                 val byteArrayOutputStream = ByteArrayOutputStream()
@@ -119,18 +130,13 @@ class ExtractionService : Service(){
             ***REMOVED***
             val py = Python.getInstance()
             val module = py.getModule("main_test")
-            val tessBaseAPI = TessBaseAPI()
-            val dataPath = py.getAssets().getAbsolutePath("tessdata")
-
-            val dataPath = "$filesDir/tesseract/" // Path to your assets folder
-            tessBaseAPI.init(dataPath, "eng") // Initialize with English language data
-
-
 
             val builtinsModule = py.getModule("builtins")
 
             builtinsModule["API_KEY_1"] = PyObject.fromJava(keyManager.getApiKey1())
             builtinsModule["API_KEY_2"] = PyObject.fromJava(keyManager.getApiKey2())
+            builtinsModule["TESSDATA_PREFIX"] = PyObject.fromJava(tessdataDir.absolutePath)
+
 
             val template= Template().apply {
                 title = "Sample Template"
@@ -177,3 +183,18 @@ class ExtractionService : Service(){
 
 
 ***REMOVED***
+
+private fun copyAssetsToStorage(context: Context, assetPath: String, targetDirectoryPath: String) {
+    val assetManager = context.assets
+
+    assetManager.list(assetPath)?.forEach { fileName ->
+        val inputStream = assetManager.open("$assetPath/$fileName")
+        val targetFile = File(targetDirectoryPath, fileName)
+
+        targetFile.parentFile?.mkdirs()
+        FileOutputStream(targetFile).use { outputStream ->
+            inputStream.copyTo(outputStream)
+        ***REMOVED***
+    ***REMOVED***
+***REMOVED***
+

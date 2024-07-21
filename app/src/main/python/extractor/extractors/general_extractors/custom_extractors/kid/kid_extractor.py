@@ -1,26 +1,10 @@
-from io import BytesIO
-import re
 from typing import Any, Dict, List
-from PIL import Image, ImageFile
 from classes.Extracted import ExtractedField, ExtractedTable
 from classes.Options import ExceptionsExtracted, Options
 from classes.Template import Template, TemplateTable
-from .insurance.kid.cleaning_kid import regex_cleaning, strips_cleaning
-
-
-from extractors.general_extractors.custom_extractors.kid.insurance.kid.tags_kid import (
-    InformazioniBase,
-    TabellaCostiGestione,
-    TabellaCostiIngresso,
-    TabellaRiy,
-    TabellaScenariPerformance,
-)
-from .insurance.kid.config_kid import prompts, word_representation
-
 from ...llm_functions import complex_table_inspection, general_table_inspection, llm_extraction, tag_only
 from ...extractor import GeneralScanner
 from ..kid.kid_utils import create_pydantic_class, create_intelligent_pydantic_class
-
 from ...llm_functions import (
     llm_extraction_and_tag,
 )

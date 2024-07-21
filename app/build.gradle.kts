@@ -6,6 +6,8 @@ plugins {
     id("dagger.hilt.android.plugin")
     id("io.realm.kotlin")
     kotlin("plugin.serialization") version "1.9.23"
+
+
 ***REMOVED***
 
 
@@ -69,24 +71,39 @@ android {
         productFlavors {
             getByName("py311") { version = "3.11" ***REMOVED***
         ***REMOVED***
-        defaultConfig{
+        defaultConfig {
             version = "3.11"
             pip {
                 // "-r"` followed by a requirements filename, relative to the
                 // project directory:
+                install("azure-ai-formrecognizer")
+                install("azure-core")
+                install("langchain")
                 install("numpy")
+                install("openai")
                 install("pandas")
-                install("-r", projectDir.absolutePath + "/src/main/python/requirements.txt")
+                install("pydantic")
+                install("pyodbc")
+                install("pypdf2")  // Use pypdf2 instead of pypdf
+                install("python-dotenv")
+                install("regex")
+                install("tiktoken")
+                install("typing-extensions")
+                install("pillow")
+                install("pytesseract")
+                install("pdf2image")
+                install("opencv-python-headless") // Use headless version for Android
+                //install("-r", projectDir.absolutePath + "/src/main/python/requirements.txt")
             ***REMOVED***
+            extractPackages("tesseract")
+
+
+
         ***REMOVED***
+    ***REMOVED***
         sourceSets {
         ***REMOVED***
-
-
-
-
     ***REMOVED***
-***REMOVED***
 
 dependencies {
 
@@ -136,6 +153,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation("io.realm.kotlin:library-base:1.11.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+
 ***REMOVED***
 kapt {
     correctErrorTypes = true

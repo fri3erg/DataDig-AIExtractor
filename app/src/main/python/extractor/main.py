@@ -1,24 +1,16 @@
 
 from datetime import date
-from PIL.ImageFile import ImageFile
-from pypdf import PdfReader, PdfWriter
 from classes.Extracted import Extracted
-from classes.Options import Options
+from classes.Options import ExceptionsExtracted, Options
 from extractors.general_extractors.custom_extractors.kid.insurance.kid.kid_extractor import DataExtractor
 # from extractors.Derivati.Spot_KID_extractor import write_info
 # from extractors.Derivati.Global_KID_extractor import GlobalExtractor
-from extractors.models import Models
 import logging
 import base64
-from PIL import Image
-from io import BytesIO
 import asyncio
-import pandas as pd
-from typing import Callable
+from typing import Callable, List
 from classes.Template import Template, TemplateField, TemplateTable
 from test.variables import images
-from dotenv import load_dotenv
-import os
 
 
 # Now use the 'api_key' and 'db_password' variables in your code
@@ -44,7 +36,8 @@ def main(base64_images : list , template: Template, progress_callback: Callable,
         # testing
         batch_size = 5
         parallel = True
-        exceptions_occurred = []
+        exceptions_occurred: List[ExceptionsExtracted] = []
+        extractor:DataExtractor | None = None
         # list all the pdf files in the folder
         print("START")
 
@@ -54,13 +47,15 @@ def main(base64_images : list , template: Template, progress_callback: Callable,
             extractor= DataExtractor(images, template,progress_callback, options)
             
         except Exception as error:
-            raise Exception("error in initializing DataExtractor" + repr(error))
+            exceptions_occurred.append(ExceptionsExtracted(error=error, error_location="initialization",error_description=repr(error)))
         
-        try: 
-            extraction, exceptions_occurred= asyncio.run(extractor.process())
+        try:
+            if extractor:
+                extraction= asyncio.run(extractor.process())
     
     
         except Exception as error:
+            exceptions_occurred.append(ExceptionsExtracted(error=error, error_location="main phase",error_description=repr(error)))
             print("main phase error" + repr(error))
 
 
@@ -72,6 +67,8 @@ def main(base64_images : list , template: Template, progress_callback: Callable,
         #excel_path = os.path.join(doc_folder + ".xlsx")
         # saves results
         #results.to_excel(excel_path, header=True, index=False)
+        if extraction:
+            extraction.add_exceptions(exceptions_occurred)
         print(extraction)
         return extraction
 

@@ -3,12 +3,7 @@ from azure.ai.formrecognizer._models import AnalyzeResult
 import pandas as pd
 from azure.ai.formrecognizer import DocumentAnalysisClient
 from azure.core.credentials import AzureKeyCredential
-from typing import List, Union
-from io import BytesIO
-from PIL import Image
 from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError
-
-
 from extractors.general_extractors.utils import format_pages_num
 
 # Will need authentication for prod app

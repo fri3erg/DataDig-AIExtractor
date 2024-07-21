@@ -1,9 +1,5 @@
 import re
-from types import UnionType
 from typing import Dict, List, Literal, Optional
-
-from sqlalchemy import desc
-
 from classes.Extracted import ExtractedField
 from classes.Template import Template, TemplateField, TemplateTable
 from extractors.general_extractors.utils import divide_regex

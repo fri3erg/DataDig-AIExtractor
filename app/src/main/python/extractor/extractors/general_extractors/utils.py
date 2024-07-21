@@ -1,21 +1,16 @@
 from collections import defaultdict
-from itertools import count
 import os
 import re
 import uuid
 from langchain_community.document_loaders import PyPDFLoader
-from typing import List, Union
-from PIL import Image, ImageOps
-import numpy as np
+from typing import List
+from PIL import Image
 from io import BytesIO
 import pytesseract
-import cv2
 from pdf2image import convert_from_bytes
 from langchain_community.document_loaders import UnstructuredExcelLoader
 import tiktoken
 import pandas as pd
-
-from classes.Extracted import ExtractedField
 
 
 def select_desired_page(text, words_repr):

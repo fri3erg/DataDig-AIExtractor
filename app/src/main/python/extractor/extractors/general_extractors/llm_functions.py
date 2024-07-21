@@ -1,9 +1,5 @@
-import re
-from typing import List
-from classes.Extracted import ExtractedField
 from classes.Options import Options
 from classes.Template import Template
-from extractors.general_extractors.custom_extractors.kid.kid_utils import extracted_from_pydantic
 from extractors.general_extractors.utils import select_desired_page, upload_df_as_excel
 from extractors.general_extractors.utils import num_tokens_from_string
 from langchain.prompts import PromptTemplate

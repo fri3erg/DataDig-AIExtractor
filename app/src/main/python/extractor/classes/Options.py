@@ -1,3 +1,6 @@
+from typing import List
+
+
 class Options:
     def __init__(self, model:str = "gpt-3.5-turbo", language:str|None=None, azure_ocr=False):
         self.model= model
@@ -10,3 +13,4 @@ class ExceptionsExtracted:
         self.error = error
         self.error_type = error_location
         self.error_description = error_description
+        

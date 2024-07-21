@@ -1,7 +1,6 @@
 import datetime
 import importlib
 import locale
-from extractors.general_extractors.config.json_config.json_kid import names_of_fields_to_clean_dot, prepare_json
 import json
 from .cost_config import available_costs
 

@@ -1,8 +1,5 @@
 from abc import abstractmethod
-from io import BytesIO
 from typing import Any, List
-from PIL.ImageFile import ImageFile
-from PIL import Image
 from classes.Extracted import Extracted, ExtractedField, ExtractedTable
 from classes.Options import ExceptionsExtracted, Options
 from ..models import Models
@@ -13,7 +10,6 @@ from .llm_functions import get_doc_language, llm_extraction
 from extractors.azure.document_intelligence import get_tables_from_doc
 from .utils import select_desired_page, select_desired_table
 from extractors.general_extractors.llm_functions import general_table_inspection
-
 from .config.JsonClasses import JSONExtraction
 import threading
 from classes.Template import Template
@@ -244,4 +240,4 @@ class GeneralScanner:
         return new_dict
 
     @abstractmethod
-    async def process(self)->tuple[Extracted, List[ExceptionsExtracted]]: ...
+    async def process(self)->Extracted: ...

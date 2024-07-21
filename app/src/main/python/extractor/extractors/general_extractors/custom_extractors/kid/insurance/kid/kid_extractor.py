@@ -1,18 +1,9 @@
-from io import BytesIO
-from math import cos
-import os
-
-from attr import field
-
 from classes.Extracted import Extracted, ExtractedField
 from classes.Options import ExceptionsExtracted, Options
 from extractors.models import Models
 from extractors.general_extractors.custom_extractors.kid.kid_extractor import Extractor
-
-from .....config.json_config.json_kid import renaming
 from classes.Template import Template, TemplateTable
 from typing import Any, Callable, List
-from PIL import Image, ImageFile
 class DataExtractor(Extractor):
 
     def __init__(self, images:list[bytes], template: Template, progress_callback: Callable, options:Options) -> None:
@@ -21,7 +12,7 @@ class DataExtractor(Extractor):
         
         
 
-    async def process(self) -> tuple[Extracted, List[ExceptionsExtracted]]:
+    async def process(self) -> Extracted:
         """main processor in different phases, first phases extracts the tables and general information,
         and target market, second phase extracts the rest of the fields.
 
@@ -78,7 +69,7 @@ class DataExtractor(Extractor):
 
             api_costs = self._process_costs()
             
-            self.extraction= Extracted(template=self.template, fields=self.extracted_fields, tables=self.extracted_tables, costs=api_costs)
+            self.extraction= Extracted(template=self.template, fields=self.extracted_fields, tables=self.extracted_tables, costs=api_costs, exceptions=self.exceptions_occurred)
 
 
         except Exception as error:
@@ -90,4 +81,4 @@ class DataExtractor(Extractor):
         print(self.extraction)
         Models.clear_resources_file(filename)
 
-        return self.extraction, self.exceptions_occurred
+        return self.extraction

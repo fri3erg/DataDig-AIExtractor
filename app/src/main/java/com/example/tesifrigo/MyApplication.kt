@@ -5,10 +5,13 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
+import com.example.tesifrigo.models.ExceptionOccurred
 import com.example.tesifrigo.models.Extraction
 import com.example.tesifrigo.models.ExtractionField
+import com.example.tesifrigo.models.ExtractionTable
 import com.example.tesifrigo.models.TemplateField
 import com.example.tesifrigo.models.Template
+import com.example.tesifrigo.models.TemplateTable
 import dagger.hilt.android.HiltAndroidApp
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
@@ -29,9 +32,12 @@ class MyApp: Application(){
         val configuration = RealmConfiguration.Builder(
             schema = setOf(
                 Extraction::class,
+                ExtractionField::class,
+                ExtractionTable::class,
                 Template::class,
                 TemplateField::class,
-                ExtractionField::class
+                TemplateTable::class,
+                ExceptionOccurred::class
 ***REMOVED***
         ).schemaVersion(4).build()
 
