@@ -16,11 +16,18 @@ import com.chaquo.python.PyObject
 import com.chaquo.python.Python
 import com.chaquo.python.android.AndroidPlatform
 import com.example.tesifrigo.R
+import com.example.tesifrigo.models.ExceptionOccurred
 import com.example.tesifrigo.models.Extracted
+import com.example.tesifrigo.models.Extraction
+import com.example.tesifrigo.models.ExtractionField
+import com.example.tesifrigo.models.ExtractionTable
+import com.example.tesifrigo.models.ExtractionTableRow
 import com.example.tesifrigo.models.Template
 import com.example.tesifrigo.models.TemplateField
+import com.example.tesifrigo.models.TemplateTable
 import com.example.tesifrigo.repositories.KeyManager
 import com.example.tesifrigo.repositories.ServiceRepository
+import com.example.tesifrigo.ui.extraction.ExtractionField
 import com.example.tesifrigo.viewmodels.Keys
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -30,6 +37,10 @@ import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 import com.googlecode.tesseract.android.TessBaseAPI
+import io.realm.kotlin.Realm
+import io.realm.kotlin.RealmConfiguration
+import io.realm.kotlin.types.RealmList
+import kotlinx.coroutines.async
 import java.io.File
 import java.io.FileOutputStream
 
@@ -72,9 +83,10 @@ class ExtractionService : Service(){
             intent?.getParcelableExtra<Uri>("imageUri")
         ***REMOVED***
         if (imageUri != null) {
+            val template = serviceRepository.getTemplate() ?: return
             // Process the image using a Coroutine
             CoroutineScope(Dispatchers.IO).launch {
-                processImage(imageUri, serviceRepository, keyManager)
+                processImage(imageUri, serviceRepository, keyManager, template)
             ***REMOVED***
         ***REMOVED***
 
@@ -94,8 +106,13 @@ class ExtractionService : Service(){
     ***REMOVED***
 
     // Simulate image processing for now
-    private fun processImage(imageUri: Uri?, serviceRepository: ServiceRepository, keyManager: KeyManager) {
+    private fun processImage(imageUri: Uri?, serviceRepository: ServiceRepository, keyManager: KeyManager, template: Template) {
         val localContext = this
+
+        val onResult: (PyObject) -> Unit = { result ->
+
+            serviceRepository.updateResult(extractResult(result, template))
+        ***REMOVED***
 
         serviceScope.launch {
             Log.d("TestService", "Processing image: $imageUri")
@@ -133,15 +150,11 @@ class ExtractionService : Service(){
 
             val builtinsModule = py.getModule("builtins")
 
-            builtinsModule["API_KEY_1"] = PyObject.fromJava(keyManager.getApiKey1())
-            builtinsModule["API_KEY_2"] = PyObject.fromJava(keyManager.getApiKey2())
+            builtinsModule["OPENAI_API_KEY"] = PyObject.fromJava(keyManager.getApiKey(Keys.API_KEY_1))
+            builtinsModule["AZURE_FORM_RECOGNIZER_KEY"] = PyObject.fromJava(keyManager.getApiKey(Keys.API_KEY_2))
+            builtinsModule["AZURE_FORM_RECOGNIZER_ENPOINT"] = PyObject.fromJava(keyManager.getApiKey(Keys.API_KEY_3))
             builtinsModule["TESSDATA_PREFIX"] = PyObject.fromJava(tessdataDir.absolutePath)
 
-
-            val template= Template().apply {
-                title = "Sample Template"
-                description = "This is a sample template"
-            ***REMOVED***
 
 
             val templateFields = template.fields.map { realmField ->
@@ -153,6 +166,16 @@ class ExtractionService : Service(){
                     realmField.tags.toList()
                 ***REMOVED***
             ***REMOVED***
+            val templateTables = template.tables.map { realmTable ->
+                TemplateTable().apply {
+                    realmTable.id.toHexString()  // Convert ObjectId to hex string
+                    realmTable.title
+                    realmTable.description
+                    realmTable.keywords.toList()
+                    realmTable.rows
+                    realmTable.columns
+                ***REMOVED***
+            ***REMOVED***
 
             val pythonTemplate = PyObject.fromJava(
                 Template().apply {
@@ -160,17 +183,22 @@ class ExtractionService : Service(){
                     template.title
                     template.description
                     templateFields
+                    templateTables
                     template.tags.toList()
 
                 ***REMOVED***
 ***REMOVED***
 
-            val pyResult = module.callAttr("process_data", base64Image,template, progressCallback).toString()
-            // Handle 'pyResult' on the main thread for UI updates if needed
+
+            val deferredResult = async {
+                module.callAttr("main", base64Image, pythonTemplate, progressCallback)
+            ***REMOVED***
+
+            val pyResult = deferredResult.await()  // Wait for the result from Python            // Handle 'pyResult' on the main thread for UI updates if needed
             Log.d("TestService", "Result: $pyResult")
+            onResult(pyResult)
+            progressCallback(100)
         ***REMOVED***
-        val result = Extracted()
-        this.serviceRepository.updateResult(result)
         stopSelf()
     ***REMOVED***
 
@@ -196,5 +224,73 @@ private fun copyAssetsToStorage(context: Context, assetPath: String, targetDirec
             inputStream.copyTo(outputStream)
         ***REMOVED***
     ***REMOVED***
+***REMOVED***
+
+private fun extractResult(pyResult:PyObject, template: Template): Extraction{
+    val extracted = Extraction().apply {
+        image = pyResult.get("image").toString()
+        format = pyResult.get("format").toString()
+        pyResult.get("tags")?.asList()?.let { tags.addAll(it.map { it.toString() ***REMOVED***) ***REMOVED***
+        extractionCosts = pyResult.get("extraction_costs").toString() // Adjust conversion as needed
+        pyResult.get("exceptions_occurred")?.asList()?.let {
+            exceptionsOccurred.addAll(
+                it.map { pyException ->
+                    ExceptionOccurred().apply {
+                        error = pyException.get("error").toString() // Assuming error is a string
+                        errorType = pyException.get("error_type").toString()
+                        errorDescription = pyException.get("error_description").toString()
+                    ***REMOVED***
+                ***REMOVED***
+***REMOVED***
+        ***REMOVED***
+        pyResult.get("extracted_fields")?.asList()?.let {
+            extractedFields.addAll(
+                it.map { pyExtractedField ->
+                    ExtractionField().apply {
+                        templateField = template.fields.first { it.id.toHexString() == pyExtractedField.get("template_field")
+                            ?.get("id")
+                            .toString() ***REMOVED***
+                        value = pyExtractedField.get("value").toString()
+                    ***REMOVED***
+                ***REMOVED***
+***REMOVED***
+        ***REMOVED***
+        extractedTables = pyResult.get("extracted_tables")?.asList()?.map { pyExtractedTable ->
+            extractTable(pyExtractedTable, template)
+        ***REMOVED*** as RealmList<ExtractionTable>
+
+    ***REMOVED***
+    return extracted
+***REMOVED***
+
+
+private fun extractTable(pyExtractedTable: PyObject, template: Template): ExtractionTable {
+
+
+    val realmExtractionTable = ExtractionTable().apply {
+        templateTable = template.tables.first { it.id.toHexString() == pyExtractedTable.get("template_table")
+            ?.get("id")
+            .toString() ***REMOVED***
+        dataframe= pyExtractedTable.get("dataframe").toString()
+        // Handle fields (nested dictionaries)
+        val rows = mutableListOf<ExtractionTableRow>()
+        val pyFields = pyExtractedTable.get("fields")?.asMap()
+        if (pyFields != null) {
+            for ((rowIndex, rowData) in pyFields) {
+                val fields = rowData.values.map { extractedField: PyObject ->
+                    ExtractionField().apply {
+                        templateTable
+                        value = extractedField.get("value").toString()
+                    ***REMOVED***
+                ***REMOVED***
+                rows.add(ExtractionTableRow().apply {
+                    this.rowIndex = rowIndex.toString()
+                    this.fields.addAll(fields)
+                ***REMOVED***)
+            ***REMOVED***
+            this.fields.addAll(rows)
+        ***REMOVED***
+    ***REMOVED***
+    return realmExtractionTable
 ***REMOVED***
 

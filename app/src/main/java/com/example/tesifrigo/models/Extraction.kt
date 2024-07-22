@@ -9,16 +9,14 @@ import org.mongodb.kbson.ObjectId
 
 class Extraction: RealmObject {
     @PrimaryKey var id: ObjectId = ObjectId()
-    var templateTitle: String = ""
-    var templateDescription: String = ""
     var extractedFields: RealmList<ExtractionField> = realmListOf()
     var extractedTables: RealmList<ExtractionTable> = realmListOf()
-    var image: String = ""
-    var template: Template? = null
-    var format: String = ""
-    var tags: RealmList<String> = realmListOf()
     var extractionCosts: String = "" // Store as JSON string
     var exceptionsOccurred: RealmList<ExceptionOccurred> = realmListOf()
+    var image: String = ""
+    var template: Template = Template()
+    var format: String = ""
+    var tags: RealmList<String> = realmListOf()
 
     /*constructor(title: String, shortDescription: String, longDescription: String, image: String, type: String) {
         this.title = title
@@ -31,14 +29,18 @@ class Extraction: RealmObject {
 class ExtractionTable : RealmObject {
     @PrimaryKey
     var id: ObjectId = ObjectId()
-    var templateTable: TemplateTable? = null
-    var keywords: RealmList<String> = realmListOf()
+    var templateTable: TemplateTable = TemplateTable()
     var dataframe: String = "" // Store dataframe as JSON or another format
-    var modelUsed: String = ""
-    var extractionCost: String = "" // Store cost as JSON or another format
-    var title: String = ""
+    var fields: RealmList<ExtractionTableRow> = realmListOf()
+***REMOVED***
+
+class ExtractionTableRow: RealmObject {
+    @PrimaryKey
+    var id: ObjectId = ObjectId()
+    var rowIndex: String = "" // Or an integer if rows are numbered
     var fields: RealmList<ExtractionField> = realmListOf()
 ***REMOVED***
+
 
 
 class ExceptionOccurred : RealmObject {
@@ -52,17 +54,9 @@ class ExceptionOccurred : RealmObject {
 class ExtractionField : RealmObject {
     @PrimaryKey
     var id: ObjectId = ObjectId()
-    var templateField: TemplateField? = null
-    var title: String= ""
-    var description: String = ""
-    var extraDescription: String = ""
+    var templateField: TemplateField = TemplateField()
     var value: String = ""
-    var type: String = ""
-    var tags: RealmList<String> = realmListOf()
-    var modelUsed: String = ""
     //var extraction: Extraction? = null // Required: Every field belongs to an extraction
-
-
 ***REMOVED***
 
 

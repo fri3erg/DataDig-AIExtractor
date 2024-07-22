@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.tesifrigo.MyApp
 import com.example.tesifrigo.models.TemplateField
 import com.example.tesifrigo.models.Template
+import com.example.tesifrigo.models.TemplateTable
 import io.realm.kotlin.ext.query
 import io.realm.kotlin.ext.realmListOf
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -107,28 +108,53 @@ class TemplateViewModel : ViewModel() {
                 val fieldsToDelete = query<TemplateField>().find()
                 delete(fieldsToDelete)
 
+                val tablesToDelete = query<TemplateTable>().find()
+                delete(tablesToDelete)
+
 
                 val templateField1 = TemplateField().apply {
                     title = "Field 1"
                     description = "This is a sample field"
+                    extraDescription = "This is an extra description"
+                    type = "text"
+                    required = true
+                    intelligent_extraction = false
                     tags = realmListOf("freezer")
                 ***REMOVED***
                 val templateField2 = TemplateField().apply {
                     title = "Field 2"
                     description = "This is a sample field 2"
+                    extraDescription = "This is an extra description 2"
+                    type = "text"
+                    required = true
+                    intelligent_extraction = true
                     tags = realmListOf("freezer")
                 ***REMOVED***
                 val templateField3 = TemplateField().apply {
                     title = "Field 3"
                     description = "This is a sample field 3"
+                    extraDescription = "This is an extra description 3"
+                    type = "text"
+                    required = true
+                    intelligent_extraction = false
                     tags = realmListOf("freezer")
                 ***REMOVED***
+
+                val templateTable1 = TemplateTable().apply {
+                    title = "Table 1"
+                    description = "This is a sample table"
+                    keywords = realmListOf("freezer")
+                    rows = realmListOf(templateField1, templateField2)
+                    columns = realmListOf(templateField2)
+                ***REMOVED***
+
                 val template1 = Template().apply {
                     title = "Sample Template"
                     description = "This is a sample template"
                     fields = realmListOf(
                         templateField1,
         ***REMOVED***
+                    tables = realmListOf(templateTable1)
                     tags = realmListOf("freezer")
                     tables = realmListOf()
                 ***REMOVED***
@@ -138,6 +164,7 @@ class TemplateViewModel : ViewModel() {
                     fields = realmListOf(
                         templateField2,
         ***REMOVED***
+                    tables = realmListOf()
                     tags = realmListOf("freezer", "fridge")
                     tables = realmListOf()
 
@@ -148,6 +175,8 @@ class TemplateViewModel : ViewModel() {
                     fields = realmListOf(
                         templateField3
         ***REMOVED***
+                    tables = realmListOf()
+
                     tags = realmListOf("freezer", "fridge")
                     tables = realmListOf()
                 ***REMOVED***

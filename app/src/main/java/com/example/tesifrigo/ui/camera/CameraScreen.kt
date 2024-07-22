@@ -42,8 +42,10 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.example.tesifrigo.models.Template
 import com.example.tesifrigo.services.ExtractionService
 import com.example.tesifrigo.viewmodels.ServiceViewModel
+import com.example.tesifrigo.viewmodels.TemplateViewModel
 import java.io.File
 
 
@@ -52,8 +54,16 @@ fun CameraScreen(templateId: String?) {
 
 
     val context = LocalContext.current
-
+    val serviceViewModel = hiltViewModel<ServiceViewModel>()
     var imageUri by remember { mutableStateOf<Uri?>(null) ***REMOVED***
+    val templateViewModel = hiltViewModel<TemplateViewModel>()
+    var template by remember { mutableStateOf<Template?>(null) ***REMOVED***
+    if (templateId != null) {
+        template = templateViewModel.queryTemplate(templateId).collectAsState().value
+        if (template != null){
+            serviceViewModel.setTemplate(template!!)
+        ***REMOVED***
+    ***REMOVED***
 
     Column (modifier = Modifier.fillMaxSize()){
 

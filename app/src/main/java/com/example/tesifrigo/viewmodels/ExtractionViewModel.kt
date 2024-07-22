@@ -6,7 +6,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.tesifrigo.MyApp
 import com.example.tesifrigo.models.Extraction
 import com.example.tesifrigo.models.ExtractionField
+import com.example.tesifrigo.models.ExtractionTable
+import com.example.tesifrigo.models.ExtractionTableRow
 import com.example.tesifrigo.models.Template
+import com.example.tesifrigo.models.TemplateField
+import com.example.tesifrigo.models.TemplateTable
 import com.example.tesifrigo.utils.calculateCloseness
 import io.realm.kotlin.ext.query
 import io.realm.kotlin.ext.realmListOf
@@ -46,23 +50,23 @@ class ExtractionViewModel: ViewModel(){
 
     val sortedExtractions: StateFlow<List<Extraction>> = combine(
         extractions, sortOrder, ascending, searchText
-    ) { templateList, order, isAscending, searchQuery ->
-        templateList.sortedWith { t1, t2 ->
+    ) { extractionList, order, isAscending, searchQuery ->
+        extractionList.sortedWith { t1, t2 ->
             if (searchQuery.isBlank()) { // Check if searchQuery is empty
                 // Default sorting if searchQuery is empty
                 when (order) {
-                    SortOrder.BY_TITLE -> compareValuesBy(t1, t2) { it.title ***REMOVED*** * if (isAscending) 1 else -1
+                    SortOrder.BY_TITLE -> compareValuesBy(t1, t2) { it.template?.title ***REMOVED*** * if (isAscending) 1 else -1
                     SortOrder.BY_DATE -> compareValuesBy(t1, t2) { it.id ***REMOVED*** * if (isAscending) 1 else -1
                 ***REMOVED***
             ***REMOVED*** else {
                 // Closeness-based sorting if searchQuery is not empty
-                val closenessComparison = compareValuesBy(t1, t2) { template ->
-                    calculateCloseness(template.title, searchQuery)
+                val closenessComparison = compareValuesBy(t1, t2) { extraction ->
+                    extraction.template?.let { calculateCloseness(it.title, searchQuery) ***REMOVED***
                 ***REMOVED***
                 if (closenessComparison == 0) {
                     // If a tie, apply secondary comparison
                     when (order) {
-                        SortOrder.BY_TITLE -> compareValuesBy(t1, t2) { it.title ***REMOVED*** * if (isAscending) 1 else -1
+                        SortOrder.BY_TITLE -> compareValuesBy(t1, t2) { it.template?.title ***REMOVED*** * if (isAscending) 1 else -1
                         SortOrder.BY_DATE -> compareValuesBy(t1, t2) { it.id ***REMOVED*** * if (isAscending) 1 else -1
                     ***REMOVED***
                 ***REMOVED*** else {
@@ -92,77 +96,133 @@ class ExtractionViewModel: ViewModel(){
                 delete(extractionToDelete)
                 val extractionFieldToDelete = query<ExtractionField>().find()
                 delete(extractionFieldToDelete)
+                val extractionTableToDelete = query<ExtractionTable>().find()
+                delete(extractionTableToDelete)
 
 
-                val template1= Template().apply {
-                    title = "Sample Template"
-                    description = "This is a sample template"
-
-                ***REMOVED***
-                val template2= Template().apply {
-                    title = "Sample Template 2"
-                    description = "This is a sample template 2"
-                ***REMOVED***
-                val template3= Template().apply {
-                    title = "Sample Template 3"
-                    description = "This is a sample template 3"
-                ***REMOVED***
-
-                val extractionField1 = ExtractionField().apply {
+                val templateField1 = TemplateField().apply {
                     title = "Field 1"
                     description = "This is a sample field"
                     extraDescription = "This is an extra description"
-                    extracted = "This is an extracted value"
                     type = "text"
-                    tags = realmListOf("Tag 1",
-                        "Tag 2"
-        ***REMOVED***
+                    required = true
+                    intelligent_extraction = false
+                    tags = realmListOf("freezer")
                 ***REMOVED***
-                val extractionField2 = ExtractionField().apply {
+                val templateField2 = TemplateField().apply {
                     title = "Field 2"
                     description = "This is a sample field 2"
                     extraDescription = "This is an extra description 2"
-                    extracted = "This is an extracted value 2"
                     type = "text"
-                    tags = realmListOf("Tag 1",
-                        "Tag 2"
-        ***REMOVED***
+                    required = true
+                    intelligent_extraction = true
+                    tags = realmListOf("freezer")
                 ***REMOVED***
-                val extractionField3 = ExtractionField().apply {
+                val templateField3 = TemplateField().apply {
                     title = "Field 3"
                     description = "This is a sample field 3"
                     extraDescription = "This is an extra description 3"
-                    extracted = "This is an extracted value 3"
                     type = "text"
-                    tags = realmListOf("Tag 1",
-                        "Tag 2"
-        ***REMOVED***
+                    required = true
+                    intelligent_extraction = false
+                    tags = realmListOf("freezer")
                 ***REMOVED***
 
+                val templateTable1 = TemplateTable().apply {
+                    title = "Table 1"
+                    description = "This is a sample table"
+                    keywords = realmListOf("freezer")
+                    rows = realmListOf(templateField1, templateField2)
+                    columns = realmListOf(templateField2)
+                ***REMOVED***
 
+                val template1 = Template().apply {
+                    title = "Sample Template"
+                    description = "This is a sample template"
+                    fields = realmListOf(
+                        templateField1,
+        ***REMOVED***
+                    tables = realmListOf(templateTable1)
+                    tags = realmListOf("freezer")
+                    tables = realmListOf()
+                ***REMOVED***
+                val template2 = Template().apply {
+                    title = "Sample Template 2"
+                    description = "This is a sample template 2"
+                    fields = realmListOf(
+                        templateField2,
+        ***REMOVED***
+                    tables = realmListOf()
+                    tags = realmListOf("freezer", "fridge")
+                    tables = realmListOf()
+
+                ***REMOVED***
+                val template3 = Template().apply {
+                    title = "Sample Template 3"
+                    description = "This is a sample template 3"
+                    fields = realmListOf(
+                        templateField3
+        ***REMOVED***
+                    tables = realmListOf()
+
+                    tags = realmListOf("freezer", "fridge")
+                    tables = realmListOf()
+                ***REMOVED***
+
+                val extractionField1 = ExtractionField().apply {
+                    templateField = templateField1
+
+                    value = "This is an extracted value"
+                ***REMOVED***
+                val extractionField2 = ExtractionField().apply {
+                    templateField = templateField2
+                    value = "This is an extracted value 2"
+
+
+                ***REMOVED***
+                val extractionField3 = ExtractionField().apply {
+                    templateField = templateField3
+                    value = "This is an extracted value 3"
+                ***REMOVED***
+
+                val extractionTableRow1 = ExtractionTableRow().apply {
+                    rowIndex = "1"
+                    fields = realmListOf(extractionField1, extractionField2)
+                ***REMOVED***
+                val extractionTableRow2 = ExtractionTableRow().apply {
+                    rowIndex = "2"
+                    fields = realmListOf(extractionField2)
+                ***REMOVED***
+
+                val extractedTable1 = ExtractionTable().apply {
+                    templateTable = templateTable1
+                    dataframe = "This is a dataframe"
+                    fields = realmListOf(extractionTableRow1, extractionTableRow2)
+                ***REMOVED***
 
                 val extraction1 = Extraction().apply {
-                    title = "Sample Extraction"
-                    description = "This is a sample extraction"
                     image = "https://www.example.com/image.jpg"
                     format= "cvs"
-                    fields = realmListOf(extractionField1)
+                    extractedFields = realmListOf(extractionField1)
+                    extractedTables = realmListOf(extractedTable1)
+                    extractionCosts = "100"
+                    exceptionsOccurred = realmListOf()
                     template = template1
                 ***REMOVED***
                 val extraction2 = Extraction().apply {
-                    title = "Sample Extraction 2"
-                    description = "This is a sample extraction 2"
                     image = "https://www.example.com/image2.jpg"
                     format= "cvs"
-                    fields = realmListOf( extractionField2)
+                    extractedFields = realmListOf(extractionField2)
+                    extractionCosts = "200"
+                    exceptionsOccurred = realmListOf()
                     template = template2
                 ***REMOVED***
                 val extraction3 = Extraction().apply {
-                    title = "Sample Extraction 3"
-                    description = "This is a sample extraction 3"
                     image = "https://www.example.com/image3.jpg"
                     format= "json"
-                    fields = realmListOf(extractionField3)
+                    extractedFields = realmListOf(extractionField3)
+                    extractionCosts = "300"
+                    exceptionsOccurred = realmListOf()
                     template = template3
                 ***REMOVED***
 
@@ -174,34 +234,13 @@ class ExtractionViewModel: ViewModel(){
         ***REMOVED***
 
     ***REMOVED***
-    fun updateExtraction(extraction: Extraction, modifiedValue: Pair<String, String>, index: Int) {
+    fun updateExtraction(extraction: Extraction, modifiedValue: String, index: Int) {
         viewModelScope.launch {
             realm.write { // Start a write transaction
                 val latestExtraction = findLatest(extraction) ?: copyToRealm(extraction)  // Find or create the latest extraction
-                modifiedValue.let { (field, newText) ->
-                    when (field) {
-                        "extra" -> {
-                            latestExtraction.fields[index].extraDescription = newText
-                        ***REMOVED***
-                        "description" -> {
-                            latestExtraction.fields[index].description = newText
-                        ***REMOVED***
-                        "extracted" -> {
-                            latestExtraction.fields[index].extracted = newText
-                    ***REMOVED***
-                        else -> {
-                            // Handle other cases if needed
-                        ***REMOVED***
-                    ***REMOVED***
-                ***REMOVED***
+                latestExtraction.extractedFields[index].value = modifiedValue
 
                 // Update properties on latestExtraction, not extraction
-                latestExtraction.apply {
-                    title = extraction.title
-                    description = extraction.description
-                    format = extraction.format
-                    // fields = extraction.fields // Don't update RealmList directly
-                ***REMOVED***
             ***REMOVED***
         ***REMOVED***
     ***REMOVED***

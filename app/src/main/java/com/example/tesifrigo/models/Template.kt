@@ -14,8 +14,8 @@ class Template: RealmObject {
     var title: String = ""
     var description: String = ""
     var fields: RealmList<TemplateField> = realmListOf()
-    var tags: RealmList<String> = realmListOf()
     var tables: RealmList<TemplateTable> = realmListOf()  // Add this line
+    var tags: RealmList<String> = realmListOf()
 
 
 ***REMOVED***
@@ -35,9 +35,9 @@ class TemplateField : RealmObject {
     var id: ObjectId = ObjectId()
     var title: String= ""
     var description: String = ""
+    var extraDescription: String = ""
     var type: String = ""
     var required: Boolean = false
-    var extraDescription: String = ""
     var tags: RealmList<String> = realmListOf()
     var intelligent_extraction: Boolean = false
 

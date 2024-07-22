@@ -29,6 +29,23 @@ fun EditableTextWithTitle(
     ***REMOVED***
 ***REMOVED***
 
+@Composable
+fun TextWithTitle(
+    title: String,
+    text: String,
+    modifier: Modifier
+) {
+    Column {
+        Text(
+            text = title,
+        )
+        Text(
+            text = text,
+            modifier = modifier
+        )
+    ***REMOVED***
+***REMOVED***
+
 
 fun calculateCloseness(text1: String, text2: String): Int {//simple Levenshtein implementation
     if (text1 == text2) return 0  // Identical strings

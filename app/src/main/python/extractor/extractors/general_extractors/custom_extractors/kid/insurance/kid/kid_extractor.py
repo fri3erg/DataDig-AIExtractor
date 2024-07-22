@@ -24,8 +24,10 @@ class DataExtractor(Extractor):
         complex_info_present: bool = False
         results = {***REMOVED***
         tables = {***REMOVED***
+        tables_present: bool = self.template.tables != [] or self.options.azure_ocr
+        intelligent_present: bool = any(field.intelligent_extraction for field in self.template.fields)
+        
         try:
-            tables_present: bool = self.template.tables != [] or self.options.azure_ocr
             #complex_info_present: bool = any(field.extra_description for field in self.template.fields)
 
             if tables_present:
@@ -35,11 +37,14 @@ class DataExtractor(Extractor):
             
             functions_parameters = {
                 "basic_info": {"function": self.extract_basic_info, "args": {"template": basic_template***REMOVED******REMOVED***,
-                **({"intelligent_info": {"function": self.extract_intelligent_info, "args": {"template": intelligent_template***REMOVED******REMOVED******REMOVED*** if intelligent_template.fields else {***REMOVED***)
+                **({"intelligent_info": {"function": self.extract_intelligent_info, "args": {"template": intelligent_template***REMOVED******REMOVED******REMOVED*** if intelligent_present else {***REMOVED***)
             ***REMOVED***
             results = self.threader(functions_parameters)
             self.extracted_fields += results.get("basic_info") or []
             self.extracted_fields += results.get("intelligent_info") or []
+            for condition in [tables_present, complex_info_present, False]:
+                self.progress += 0.30 if not condition else 0
+            self.progress_callback(self.progress)
 
         except Exception as error:
             self.exceptions_occurred.append(ExceptionsExtracted(error=error, error_location="first stage",error_description=repr(error)))
@@ -66,6 +71,8 @@ class DataExtractor(Extractor):
 
             # REVIEW: what name do they need?
             filename = self.template.title
+            
+            self.progress_callback(0.95)
 
             api_costs = self._process_costs()
             
@@ -80,5 +87,7 @@ class DataExtractor(Extractor):
 
         print(self.extraction)
         Models.clear_resources_file(filename)
+        
+        self.progress_callback(0.99)
 
         return self.extraction

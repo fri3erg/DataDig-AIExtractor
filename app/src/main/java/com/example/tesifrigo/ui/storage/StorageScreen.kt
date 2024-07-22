@@ -126,9 +126,9 @@ fun ExtractionItem(extraction: Extraction, viewModel:ExtractionViewModel, navCon
             modifier = Modifier
                 .padding(16.dp)
         ) {
-            Text(extraction.title, style = MaterialTheme.typography.headlineMedium)
+            extraction.template?.let { Text(it.title, style = MaterialTheme.typography.headlineMedium) ***REMOVED***
             Spacer(Modifier.height(4.dp))
-            Text(extraction.description, style = MaterialTheme.typography.bodyMedium)
+            extraction.template?.let { Text(it.description, style = MaterialTheme.typography.bodyMedium) ***REMOVED***
             Spacer(Modifier.height(8.dp))
 
             Row(

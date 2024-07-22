@@ -18,6 +18,7 @@ import androidx.navigation.NavHostController
 import com.example.tesifrigo.models.Extraction
 import com.example.tesifrigo.models.ExtractionField
 import com.example.tesifrigo.utils.EditableTextWithTitle
+import com.example.tesifrigo.utils.TextWithTitle
 import com.example.tesifrigo.viewmodels.ExtractionViewModel
 
 
@@ -32,9 +33,9 @@ fun SingleExtractionScreen(
     val extraction by  viewModel.queryTemplate(templateId).collectAsState(initial = null)
 
     if (extraction != null) {
-    Text(text = extraction!!.title)
+    Text(text = extraction!!.template.title)
     LazyColumn {
-            items(extraction!!.fields.size) { index ->  // Iterate over fields directly
+            items(extraction!!.extractedFields.size) { index ->  // Iterate over fields directly
                 ExtractionField(extraction!!, index, viewModel)
             ***REMOVED***
         ***REMOVED***
@@ -52,42 +53,36 @@ fun ExtractionField (
     index: Int,
     viewModel: ExtractionViewModel
 ) {
-    EditableTextWithTitle(
-        title = extraction.fields[index].title,
-        text = extraction.fields[index].description,
+    TextWithTitle(
+        title = extraction.extractedFields[index].templateField.title,
+        text = extraction.extractedFields[index].templateField.description,
         modifier= Modifier.padding(6.dp),
-        onTextChange = { newText ->
-            viewModel.updateExtraction(extraction, "description" to newText , index)
-        ***REMOVED***
+
     )
-    if(extraction.fields[index].extraDescription!=""){
-        EditableTextWithTitle(
+    if(extraction.extractedFields[index].templateField.extraDescription!=""){
+        TextWithTitle(
             title = "extra description",
-            text = extraction.fields[index].extraDescription,
+            text = extraction.extractedFields[index].templateField.extraDescription,
             modifier= Modifier.padding(0.dp),
-            onTextChange = { newText ->
-                viewModel.updateExtraction(extraction, "extra" to newText , index)
-            ***REMOVED***
+
         )
     ***REMOVED***
     EditableTextWithTitle(
         title = "Extracted text",
-        text = extraction.fields[index].extracted,
+        text = extraction.extractedFields[index].value,
         modifier= Modifier.padding(6.dp),
         onTextChange = { newText ->
-            viewModel.updateExtraction(extraction, "extracted" to newText , index)
+            viewModel.updateExtraction(extraction, newText , index)
         ***REMOVED***
     )
-    EditableTextWithTitle(
+    TextWithTitle(
         title = "Type",
-        text = extraction.fields[index].type,
+        text = extraction.extractedFields[index].templateField.type,
         modifier= Modifier.padding(6.dp),
-        onTextChange = { newText ->
-            viewModel.updateExtraction(extraction, "type" to newText , index)
-        ***REMOVED***
+
     )
     LazyRow {
-            items(extraction.fields[index].tags) { field ->
+            items(extraction.extractedFields[index].templateField.tags) { field ->
                 Box(modifier = Modifier.padding(8.dp)) {
                     Text(text = field, modifier = Modifier
                         .padding(8.dp)

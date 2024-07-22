@@ -2,25 +2,24 @@ package com.example.tesifrigo.repositories
 
 import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
+import com.example.tesifrigo.viewmodels.Keys
 import javax.inject.Inject
 
 class KeyManager @Inject constructor(
     private val encryptedSharedPrefs: SharedPreferences
 ) {
-    fun storeApiKey1(apiKey: String) {
-        encryptedSharedPrefs.edit().putString("api_key_1", apiKey).apply()
+    fun storeApiKey(apiKey: String, number:Keys) {
+            encryptedSharedPrefs.edit().putString(number.toString(), apiKey).apply()
     ***REMOVED***
 
-    fun storeApiKey2(apiKey: String) {
-        encryptedSharedPrefs.edit().putString("api_key_2", apiKey).apply()
+
+
+
+        fun getApiKey(number: Keys): String? {
+                return encryptedSharedPrefs.getString(number.toString(), null)
+        ***REMOVED***
+
     ***REMOVED***
 
-    fun getApiKey1(): String? {
-        return encryptedSharedPrefs.getString("api_key_1", null)
-    ***REMOVED***
 
-    fun getApiKey2(): String? {
-        return encryptedSharedPrefs.getString("api_key_2", null)
-    ***REMOVED***
-***REMOVED***
 

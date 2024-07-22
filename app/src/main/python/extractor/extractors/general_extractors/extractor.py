@@ -42,7 +42,7 @@ class GeneralScanner:
         if not options.language:
             self.options.language = get_doc_language(self.text, self.file_id)
         self.template: Template = template
-
+        self.progress:float= 0
         self.di_tables_pages = {***REMOVED***
         self.raw_data_pages = {***REMOVED***
         self.exceptions_occurred: List[ExceptionsExtracted] = []

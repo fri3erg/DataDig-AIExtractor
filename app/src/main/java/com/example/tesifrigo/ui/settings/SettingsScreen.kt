@@ -43,8 +43,8 @@ fun SettingsScreen() {
             text = "Settings",
         )
         ClickableWebLink(
-            text = "API Key",
-            url = "https://www.example.com",
+            text = "OpenAI API KEY",
+            url = "https://platform.openai.com/api-keys",
             color = Color.Blue,
             fontSize = TextUnit.Unspecified,
             fontWeight = FontWeight.Bold,
@@ -54,11 +54,11 @@ fun SettingsScreen() {
         ApiKeyInput(
             key = Keys.API_KEY_1,
             viewModel = serviceViewModel,
-            keyName = "API Key 1"
+            keyName = "OpenAI API Key"
         )
         ClickableWebLink(
-            text = "API Key w",
-            url = "https://www.example.com",
+            text = "AZURE API KEY",
+            url = "https://portal.azure.com/#create/Microsoft.CognitiveServicesFormRecognizer",
             color = Color.Blue,
             fontSize = TextUnit.Unspecified,
             fontWeight = FontWeight.Bold,
@@ -68,7 +68,12 @@ fun SettingsScreen() {
         ApiKeyInput(
             key = Keys.API_KEY_2,
             viewModel = serviceViewModel,
-            keyName = "API Key w"
+            keyName = "AZURE API Key"
+        )
+        ApiKeyInput(
+            key = Keys.API_KEY_3,
+            viewModel = serviceViewModel,
+            keyName = "AZURE ENDPOINT"
         )
 
     ***REMOVED***
