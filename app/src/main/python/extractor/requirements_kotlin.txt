@@ -46,7 +46,7 @@ frozenlist==1.4.1
     # via
     #   aiohttp
     #   aiosignal
-greenlet==3.0.3
+#greenlet==3.0.3
     # via sqlalchemy
 h11==0.14.0
     # via httpcore
@@ -85,13 +85,13 @@ marshmallow==3.20.2
     # via dataclasses-json
 msrest==0.7.1
     # via azure-ai-formrecognizer
-multidict==6.0.4
+#multidict==6.0.4
     # via
     #   aiohttp
     #   yarl
 mypy-extensions==1.0.0
     # via typing-inspect
-numpy==1.26.3
+#numpy==1.26.3
     # via
     #   -r requirements.in
     #   langchain
@@ -102,18 +102,18 @@ oauthlib==3.2.2
     # via requests-oauthlib
 openai==1.9.0
     # via -r requirements.in
-opencv-python==4.10.0.84
+#opencv-python==4.10.0.84
     # via -r requirements.in
 packaging==23.2
     # via
     #   langchain-core
     #   marshmallow
     #   pytesseract
-pandas==2.2.0
+#pandas==2.2.0
     # via -r requirements.in
 pdf2image==1.17.0
     # via -r requirements.in
-pillow==10.4.0
+#pillow==10.4.0
     # via
     #   -r requirements.in
     #   pdf2image
@@ -140,7 +140,7 @@ pyyaml==6.0.1
     #   langchain
     #   langchain-community
     #   langchain-core
-regex==2023.12.25
+#regex==2023.12.25
     # via
     #   -r requirements.in
     #   tiktoken

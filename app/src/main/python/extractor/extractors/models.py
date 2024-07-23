@@ -1,17 +1,10 @@
-import json
-from pydantic import BaseModel, ValidationError,parse_obj_as
-from .azure.openai import azure_openai_model
+from pydantic import BaseModel, ValidationError
+#import tiktoken
+from extractors.general_extractors.utils import num_tokens_from_string
 import threading
-from langchain.chains.openai_functions.tagging import create_tagging_chain_pydantic
-import tiktoken
 from .general_extractors.config.cost_config import cost_per_token
 from langchain.chains import LLMChain
 import openai
-from langchain.schema import (
-    AIMessage,
-    HumanMessage,
-    SystemMessage
-)
 from langchain.llms.base import LLM
 from typing import List, Optional, Any, Dict
 from langchain.prompts import ChatPromptTemplate
@@ -20,9 +13,7 @@ from langchain.chat_models import ChatOpenAI # use ChatOpenAI from the core libr
 import os
 import openai
 import threading
-import tiktoken
 from langchain.llms.base import LLM
-from langchain.schema import SystemMessage
 from langchain.prompts import ChatPromptTemplate
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
@@ -161,12 +152,12 @@ class Models(LLM):
             if file_id not in cls._file_locks:
                 cls._file_locks.update({file_id: threading.Lock()***REMOVED***)
             lock = cls._file_locks[file_id]
-            encoding = tiktoken.encoding_for_model(model)
+            #encoding = tiktoken.encoding_for_model(model)
             for i in inputs:
                 with lock:
                     cls._costs[file_id][model]["tokens"] = cls._costs[file_id].setdefault(model, {***REMOVED***).get(
                         "tokens", 0
-        ***REMOVED*** + (len(encoding.encode(str(i))))
+        ***REMOVED*** + num_tokens_from_string(i)
                     cls._costs[file_id][model]["cost"] = (
                         cls._costs[file_id][model].get("tokens", 0) * cost_per_token["input"][model]
         ***REMOVED***
@@ -174,7 +165,7 @@ class Models(LLM):
                 with lock:
                     cls._costs[file_id][model]["tokens"] = cls._costs[file_id].setdefault(model, {***REMOVED***).get(
                         "tokens", 0
-        ***REMOVED*** + (len(encoding.encode(str(o))))
+        ***REMOVED*** + num_tokens_from_string(o)
                     cls._costs[file_id][model]["cost"] = (
                         cls._costs[file_id][model].get("tokens", 0) * cost_per_token["output"][model]
         ***REMOVED***

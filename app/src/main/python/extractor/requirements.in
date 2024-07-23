@@ -5,11 +5,10 @@ numpy
 openai
 pandas
 pydantic
-pyodbc
 pypdf                   # Removed PyPDF2, keeping pypdf as it's newer
 python-dotenv
 regex
-tiktoken
+#tiktoken
 typing-extensions       # Removed typing-inspect as extensions is the newer standard
 pillow
 pytesseract

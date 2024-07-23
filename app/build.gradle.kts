@@ -76,24 +76,14 @@ android {
             pip {
                 // "-r"` followed by a requirements filename, relative to the
                 // project directory:
-                install("azure-ai-formrecognizer")
-                install("azure-core")
-                install("langchain")
                 install("numpy")
-                install("openai")
                 install("pandas")
-                install("pydantic")
-                install("pyodbc")
-                install("pypdf2")  // Use pypdf2 instead of pypdf
-                install("python-dotenv")
+                install("greenlet")
+                install("multidict")
+                //install("opencv-python")
                 install("regex")
-                install("tiktoken")
-                install("typing-extensions")
                 install("pillow")
-                install("pytesseract")
-                install("pdf2image")
-                install("opencv-python-headless") // Use headless version for Android
-                //install("-r", projectDir.absolutePath + "/src/main/python/requirements.txt")
+                install("-r", projectDir.absolutePath + "/src/main/python/extractor/requirements_kotlin.txt")
             ***REMOVED***
             extractPackages("tesseract")
 

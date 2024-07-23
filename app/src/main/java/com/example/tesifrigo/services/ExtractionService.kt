@@ -197,7 +197,7 @@ class ExtractionService : Service(){
             val pyResult = deferredResult.await()  // Wait for the result from Python            // Handle 'pyResult' on the main thread for UI updates if needed
             Log.d("TestService", "Result: $pyResult")
             onResult(pyResult)
-            progressCallback(100)
+            progressCallback(1f)
         ***REMOVED***
         stopSelf()
     ***REMOVED***

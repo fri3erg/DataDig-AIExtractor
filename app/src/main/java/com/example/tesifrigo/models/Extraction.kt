@@ -14,7 +14,7 @@ class Extraction: RealmObject {
     var extractionCosts: String = "" // Store as JSON string
     var exceptionsOccurred: RealmList<ExceptionOccurred> = realmListOf()
     var image: String = ""
-    var template: Template = Template()
+    var template: Template? = null
     var format: String = ""
     var tags: RealmList<String> = realmListOf()
 
@@ -29,7 +29,7 @@ class Extraction: RealmObject {
 class ExtractionTable : RealmObject {
     @PrimaryKey
     var id: ObjectId = ObjectId()
-    var templateTable: TemplateTable = TemplateTable()
+    var templateTable: TemplateTable? = null
     var dataframe: String = "" // Store dataframe as JSON or another format
     var fields: RealmList<ExtractionTableRow> = realmListOf()
 ***REMOVED***
@@ -54,7 +54,7 @@ class ExceptionOccurred : RealmObject {
 class ExtractionField : RealmObject {
     @PrimaryKey
     var id: ObjectId = ObjectId()
-    var templateField: TemplateField = TemplateField()
+    var templateField: TemplateField? = null
     var value: String = ""
     //var extraction: Extraction? = null // Required: Every field belongs to an extraction
 ***REMOVED***

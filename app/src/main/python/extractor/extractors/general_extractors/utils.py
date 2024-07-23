@@ -9,7 +9,7 @@ from io import BytesIO
 import pytesseract
 from pdf2image import convert_from_bytes
 from langchain_community.document_loaders import UnstructuredExcelLoader
-import tiktoken
+#import tiktoken
 import pandas as pd
 
 
@@ -121,7 +121,7 @@ def upload_df_as_excel(df: pd.DataFrame):
     return loaded_table
 
 
-def num_tokens_from_string(string: str, encoding_name: str = "cl100k_base") -> int:
+def num_tokens_from_string(string: str, encoding_name: str = "gpt-4") -> int:
     """
     Returns the number of tokens in a given string using the specified encoding.
 
@@ -132,9 +132,14 @@ def num_tokens_from_string(string: str, encoding_name: str = "cl100k_base") -> i
     Returns:
         int: The number of tokens in the input string.
     """
-    encoding = tiktoken.get_encoding(encoding_name)
-    num_tokens = len(encoding.encode(string))
-    return num_tokens
+    #encoding = tiktoken.get_encoding(encoding_name)
+    #num_tokens = len(encoding.encode(string))
+    #return num_tokens
+    average_token_length = 4
+    # Add a small buffer to account for potential special characters or word endings
+    buffer = 0.1  
+
+    return int(len(string) * (1 + buffer) / average_token_length)
 
 
 def is_more_number(text):

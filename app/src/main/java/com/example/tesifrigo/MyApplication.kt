@@ -9,6 +9,7 @@ import com.example.tesifrigo.models.ExceptionOccurred
 import com.example.tesifrigo.models.Extraction
 import com.example.tesifrigo.models.ExtractionField
 import com.example.tesifrigo.models.ExtractionTable
+import com.example.tesifrigo.models.ExtractionTableRow
 import com.example.tesifrigo.models.TemplateField
 import com.example.tesifrigo.models.Template
 import com.example.tesifrigo.models.TemplateTable
@@ -34,6 +35,7 @@ class MyApp: Application(){
                 Extraction::class,
                 ExtractionField::class,
                 ExtractionTable::class,
+                ExtractionTableRow::class,
                 Template::class,
                 TemplateField::class,
                 TemplateTable::class,

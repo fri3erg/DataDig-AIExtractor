@@ -1,6 +1,6 @@
 package com.example.tesifrigo.ui.extraction
 
-import androidx.compose.foundation.background
+import androidx.compose .foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -33,7 +33,7 @@ fun SingleExtractionScreen(
     val extraction by  viewModel.queryTemplate(templateId).collectAsState(initial = null)
 
     if (extraction != null) {
-    Text(text = extraction!!.template.title)
+        extraction!!.template?.let { Text(text = it.title) ***REMOVED***
     LazyColumn {
             items(extraction!!.extractedFields.size) { index ->  // Iterate over fields directly
                 ExtractionField(extraction!!, index, viewModel)
@@ -53,19 +53,25 @@ fun ExtractionField (
     index: Int,
     viewModel: ExtractionViewModel
 ) {
-    TextWithTitle(
-        title = extraction.extractedFields[index].templateField.title,
-        text = extraction.extractedFields[index].templateField.description,
-        modifier= Modifier.padding(6.dp),
+    extraction.extractedFields[index].templateField?.let {
+        extraction.extractedFields[index].templateField?.let { it1 ->
+            TextWithTitle(
+            title = it.title,
+            text = it1.description,
+            modifier= Modifier.padding(6.dp),
 
-    )
-    if(extraction.extractedFields[index].templateField.extraDescription!=""){
-        TextWithTitle(
-            title = "extra description",
-            text = extraction.extractedFields[index].templateField.extraDescription,
-            modifier= Modifier.padding(0.dp),
+    ***REMOVED***
+        ***REMOVED***
+    ***REMOVED***
+    if(extraction.extractedFields[index].templateField?.extraDescription !=""){
+        extraction.extractedFields[index].templateField?.let {
+            TextWithTitle(
+                title = "extra description",
+                text = it.extraDescription,
+                modifier= Modifier.padding(0.dp),
 
-        )
+***REMOVED***
+        ***REMOVED***
     ***REMOVED***
     EditableTextWithTitle(
         title = "Extracted text",
@@ -75,18 +81,22 @@ fun ExtractionField (
             viewModel.updateExtraction(extraction, newText , index)
         ***REMOVED***
     )
-    TextWithTitle(
+    extraction.extractedFields[index].templateField?.let {
+        TextWithTitle(
         title = "Type",
-        text = extraction.extractedFields[index].templateField.type,
+        text = it.type,
         modifier= Modifier.padding(6.dp),
 
-    )
+***REMOVED***
+    ***REMOVED***
     LazyRow {
-            items(extraction.extractedFields[index].templateField.tags) { field ->
-                Box(modifier = Modifier.padding(8.dp)) {
-                    Text(text = field, modifier = Modifier
-                        .padding(8.dp)
-                        .background(Color.Blue))
+            extraction.extractedFields[index].templateField?.let {
+                items(it.tags) { field ->
+                    Box(modifier = Modifier.padding(8.dp)) {
+                        Text(text = field, modifier = Modifier
+                            .padding(8.dp)
+                            .background(Color.Blue))
+                    ***REMOVED***
                 ***REMOVED***
             ***REMOVED***
             // Add other template details here if needed
