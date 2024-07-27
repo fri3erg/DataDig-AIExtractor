@@ -1,6 +1,7 @@
 package com.example.tesifrigo.repositories
 
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.security.crypto.EncryptedSharedPreferences
 import com.example.tesifrigo.viewmodels.Keys
 import javax.inject.Inject
@@ -16,10 +17,22 @@ class KeyManager @Inject constructor(
 
 
         fun getApiKey(number: Keys): String? {
+            Log.d(
+                "KeyManager",
+                "Getting API key for ${
+                    encryptedSharedPrefs.getString(
+                        number.toString(),
+                        null
+        ***REMOVED***
+                ***REMOVED***",
+***REMOVED***
                 return encryptedSharedPrefs.getString(number.toString(), null)
         ***REMOVED***
 
-    ***REMOVED***
+
+
+
+***REMOVED***
 
 
 

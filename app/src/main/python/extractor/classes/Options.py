@@ -1,11 +1,12 @@
-from typing import List
+from typing import Callable
 
 
 class Options:
-    def __init__(self, model:str = "gpt-3.5-turbo", language:str|None=None, azure_ocr=False):
+    def __init__(self, model:str = "gpt-3.5-turbo", language:str|None=None, azure_ocr=False, get_api_key: Callable = lambda x: x):
         self.model= model
         self.language = language
         self.azure_ocr = azure_ocr
+        self.get_api_key = get_api_key
 
 
 class ExceptionsExtracted:

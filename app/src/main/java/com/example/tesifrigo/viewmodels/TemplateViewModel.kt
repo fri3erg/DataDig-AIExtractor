@@ -81,7 +81,7 @@ class TemplateViewModel : ViewModel() {
 
 
     init {
-        createSampleTemplates()
+        //createSampleTemplates()
     ***REMOVED***
 
     fun queryTemplate(id: String): StateFlow<Template?> {

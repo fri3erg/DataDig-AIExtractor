@@ -1,11 +1,11 @@
-from classes.Options import Options
-from classes.Template import Template
-from extractors.general_extractors.utils import select_desired_page, upload_df_as_excel
-from extractors.general_extractors.utils import num_tokens_from_string
+from ...classes.Options import Options
+from ...classes.Template import Template
+from ...scanner.extractors.utils import select_desired_page, upload_df_as_excel
+from ...scanner.extractors.utils import num_tokens_from_string
 from langchain.prompts import PromptTemplate
-from .config.basic_tags import *
-from ..models import Models
-from configs.configs import prompts, prompts_intelligent
+from ..ai_manager.models import Models
+from ...configs.configs import prompts, prompts_intelligent
+from ..config.basic_tags import DocLanguage
 
 
 def get_doc_language(text, file_id):

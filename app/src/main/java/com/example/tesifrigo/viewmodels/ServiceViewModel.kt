@@ -11,6 +11,7 @@ import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
 import com.example.tesifrigo.models.Extracted
 import com.example.tesifrigo.models.Extraction
+import com.example.tesifrigo.models.Options
 import com.example.tesifrigo.models.Template
 import com.example.tesifrigo.repositories.KeyManager
 import com.example.tesifrigo.repositories.ServiceRepository
@@ -32,10 +33,15 @@ class ServiceViewModel @Inject constructor(
     val progress: StateFlow<Float> = progressRepository.progress
     val result: StateFlow<Extraction?> = progressRepository.result
     val template: StateFlow<Template?> = progressRepository.template
+    val options : StateFlow<Options?> = progressRepository.options
 
     fun setTemplate(template: Template) {
         progressRepository.setTemplate(template)
 
+    ***REMOVED***
+
+    fun setOptions(options: Options) {
+        progressRepository.setOptions(options)
     ***REMOVED***
 
 

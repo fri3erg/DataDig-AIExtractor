@@ -77,7 +77,7 @@ class ExtractionViewModel: ViewModel(){
     ***REMOVED***.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     init {
-        createSampleExtraction()
+        //createSampleExtraction()
     ***REMOVED***
     fun queryTemplate(id: String): StateFlow<Extraction?> {
         return extractions.map { extractionList ->
@@ -98,9 +98,11 @@ class ExtractionViewModel: ViewModel(){
                 delete(extractionFieldToDelete)
                 val extractionTableToDelete = query<ExtractionTable>().find()
                 delete(extractionTableToDelete)
+                val extractionTableRowToDelete = query<ExtractionTableRow>().find()
+                delete(extractionTableRowToDelete)
 
 
-                val templateField1 = TemplateField().apply {
+                val templateField1 = copyToRealm(TemplateField().apply {
                     title = "Field 1"
                     description = "This is a sample field"
                     extraDescription = "This is an extra description"
@@ -108,8 +110,8 @@ class ExtractionViewModel: ViewModel(){
                     required = true
                     intelligent_extraction = false
                     tags = realmListOf("freezer")
-                ***REMOVED***
-                val templateField2 = TemplateField().apply {
+                ***REMOVED***)
+                val templateField2 = copyToRealm(TemplateField().apply {
                     title = "Field 2"
                     description = "This is a sample field 2"
                     extraDescription = "This is an extra description 2"
@@ -117,8 +119,8 @@ class ExtractionViewModel: ViewModel(){
                     required = true
                     intelligent_extraction = true
                     tags = realmListOf("freezer")
-                ***REMOVED***
-                val templateField3 = TemplateField().apply {
+                ***REMOVED***)
+                val templateField3 = copyToRealm(TemplateField().apply {
                     title = "Field 3"
                     description = "This is a sample field 3"
                     extraDescription = "This is an extra description 3"
@@ -126,17 +128,17 @@ class ExtractionViewModel: ViewModel(){
                     required = true
                     intelligent_extraction = false
                     tags = realmListOf("freezer")
-                ***REMOVED***
+                ***REMOVED***)
 
-                val templateTable1 = TemplateTable().apply {
+                val templateTable1 = copyToRealm(TemplateTable().apply {
                     title = "Table 1"
                     description = "This is a sample table"
                     keywords = realmListOf("freezer")
                     rows = realmListOf(templateField1, templateField2)
-                    columns = realmListOf(templateField2)
-                ***REMOVED***
+                    columns = realmListOf(templateField3)
+                ***REMOVED***)
 
-                val template1 = Template().apply {
+                val template1 = copyToRealm(Template().apply {
                     title = "Sample Template"
                     description = "This is a sample template"
                     fields = realmListOf(
@@ -145,60 +147,62 @@ class ExtractionViewModel: ViewModel(){
                     tables = realmListOf(templateTable1)
                     tags = realmListOf("freezer")
                     tables = realmListOf()
-                ***REMOVED***
-                val template2 = Template().apply {
+                ***REMOVED***)
+                val template2 = copyToRealm(Template().apply {
                     title = "Sample Template 2"
                     description = "This is a sample template 2"
                     fields = realmListOf(
+                        templateField1,
                         templateField2,
         ***REMOVED***
                     tables = realmListOf()
                     tags = realmListOf("freezer", "fridge")
                     tables = realmListOf()
 
-                ***REMOVED***
-                val template3 = Template().apply {
+                ***REMOVED***)
+                val template3 = copyToRealm(Template().apply {
                     title = "Sample Template 3"
                     description = "This is a sample template 3"
                     fields = realmListOf(
+                        templateField2,
                         templateField3
         ***REMOVED***
                     tables = realmListOf()
 
                     tags = realmListOf("freezer", "fridge")
                     tables = realmListOf()
-                ***REMOVED***
+                ***REMOVED***)
 
-                val extractionField1 = ExtractionField().apply {
+                val extractionField1 = copyToRealm(ExtractionField().apply {
                     templateField = templateField1
 
                     value = "This is an extracted value"
-                ***REMOVED***
-                val extractionField2 = ExtractionField().apply {
+                ***REMOVED***)
+                val extractionField2 = copyToRealm(ExtractionField().apply {
                     templateField = templateField2
                     value = "This is an extracted value 2"
 
 
-                ***REMOVED***
-                val extractionField3 = ExtractionField().apply {
+                ***REMOVED***)
+                val extractionField3 = copyToRealm(ExtractionField().apply {
                     templateField = templateField3
                     value = "This is an extracted value 3"
-                ***REMOVED***
+                ***REMOVED***)
 
-                val extractionTableRow1 = ExtractionTableRow().apply {
+                val extractionTableRow1 = copyToRealm(ExtractionTableRow().apply {
                     rowIndex = "1"
                     fields = realmListOf(extractionField1, extractionField2)
-                ***REMOVED***
-                val extractionTableRow2 = ExtractionTableRow().apply {
+                ***REMOVED***)
+                val extractionTableRow2 = copyToRealm(ExtractionTableRow().apply {
                     rowIndex = "2"
-                    fields = realmListOf(extractionField2)
-                ***REMOVED***
+                    fields = realmListOf(extractionField2, extractionField3)
+                ***REMOVED***)
 
-                val extractedTable1 = ExtractionTable().apply {
+                val extractedTable1 = copyToRealm(ExtractionTable().apply {
                     templateTable = templateTable1
                     dataframe = "This is a dataframe"
                     fields = realmListOf(extractionTableRow1, extractionTableRow2)
-                ***REMOVED***
+                ***REMOVED***)
 
                 val extraction1 = Extraction().apply {
                     image = "https://www.example.com/image.jpg"
@@ -212,7 +216,7 @@ class ExtractionViewModel: ViewModel(){
                 val extraction2 = Extraction().apply {
                     image = "https://www.example.com/image2.jpg"
                     format= "cvs"
-                    extractedFields = realmListOf(extractionField2)
+                    extractedFields = realmListOf(extractionField2, extractionField1)
                     extractionCosts = "200"
                     exceptionsOccurred = realmListOf()
                     template = template2
@@ -220,7 +224,7 @@ class ExtractionViewModel: ViewModel(){
                 val extraction3 = Extraction().apply {
                     image = "https://www.example.com/image3.jpg"
                     format= "json"
-                    extractedFields = realmListOf(extractionField3)
+                    extractedFields = realmListOf(extractionField3, extractionField2)
                     extractionCosts = "300"
                     exceptionsOccurred = realmListOf()
                     template = template3

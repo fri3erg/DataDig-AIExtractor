@@ -2,6 +2,7 @@ import datetime
 import importlib
 import locale
 import json
+from multiprocessing.spawn import prepare
 from .cost_config import available_costs
 
 
@@ -16,7 +17,7 @@ class Field:
         self.decimals = config.decimals_of.get(key, "N/A")
         self.allownull = config.allow_null.get(key, False)
 
-    def check_validity(self):
+    def check_validity(self, names_of_fields_to_clean_dot=["cost"]):
         """clean the value"""
         if self.name in names_of_fields_to_clean_dot:
             self.value = str(self.value).replace(".", "")
@@ -101,6 +102,8 @@ class JSONExtraction:
             self.fields[self.config.field_names[key]] = Field(
                 config=self.config, key=key, results=self.results
 ***REMOVED***.to_dict()
+            
+
 
     def build_basic_info(self):
         """creates the basic info for the JSON
@@ -108,6 +111,16 @@ class JSONExtraction:
         Returns:
             dict(): basic info for the JSON
         """
+        
+        prepare_json = {
+        "basic": """
+        {{
+            "path": "{path***REMOVED***",
+            "total": {total***REMOVED***,
+            "models": {models***REMOVED***
+        ***REMOVED******REMOVED***
+        """
+    ***REMOVED***   
 
         models_cost = {value: self.results[value] for value in available_costs if value in self.results***REMOVED***
         basic_template = prepare_json["basic"]

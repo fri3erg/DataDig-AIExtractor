@@ -1,11 +1,15 @@
 from collections import defaultdict
 import os
 import re
+from tempfile import NamedTemporaryFile
 import uuid
 from langchain_community.document_loaders import PyPDFLoader
-from typing import List
+from pydantic import BaseModel, Field, create_model
+from typing import Dict, List, Optional
 from PIL import Image
 from io import BytesIO
+from ...classes.Extracted import ExtractedField
+from ...classes.Template import Template, TemplateTable, TemplateField
 import pytesseract
 from pdf2image import convert_from_bytes
 from langchain_community.document_loaders import UnstructuredExcelLoader
@@ -121,7 +125,7 @@ def upload_df_as_excel(df: pd.DataFrame):
     return loaded_table
 
 
-def num_tokens_from_string(string: str, encoding_name: str = "gpt-4") -> int:
+def num_tokens_from_string(string: str|List[str], encoding_name: str = "gpt-4") -> int:
     """
     Returns the number of tokens in a given string using the specified encoding.
 
@@ -138,7 +142,9 @@ def num_tokens_from_string(string: str, encoding_name: str = "gpt-4") -> int:
     average_token_length = 4
     # Add a small buffer to account for potential special characters or word endings
     buffer = 0.1  
-
+    if isinstance(string, list):
+        tokens = [int(len(s) * (1 + buffer) / average_token_length) for s in string]
+        return sum(tokens)
     return int(len(string) * (1 + buffer) / average_token_length)
 
 
@@ -224,7 +230,7 @@ def get_document_text_old(images):
 
 
 
-def get_document_text(images: list[bytes],language:str|None,  context=None) -> List[str]:
+def get_document_text(images: list[bytes],language:str|None) -> List[str]:
     """Extracts text from a list of PIL Image objects or bytes (base64 images).
 
     Args:
@@ -233,81 +239,62 @@ def get_document_text(images: list[bytes],language:str|None,  context=None) -> L
     Returns:
         str: Concatenated text extracted from all images.
     """
-
+    is_chaquopy=False
     all_text = []
-    temp_file = None
-    
-
-    if context:
-    # We're running in Chaquopy
-        try:
-            from java import io
-            assets = context.getAssets()
-            input_stream = assets.open("tessdata/eng.traineddata")
-            temp_file = io.File.createTempFile("tessdata", None)
-            output_stream = io.FileOutputStream(temp_file)
-            input_stream.copyTo(output_stream)
-            input_stream.close()
-            
-            tessdata_path = temp_file.getParent()
-        except ImportError:
-            raise RuntimeError("Could not import 'java.io'. Make sure you're running this in Chaquopy.")
-    else:
-        # We're running as a standalone Python script
-        tessdata_path = None  # Use the default Tesseract data path
+    try:
+        import chaquopy  # Try importing Chaquopy
+        print("here chaquopy")
+        tess_exe_path =  os.environ.get("TESSDATA_PREFIX") or ""
+        pytesseract.pytesseract.tesseract_cmd = tess_exe_path
+        print(tess_exe_path)
+        is_chaquopy=True
+    except ImportError:
+        # Not running in Chaquopy (e.g., standalone script)
+        tess_exe_path = None  # Use the default Tesseract data path
         pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
-        
-    # Initialize pytesseract with the tessdata path
-    tessdata_dir_config = f'--tessdata-dir "{tessdata_path***REMOVED***"' if tessdata_path else ''
+    tessdata_dir_config = f'--tessdata-dir "{tess_exe_path***REMOVED***/tessdata"' if tess_exe_path else ''
 
-    for image in images:
-        try:
-            if isinstance(image, BytesIO):  
-                image = Image.open(image)
-            elif isinstance(image, bytes):
-                image = Image.open(BytesIO(image))
-            elif not isinstance(image, Image.Image):
-                raise TypeError("Unsupported image type. Expected PIL Image or bytes (base64 image).")
-            
+    if not is_chaquopy:
+        for image in images:
+            try:
+                # Handle different image input types
+                if isinstance(image, bytes):  # Directly handle bytes
+                    print(image)
+                    image = Image.open(BytesIO(image))
+                    print("not here")
+                    print(f"image format {image.format***REMOVED***")
+                    if image.format != 'PNG':  # Example: converting to PNG
+                        image = image.convert('PNG')
+                elif not isinstance(image, Image.Image):
+                    raise TypeError(
+                        "Unsupported image type. Expected PIL Image or bytes (base64 image)."
+        ***REMOVED***
 
-            """image_cv = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)  # Convert to OpenCV format
-            gray = cv2.cvtColor(image_cv, cv2.COLOR_BGR2GRAY)
+                # ... (Your image preprocessing logic here) ...
+                # (e.g., grayscale conversion, thresholding, etc.)
 
-            # Adaptive thresholding
-            adaptive_thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
+                # Perform OCR
+                all_text.append(pytesseract.image_to_string(image, config=tessdata_dir_config, lang=language))
 
-            # Convert back to PIL Image
-            image = Image.fromarray(cv2.cvtColor(adaptive_thresh, cv2.COLOR_BGR2RGB))
-            """
-            
-            
-            
-            
-            """image = ImageOps.grayscale(image) 
-            image = image.convert("L")
-            img_array = np.array(image)
-            threshold = 128  
-            img_array = (img_array > threshold) * 255
-            image = Image.fromarray(img_array) """
-            
-            
-            all_text += [pytesseract.image_to_string(image, config=tessdata_dir_config, lang=language)]
-        except Exception as e:
-            print(f"Error processing image: {e***REMOVED***")
-            all_text += [""]
-
-    if 'tempFile' in locals():
-        try:
-            temp_file.delete()
-        except Exception as e:
-            print("Error deleting temporary file:", e)
+            except Exception as e:
+                print(f"Error processing image: {e***REMOVED***")
+                all_text.append("")  # Add empty string if an error occurs
+    else:
+        for image_bytes in images:
+            print("here")
+            with NamedTemporaryFile(suffix=".png") as temp:  # Assuming PNG format
+                temp.write(image_bytes)
+                temp.flush()
+                print("here")
+                text = pytesseract.image_to_string(temp.name, lang=language, config=tessdata_dir_config)
+                all_text.append(text)
 
     return all_text
 
 
 
 def get_document_text_pdf(file_path: str) -> List[str]:
-    images:list[BytesIO] = convert_from_bytes(open(file_path, "rb").read())
+    images:list[bytes] = convert_from_bytes(open(file_path, "rb").read())
     return get_document_text(images,"it")
 
 
@@ -501,3 +488,251 @@ def search_reg(search, text):
     """
     match = re.search(search, text, re.IGNORECASE)
     return match is not None
+
+
+
+# TO REVIEW
+def clean_response_regex(cleaner: dict, response, to_add=""):
+    """cleans a response using a regex
+
+        Args:
+        cleaner (dict): dict of keys and string of regex cleaner
+        response (dict()| object): data to clean
+        to_add (str, optional): string to add to the cleaned data. Defaults to "".
+    Returns:
+        dict()| object: data cleaned
+    """
+    try:
+        # dict of regexes
+
+        for r in cleaner.items():
+            if r[0] in dict(response):
+                # match each and keep the match if found
+                match = re.search(r[1], str(dict(response)[r[0]]))
+                value = "-"
+                if match and match.group(0) != "":
+                    value = match.group(0)
+                    if to_add != "":
+                        value = "".join([value, to_add])
+                # response can be object or dict
+                if isinstance(response, dict):
+                    response[r[0]] = value
+                else:
+                    setattr(response, r[0], value)
+    except Exception as e:
+        print("clean_response_regex error" + repr(e))
+
+    return response
+
+
+def clean_response_strips(strips, response):
+    """cleans a response using a list of strings to strip
+
+    Args:
+        strips ([str]): list of strings to strip
+        response (str): data to clean
+
+    Returns:
+        str: data cleaned
+    """
+
+    # cut strips from response
+    for s in strips:
+        while response.find(s) != -1:
+            response = response.replace(s, "")
+    # remove leading and trailing spaces
+    while response[0] in [",", ":", ".", ";", " ", '"', "'", "\\n"]:
+        response = response[1:]
+    # replace is for json format
+    response = response.replace('"', r"\"")
+    return response
+
+exc_multiple_lines=[]
+def regex_extract(searches: dict, table):
+    """extract via regex from the table
+
+    Args:
+        searches (dict()): dict of searches
+        table (pandas.dataframe): table to search on
+        costi (dict()): return dictionary
+
+    Returns:
+        dict(): dict with value extracted for each search
+    """
+    ret = dict()
+    intermediate = dict()
+    # for each search find it via regex in first column and then extract the value in last column
+    for key, search in searches.items():
+        once = True
+        intermediate.update(dict([(key, "")]))
+        for a in range(1, len(table.index)):
+            # if found in first column
+            if search_reg(search, table.iloc[a, 0]):
+                # handle multiple lines exception( exc_multiple_lines is a list of lists of strings, each list is a different exception)
+                if key in exc_multiple_lines and once:
+                    once = False
+                    exc = handle_exc(
+                        table,
+                        a,
+                        search,
+        ***REMOVED***
+                    intermediate.update(dict([(key, exc)]))
+                    continue
+                # add last column
+                updated = " ".join([intermediate[key], str(table.iloc[a, -1])])
+                intermediate.update(dict([(key, updated)]))
+
+    # for each search divide the value in min and max and add to dict
+    for field, value in intermediate.items():
+        if field in searches:
+            groups = divide_regex(value)
+            # returning 0 and -1 takes care of all cases anyway
+            ret.update(dict([(field + "_min", groups[0]), (field + "_max", groups[-1])]))
+        else:
+            ret.update(dict([(field, value)]))
+    return ret
+
+
+def handle_exc(table, a, search):
+    """handles exceptions where table may be split in multiple lines, looks until next search is found
+
+    Args:
+        table (pd.dataframe): table to look into
+        a (int): index we are at
+        search (str): what we are looking for
+        language (str): language of the document
+
+    Returns:
+        str: values found
+    """
+    ret = ""
+    # while not at the end and we didn't find the next search join the values
+    while a < len(table.index) and (not search_reg(search, table.iloc[a, 0])):
+        ret = " ".join([ret, str(table.iloc[a, -1])])
+        a = a + 1
+    return ret
+
+
+def create_pydantic_class(template: Template):
+    """Creates a Pydantic model based on the provided Template object."""
+
+    fields = {***REMOVED***
+    for template_field in template.fields:
+        field_type = template_field.type or str
+        description=template_field.extra_description or template_field.description
+        if template_field.required:  # Assuming TemplateField has a 'required' attribute
+            description +=" ,should be present,check well"
+        fields[template_field.title] = (Optional[field_type]| str, Field(default='N/A',description=description))
+
+
+    model = create_model("DynamicModel", **fields)  # Use create_model for dynamic creation
+    return model
+
+def create_pydantic_table_class(template: TemplateTable):
+    """Creates a Pydantic model based on the provided Template object."""
+
+    fields = {***REMOVED***
+    for  row in template.rows:
+        for column in template.columns:
+            
+            field_type:type = row.type or column.type or str
+            required= column.required or row.required
+            description=f"row:{row.title***REMOVED***|column:{column.title***REMOVED***|"
+            
+            if required:  # Assuming TemplateField has a 'required' attribute
+                description +=",should be present,check well"
+            fields[description] = (Optional[field_type]| str, Field(default="N/A",description=description))
+
+
+    model = create_model("DynamicModel", **fields)  # Use create_model for dynamic creation
+    return model
+
+def create_intelligent_pydantic_class(template: Template):
+    """Creates a Pydantic model based on the provided Template object."""
+
+    fields = {***REMOVED***
+    description= ""
+    for template_field in template.fields:
+        field_type:type = template_field.type or str
+        if template_field.required:  # Assuming TemplateField has a 'required' attribute
+            description="should be present,check well"
+        fields[template_field.title] = (Optional[field_type], Field(description=description))
+
+
+    model = create_model("DynamicModel", **fields)  # Use create_model for dynamic creation
+    return model
+
+
+
+def extracted_from_pydantic(self, tagged) -> List[ExtractedField]:
+    """Extracts the fields from a tagged object.
+
+    Args:
+        tagged: Tagged object to extract fields from.
+
+    Returns:
+        List[ExtractedField]: List of extracted fields.
+    """
+    extracted = []
+    for field in tagged.__fields__:
+        value = getattr(tagged, field)
+        matching_template_field:TemplateField | None = next(
+            (tf for tf in self.template.fields if tf.title == field), None
+        )  
+        if matching_template_field:
+            extracted.append(ExtractedField(value=value, template_field=matching_template_field))
+        else:
+            print(f"Field '{field***REMOVED***' not found in template '{self.template.title***REMOVED***'")
+    return extracted
+
+
+def extracted_from_pydantic_table(self,tagged_data, template: TemplateTable) -> Dict[str, Dict[str, ExtractedField]]:
+    """Extracts structured data from a tagged Pydantic model into a matrix."""
+
+    result_matrix: Dict[str, Dict[str, ExtractedField]] = {***REMOVED***
+
+    # Initialize empty dicts for each row
+    for row in template.rows:
+        result_matrix[row.title] = {***REMOVED***
+
+    # Parse field names and create ExtractedField instances
+    for field_name, value in tagged_data.__fields__.items():  
+        # Extract row and column names from field name
+        row_name, col_name, _ = field_name.split("|") 
+        row_name = row_name[4:]
+        col_name = col_name[7:]
+
+
+        # Find matching row and column in template
+        matching_row = next((r for r in template.rows if r.title in row_name), None)
+        matching_col = next((c for c in template.columns if c.title in col_name), None)
+        
+        if matching_row and matching_col:
+            # Create ExtractedField instance
+            extracted_field = ExtractedField(
+                template_field=matching_col,  # Use the column as the template field
+                value=value,
+***REMOVED***
+
+            # Store in result matrix
+            result_matrix[matching_row.title][matching_col.title] = extracted_field
+
+    return result_matrix
+    
+
+
+def get_object_by_title(obj_list, target_title):
+    """
+    Finds and returns the first object in a list that has the specified title.
+
+    Args:
+        obj_list: The list of objects to search through.
+        target_title: The title string to match.
+
+    Returns:
+        The object with the matching title, or None if no match is found.
+    """
+    for obj in obj_list:
+        if hasattr(obj, 'title') and obj.title == target_title:
+            return obj
+    return None

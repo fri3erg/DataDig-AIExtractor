@@ -1,27 +1,27 @@
 from pydantic import BaseModel, ValidationError
 #import tiktoken
-from extractors.general_extractors.utils import num_tokens_from_string
+from ...scanner.extractors.utils import num_tokens_from_string
 import threading
-from .general_extractors.config.cost_config import cost_per_token
-from langchain.chains import LLMChain
+from ..config.cost_config import cost_per_token
 import openai
-from langchain.llms.base import LLM
 from typing import List, Optional, Any, Dict
-from langchain.prompts import ChatPromptTemplate
-from langchain_community.llms import OpenAI as LangChainOpenAI
-from langchain.chat_models import ChatOpenAI # use ChatOpenAI from the core library
 import os
 import openai
 import threading
+from langchain.chains import LLMChain
 from langchain.llms.base import LLM
 from langchain.prompts import ChatPromptTemplate
+from langchain_community.llms import OpenAI as LangChainOpenAI
+from langchain.chat_models import ChatOpenAI # use ChatOpenAI from the core library
+from langchain.llms.base import LLM
+from langchain.prompts import ChatPromptTemplate
+from langchain.output_parsers import StructuredOutputParser, PydanticOutputParser
+from langchain.schema import OutputParserException
+from langchain.output_parsers.structured import ResponseSchema
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 openai.api_key = OPENAI_API_KEY 
 
-from langchain.output_parsers import StructuredOutputParser, PydanticOutputParser
-from langchain.schema import OutputParserException
-from langchain.output_parsers.structured import ResponseSchema
 
 from typing import Any
 
@@ -113,7 +113,7 @@ class Models(LLM):
         except Exception as e:
             print("Error in tag:", e)
             output = schema
-        cls.calc_costs(file_id, model, inputs=[text], outputs=[output])
+        cls.calc_costs(file_id, model, inputs=[text], outputs=[str(output)])
         return output  
     
     # Updated extract() method
@@ -130,7 +130,7 @@ class Models(LLM):
             raise e
         
         response = chain.run(context=pages, template=template)
-        cls.calc_costs(file_id, model, inputs=[pages, prompt], outputs=[response])
+        cls.calc_costs(file_id, model, inputs=[pages, str(prompt)], outputs=[response])
         return response
     
     @classmethod

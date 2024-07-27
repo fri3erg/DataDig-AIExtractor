@@ -1,33 +1,38 @@
 package com.example.tesifrigo.services
 
+import ImageOCR
 import android.app.Notification
 import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.ImageDecoder
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.text.TextRecognition
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import android.net.ProxyInfo
 import android.net.Uri
 import android.os.Build
 import android.os.IBinder
+import android.provider.MediaStore
 import android.util.Base64
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.chaquo.python.PyObject
 import com.chaquo.python.Python
 import com.chaquo.python.android.AndroidPlatform
 import com.example.tesifrigo.R
 import com.example.tesifrigo.models.ExceptionOccurred
-import com.example.tesifrigo.models.Extracted
 import com.example.tesifrigo.models.Extraction
 import com.example.tesifrigo.models.ExtractionField
 import com.example.tesifrigo.models.ExtractionTable
 import com.example.tesifrigo.models.ExtractionTableRow
+import com.example.tesifrigo.models.Options
 import com.example.tesifrigo.models.Template
-import com.example.tesifrigo.models.TemplateField
-import com.example.tesifrigo.models.TemplateTable
 import com.example.tesifrigo.repositories.KeyManager
 import com.example.tesifrigo.repositories.ServiceRepository
-import com.example.tesifrigo.ui.extraction.ExtractionField
 import com.example.tesifrigo.viewmodels.Keys
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -36,13 +41,10 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
-import com.googlecode.tesseract.android.TessBaseAPI
-import io.realm.kotlin.Realm
-import io.realm.kotlin.RealmConfiguration
 import io.realm.kotlin.types.RealmList
-import kotlinx.coroutines.async
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
 
 @AndroidEntryPoint
 class ExtractionService : Service(){
@@ -84,9 +86,10 @@ class ExtractionService : Service(){
         ***REMOVED***
         if (imageUri != null) {
             val template = serviceRepository.getTemplate() ?: return
+            val options = serviceRepository.getOptions()
             // Process the image using a Coroutine
             CoroutineScope(Dispatchers.IO).launch {
-                processImage(imageUri, serviceRepository, keyManager, template)
+                processImage(listOf(imageUri), serviceRepository, keyManager, template, options)
             ***REMOVED***
         ***REMOVED***
 
@@ -106,100 +109,154 @@ class ExtractionService : Service(){
     ***REMOVED***
 
     // Simulate image processing for now
-    private fun processImage(imageUri: Uri?, serviceRepository: ServiceRepository, keyManager: KeyManager, template: Template) {
+    private fun processImage(imageUris: List<Uri>, serviceRepository: ServiceRepository, keyManager: KeyManager, template: Template, options: Options?) {
         val localContext = this
 
         val onResult: (PyObject) -> Unit = { result ->
-
             serviceRepository.updateResult(extractResult(result, template))
         ***REMOVED***
 
         serviceScope.launch {
-            Log.d("TestService", "Processing image: $imageUri")
+            Log.d("TestService", "Processing image: $imageUris")
             Thread.sleep(5000) // Sleep for 5 seconds
             val progressCallback: (Float) -> Unit = { progress ->
                 updateProgress(progress)
             ***REMOVED***
-            val bitmap = imageUri?.let {
-                contentResolver.openInputStream(it)?.use { inputStream ->
-                    BitmapFactory.decodeStream(inputStream)
-                ***REMOVED***
-            ***REMOVED***
-            val tessdataDir = File(filesDir, "tesseract/tessdata") // Store in app's filesDir
-            if (!tessdataDir.exists()) {
-                tessdataDir.mkdirs()
-            ***REMOVED***
-            if (tessdataDir.listFiles()?.isEmpty() == true) {
-                // If tessdata is empty, copy from assets to filesDir
-                copyAssetsToStorage(applicationContext, "tessdata", tessdataDir.absolutePath)
-            ***REMOVED***
 
-            val base64Image = bitmap?.let {
-                val byteArrayOutputStream = ByteArrayOutputStream()
-                it.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
-                val byteArray = byteArrayOutputStream.toByteArray()
-                Base64.encodeToString(byteArray, Base64.DEFAULT)
-            ***REMOVED***
-
+            // Find Tesseract data directory (assuming it's in the tessdata directory)
 
             if (! Python.isStarted()) {
                 Python.start(AndroidPlatform(localContext))
             ***REMOVED***
             val py = Python.getInstance()
-            val module = py.getModule("main_test")
+            val module = py.getModule("main")
+
 
             val builtinsModule = py.getModule("builtins")
 
-            builtinsModule["OPENAI_API_KEY"] = PyObject.fromJava(keyManager.getApiKey(Keys.API_KEY_1))
-            builtinsModule["AZURE_FORM_RECOGNIZER_KEY"] = PyObject.fromJava(keyManager.getApiKey(Keys.API_KEY_2))
-            builtinsModule["AZURE_FORM_RECOGNIZER_ENPOINT"] = PyObject.fromJava(keyManager.getApiKey(Keys.API_KEY_3))
-            builtinsModule["TESSDATA_PREFIX"] = PyObject.fromJava(tessdataDir.absolutePath)
+            val pyListImages = builtinsModule.callAttr("list") // Create an empty Python list
 
-
-
-            val templateFields = template.fields.map { realmField ->
-                TemplateField().apply {
-                    realmField.id.toHexString()  // Convert ObjectId to hex string
-                    realmField.title
-                    realmField.description
-                    realmField.extraDescription
-                    realmField.tags.toList()
+            for (imageUri in imageUris) {
+                val bitmap = imageUri.let {
+                    contentResolver.openInputStream(it)?.use { inputStream ->
+                        BitmapFactory.decodeStream(inputStream)
+                    ***REMOVED***
+                ***REMOVED***
+                val base64Image = bitmap?.let {
+                    val byteArrayOutputStream = ByteArrayOutputStream()
+                    it.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
+                    val byteArray = byteArrayOutputStream.toByteArray()
+                    Base64.encodeToString(byteArray, Base64.DEFAULT)
+                ***REMOVED***
+                if (base64Image != null) {
+                    pyListImages.callAttr("append", base64Image)  // Add Base64 image to the Python list
                 ***REMOVED***
             ***REMOVED***
-            val templateTables = template.tables.map { realmTable ->
-                TemplateTable().apply {
-                    realmTable.id.toHexString()  // Convert ObjectId to hex string
-                    realmTable.title
-                    realmTable.description
-                    realmTable.keywords.toList()
-                    realmTable.rows
-                    realmTable.columns
-                ***REMOVED***
+            val imageUriOcr = ImageOCR()
+            val pyListText = builtinsModule.callAttr("list") // Create an empty Python list
+            imageUris.map { imageUri ->
+                val bitmap = MediaStore.Images.Media.getBitmap(localContext.contentResolver, imageUri)
+                pyListText.callAttr("append",imageUriOcr.extractTextFromBitmap(bitmap) )  // Add Base64 image to the Python list
             ***REMOVED***
 
-            val pythonTemplate = PyObject.fromJava(
-                Template().apply {
-                    template.id.toHexString()
-                    template.title
-                    template.description
-                    templateFields
-                    templateTables
-                    template.tags.toList()
+            val classesOptionModule = py.getModule("extractor.classes.Options") // Get the module
 
+
+            val getApiKey = { key: String ->
+                    when(key){
+                        "API_KEY_1" -> keyManager.getApiKey(Keys.API_KEY_1)
+                        "API_KEY_2" -> keyManager.getApiKey(Keys.API_KEY_2)
+                        "API_KEY_3" -> keyManager.getApiKey(Keys.API_KEY_3)
+                        else -> null
+                    ***REMOVED***
+            ***REMOVED***
+
+
+// Create a map of keyword arguments
+            val chosenOption = classesOptionModule.callAttr(
+                "Options",  // Directly call the constructor
+                PyObject.fromJava("gpt-4"),
+                PyObject.fromJava("eng"),
+                PyObject.fromJava(false),
+                PyObject.fromJava(getApiKey)
+***REMOVED***
+
+            val classesModule = py.getModule("extractor.classes.Template") // Get the module
+
+// Create Python TemplateField objects
+            val pyTemplateFields = template.fields.map { realmField ->
+                classesModule.callAttr(
+                    "TemplateField",
+                    PyObject.fromJava(realmField.title),
+                    PyObject.fromJava(realmField.description),
+                    PyObject.fromJava(realmField.extraDescription),
+                    PyObject.fromJava(realmField.type),
+                    PyObject.fromJava(realmField.required),
+                    PyObject.fromJava(realmField.tags.toList()),
+                    PyObject.fromJava(realmField.intelligent_extraction)
+    ***REMOVED***
+            ***REMOVED***
+
+// Create Python TemplateTable objects (with their fields)
+            val pyTemplateTables = template.tables.map { realmTable ->
+                val pyTableRows = realmTable.rows.map { tableField ->
+                    classesModule.callAttr(
+                        "TemplateField",
+                        PyObject.fromJava(tableField.title),
+                        PyObject.fromJava(tableField.description),
+                        PyObject.fromJava(tableField.extraDescription),
+                        PyObject.fromJava(tableField.type),
+                        PyObject.fromJava(tableField.required),
+                        PyObject.fromJava(tableField.tags.toList()),
+                        PyObject.fromJava(tableField.intelligent_extraction)
+        ***REMOVED***
                 ***REMOVED***
+                val pyTableColumns = realmTable.columns.map { tableField ->
+                    classesModule.callAttr(
+                        "TemplateField",
+                        PyObject.fromJava(tableField.title),
+                        PyObject.fromJava(tableField.description),
+                        PyObject.fromJava(tableField.extraDescription),
+                        PyObject.fromJava(tableField.type),
+                        PyObject.fromJava(tableField.required),
+                        PyObject.fromJava(tableField.tags.toList()),
+                        PyObject.fromJava(tableField.intelligent_extraction)
+        ***REMOVED***
+                ***REMOVED***
+
+                classesModule.callAttr(
+                    "TemplateTable",
+                    PyObject.fromJava(realmTable.title),
+                    PyObject.fromJava(realmTable.keywords.toList()),
+                    PyObject.fromJava(realmTable.description),
+                    pyTableRows,
+                    pyTableColumns
+    ***REMOVED***
+            ***REMOVED***
+
+// Create the Python Template object
+            val pythonTemplate = classesModule.callAttr(
+                "Template",
+                PyObject.fromJava(template.title),
+                PyObject.fromJava(template.description),
+                pyTemplateFields, // Pass the created Python TemplateField list
+                pyTemplateTables, // Pass the created Python TemplateTable list
+                PyObject.fromJava(template.tags.toList())
 ***REMOVED***
 
 
-            val deferredResult = async {
-                module.callAttr("main", base64Image, pythonTemplate, progressCallback)
-            ***REMOVED***
 
-            val pyResult = deferredResult.await()  // Wait for the result from Python            // Handle 'pyResult' on the main thread for UI updates if needed
-            Log.d("TestService", "Result: $pyResult")
-            onResult(pyResult)
-            progressCallback(1f)
+            val pyResult =module.callAttr("main_kotlin", pyListImages,pyListText, pythonTemplate, progressCallback, chosenOption)
+
+            launch(Dispatchers.Main) {        // Handle 'pyResult' on the main thread for UI updates if needed
+
+                onResult(pyResult)
+                progressCallback(1f)
+
+                // Stop the service only after processing the result
+                stopSelf()
+            ***REMOVED***
         ***REMOVED***
-        stopSelf()
     ***REMOVED***
 
 
@@ -293,4 +350,3 @@ private fun extractTable(pyExtractedTable: PyObject, template: Template): Extrac
     ***REMOVED***
     return realmExtractionTable
 ***REMOVED***
-

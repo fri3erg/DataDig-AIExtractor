@@ -67,7 +67,12 @@ data class Extracted (val title: String, val description: String, val tags: List
 
 
 
-data class Options(val model: String, val language: String, val azure_ocr: Boolean){
-    constructor(): this("", "", false)
-***REMOVED***
+data class Options(
+    var model: String,
+    var language: String,
+    var azure_ocr: Boolean,
+    var getApiKey: (String) -> String?
 
+) {
+    constructor() : this("", "", false, {""***REMOVED***)
+***REMOVED***

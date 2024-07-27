@@ -1,8 +1,7 @@
 
 from typing import Dict, List, Tuple
 class TemplateField:
-    def __init__(self, id, title: str, description:str, extra_description: str, tags: List[str], type: type | None, required: bool, intelligent_extraction= False):
-        self.id = id
+    def __init__(self, title: str, description:str, extra_description: str, tags: List[str], type: type | None, required: bool, intelligent_extraction= False):
         self.title = title
         self.description = description
         self.extra_description = extra_description
@@ -13,8 +12,7 @@ class TemplateField:
 
 
 class TemplateTable:
-    def __init__(self, id, title:str, keywords: List[str],description:str, rows: List[TemplateField], columns:List[TemplateField]):
-        self.id = id
+    def __init__(self, title:str, keywords: List[str],description:str, rows: List[TemplateField], columns:List[TemplateField]):
         self.title = title
         self.keywords = keywords
         self.description = description
@@ -24,8 +22,7 @@ class TemplateTable:
         
         
 class Template:
-    def __init__(self, id, title:str , description: str, fields: List[TemplateField] ,tables: List[TemplateTable], tags:List[str]):
-        self.id = id
+    def __init__(self, title:str , description: str, fields: List[TemplateField] ,tables: List[TemplateTable], tags:List[str]):
         self.title = title
         self.description = description
         self.fields = fields  # List of TemplateField objects
@@ -43,7 +40,7 @@ class Template:
         output_str += "Fields:\n  "
         for field in self.fields:
             required_str = "Required" if field.required else "Optional" 
-            output_str += f"- {field.title***REMOVED*** ({field.type.__name__***REMOVED***): {field.description***REMOVED*** ({required_str***REMOVED***)\n  "
+            output_str += f"- {field.title***REMOVED*** ({getattr(field.type, '__name__','type unknown')***REMOVED***): {field.description***REMOVED*** ({required_str***REMOVED***)\n  "
             
             # Include extra description if available
             #if field.extra_description:
@@ -66,7 +63,6 @@ class Template:
 
         # Create new templates with the split fields
         intelligent_template = Template(
-            id=self.id,
             title=self.title,
             description=self.description,
             fields=intelligent_fields,
@@ -74,7 +70,6 @@ class Template:
             tags=self.tags,
         )
         non_intelligent_template = Template(
-            id=self.id,
             title=self.title,
             description=self.description,
             fields=non_intelligent_fields,

@@ -47,3 +47,11 @@ word_representation = {
     ***REMOVED***,
     "en": {***REMOVED***,
 ***REMOVED***
+
+
+
+keys_config={
+    "OPENAI_API_KEY" : "API_KEY_1",
+    "AZURE_FORM_RECOGNIZER_ENPOINT": "API_KEY_2",
+    "AZURE_FORM_RECOGNIZER_KEY": "API_KEY_3",
+***REMOVED***

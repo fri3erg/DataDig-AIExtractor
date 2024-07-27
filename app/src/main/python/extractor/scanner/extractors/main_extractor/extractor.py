@@ -1,14 +1,15 @@
-from classes.Extracted import Extracted, ExtractedField
-from classes.Options import ExceptionsExtracted, Options
-from extractors.models import Models
-from extractors.general_extractors.custom_extractors.kid.kid_extractor import Extractor
-from classes.Template import Template, TemplateTable
+from ....classes.Extracted import Extracted, ExtractedField
+from ....classes.Options import ExceptionsExtracted, Options
+from ....scanner.ai_manager.models import Models
+from ....classes.Template import Template, TemplateTable
 from typing import Any, Callable, List
-class DataExtractor(Extractor):
 
-    def __init__(self, images:list[bytes], template: Template, progress_callback: Callable, options:Options) -> None:
+from ..general_scanner import GeneralScanner
+class MainExtractor(GeneralScanner):
+
+    def __init__(self, images:list[bytes],text:list[str], template: Template, progress_callback: Callable, options:Options) -> None:
         self.progress_callback = progress_callback
-        super().__init__(images,template, options)
+        super().__init__(images,text, template, options)
         
         
 

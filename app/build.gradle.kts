@@ -18,6 +18,7 @@ android {
 
 
     defaultConfig {
+
         ndk {
             // On Apple silicon, you can omit x86_64.
             abiFilters += listOf("arm64-v8a", "x86_64")
@@ -83,13 +84,11 @@ android {
                 //install("opencv-python")
                 install("regex")
                 install("pillow")
-                install("-r", projectDir.absolutePath + "/src/main/python/extractor/requirements_kotlin.txt")
+                install("-r", projectDir.absolutePath + "/src/main/python/requirements_kotlin.txt")
+                extractPackages("tesseract")
             ***REMOVED***
-            extractPackages("tesseract")
-
-
-
         ***REMOVED***
+
     ***REMOVED***
         sourceSets {
         ***REMOVED***
@@ -98,8 +97,11 @@ android {
 dependencies {
 
     implementation(libs.androidx.material3.android)
+    implementation(libs.vision.common)
+    implementation(libs.play.services.mlkit.text.recognition.common)
+    implementation(libs.play.services.mlkit.text.recognition)
     val nav_version = "2.8.0-alpha08"
-
+    implementation("com.google.mlkit:text-recognition:16.0.0") // Or latest version
     implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
     implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
     implementation("androidx.navigation:navigation-compose:$nav_version")
@@ -107,7 +109,7 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     implementation(libs.tess.two) // Or latest version
     kapt("com.google.dagger:hilt-android-compiler:2.51")
-    annotationProcessor("com.google.dagger:hilt-android:2.51")
+    kapt("com.google.dagger:hilt-android:2.51")
     implementation("androidx.hilt:hilt-work:1.0.0")
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
     kapt("androidx.hilt:hilt-compiler:1.0.0")
@@ -120,6 +122,7 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
+    implementation("androidx.core:core-ktx:1.12.0") // Or the latest version
     implementation("com.google.accompanist:accompanist-permissions:0.28.0") // Replace with your desired version
     implementation("androidx.camera:camera-camera2:1.3.3") // Or latest stable version
     implementation(libs.androidx.camera.core)

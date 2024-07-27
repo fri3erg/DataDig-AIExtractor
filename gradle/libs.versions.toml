@@ -22,6 +22,9 @@ roomKtx = "2.6.1"
 composeNavigation = "2.8.0-alpha08"
 serialization = "1.6.3"
 securityCryptoKtx = "1.0.0"
+visionCommon = "17.3.0"
+playServicesMlkitTextRecognitionCommon = "19.0.0"
+playServicesMlkitTextRecognition = "19.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" ***REMOVED***
@@ -52,6 +55,9 @@ navigation-compose = { module="androidx.navigation:navigation-compose", version.
 kotlinx-serialization-json = { module="org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization"***REMOVED***
 androidx-security-crypto-ktx = { group = "androidx.security", name = "security-crypto-ktx", version.ref = "securityCryptoKtx" ***REMOVED***
 tess-two = { module = "com.rmtheis:tess-two", version.ref = "tessTwo" ***REMOVED***
+vision-common = { group = "com.google.mlkit", name = "vision-common", version.ref = "visionCommon" ***REMOVED***
+play-services-mlkit-text-recognition-common = { group = "com.google.android.gms", name = "play-services-mlkit-text-recognition-common", version.ref = "playServicesMlkitTextRecognitionCommon" ***REMOVED***
+play-services-mlkit-text-recognition = { group = "com.google.android.gms", name = "play-services-mlkit-text-recognition", version.ref = "playServicesMlkitTextRecognition" ***REMOVED***
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" ***REMOVED***

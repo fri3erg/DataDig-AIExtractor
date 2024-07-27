@@ -1,6 +1,6 @@
 from typing import Any, Dict, List, Optional, Union
 
-from classes.Options import ExceptionsExtracted
+from ..classes.Options import ExceptionsExtracted
 from .Template import TemplateField, TemplateTable, Template
 
 class ExtractedField:

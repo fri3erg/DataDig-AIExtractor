@@ -1,18 +1,17 @@
 from abc import abstractmethod
-from typing import Any, List
-from classes.Extracted import Extracted, ExtractedField, ExtractedTable
-from classes.Options import ExceptionsExtracted, Options
-from ..models import Models
-from .config.cost_config import cost_per_token
-from .utils import get_document_text, upload_df_as_excel
-from extractors.general_extractors.config.cost_config import cost_per_token
-from .llm_functions import get_doc_language, llm_extraction
-from extractors.azure.document_intelligence import get_tables_from_doc
+from typing import Any, Dict, List
+from ...classes.Extracted import Extracted, ExtractedField, ExtractedTable
+from ...classes.Options import ExceptionsExtracted, Options
+from ..ai_manager.models import Models
+from ..config.cost_config import cost_per_token
+from .utils import create_intelligent_pydantic_class, create_pydantic_class, create_pydantic_table_class, extracted_from_pydantic, extracted_from_pydantic_table, get_document_text, upload_df_as_excel
+from .llm_functions import get_doc_language, llm_extraction, llm_extraction_and_tag
+from ...scanner.ai_manager.document_intelligence import get_tables_from_doc
 from .utils import select_desired_page, select_desired_table
-from extractors.general_extractors.llm_functions import general_table_inspection
-from .config.JsonClasses import JSONExtraction
+from ...scanner.extractors.llm_functions import general_table_inspection
+from ..config.JsonClasses import JSONExtraction
 import threading
-from classes.Template import Template
+from ...classes.Template import Template, TemplateTable
 
 
 class ThreadFunction(threading.Thread):
@@ -34,11 +33,11 @@ class ThreadFunction(threading.Thread):
 class GeneralScanner:
     """parent class for all extractors"""
 
-    def __init__(self, images:list[bytes],template:Template, options:Options):
+    def __init__(self, images:list[bytes], text:List[str], template:Template, options:Options):
         self.file_id = template.title
         self.images = images
         self.options = options
-        self.text: List[str] = get_document_text(images, options.language)
+        self.text: List[str] = text
         if not options.language:
             self.options.language = get_doc_language(self.text, self.file_id)
         self.template: Template = template
@@ -66,6 +65,120 @@ class GeneralScanner:
         for function_name, thread in threads.items():
             results[function_name] = thread.get_result()
         return results
+    
+    
+    
+    
+    def get_tables(self):
+        """calc table extractor, it extracts the three tables from the document asynchronously
+
+        Returns:
+            dict([pandas.dataframe]): tables as dataframe
+        """
+        tables=dict()
+        if self.options.azure_ocr:
+            try:
+                self.fill_tables()
+            except Exception as error:
+                print("calc table error" + repr(error))
+                self.exceptions_occurred.append(ExceptionsExtracted( error, "filling tables",repr(error)))
+                    
+        for table in self.template.tables:    
+            try:
+                tables.update({table: self._extract_table(table.keywords)***REMOVED***)
+
+            except Exception as error:
+                #REDO ERROR HANDLING
+                print("calc table error" + repr(error))
+                self.exceptions_occurred.append(ExceptionsExtracted( error, f"extracting tables: {table.title***REMOVED***",repr(error)))
+
+
+        return tables
+    
+    
+    def extract_intelligent_info(self, template:Template) -> List[ExtractedField]:
+        
+        extraction_fields=[]
+        try:
+            # extract and clean
+            extraction = llm_extraction_and_tag(
+                self.text, template, self.file_id,create_intelligent_pydantic_class(template), self.options
+***REMOVED***
+            #extraction = clean_response_regex(regex_cleaning, extraction)
+            extraction_fields: List[ExtractedField] = extracted_from_pydantic(self, extraction)
+            
+        except Exception as error:
+            print("intelligent info extraction error" + repr(error))
+            self.exceptions_occurred.append(ExceptionsExtracted( error, "intelligent_info",repr(error)))
+            
+        return extraction_fields
+        
+
+    def extract_basic_info(self, template: Template) -> List[ExtractedField]:
+        """
+        Extract general data from the document. Namely RHP and SRI.
+
+        Returns:
+            List[ExtractedField]: extracted data
+        """
+        extraction_fields=[]
+        try:
+            # extract and clean
+            extraction = llm_extraction_and_tag(
+                self.text, template, self.file_id, create_pydantic_class(template), self.options
+***REMOVED***
+            #extraction = clean_response_regex(regex_cleaning, extraction)
+            extraction_fields: List[ExtractedField] = extracted_from_pydantic(self, extraction)
+            
+
+        except Exception as error:
+            self.exceptions_occurred.append(ExceptionsExtracted( error, "basic_info",repr(error)))
+            print("basic info extraction error" + repr(error))
+
+        return extraction_fields
+
+    # REVIEW: NEED TO UPLOAD TABLE AS DF
+    def extract_from_tables(self, tables:dict[TemplateTable, Any]) -> list[ExtractedTable]:
+        """extracts riy from the document
+
+        Returns:
+            dict(): riy extracted
+        """
+        extracted_table = []
+        
+        for template, table in tables.items():
+            try:
+            # Select page with RIY
+            
+                extraction = general_table_inspection(table, create_pydantic_table_class(template), self.file_id, add_text=template.description)
+                extracted_fields: Dict[str,Dict[str,ExtractedField]]= extracted_from_pydantic_table(self, extraction, template)
+                extracted_table.append(ExtractedTable(template,fields=extracted_fields,dataframe=table))
+                
+                
+                #extraction = clean_response_regex(regex_cleaning, extraction)
+            except Exception as error:
+                print("extract riy error" + repr(error))
+                self.exceptions_occurred.append(ExceptionsExtracted( error, f"extracting tables: {template.title***REMOVED***",repr(error)))
+
+
+        return extracted_table
+
+    # REVIEW: NEED TO UPLOAD TABLE AS DF
+    def extract_complex_info(self, extracted) -> List[ExtractedField]:
+        
+        extraction: List[ExtractedField] =[]
+        try:
+            extracted = llm_extraction_and_tag(
+                extracted, self.template, self.file_id, create_pydantic_class(self.template), self.options
+***REMOVED***
+            extraction= extracted_from_pydantic(self, extracted)
+        except Exception as error:
+            print("extract entry exit costs error" + repr(error))
+            self.exceptions_occurred.append(ExceptionsExtracted( error, "complex_info",repr(error)))
+
+        return extraction
+        
+
 
     def _extract_table(self, keywords, black_list_pages=[]) -> Any:
         """General table extractor, given a table type it first finds the page within

@@ -7,6 +7,7 @@ import androidx.security.crypto.MasterKey
 import androidx.security.crypto.MasterKeys
 import com.example.tesifrigo.models.Extracted
 import com.example.tesifrigo.models.Extraction
+import com.example.tesifrigo.models.Options
 import com.example.tesifrigo.models.Template
 import dagger.Module
 import dagger.Provides
@@ -36,12 +37,23 @@ class ServiceRepository @Inject constructor() {
     private val _template = MutableStateFlow<Template?>(null)
     val template: StateFlow<Template?> = _template.asStateFlow()
 
+    private val _options =MutableStateFlow<Options?>(null)
+    val options: StateFlow<Options?> = _options.asStateFlow()
+
     fun setTemplate(template: Template) {
         _template.value = template
     ***REMOVED***
 
     fun getTemplate(): Template? {
         return _template.value
+    ***REMOVED***
+
+    fun setOptions(options: Options) {
+        _options.value = options
+    ***REMOVED***
+
+    fun getOptions(): Options? {
+        return _options.value
     ***REMOVED***
 
     fun updateProgress(newProgress: Float) {
