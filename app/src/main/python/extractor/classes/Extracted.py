@@ -15,7 +15,7 @@ class ExtractedTable:
         self.dataframe = dataframe
 
 class Extracted:
-    def __init__(self, template: Template, fields: Optional[List[ExtractedField]] = None, tables: Optional[List[ExtractedTable]] = None, costs:dict = {***REMOVED***, exceptions: List[ExceptionsExtracted] = [], image:bytes|None =None, format:str|None=None, tags:List[str]=[]):
+    def __init__(self, template: Template, fields: Optional[List[ExtractedField]] = None, tables: Optional[List[ExtractedTable]] = None, costs:dict = {***REMOVED***, exceptions: List[ExceptionsExtracted] = [], image:List[bytes]|None =None, format:str|None=None, tags:List[str]=[]):
         self.extracted_fields: List[ExtractedField] = fields or []
         self.extracted_tables: List[ExtractedTable] = tables or []
         self.extraction_costs = costs or {***REMOVED***

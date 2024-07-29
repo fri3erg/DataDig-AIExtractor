@@ -17,15 +17,7 @@ class KeyManager @Inject constructor(
 
 
         fun getApiKey(number: Keys): String? {
-            Log.d(
-                "KeyManager",
-                "Getting API key for ${
-                    encryptedSharedPrefs.getString(
-                        number.toString(),
-                        null
-        ***REMOVED***
-                ***REMOVED***",
-***REMOVED***
+
                 return encryptedSharedPrefs.getString(number.toString(), null)
         ***REMOVED***
 

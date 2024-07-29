@@ -86,6 +86,7 @@ fun CameraScreen(templateId: String?) {
             ***REMOVED***
 
             ProgressBar()
+            ShownExtraction()
         ***REMOVED***
 
 
@@ -327,6 +328,20 @@ fun MyModalBottomSheetContent(
                     ***REMOVED***,
     ***REMOVED***
             ***REMOVED***
+        ***REMOVED***
+    ***REMOVED***
+***REMOVED***
+
+@Composable
+fun ShownExtraction() {
+    val serviceViewModel = hiltViewModel<ServiceViewModel>()
+    val result by serviceViewModel.result.collectAsState()
+    if (result != null) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text("Extraction Result")
         ***REMOVED***
     ***REMOVED***
 ***REMOVED***

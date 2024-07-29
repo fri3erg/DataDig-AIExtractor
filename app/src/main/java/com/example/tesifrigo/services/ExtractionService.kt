@@ -7,18 +7,12 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.ImageDecoder
-import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.text.TextRecognition
-import com.google.mlkit.vision.text.latin.TextRecognizerOptions
-import android.net.ProxyInfo
 import android.net.Uri
 import android.os.Build
 import android.os.IBinder
 import android.provider.MediaStore
 import android.util.Base64
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.chaquo.python.PyObject
 import com.chaquo.python.Python
@@ -35,6 +29,7 @@ import com.example.tesifrigo.repositories.KeyManager
 import com.example.tesifrigo.repositories.ServiceRepository
 import com.example.tesifrigo.viewmodels.Keys
 import dagger.hilt.android.AndroidEntryPoint
+import io.realm.kotlin.ext.realmListOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -44,7 +39,7 @@ import javax.inject.Inject
 import io.realm.kotlin.types.RealmList
 import java.io.File
 import java.io.FileOutputStream
-import java.io.IOException
+import java.util.Collections.addAll
 
 @AndroidEntryPoint
 class ExtractionService : Service(){
@@ -113,7 +108,7 @@ class ExtractionService : Service(){
         val localContext = this
 
         val onResult: (PyObject) -> Unit = { result ->
-            serviceRepository.updateResult(extractResult(result, template))
+            serviceRepository.updateResult(extractResult(result, template, imageUris))
         ***REMOVED***
 
         serviceScope.launch {
@@ -130,8 +125,6 @@ class ExtractionService : Service(){
             ***REMOVED***
             val py = Python.getInstance()
             val module = py.getModule("main")
-
-
             val builtinsModule = py.getModule("builtins")
 
             val pyListImages = builtinsModule.callAttr("list") // Create an empty Python list
@@ -159,8 +152,9 @@ class ExtractionService : Service(){
                 pyListText.callAttr("append",imageUriOcr.extractTextFromBitmap(bitmap) )  // Add Base64 image to the Python list
             ***REMOVED***
 
-            val classesOptionModule = py.getModule("extractor.classes.Options") // Get the module
 
+
+            val classesOptionModule = py.getModule("extractor.classes.Options") // Get the module
 
             val getApiKey = { key: String ->
                     when(key){
@@ -171,78 +165,17 @@ class ExtractionService : Service(){
                     ***REMOVED***
             ***REMOVED***
 
-
-// Create a map of keyword arguments
             val chosenOption = classesOptionModule.callAttr(
                 "Options",  // Directly call the constructor
                 PyObject.fromJava("gpt-4"),
-                PyObject.fromJava("eng"),
+                PyObject.fromJava("en"),
                 PyObject.fromJava(false),
                 PyObject.fromJava(getApiKey)
 ***REMOVED***
 
             val classesModule = py.getModule("extractor.classes.Template") // Get the module
 
-// Create Python TemplateField objects
-            val pyTemplateFields = template.fields.map { realmField ->
-                classesModule.callAttr(
-                    "TemplateField",
-                    PyObject.fromJava(realmField.title),
-                    PyObject.fromJava(realmField.description),
-                    PyObject.fromJava(realmField.extraDescription),
-                    PyObject.fromJava(realmField.type),
-                    PyObject.fromJava(realmField.required),
-                    PyObject.fromJava(realmField.tags.toList()),
-                    PyObject.fromJava(realmField.intelligent_extraction)
-    ***REMOVED***
-            ***REMOVED***
-
-// Create Python TemplateTable objects (with their fields)
-            val pyTemplateTables = template.tables.map { realmTable ->
-                val pyTableRows = realmTable.rows.map { tableField ->
-                    classesModule.callAttr(
-                        "TemplateField",
-                        PyObject.fromJava(tableField.title),
-                        PyObject.fromJava(tableField.description),
-                        PyObject.fromJava(tableField.extraDescription),
-                        PyObject.fromJava(tableField.type),
-                        PyObject.fromJava(tableField.required),
-                        PyObject.fromJava(tableField.tags.toList()),
-                        PyObject.fromJava(tableField.intelligent_extraction)
-        ***REMOVED***
-                ***REMOVED***
-                val pyTableColumns = realmTable.columns.map { tableField ->
-                    classesModule.callAttr(
-                        "TemplateField",
-                        PyObject.fromJava(tableField.title),
-                        PyObject.fromJava(tableField.description),
-                        PyObject.fromJava(tableField.extraDescription),
-                        PyObject.fromJava(tableField.type),
-                        PyObject.fromJava(tableField.required),
-                        PyObject.fromJava(tableField.tags.toList()),
-                        PyObject.fromJava(tableField.intelligent_extraction)
-        ***REMOVED***
-                ***REMOVED***
-
-                classesModule.callAttr(
-                    "TemplateTable",
-                    PyObject.fromJava(realmTable.title),
-                    PyObject.fromJava(realmTable.keywords.toList()),
-                    PyObject.fromJava(realmTable.description),
-                    pyTableRows,
-                    pyTableColumns
-    ***REMOVED***
-            ***REMOVED***
-
-// Create the Python Template object
-            val pythonTemplate = classesModule.callAttr(
-                "Template",
-                PyObject.fromJava(template.title),
-                PyObject.fromJava(template.description),
-                pyTemplateFields, // Pass the created Python TemplateField list
-                pyTemplateTables, // Pass the created Python TemplateTable list
-                PyObject.fromJava(template.tags.toList())
-***REMOVED***
+            val pythonTemplate= getTemplate(classesModule,builtinsModule, template)
 
 
 
@@ -283,39 +216,46 @@ private fun copyAssetsToStorage(context: Context, assetPath: String, targetDirec
     ***REMOVED***
 ***REMOVED***
 
-private fun extractResult(pyResult:PyObject, template: Template): Extraction{
+private fun extractResult(pyResult:PyObject, template_og: Template, imageUris: List<Uri>): Extraction{
+
     val extracted = Extraction().apply {
-        image = pyResult.get("image").toString()
-        format = pyResult.get("format").toString()
-        pyResult.get("tags")?.asList()?.let { tags.addAll(it.map { it.toString() ***REMOVED***) ***REMOVED***
-        extractionCosts = pyResult.get("extraction_costs").toString() // Adjust conversion as needed
-        pyResult.get("exceptions_occurred")?.asList()?.let {
+        image.addAll(imageUris.map { it.toString() ***REMOVED***)
+        format = pyResult["format"].toString()
+        pyResult["tags"]?.let { pyTags ->
+            val tagsList = pyTags.asList()
+            tags.addAll(
+                tagsList.map { it.toString() ***REMOVED***
+***REMOVED***
+        ***REMOVED***
+
+        extractionCosts = pyResult["extraction_costs"].toString() // Adjust conversion as needed
+        pyResult["exceptions_occurred"]?.asList()?.let {
             exceptionsOccurred.addAll(
                 it.map { pyException ->
                     ExceptionOccurred().apply {
-                        error = pyException.get("error").toString() // Assuming error is a string
-                        errorType = pyException.get("error_type").toString()
-                        errorDescription = pyException.get("error_description").toString()
+                        error = pyException["error"].toString() // Assuming error is a string
+                        errorType = pyException["error_type"].toString()
+                        errorDescription = pyException["error_description"].toString()
                     ***REMOVED***
                 ***REMOVED***
 ***REMOVED***
         ***REMOVED***
-        pyResult.get("extracted_fields")?.asList()?.let {
+        pyResult["extracted_fields"]?.asList()?.let { pyObjects ->
             extractedFields.addAll(
-                it.map { pyExtractedField ->
+                pyObjects.map { pyExtractedField ->
                     ExtractionField().apply {
-                        templateField = template.fields.first { it.id.toHexString() == pyExtractedField.get("template_field")
+                        templateField = template_og.fields.first { it.id.toHexString() == pyExtractedField["template_field"]
                             ?.get("id")
                             .toString() ***REMOVED***
-                        value = pyExtractedField.get("value").toString()
+                        value = pyExtractedField["value"].toString()
                     ***REMOVED***
                 ***REMOVED***
 ***REMOVED***
         ***REMOVED***
-        extractedTables = pyResult.get("extracted_tables")?.asList()?.map { pyExtractedTable ->
-            extractTable(pyExtractedTable, template)
-        ***REMOVED*** as RealmList<ExtractionTable>
-
+        pyResult["extracted_tables"]?.asList()?.forEach { pyExtractedTable ->
+            extractedTables.add(extractTable(pyExtractedTable, template_og))
+        ***REMOVED***
+        template=template_og
     ***REMOVED***
     return extracted
 ***REMOVED***
@@ -328,16 +268,16 @@ private fun extractTable(pyExtractedTable: PyObject, template: Template): Extrac
         templateTable = template.tables.first { it.id.toHexString() == pyExtractedTable.get("template_table")
             ?.get("id")
             .toString() ***REMOVED***
-        dataframe= pyExtractedTable.get("dataframe").toString()
+        dataframe= pyExtractedTable["dataframe"].toString()
         // Handle fields (nested dictionaries)
         val rows = mutableListOf<ExtractionTableRow>()
-        val pyFields = pyExtractedTable.get("fields")?.asMap()
+        val pyFields = pyExtractedTable["fields"]?.asMap()
         if (pyFields != null) {
             for ((rowIndex, rowData) in pyFields) {
                 val fields = rowData.values.map { extractedField: PyObject ->
                     ExtractionField().apply {
                         templateTable
-                        value = extractedField.get("value").toString()
+                        value = extractedField["value"].toString()
                     ***REMOVED***
                 ***REMOVED***
                 rows.add(ExtractionTableRow().apply {
@@ -349,4 +289,88 @@ private fun extractTable(pyExtractedTable: PyObject, template: Template): Extrac
         ***REMOVED***
     ***REMOVED***
     return realmExtractionTable
+***REMOVED***
+
+
+
+private fun getTemplate(classesModule: PyObject,builtinsModule: PyObject, template: Template): PyObject? {
+
+    val pyFields = builtinsModule.callAttr("list") // Create an empty Python list
+
+    template.fields.map { realmField ->
+
+        pyFields.callAttr("append",
+            classesModule.callAttr(
+            "TemplateField",
+            PyObject.fromJava(realmField.id.toHexString()),
+            PyObject.fromJava(realmField.title),
+            PyObject.fromJava(realmField.description),
+            PyObject.fromJava(realmField.extraDescription),
+            PyObject.fromJava(realmField.type),
+            PyObject.fromJava(realmField.required),
+            PyObject.fromJava(realmField.tags.toList()),
+            PyObject.fromJava(realmField.intelligent_extraction)
+        )
+        )  // Add Base64 image to the Python list
+
+    ***REMOVED***
+    val pyTables = builtinsModule.callAttr("list") // Create an empty Python list
+// Create Python TemplateTable objects (with their fields)
+    template.tables.map { realmTable ->
+        val pyTableRows = builtinsModule.callAttr("list") // Create an empty Python list
+        val pyTableColumns = builtinsModule.callAttr("list") // Create an empty Python list
+        realmTable.rows.map { tableField ->
+            pyTableRows.callAttr("append",
+                classesModule.callAttr(
+                "TemplateField",
+                PyObject.fromJava(tableField.id.toHexString()),
+                PyObject.fromJava(tableField.title),
+                PyObject.fromJava(tableField.description),
+                PyObject.fromJava(tableField.extraDescription),
+                PyObject.fromJava(tableField.type),
+                PyObject.fromJava(tableField.required),
+                PyObject.fromJava(tableField.tags.toList()),
+                PyObject.fromJava(tableField.intelligent_extraction)
+***REMOVED***
+***REMOVED***  // Add Base64 image to the Python list
+        ***REMOVED***
+        realmTable.columns.map { tableField ->
+            pyTableColumns.callAttr("append",
+                classesModule.callAttr(
+                    "TemplateField",
+                    PyObject.fromJava(tableField.id.toHexString()),
+                    PyObject.fromJava(tableField.title),
+                    PyObject.fromJava(tableField.description),
+                    PyObject.fromJava(tableField.extraDescription),
+                    PyObject.fromJava(tableField.type),
+                    PyObject.fromJava(tableField.required),
+                    PyObject.fromJava(tableField.tags.toList()),
+                    PyObject.fromJava(tableField.intelligent_extraction)
+    ***REMOVED***
+***REMOVED***  // Add Base64 image to the Python list
+        ***REMOVED***
+        pyTables.callAttr("append",
+            classesModule.callAttr(
+            "TemplateTable",
+            PyObject.fromJava(realmTable.id.toHexString()),
+            PyObject.fromJava(realmTable.title),
+            PyObject.fromJava(realmTable.keywords.toList()),
+            PyObject.fromJava(realmTable.description),
+            pyTableRows,
+            pyTableColumns
+        )
+        )  // Add Base64 image to the Python list
+    ***REMOVED***
+
+// Create the Python Template object
+    val pythonTemplate = classesModule.callAttr(
+        "Template",
+        PyObject.fromJava(template.id.toHexString()),
+        PyObject.fromJava(template.title),
+        PyObject.fromJava(template.description),
+        pyFields, // Pass the created Python TemplateField list
+        pyTables, // Pass the created Python TemplateTable list
+        PyObject.fromJava(template.tags.toList())
+    )
+    return pythonTemplate
 ***REMOVED***

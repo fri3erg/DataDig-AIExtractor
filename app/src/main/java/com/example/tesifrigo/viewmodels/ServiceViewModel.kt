@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.savedstate.SavedStateRegistryOwner
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
+import com.example.tesifrigo.MyApp
 import com.example.tesifrigo.models.Extracted
 import com.example.tesifrigo.models.Extraction
 import com.example.tesifrigo.models.Options
@@ -30,6 +31,7 @@ class ServiceViewModel @Inject constructor(
     private val progressRepository: ServiceRepository,
     private val keyManager: KeyManager
 ) : ViewModel(){
+
     val progress: StateFlow<Float> = progressRepository.progress
     val result: StateFlow<Extraction?> = progressRepository.result
     val template: StateFlow<Template?> = progressRepository.template

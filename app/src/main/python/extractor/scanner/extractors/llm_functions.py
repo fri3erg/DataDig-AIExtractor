@@ -76,6 +76,7 @@ def general_table_inspection(table, pydantic_class, file_id, add_text=""):
     Returns:
         dict: extracted data
     """
+        
     try:
 
         # First normal extraction, then tagging
@@ -185,7 +186,7 @@ def llm_extraction_and_tag(page, template:Template, file_id, pydantic_class, opt
         response = Models.extract(file_id, options.model, prompt, page, template_readable)
     except Exception as e:
         print("error in extraction", e)
-        response = page
+        response = str(page)
     response = str.replace(r"\*\*", "", response)
     # To ensure optimal data standardization
     try:

@@ -1,5 +1,6 @@
 package com.example.tesifrigo.models
 
+import android.net.Uri
 import io.realm.kotlin.ext.realmListOf
 import io.realm.kotlin.types.RealmList
 import io.realm.kotlin.types.RealmObject
@@ -13,7 +14,7 @@ class Extraction: RealmObject {
     var extractedTables: RealmList<ExtractionTable> = realmListOf()
     var extractionCosts: String = "" // Store as JSON string
     var exceptionsOccurred: RealmList<ExceptionOccurred> = realmListOf()
-    var image: String = ""
+    var image: RealmList<String> = realmListOf()
     var template: Template? = null
     var format: String = ""
     var tags: RealmList<String> = realmListOf()
@@ -71,8 +72,9 @@ data class Options(
     var model: String,
     var language: String,
     var azure_ocr: Boolean,
-    var getApiKey: (String) -> String?
+    var getApiKey: (String) -> String?,
+    var format : String
 
 ) {
-    constructor() : this("", "", false, {""***REMOVED***)
+    constructor() : this("", "", false, {""***REMOVED***,"")
 ***REMOVED***

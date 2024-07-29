@@ -200,3 +200,7 @@ pyproject.toml
 tmp/*
 
 config.json
+
+*.jpg
+*.png
+*.jpeg

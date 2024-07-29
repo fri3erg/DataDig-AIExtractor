@@ -1,5 +1,7 @@
 from abc import abstractmethod
 from typing import Any, Dict, List
+
+from pandas import DataFrame
 from ...classes.Extracted import Extracted, ExtractedField, ExtractedTable
 from ...classes.Options import ExceptionsExtracted, Options
 from ..ai_manager.models import Models
@@ -105,7 +107,7 @@ class GeneralScanner:
                 self.text, template, self.file_id,create_intelligent_pydantic_class(template), self.options
 ***REMOVED***
             #extraction = clean_response_regex(regex_cleaning, extraction)
-            extraction_fields: List[ExtractedField] = extracted_from_pydantic(self, extraction)
+            extraction_fields: List[ExtractedField] = extracted_from_pydantic(self.template, extraction)
             
         except Exception as error:
             print("intelligent info extraction error" + repr(error))
@@ -128,7 +130,7 @@ class GeneralScanner:
                 self.text, template, self.file_id, create_pydantic_class(template), self.options
 ***REMOVED***
             #extraction = clean_response_regex(regex_cleaning, extraction)
-            extraction_fields: List[ExtractedField] = extracted_from_pydantic(self, extraction)
+            extraction_fields: List[ExtractedField] = extracted_from_pydantic(self.template, extraction)
             
 
         except Exception as error:
@@ -171,7 +173,7 @@ class GeneralScanner:
             extracted = llm_extraction_and_tag(
                 extracted, self.template, self.file_id, create_pydantic_class(self.template), self.options
 ***REMOVED***
-            extraction= extracted_from_pydantic(self, extracted)
+            extraction= extracted_from_pydantic(self.template, extracted)
         except Exception as error:
             print("extract entry exit costs error" + repr(error))
             self.exceptions_occurred.append(ExceptionsExtracted( error, "complex_info",repr(error)))
@@ -200,9 +202,9 @@ class GeneralScanner:
             page, _ = select_desired_page(text, keywords)
 
             # Get all the tables from the page
-            if self.di_tables_pages is not None and page not in self.di_tables_pages.keys():
+            if (self.di_tables_pages is not None and page not in self.di_tables_pages.keys()) or len(self.di_tables_pages.get(page, []))==0:
                 page_num = str(int(page) + 1)
-                tables, raw_data = get_tables_from_doc(self.images[page], specific_pages=page_num, language=self.options.language or "it")
+                tables, raw_data = get_tables_from_doc(self.images[int(page)], specific_pages=page_num, language=self.options.language or "it")
                 document=getattr(raw_data,"pages", None)
                 all_text = ""
                 for line in getattr(document[int(page)] if document else [],"lines"):
@@ -216,7 +218,7 @@ class GeneralScanner:
 
             # Select the right table
             table_nr = select_desired_table(tables, keywords)
-            return tables[int(table_nr)]
+            return tables[int(table_nr)] if table_nr is not None else DataFrame()
 
         except Exception as error:
             print("extract table error" + repr(error))
@@ -238,11 +240,11 @@ class GeneralScanner:
             tables, raw_data = value
             self.di_tables_pages[key] = tables
             self.raw_data_pages[key] = raw_data
-            for document in getattr(raw_data, "pages", []):
+            for i, document in enumerate(getattr(raw_data, "pages", [])):
                 all_text = ""
                 for line in getattr(document, "lines"):
                     all_text += line.content + "\n"
-                self.text.append(all_text)
+                self.text[int(i)]=all_text
             
             
             
@@ -280,9 +282,9 @@ class GeneralScanner:
         Returns:
             dict(): dict containing the results
         """
+        extraction = dict()
         try:
 
-            extraction = dict()
             list_tables = list(self.di_tables_pages)
             tables = []
             concatenated_str = "i valori sono in una di queste tabelle e solo in una o in nessuna, se si riferisce all'allegato ignoralo "

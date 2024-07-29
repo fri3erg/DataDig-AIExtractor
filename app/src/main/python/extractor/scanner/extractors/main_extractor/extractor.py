@@ -77,7 +77,7 @@ class MainExtractor(GeneralScanner):
 
             api_costs = self._process_costs()
             
-            self.extraction= Extracted(template=self.template, fields=self.extracted_fields, tables=self.extracted_tables, costs=api_costs, exceptions=self.exceptions_occurred)
+            self.extraction= Extracted(template=self.template, fields=self.extracted_fields, tables=self.extracted_tables, costs=api_costs, exceptions=self.exceptions_occurred, format=self.options.format, tags=["tag 1"])
 
 
         except Exception as error:

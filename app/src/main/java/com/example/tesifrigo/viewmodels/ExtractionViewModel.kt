@@ -1,5 +1,6 @@
 package com.example.tesifrigo.viewmodels
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,20 +12,26 @@ import com.example.tesifrigo.models.ExtractionTableRow
 import com.example.tesifrigo.models.Template
 import com.example.tesifrigo.models.TemplateField
 import com.example.tesifrigo.models.TemplateTable
+import com.example.tesifrigo.repositories.ServiceRepository
 import com.example.tesifrigo.utils.calculateCloseness
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.realm.kotlin.ext.query
 import io.realm.kotlin.ext.realmListOf
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.mongodb.kbson.ObjectId
+import javax.inject.Inject
 
-class ExtractionViewModel: ViewModel(){
+@HiltViewModel
+class ExtractionViewModel @Inject constructor() : ViewModel(){
     private  val realm =MyApp.realm
 
     private val _sortOrder = MutableStateFlow(SortOrder.BY_TITLE)
@@ -35,6 +42,8 @@ class ExtractionViewModel: ViewModel(){
 
     private val _searchText = MutableStateFlow("")
     val searchText: StateFlow<String> = _searchText.asStateFlow()
+
+
 
     val extractions = realm
         .query<Extraction>()
@@ -79,6 +88,7 @@ class ExtractionViewModel: ViewModel(){
     init {
         //createSampleExtraction()
     ***REMOVED***
+
     fun queryTemplate(id: String): StateFlow<Extraction?> {
         return extractions.map { extractionList ->
             extractionList.find {
@@ -205,7 +215,7 @@ class ExtractionViewModel: ViewModel(){
                 ***REMOVED***)
 
                 val extraction1 = Extraction().apply {
-                    image = "https://www.example.com/image.jpg"
+                    image =  realmListOf("https://example.com/image.jpg")
                     format= "cvs"
                     extractedFields = realmListOf(extractionField1)
                     extractedTables = realmListOf(extractedTable1)
@@ -214,7 +224,7 @@ class ExtractionViewModel: ViewModel(){
                     template = template1
                 ***REMOVED***
                 val extraction2 = Extraction().apply {
-                    image = "https://www.example.com/image2.jpg"
+                    image = realmListOf("https://example.com/image.jpg")
                     format= "cvs"
                     extractedFields = realmListOf(extractionField2, extractionField1)
                     extractionCosts = "200"
@@ -222,7 +232,7 @@ class ExtractionViewModel: ViewModel(){
                     template = template2
                 ***REMOVED***
                 val extraction3 = Extraction().apply {
-                    image = "https://www.example.com/image3.jpg"
+                    image = realmListOf()
                     format= "json"
                     extractedFields = realmListOf(extractionField3, extractionField2)
                     extractionCosts = "300"
@@ -245,6 +255,13 @@ class ExtractionViewModel: ViewModel(){
                 latestExtraction.extractedFields[index].value = modifiedValue
 
                 // Update properties on latestExtraction, not extraction
+            ***REMOVED***
+        ***REMOVED***
+    ***REMOVED***
+    fun addExtraction(extraction: Extraction) { // Add a new extraction
+        viewModelScope.launch {
+            realm.write {
+                copyToRealm(extraction)
             ***REMOVED***
         ***REMOVED***
     ***REMOVED***

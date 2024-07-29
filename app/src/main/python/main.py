@@ -1,9 +1,4 @@
-
-from datetime import date
-
-import dotenv
 import os
-from regex import E
 from extractor.classes.Extracted import Extracted
 from extractor.classes.Options import ExceptionsExtracted, Options
 # from extractors.Derivati.Spot_KID_extractor import write_info
@@ -14,7 +9,6 @@ import asyncio
 from typing import Callable, List
 from extractor.classes.Template import Template, TemplateField, TemplateTable
 from extractor.scanner.extractors.main_extractor.extractor import MainExtractor
-from extractor.test.variables import images
 from extractor.configs.configs import keys_config
 
 
@@ -26,7 +20,7 @@ from extractor.configs.configs import keys_config
 
 
 
-def main(base64_images : list,text : list[str], template: Template, progress_callback: Callable, options: Options):
+def main(encoded_images : list,text : list[str], template: Template, progress_callback: Callable, options: Options):
     """main loop, instanciate 10 async process(more causes errors) for 10 files at the time,
     puts results in an excel file
 
@@ -37,7 +31,9 @@ def main(base64_images : list,text : list[str], template: Template, progress_cal
     try:
         #env_setter = EnvVarSetter(tenant="insurance")
         #env_setter.configure_local_env_vars()
-        images: list[bytes] = [bytes(image, 'utf-8') for image in list(base64_images)]  
+        images: list[bytes]= [base64.b64decode(image) for image in list(encoded_images)]
+
+        #images: list[bytes] = [bytes(image, 'utf-8') for image in list(encoded_images)]  
         # testing
         batch_size = 5
         parallel = True
@@ -85,16 +81,17 @@ def create_test() -> tuple[Template, Options]:
     """Creates a test instance of the Template class with sample data."""
 
     # Create sample TemplateField objects
-    field1 = TemplateField( "Name", "Enter your full name", "", ["personal", "identification"],str,True)
-    field2 = TemplateField( "Email", "Provide your email", "", ["contact", "personal"],str,True)
-    field3 = TemplateField( "Date of Birth", "Your birthdate (YYYY-MM-DD)", "", ["personal", "date"],date,True)
+    field1 = TemplateField("1", "Name", "Enter your full name", "", ["personal", "identification"],"str",True)
+    field2 = TemplateField("2", "Email", "Provide your email", "", ["contact", "personal"],"str",True)
+    field3 = TemplateField("3", "Date of Birth", "Your birthdate (YYYY-MM-DD)", "", ["personal", "date"],"date",True)
 
     # Create sample TemplateTable objects
-    table1 = TemplateTable( "Personal Information", ["personal", "info"],"table that describes personal info", [field1, field2, field3], [field1, field2, field3])
-    table2 = TemplateTable( "Contact Information", ["contact", "info"],"", [field1, field2],[field1, field2, field3])
+    table1 = TemplateTable("1", "Personal Information", ["personal", "info"],"table that describes personal info", [field1, field2, field3], [field1, field2, field3])
+    table2 = TemplateTable("2", "Contact Information", ["contact", "info"],"", [field1, field2],[field1, field2, field3])
 
     # Create the Template instance
     template = Template(
+        "1",
         "Basic Information Template",
         "Collects essential personal details",
         [field1, field2, field3],  # Fields directly associated with the template
@@ -122,9 +119,7 @@ def main_kotlin(base64_images : list , text:list[str],template: Template, progre
     logging.basicConfig(level=logging.DEBUG, handlers=[AndroidLogHandler()])
     
     for key, item in keys_config.items():
-        print(options.get_api_key(item))
         os.environ[key] = options.get_api_key(item)
-        print(key, os.environ[key])
     
     return main(base64_images,text, template, progress_callback, options)
 
@@ -132,10 +127,11 @@ def main_kotlin(base64_images : list , text:list[str],template: Template, progre
 
     
     template, option= create_test()
-    text=[
-        "This is a test"
-    ]
-    
+    text=["This is a test"]
+    base64_image = []
+    with open('extractor\\test\\test.png', "rb") as image_file:  # Open in binary mode
+        image_data = image_file.read()
+        base64_image = [base64.b64encode(image_data).decode("utf-8")]
     
     logging.basicConfig(filename="logging.log", encoding="utf-8", level=logging.DEBUG)
 
@@ -143,7 +139,7 @@ def main_kotlin(base64_images : list , text:list[str],template: Template, progre
     # Check if there are PDF files in the current directory
     # if any(file.endswith(".pdf") for file in files):
     # Call your existing function to process PDFs in the folder
-    main(images,text, template, fake_callback, option)
+    main(base64_image,text, template, fake_callback, option)
 
 
         

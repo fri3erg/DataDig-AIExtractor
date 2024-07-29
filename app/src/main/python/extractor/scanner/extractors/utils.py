@@ -30,8 +30,6 @@ def select_desired_page(text, words_repr):
     counter = defaultdict(int)
 
     for i, page in enumerate(text):
-        if page == "":
-            continue
 
         # Remove punctuation and replace \n with space
         content = page.lower().replace("\n", " ")
@@ -40,7 +38,7 @@ def select_desired_page(text, words_repr):
             counter[str(i)] += content.count(word)
 
     # Page with most occurrences
-    pg_number = max(counter, key=lambda page: counter[page])
+    pg_number = max(counter, key=lambda i: counter[i])
 
     return pg_number, counter[pg_number]
 
@@ -53,19 +51,23 @@ def select_desired_table(tables, words_repr):
         words_repr (lst): list of words to look for in the pages provided
 
     Returns:
-        int: table index with the most occurrences of the words in words_repr
+        int or None: table index with the most occurrences of the words in words_repr,
+                     or None if no words were found.
     """
     counter = defaultdict(int)
-    # Search all the tables
+
     for i, table in enumerate(tables):
         for word in words_repr:
-            # print(word)
-            # print(table.apply(lambda col:col.str.count(word, flags=re.IGNORECASE)).sum().sum())
-
             counter[str(i)] += table.apply(lambda col: col.str.count(word, flags=re.IGNORECASE)).sum().sum()
 
-    # Page with most occurrences
-    tb_number = max(counter, key=counter.get)
+    # Check if counter is empty
+    if len(counter) == 0:
+        return None  # Return None if no words were found
+
+    # Find the index with the highest count
+    tb_number = max(counter.items(), key=lambda item: item[1])[0]
+
+
     return tb_number
 
 
@@ -618,14 +620,20 @@ def create_pydantic_class(template: Template):
 
     fields = {***REMOVED***
     for template_field in template.fields:
-        field_type = template_field.type or str
-        description=template_field.extra_description or template_field.description
-        if template_field.required:  # Assuming TemplateField has a 'required' attribute
-            description +=" ,should be present,check well"
-        fields[template_field.title] = (Optional[field_type]| str, Field(default='N/A',description=description))
+        pydantic_type=get_pydantic_type(template_field.type)
 
+        description = template_field.extra_description or template_field.description
+        if template_field.required:
+            description += " (required)"
 
-    model = create_model("DynamicModel", **fields)  # Use create_model for dynamic creation
+        # Use Optional for non-required fields
+        if not template_field.required:
+            pydantic_type = Optional[pydantic_type]
+
+        # Create the Pydantic field
+        fields[template_field.title] = (pydantic_type, Field(default='N/A', description=description))
+
+    model = create_model("DynamicModel", **fields) 
     return model
 
 def create_pydantic_table_class(template: TemplateTable):
@@ -634,8 +642,8 @@ def create_pydantic_table_class(template: TemplateTable):
     fields = {***REMOVED***
     for  row in template.rows:
         for column in template.columns:
-            
-            field_type:type = row.type or column.type or str
+            type_from= row.type or column.type or "str"
+            field_type:type = get_pydantic_type(type_from)
             required= column.required or row.required
             description=f"row:{row.title***REMOVED***|column:{column.title***REMOVED***|"
             
@@ -653,7 +661,7 @@ def create_intelligent_pydantic_class(template: Template):
     fields = {***REMOVED***
     description= ""
     for template_field in template.fields:
-        field_type:type = template_field.type or str
+        field_type:type = get_pydantic_type(template_field.type)
         if template_field.required:  # Assuming TemplateField has a 'required' attribute
             description="should be present,check well"
         fields[template_field.title] = (Optional[field_type], Field(description=description))
@@ -663,8 +671,30 @@ def create_intelligent_pydantic_class(template: Template):
     return model
 
 
+def get_pydantic_type(type: str|None) -> type:
+    """Returns the Pydantic type that corresponds to the specified type string.
 
-def extracted_from_pydantic(self, tagged) -> List[ExtractedField]:
+    Args:
+        type: The type string to convert to a Pydantic type.
+
+    Returns:
+        type: The Pydantic type that corresponds to the specified type string.
+    """
+    if type == "str":
+        return str
+    elif type == "int":
+        return int
+    elif type == "float":
+        return float
+    elif type == "bool":
+        return bool
+    elif type == "date":
+        return str
+    else:
+        return str
+
+
+def extracted_from_pydantic(template:Template, tagged) -> List[ExtractedField]:
     """Extracts the fields from a tagged object.
 
     Args:
@@ -675,14 +705,14 @@ def extracted_from_pydantic(self, tagged) -> List[ExtractedField]:
     """
     extracted = []
     for field in tagged.__fields__:
-        value = getattr(tagged, field)
+        value = getattr(tagged, field,"N/A")
         matching_template_field:TemplateField | None = next(
-            (tf for tf in self.template.fields if tf.title == field), None
+            (tf for tf in template.fields if tf.title == field), None
         )  
         if matching_template_field:
             extracted.append(ExtractedField(value=value, template_field=matching_template_field))
         else:
-            print(f"Field '{field***REMOVED***' not found in template '{self.template.title***REMOVED***'")
+            print(f"Field '{field***REMOVED***' not found in template '{template.title***REMOVED***'")
     return extracted
 
 
