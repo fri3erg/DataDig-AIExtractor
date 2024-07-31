@@ -37,9 +37,13 @@ import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 import io.realm.kotlin.types.RealmList
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import java.io.File
 import java.io.FileOutputStream
 import java.util.Collections.addAll
+import java.util.concurrent.LinkedBlockingQueue
 
 @AndroidEntryPoint
 class ExtractionService : Service(){
@@ -74,17 +78,17 @@ class ExtractionService : Service(){
 
         Log.d("TestService", "Service started")
         val imageUri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent?.getParcelableExtra("imageUri", Uri::class.java)
+            intent?.getParcelableArrayListExtra("imageUris", Uri::class.java)
         ***REMOVED*** else {
             @Suppress("DEPRECATION")
-            intent?.getParcelableExtra<Uri>("imageUri")
+            intent?.getParcelableArrayListExtra<Uri>("imageUris")
         ***REMOVED***
         if (imageUri != null) {
             val template = serviceRepository.getTemplate() ?: return
             val options = serviceRepository.getOptions()
             // Process the image using a Coroutine
             CoroutineScope(Dispatchers.IO).launch {
-                processImage(listOf(imageUri), serviceRepository, keyManager, template, options)
+                processImage(imageUri, serviceRepository, keyManager, template, options)
             ***REMOVED***
         ***REMOVED***
 
@@ -115,7 +119,9 @@ class ExtractionService : Service(){
             Log.d("TestService", "Processing image: $imageUris")
             Thread.sleep(5000) // Sleep for 5 seconds
             val progressCallback: (Float) -> Unit = { progress ->
-                updateProgress(progress)
+                serviceScope.launch {
+                    updateProgress(progress)
+                ***REMOVED***
             ***REMOVED***
 
             // Find Tesseract data directory (assuming it's in the tessdata directory)
@@ -179,14 +185,25 @@ class ExtractionService : Service(){
 
 
 
-            val pyResult =module.callAttr("main_kotlin", pyListImages,pyListText, pythonTemplate, progressCallback, chosenOption)
+            val deferredPyResult = async(Dispatchers.Default) { // Use async for Python call
+                module.callAttr("main_kotlin", pyListImages, pyListText, pythonTemplate, chosenOption)
+            ***REMOVED***
 
-            launch(Dispatchers.Main) {        // Handle 'pyResult' on the main thread for UI updates if needed
+            // Monitor progress in parallel
+            while (isActive && !deferredPyResult.isCompleted) {  // Check if Python is still running
+                val currentProgress = module.get("global_progress")?.toFloat()
+                if (currentProgress != null) {
+                    progressCallback(currentProgress)
+                    Log.d("TestService", "Progress: $currentProgress")
+                ***REMOVED***
+                delay(10)
+            ***REMOVED***
 
+            // Python call is complete, handle results
+            val pyResult = deferredPyResult.await()  // Wait for the result
+            launch(Dispatchers.Main) {
                 onResult(pyResult)
                 progressCallback(1f)
-
-                // Stop the service only after processing the result
                 stopSelf()
             ***REMOVED***
         ***REMOVED***

@@ -10,6 +10,8 @@ plugins {
 buildscript {
     repositories {
         google()
+        mavenCentral()
+        maven { url = uri("https://jitpack.io") ***REMOVED***
     ***REMOVED***
     dependencies {
         // ... other dependencies

@@ -1,4 +1,5 @@
 import os
+from threading import Thread
 from extractor.classes.Extracted import Extracted
 from extractor.classes.Options import ExceptionsExtracted, Options
 # from extractors.Derivati.Spot_KID_extractor import write_info
@@ -15,12 +16,13 @@ from extractor.configs.configs import keys_config
 # Now use the 'api_key' and 'db_password' variables in your code
 
 
+global_progress =0.0
 
 
 
 
+def main(encoded_images : list,text : list[str], template: Template, options: Options):
 
-def main(encoded_images : list,text : list[str], template: Template, progress_callback: Callable, options: Options):
     """main loop, instanciate 10 async process(more causes errors) for 10 files at the time,
     puts results in an excel file
 
@@ -44,15 +46,23 @@ def main(encoded_images : list,text : list[str], template: Template, progress_ca
         extraction: Extracted | None = None
         
         try:
-            extractor= MainExtractor(images,text, template,progress_callback, options)
+            extractor= MainExtractor(images,text, template, options)
+            progress_callback(0.1)
             
         except Exception as error:
             print("initialization error" + repr(error))
             exceptions_occurred.append(ExceptionsExtracted(error=error, error_location="initialization",error_description=repr(error)))
         
         try:
-            if extractor:
-                extraction= asyncio.run(extractor.process())
+            if extractor:   
+                progress_callback(0.2)
+                progress=extractor.first_stage()
+                progress_callback(progress or 0.6)
+                extractor.second_stage()
+                progress_callback(0.95)
+                extraction = extractor.end_phase()
+                progress_callback(0.99)
+                
     
     
         except Exception as error:
@@ -106,9 +116,13 @@ def create_test() -> tuple[Template, Options]:
 def fake_callback(progress):
     print(progress)
     
+def progress_callback(value: float):
+    global global_progress
+    global_progress = value 
     
     
-def main_kotlin(base64_images : list , text:list[str],template: Template, progress_callback: Callable, options: Options):
+    
+def main_kotlin(base64_images : list , text:list[str],template: Template, options: Options):
         
     from java import jclass
 
@@ -120,8 +134,13 @@ def main_kotlin(base64_images : list , text:list[str],template: Template, progre
     
     for key, item in keys_config.items():
         os.environ[key] = options.get_api_key(item)
+        
+            
     
-    return main(base64_images,text, template, progress_callback, options)
+    return main(base64_images,text, template, options)
+
+        
+
 
 ***REMOVED***
 

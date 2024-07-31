@@ -95,11 +95,11 @@ android {
     ***REMOVED***
 
 dependencies {
-
     implementation(libs.androidx.material3.android)
     implementation(libs.vision.common)
     implementation(libs.play.services.mlkit.text.recognition.common)
     implementation(libs.play.services.mlkit.text.recognition)
+    implementation(libs.androidx.paging.common.android)
     val nav_version = "2.8.0-alpha08"
     implementation("com.google.mlkit:text-recognition:16.0.0") // Or latest version
     implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
@@ -115,6 +115,9 @@ dependencies {
     kapt("androidx.hilt:hilt-compiler:1.0.0")
     implementation("androidx.work:work-runtime-ktx:2.8.1")
     implementation("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.5.0") // Use the latest version
+    implementation ("com.google.accompanist:accompanist-pager:0.31.2-alpha") // Replace with the latest version
+    implementation("com.google.accompanist:accompanist-pager:0.28.0")
+    implementation("androidx.compose.foundation:foundation:1.4.3") // Or the latest version
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -144,8 +147,15 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    implementation("io.realm.kotlin:library-base:1.11.0")
+    implementation (libs.androidx.camera.core.v130alpha06)
+    implementation (libs.camera.camera2)
+    implementation (libs.androidx.camera.lifecycle.v130alpha06)
+    implementation (libs.androidx.camera.view.v130alpha06)
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+    implementation("io.realm.kotlin:library-base:1.11.0")
+
+
+
 
 ***REMOVED***
 kapt {
