@@ -29,6 +29,7 @@ visionCommon = "17.3.0"
 playServicesMlkitTextRecognitionCommon = "19.0.0"
 playServicesMlkitTextRecognition = "19.0.0"
 pagingCommonAndroid = "3.3.1"
+firebaseCrashlyticsBuildtools = "3.0.2"
 
 [libraries]
 androidx-camera-core-v130alpha06 = { module = "androidx.camera:camera-core", version.ref = "cameraCoreVersion" ***REMOVED***
@@ -67,6 +68,7 @@ vision-common = { group = "com.google.mlkit", name = "vision-common", version.re
 play-services-mlkit-text-recognition-common = { group = "com.google.android.gms", name = "play-services-mlkit-text-recognition-common", version.ref = "playServicesMlkitTextRecognitionCommon" ***REMOVED***
 play-services-mlkit-text-recognition = { group = "com.google.android.gms", name = "play-services-mlkit-text-recognition", version.ref = "playServicesMlkitTextRecognition" ***REMOVED***
 androidx-paging-common-android = { group = "androidx.paging", name = "paging-common-android", version.ref = "pagingCommonAndroid" ***REMOVED***
+firebase-crashlytics-buildtools = { group = "com.google.firebase", name = "firebase-crashlytics-buildtools", version.ref = "firebaseCrashlyticsBuildtools" ***REMOVED***
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" ***REMOVED***

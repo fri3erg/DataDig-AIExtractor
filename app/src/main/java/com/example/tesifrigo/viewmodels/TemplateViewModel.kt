@@ -17,8 +17,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import org.mongodb.kbson.ObjectId
 import com.example.tesifrigo.utils.calculateCloseness
+import org.mongodb.kbson.ObjectId
 
 class TemplateViewModel : ViewModel() {
 
@@ -118,7 +118,7 @@ class TemplateViewModel : ViewModel() {
                     extraDescription = "This is an extra description"
                     type = "text"
                     required = true
-                    intelligent_extraction = false
+                    intelligentExtraction = false
                     tags = realmListOf("freezer")
                 ***REMOVED***
                 val templateField2 = TemplateField().apply {
@@ -127,7 +127,7 @@ class TemplateViewModel : ViewModel() {
                     extraDescription = "This is an extra description 2"
                     type = "text"
                     required = true
-                    intelligent_extraction = true
+                    intelligentExtraction = true
                     tags = realmListOf("freezer")
                 ***REMOVED***
                 val templateField3 = TemplateField().apply {
@@ -136,7 +136,7 @@ class TemplateViewModel : ViewModel() {
                     extraDescription = "This is an extra description 3"
                     type = "text"
                     required = true
-                    intelligent_extraction = false
+                    intelligentExtraction = false
                     tags = realmListOf("freezer")
                 ***REMOVED***
 

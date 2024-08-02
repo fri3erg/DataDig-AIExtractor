@@ -100,6 +100,7 @@ dependencies {
     implementation(libs.play.services.mlkit.text.recognition.common)
     implementation(libs.play.services.mlkit.text.recognition)
     implementation(libs.androidx.paging.common.android)
+    implementation(libs.firebase.crashlytics.buildtools)
     val nav_version = "2.8.0-alpha08"
     implementation("com.google.mlkit:text-recognition:16.0.0") // Or latest version
     implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
@@ -153,6 +154,8 @@ dependencies {
     implementation (libs.androidx.camera.view.v130alpha06)
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
     implementation("io.realm.kotlin:library-base:1.11.0")
+    implementation ("com.google.code.gson:gson:2.8.6")
+
 
 
 

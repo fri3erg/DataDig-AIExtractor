@@ -1,7 +1,6 @@
-import android.content.ContentResolver
+package com.example.tesifrigo.services
+
 import android.graphics.Bitmap
-import android.net.Uri
-import android.provider.MediaStore
 import com.google.android.gms.tasks.Tasks
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition

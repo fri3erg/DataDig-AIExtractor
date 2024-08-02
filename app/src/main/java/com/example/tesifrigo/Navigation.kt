@@ -27,7 +27,7 @@ fun AppNavigation( navController: NavHostController, modifier: Modifier = Modifi
                 ***REMOVED***
 ***REMOVED***
         ) {
-            CameraScreen(it.arguments?.getString("templateId")) ***REMOVED***
+            CameraScreen(it.arguments?.getString("templateId"), navController) ***REMOVED***
         composable(Screen.Storage.route) { StorageScreen(navController) ***REMOVED***
         composable(Screen.Settings.route) { SettingsScreen() ***REMOVED***
         composable(Screen.Templates.route + "?photos={photos***REMOVED***",

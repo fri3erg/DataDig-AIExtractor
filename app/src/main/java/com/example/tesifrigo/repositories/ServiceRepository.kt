@@ -1,34 +1,17 @@
 package com.example.tesifrigo.repositories
 
-import android.content.Context
-import android.content.SharedPreferences
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKey
-import androidx.security.crypto.MasterKeys
+
 import com.example.tesifrigo.MyApp
-import com.example.tesifrigo.models.Extracted
 import com.example.tesifrigo.models.Extraction
 import com.example.tesifrigo.models.Options
 import com.example.tesifrigo.models.Template
-import com.example.tesifrigo.viewmodels.ExtractionViewModel
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
 import io.realm.kotlin.UpdatePolicy
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -36,7 +19,6 @@ import javax.inject.Singleton
 class ServiceRepository @Inject constructor(
 
 ) {
-    val repositoryScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)  // Custom scope
 
     private val _progress = MutableStateFlow(0f)
     val progress: StateFlow<Float> = _progress.asStateFlow()
@@ -97,8 +79,4 @@ class ServiceRepository @Inject constructor(
         ***REMOVED***
     ***REMOVED***
 
-
-    fun onDestroy() {
-        repositoryScope.cancel()  // Cancel the scope when the repository is no longer needed
-    ***REMOVED***
 ***REMOVED***

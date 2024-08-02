@@ -1,6 +1,5 @@
 package com.example.tesifrigo.services
 
-import ImageOCR
 import android.app.Notification
 import android.app.Service
 import android.content.Context
@@ -17,6 +16,7 @@ import androidx.core.app.NotificationCompat
 import com.chaquo.python.PyObject
 import com.chaquo.python.Python
 import com.chaquo.python.android.AndroidPlatform
+import com.example.tesifrigo.fileCreator.JsonCreator
 import com.example.tesifrigo.R
 import com.example.tesifrigo.models.ExceptionOccurred
 import com.example.tesifrigo.models.Extraction
@@ -29,21 +29,17 @@ import com.example.tesifrigo.repositories.KeyManager
 import com.example.tesifrigo.repositories.ServiceRepository
 import com.example.tesifrigo.viewmodels.Keys
 import dagger.hilt.android.AndroidEntryPoint
-import io.realm.kotlin.ext.realmListOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
-import io.realm.kotlin.types.RealmList
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import java.io.File
 import java.io.FileOutputStream
-import java.util.Collections.addAll
-import java.util.concurrent.LinkedBlockingQueue
 
 @AndroidEntryPoint
 class ExtractionService : Service(){
@@ -81,7 +77,7 @@ class ExtractionService : Service(){
             intent?.getParcelableArrayListExtra("imageUris", Uri::class.java)
         ***REMOVED*** else {
             @Suppress("DEPRECATION")
-            intent?.getParcelableArrayListExtra<Uri>("imageUris")
+            intent?.getParcelableArrayListExtra("imageUris")
         ***REMOVED***
         if (imageUri != null) {
             val template = serviceRepository.getTemplate() ?: return
@@ -112,19 +108,17 @@ class ExtractionService : Service(){
         val localContext = this
 
         val onResult: (PyObject) -> Unit = { result ->
-            serviceRepository.updateResult(extractResult(result, template, imageUris))
+            serviceRepository.updateResult(extractResult(result, template, imageUris, localContext))
         ***REMOVED***
 
         serviceScope.launch {
             Log.d("TestService", "Processing image: $imageUris")
-            Thread.sleep(5000) // Sleep for 5 seconds
             val progressCallback: (Float) -> Unit = { progress ->
                 serviceScope.launch {
                     updateProgress(progress)
                 ***REMOVED***
             ***REMOVED***
 
-            // Find Tesseract data directory (assuming it's in the tessdata directory)
 
             if (! Python.isStarted()) {
                 Python.start(AndroidPlatform(localContext))
@@ -151,6 +145,7 @@ class ExtractionService : Service(){
                     pyListImages.callAttr("append", base64Image)  // Add Base64 image to the Python list
                 ***REMOVED***
             ***REMOVED***
+            progressCallback(0.15f)
             val imageUriOcr = ImageOCR()
             val pyListText = builtinsModule.callAttr("list") // Create an empty Python list
             imageUris.map { imageUri ->
@@ -179,6 +174,8 @@ class ExtractionService : Service(){
                 PyObject.fromJava(getApiKey)
 ***REMOVED***
 
+            progressCallback(0.2f)
+
             val classesModule = py.getModule("extractor.classes.Template") // Get the module
 
             val pythonTemplate= getTemplate(classesModule,builtinsModule, template)
@@ -191,7 +188,7 @@ class ExtractionService : Service(){
 
             // Monitor progress in parallel
             while (isActive && !deferredPyResult.isCompleted) {  // Check if Python is still running
-                val currentProgress = module.get("global_progress")?.toFloat()
+                val currentProgress = module["global_progress"]?.toFloat()
                 if (currentProgress != null) {
                     progressCallback(currentProgress)
                     Log.d("TestService", "Progress: $currentProgress")
@@ -233,7 +230,7 @@ private fun copyAssetsToStorage(context: Context, assetPath: String, targetDirec
     ***REMOVED***
 ***REMOVED***
 
-private fun extractResult(pyResult:PyObject, template_og: Template, imageUris: List<Uri>): Extraction{
+private fun extractResult(pyResult:PyObject, templateOg: Template, imageUris: List<Uri>, context: Context): Extraction{
 
     val extracted = Extraction().apply {
         image.addAll(imageUris.map { it.toString() ***REMOVED***)
@@ -261,7 +258,7 @@ private fun extractResult(pyResult:PyObject, template_og: Template, imageUris: L
             extractedFields.addAll(
                 pyObjects.map { pyExtractedField ->
                     ExtractionField().apply {
-                        templateField = template_og.fields.first { it.id.toHexString() == pyExtractedField["template_field"]
+                        templateField = templateOg.fields.first { it.id.toHexString() == pyExtractedField["template_field"]
                             ?.get("id")
                             .toString() ***REMOVED***
                         value = pyExtractedField["value"].toString()
@@ -270,10 +267,21 @@ private fun extractResult(pyResult:PyObject, template_og: Template, imageUris: L
 ***REMOVED***
         ***REMOVED***
         pyResult["extracted_tables"]?.asList()?.forEach { pyExtractedTable ->
-            extractedTables.add(extractTable(pyExtractedTable, template_og))
+            extractedTables.add(extractTable(pyExtractedTable, templateOg))
         ***REMOVED***
-        template=template_og
+        template=templateOg
     ***REMOVED***
+
+    // Convert to JSON and save to file
+    when(extracted.format){
+        "json" -> {
+        ***REMOVED***
+        "csv" -> {
+
+            ***REMOVED***
+        ***REMOVED***
+    extracted.fileUri = JsonCreator().convertToJsonFile(extracted, context).toString()
+
     return extracted
 ***REMOVED***
 
@@ -282,7 +290,7 @@ private fun extractTable(pyExtractedTable: PyObject, template: Template): Extrac
 
 
     val realmExtractionTable = ExtractionTable().apply {
-        templateTable = template.tables.first { it.id.toHexString() == pyExtractedTable.get("template_table")
+        templateTable = template.tables.first { it.id.toHexString() == pyExtractedTable["template_table"]
             ?.get("id")
             .toString() ***REMOVED***
         dataframe= pyExtractedTable["dataframe"].toString()
@@ -326,7 +334,7 @@ private fun getTemplate(classesModule: PyObject,builtinsModule: PyObject, templa
             PyObject.fromJava(realmField.type),
             PyObject.fromJava(realmField.required),
             PyObject.fromJava(realmField.tags.toList()),
-            PyObject.fromJava(realmField.intelligent_extraction)
+            PyObject.fromJava(realmField.intelligentExtraction)
         )
         )  // Add Base64 image to the Python list
 
@@ -347,7 +355,7 @@ private fun getTemplate(classesModule: PyObject,builtinsModule: PyObject, templa
                 PyObject.fromJava(tableField.type),
                 PyObject.fromJava(tableField.required),
                 PyObject.fromJava(tableField.tags.toList()),
-                PyObject.fromJava(tableField.intelligent_extraction)
+                PyObject.fromJava(tableField.intelligentExtraction)
 ***REMOVED***
 ***REMOVED***  // Add Base64 image to the Python list
         ***REMOVED***
@@ -362,7 +370,7 @@ private fun getTemplate(classesModule: PyObject,builtinsModule: PyObject, templa
                     PyObject.fromJava(tableField.type),
                     PyObject.fromJava(tableField.required),
                     PyObject.fromJava(tableField.tags.toList()),
-                    PyObject.fromJava(tableField.intelligent_extraction)
+                    PyObject.fromJava(tableField.intelligentExtraction)
     ***REMOVED***
 ***REMOVED***  // Add Base64 image to the Python list
         ***REMOVED***

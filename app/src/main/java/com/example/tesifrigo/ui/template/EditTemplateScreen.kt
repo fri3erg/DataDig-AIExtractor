@@ -63,7 +63,7 @@ fun TemplateField(
     template?.fields?.get(index)?.let {
         EditableTextWithTitle(
             title = it.title,
-            text = template.fields!![index].description,
+            text = template.fields[index].description,
             modifier= Modifier.padding(6.dp),
             onTextChange = { newText ->
                 viewModel.updateTemplateItem(template, "description" to newText , index)

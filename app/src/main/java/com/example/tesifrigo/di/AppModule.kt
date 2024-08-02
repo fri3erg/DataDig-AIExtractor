@@ -58,11 +58,3 @@ object ViewModelModule {
 
 ***REMOVED***
 
-
-
-@Module
-@InstallIn(SingletonComponent::class)
-object AppModule {
-
-
-***REMOVED***

@@ -1,6 +1,5 @@
 package com.example.tesifrigo.viewmodels
 
-import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,17 +11,14 @@ import com.example.tesifrigo.models.ExtractionTableRow
 import com.example.tesifrigo.models.Template
 import com.example.tesifrigo.models.TemplateField
 import com.example.tesifrigo.models.TemplateTable
-import com.example.tesifrigo.repositories.ServiceRepository
 import com.example.tesifrigo.utils.calculateCloseness
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.realm.kotlin.ext.query
 import io.realm.kotlin.ext.realmListOf
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -118,7 +114,7 @@ class ExtractionViewModel @Inject constructor() : ViewModel(){
                     extraDescription = "This is an extra description"
                     type = "text"
                     required = true
-                    intelligent_extraction = false
+                    intelligentExtraction = false
                     tags = realmListOf("freezer")
                 ***REMOVED***)
                 val templateField2 = copyToRealm(TemplateField().apply {
@@ -127,7 +123,7 @@ class ExtractionViewModel @Inject constructor() : ViewModel(){
                     extraDescription = "This is an extra description 2"
                     type = "text"
                     required = true
-                    intelligent_extraction = true
+                    intelligentExtraction = true
                     tags = realmListOf("freezer")
                 ***REMOVED***)
                 val templateField3 = copyToRealm(TemplateField().apply {
@@ -136,7 +132,7 @@ class ExtractionViewModel @Inject constructor() : ViewModel(){
                     extraDescription = "This is an extra description 3"
                     type = "text"
                     required = true
-                    intelligent_extraction = false
+                    intelligentExtraction = false
                     tags = realmListOf("freezer")
                 ***REMOVED***)
 

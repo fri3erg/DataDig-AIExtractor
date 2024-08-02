@@ -17,7 +17,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.tesifrigo.models.Extraction
-import com.example.tesifrigo.models.ExtractionField
 import com.example.tesifrigo.utils.EditableTextWithTitle
 import com.example.tesifrigo.utils.TextWithTitle
 import com.example.tesifrigo.viewmodels.ExtractionViewModel
