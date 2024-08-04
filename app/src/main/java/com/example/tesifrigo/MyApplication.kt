@@ -41,7 +41,7 @@ class MyApp: Application(){
                 TemplateTable::class,
                 ExceptionOccurred::class
 ***REMOVED***
-        ).schemaVersion(7).build()
+        ).schemaVersion(8).build()
 
         realm = Realm.open(
         configuration

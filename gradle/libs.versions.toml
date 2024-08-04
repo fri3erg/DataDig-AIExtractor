@@ -1,8 +1,19 @@
 [versions]
+accompanistPagerIndicators = "0.31.5-alpha"
+accompanistPagerVersion = "0.28.0"
+activityComposeVersion = "1.6.1"
 agp = "8.5.1"
+androidxUi = "1.3.3"
+cameraCamera2Version = "1.3.3"
 cameraCoreVersion = "1.3.0-alpha06"
 cameraLifecycleVersion = "1.3.0-alpha06"
 cameraViewVersion = "1.3.0-alpha06"
+coilmultiplatformVersion = "1.0.0"
+composethemeVersion = "1.1.0-alpha"
+coreKtxVersion = "1.13.1"
+fontawesomecompose = "1.0.0"
+hiltAndroid = "2.51"
+hiltWork = "1.2.0"
 kotlin = "1.9.0"
 coreKtx = "1.12.0"
 junit = "4.13.2"
@@ -13,9 +24,17 @@ activityCompose = "1.8.2"
 composeBom = "2023.08.00"
 cameraCore = "1.3.2"
 datastoreCoreAndroid = "1.1.0-rc01"
+localbroadcastmanager = "1.1.0"
+material3 = "1.0.0"
+material3Version = "1.2.1"
 navigationCompose = "2.7.7"
 material3Android = "1.2.1"
+navigationFragmentKtx = "2.8.0-alpha08"
+securityCrypto = "1.1.0-alpha06"
 tessTwo = "9.1.0"
+textRecognition = "16.0.0"
+ui = "1.6.8"
+uiVersion = "1.6.10"
 workRuntimeKtx = "2.9.0"
 cronetEmbedded = "119.6045.31"
 cameraLifecycle = "1.3.2"
@@ -32,11 +51,28 @@ pagingCommonAndroid = "3.3.1"
 firebaseCrashlyticsBuildtools = "3.0.2"
 
 [libraries]
+accompanist-pager-indicators = { module = "com.google.accompanist:accompanist-pager-indicators", version.ref = "accompanistPagerIndicators" ***REMOVED***
+accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPagerVersion" ***REMOVED***
+androidx-activity-compose-v161 = { module = "androidx.activity:activity-compose", version.ref = "activityComposeVersion" ***REMOVED***
 androidx-camera-core-v130alpha06 = { module = "androidx.camera:camera-core", version.ref = "cameraCoreVersion" ***REMOVED***
 androidx-camera-lifecycle-v130alpha06 = { module = "androidx.camera:camera-lifecycle", version.ref = "cameraLifecycleVersion" ***REMOVED***
 androidx-camera-view-v130alpha06 = { module = "androidx.camera:camera-view", version.ref = "cameraViewVersion" ***REMOVED***
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" ***REMOVED***
+androidx-core-ktx-v1131 = { module = "androidx.core:core-ktx", version.ref = "coreKtxVersion" ***REMOVED***
+androidx-hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "hiltWork" ***REMOVED***
+androidx-localbroadcastmanager = { module = "androidx.localbroadcastmanager:localbroadcastmanager", version.ref = "localbroadcastmanager" ***REMOVED***
+androidx-material3-v100 = { module = "androidx.compose.material3:material3", version.ref = "material3" ***REMOVED***
+androidx-navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationFragmentKtx" ***REMOVED***
+androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "securityCrypto" ***REMOVED***
+androidx-ui-v133 = { module = "androidx.compose.ui:ui", version.ref = "androidxUi" ***REMOVED***
+androidx-ui-v1610 = { module = "androidx.compose.ui:ui", version.ref = "uiVersion" ***REMOVED***
 camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "cameraCoreVersion" ***REMOVED***
+camera-camera2-v133 = { module = "androidx.camera:camera-camera2", version.ref = "cameraCamera2Version" ***REMOVED***
+coilmultiplatform = { module = "com.alexstyl:coilmultiplatform", version.ref = "coilmultiplatformVersion" ***REMOVED***
+composetheme = { module = "com.composables:composetheme", version.ref = "composethemeVersion" ***REMOVED***
+fontawesomecompose = { module = "com.github.Gurupreet:FontAwesomeCompose", version.ref = "fontawesomecompose" ***REMOVED***
+google-accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanistPagerVersion" ***REMOVED***
+hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" ***REMOVED***
 junit = { group = "junit", name = "junit", version.ref = "junit" ***REMOVED***
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" ***REMOVED***
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" ***REMOVED***
@@ -60,10 +96,14 @@ androidx-camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycl
 androidx-camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "cameraView" ***REMOVED***
 androidx-room-common = { group = "androidx.room", name = "room-common", version.ref = "roomCommon" ***REMOVED***
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" ***REMOVED***
+material3 = { module = "androidx.compose.material3:material3", version.ref = "material3Version" ***REMOVED***
 navigation-compose = { module="androidx.navigation:navigation-compose", version.ref = "composeNavigation" ***REMOVED***
 kotlinx-serialization-json = { module="org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization"***REMOVED***
 androidx-security-crypto-ktx = { group = "androidx.security", name = "security-crypto-ktx", version.ref = "securityCryptoKtx" ***REMOVED***
 tess-two = { module = "com.rmtheis:tess-two", version.ref = "tessTwo" ***REMOVED***
+text-recognition = { module = "com.google.mlkit:text-recognition", version.ref = "textRecognition" ***REMOVED***
+ui = { module = "androidx.compose.ui:ui", version.ref = "ui" ***REMOVED***
+ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "androidxUi" ***REMOVED***
 vision-common = { group = "com.google.mlkit", name = "vision-common", version.ref = "visionCommon" ***REMOVED***
 play-services-mlkit-text-recognition-common = { group = "com.google.android.gms", name = "play-services-mlkit-text-recognition-common", version.ref = "playServicesMlkitTextRecognitionCommon" ***REMOVED***
 play-services-mlkit-text-recognition = { group = "com.google.android.gms", name = "play-services-mlkit-text-recognition", version.ref = "playServicesMlkitTextRecognition" ***REMOVED***

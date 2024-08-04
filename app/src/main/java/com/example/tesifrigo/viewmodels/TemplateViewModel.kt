@@ -38,7 +38,6 @@ class TemplateViewModel : ViewModel() {
     // Function to update search text
 
 
-
     val templates = realm
         .query<Template>()
         .asFlow()
@@ -58,8 +57,15 @@ class TemplateViewModel : ViewModel() {
             if (searchQuery.isBlank()) { // Check if searchQuery is empty
                 // Default sorting if searchQuery is empty
                 when (order) {
-                    SortOrder.BY_TITLE -> compareValuesBy(t1, t2) { it.title ***REMOVED*** * if (isAscending) 1 else -1
-                    SortOrder.BY_DATE -> compareValuesBy(t1, t2) { it.id ***REMOVED*** * if (isAscending) 1 else -1
+                    SortOrder.BY_TITLE -> compareValuesBy(
+                        t1,
+                        t2
+        ***REMOVED*** { it.title ***REMOVED*** * if (isAscending) 1 else -1
+
+                    SortOrder.BY_DATE -> compareValuesBy(
+                        t1,
+                        t2
+        ***REMOVED*** { it.id ***REMOVED*** * if (isAscending) 1 else -1
                 ***REMOVED***
             ***REMOVED*** else {
                 // Closeness-based sorting if searchQuery is not empty
@@ -69,8 +75,15 @@ class TemplateViewModel : ViewModel() {
                 if (closenessComparison == 0) {
                     // If a tie, apply secondary comparison
                     when (order) {
-                        SortOrder.BY_TITLE -> compareValuesBy(t1, t2) { it.title ***REMOVED*** * if (isAscending) 1 else -1
-                        SortOrder.BY_DATE -> compareValuesBy(t1, t2) { it.id ***REMOVED*** * if (isAscending) 1 else -1
+                        SortOrder.BY_TITLE -> compareValuesBy(
+                            t1,
+                            t2
+            ***REMOVED*** { it.title ***REMOVED*** * if (isAscending) 1 else -1
+
+                        SortOrder.BY_DATE -> compareValuesBy(
+                            t1,
+                            t2
+            ***REMOVED*** { it.id ***REMOVED*** * if (isAscending) 1 else -1
                     ***REMOVED***
                 ***REMOVED*** else {
                     closenessComparison
@@ -198,19 +211,31 @@ class TemplateViewModel : ViewModel() {
         ***REMOVED***
     ***REMOVED***
 
-    fun updateTemplateItem(template: Template, modifiedValue: Pair<String, String>, index: Int) {
+    fun updateTemplateItem(template: Template, modifiedValue: Pair<String, Any>, index: Int) {
         viewModelScope.launch {
-            realm.write {
+            realm.writeBlocking {
                 val latestTemplate = findLatest(template)
                     ?: copyToRealm(template)  // Find or create the latest extraction
                 modifiedValue.let { (field, newText) ->
                     when (field) {
-                        "extra" -> {
-                            latestTemplate.fields[index].extraDescription = newText
+                        "title" -> {
+                            latestTemplate.fields[index].title = newText.toString()
                         ***REMOVED***
 
                         "description" -> {
-                            latestTemplate.fields[index].description = newText
+                            latestTemplate.fields[index].description = newText.toString()
+                        ***REMOVED***
+
+                        "type" -> {
+                            latestTemplate.fields[index].type = newText.toString()
+                        ***REMOVED***
+
+                        "required" -> {
+                            latestTemplate.fields[index].required = newText as Boolean
+                        ***REMOVED***
+
+                        "intelligentExtraction" -> {
+                            latestTemplate.fields[index].intelligentExtraction = newText as Boolean
                         ***REMOVED***
 
                         else -> {
@@ -264,6 +289,7 @@ class TemplateViewModel : ViewModel() {
             ***REMOVED***
         ***REMOVED***
     ***REMOVED***
+
     fun updateSearchText(newText: String) {
         _searchText.value = newText
     ***REMOVED***
@@ -278,14 +304,166 @@ class TemplateViewModel : ViewModel() {
         _ascending.value = !_ascending.value
     ***REMOVED***
 
+    fun updateTemplateTitle(template: Template, it: String) {
+        viewModelScope.launch {
+            realm.writeBlocking {
+                val latestTemplate = findLatest(template) ?: return@writeBlocking
+                latestTemplate.title = it
+            ***REMOVED***
+
+        ***REMOVED***
+    ***REMOVED***
 
 
+    fun removeTag(template: Template, tag: String) {
+        viewModelScope.launch {
+            realm.writeBlocking {
+                val latestTemplate = findLatest(template) ?: return@writeBlocking
+                latestTemplate.tags.remove(tag)
+            ***REMOVED***
 
+        ***REMOVED***
+
+
+    ***REMOVED***
+
+    fun changeTags(template: Template, newTag: String) {
+        viewModelScope.launch {
+            realm.writeBlocking {
+                val latestTemplate = findLatest(template) ?: return@writeBlocking
+                latestTemplate.tags.add(newTag)
+            ***REMOVED***
+        ***REMOVED***
+
+    ***REMOVED***
+
+    fun addTable(template: Template) {
+        val newTable = TemplateTable().apply {
+            title = "New Table"
+            description = "This is a new table"
+            keywords = realmListOf("tag1 ")
+        ***REMOVED***
+        viewModelScope.launch {
+            realm.write {
+                val latestTemplate = findLatest(template) ?: return@write
+                latestTemplate.tables.add(newTable)
+
+            ***REMOVED***
+        ***REMOVED***
+
+
+    ***REMOVED***
+
+    fun updateTableItem(template: Template, pair: Pair<String, String>, tableIndex: Int) {
+        viewModelScope.launch {
+            realm.writeBlocking {
+                val latestTemplate = findLatest(template) ?: return@writeBlocking
+                val table = latestTemplate.tables[tableIndex]
+                pair.let { (field, newText) ->
+                    when (field) {
+                        "title" -> {
+                            table.title = newText
+                        ***REMOVED***
+
+                        "description" -> {
+                            table.description = newText
+                        ***REMOVED***
+
+                        "keywords" -> {
+                            table.keywords.add(newText)
+                        ***REMOVED***
+
+                        else -> {
+                            // Handle other cases if needed
+                        ***REMOVED***
+                    ***REMOVED***
+                ***REMOVED***
+            ***REMOVED***
+
+        ***REMOVED***
+    ***REMOVED***
+
+    fun updateTableRows(template: Template, tableIndex: Int, it: Any) {
+        viewModelScope.launch {
+            realm.writeBlocking {
+                val latestTemplate = findLatest(template) ?: return@writeBlocking
+                val table = latestTemplate.tables[tableIndex]
+                table.rows.add(it as TemplateField)
+            ***REMOVED***
+        ***REMOVED***
+    ***REMOVED***
+
+    fun updateTableColumns(template: Template, tableIndex: Int, it: Any) {
+        viewModelScope.launch {
+            realm.writeBlocking {
+                val latestTemplate = findLatest(template) ?: return@writeBlocking
+                val table = latestTemplate.tables[tableIndex]
+                table.columns.add(it as TemplateField)
+            ***REMOVED***
+        ***REMOVED***
+
+    ***REMOVED***
+
+    fun deleteTable(template: Template, tableIndex: Int) {
+        viewModelScope.launch {
+            realm.writeBlocking {
+                val latestTemplate = findLatest(template) ?: return@writeBlocking
+                latestTemplate.tables.removeAt(tableIndex)
+            ***REMOVED***
+        ***REMOVED***
+
+    ***REMOVED***
+
+    fun updateTableRowHeader(template: Any, tableIndex: Int, rowIndex: Int, newText: String) {
+        viewModelScope.launch {
+            realm.writeBlocking {
+                val latestTemplate = findLatest(template as Template) ?: return@writeBlocking
+                val table = latestTemplate.tables[tableIndex]
+                table.rows[rowIndex].title = newText
+            ***REMOVED***
+        ***REMOVED***
+    ***REMOVED***
+
+    fun updateTableColumnHeader(template: Any, tableIndex: Int, columnIndex: Int, newText: Any) {
+        viewModelScope.launch {
+            realm.writeBlocking {
+                val latestTemplate = findLatest(template as Template) ?: return@writeBlocking
+                val table = latestTemplate.tables[tableIndex]
+                table.columns[columnIndex].title = newText.toString()
+            ***REMOVED***
+        ***REMOVED***
+    ***REMOVED***
+
+    fun addRowToTable(template: Template, tableIndex: Int, newRowHeader: String) {
+        val newField = TemplateField().apply {
+            title = newRowHeader
+            description = "This is a new field"
+        ***REMOVED***
+        viewModelScope.launch {
+            realm.write {
+                val latestTemplate = findLatest(template) ?: return@write
+                latestTemplate.tables[tableIndex].rows.add(newField)
+            ***REMOVED***
+        ***REMOVED***
+
+    ***REMOVED***
+
+    fun addColumnToTable(template: Template, tableIndex: Int, newColumnHeader: String) {
+        val newField = TemplateField().apply {
+            title = newColumnHeader
+            description = "This is a new field"
+        ***REMOVED***
+        viewModelScope.launch {
+            realm.write {
+                val latestTemplate = findLatest(template) ?: return@write
+                latestTemplate.tables[tableIndex].columns.add(newField)
+            ***REMOVED***
+
+        ***REMOVED***
+    ***REMOVED***
 ***REMOVED***
 
-
-
-enum class SortOrder{
+    enum class SortOrder{
     BY_TITLE,
     BY_DATE,
 ***REMOVED***

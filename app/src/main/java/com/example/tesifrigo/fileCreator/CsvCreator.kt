@@ -13,31 +13,61 @@ import java.util.Locale
 class CsvCreator {
         fun convertToCsvFile(extraction: Extraction, context: Context): Uri? {
             // Create a filename based on the timestamp and template title
-            val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ITALY).format(Date())
-            val templateTitle = extraction.template?.title ?: "Untitled"
-            val filename = "${templateTitle***REMOVED***-$timestamp.csv"
+                val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ITALY).format(Date())
+                val templateTitle = extraction.template?.title ?: "Untitled"
+                val filename = "${templateTitle***REMOVED***-$timestamp.csv"
 
-            // Get the output directory
-            val outputDirectory = context.filesDir
-            val outputFile = File(outputDirectory, filename)
+                val outputDirectory = context.filesDir
+                val outputFile = File(outputDirectory, filename)
 
-            return try {
-                FileWriter(outputFile).use { writer ->
-                    // Write CSV header (field names)
-                    writer.write("extractedFields,extractedTables,extractionCosts,exceptionsOccurred,template\n")
+                return try {
+                    FileWriter(outputFile).use { writer ->
+                        writer.write("type,template_title,extraction_costs,exception_occurred_error,exception_occurred_type,exception_occurred_description,template_field_title,value,row_index,column_index\n")
 
-                    // Write data rows
-                    val extractedFieldsCsv = extraction.extractedFields.joinToString(",") { it.templateField?.title ?: "" ***REMOVED***
-                    val extractedTablesCsv = extraction.extractedTables.joinToString(",") { it.templateTable?.title ?: "" ***REMOVED***
-                    val exceptionsOccurredCsv = extraction.exceptionsOccurred.joinToString(",") { "${it.error***REMOVED***-${it.errorType***REMOVED***" ***REMOVED***
-                    val templateTitleCsv = extraction.template?.title ?: ""
+                        // Write Extraction row
+                        val extractionRow = listOf(
+                            "Extraction",
+                            extraction.template?.title,
+                            extraction.extractionCosts,
+                            extraction.exceptionsOccurred.firstOrNull()?.error,
+                            extraction.exceptionsOccurred.firstOrNull()?.errorType,
+                            extraction.exceptionsOccurred.firstOrNull()?.errorDescription,
+                            "", "", "", "" // Empty fields for non-Extraction attributes
+            ***REMOVED***.joinToString(",")
+                        writer.write("$extractionRow\n")
 
-                    writer.write("$extractedFieldsCsv,$extractedTablesCsv,${extraction.extractionCosts***REMOVED***,$exceptionsOccurredCsv,$templateTitleCsv\n")
+                        // Write ExtractionField rows
+                        for (field in extraction.extractedFields) {
+                            val fieldRow = listOf(
+                                "extracted_field",
+                                "", "", "", "", // Empty fields for non-field attributes
+                                field.templateField?.title,
+                                field.value, "", ""
+                ***REMOVED***.joinToString(",")
+                            writer.write("$fieldRow\n")
+                        ***REMOVED***
+
+                        // Write ExtractionTable rows
+                        for (table in extraction.extractedTables) {
+                            for (i in table.fields.indices) {
+                                for (j in table.fields[i].fields.indices) {
+                                    val tableRow = listOf(
+                                        "extracted_table",
+                                        "", "", "", "", // Empty fields for non-table attributes
+                                        table.fields[i].fields[j].templateField?.title,
+                                        table.fields[i].fields[j].value,
+                                        i.toString(),
+                                        j.toString()
+                        ***REMOVED***.joinToString(",")
+                                    writer.write("$tableRow\n")
+                                ***REMOVED***
+                            ***REMOVED***
+                        ***REMOVED***
+                    ***REMOVED***
+                    Uri.fromFile(outputFile)
+                ***REMOVED*** catch (e: IOException) {
+                    e.printStackTrace()
+                    null
                 ***REMOVED***
-                Uri.fromFile(outputFile)
-            ***REMOVED*** catch (e: IOException) {
-                e.printStackTrace()
-                null
             ***REMOVED***
-        ***REMOVED***
     ***REMOVED***

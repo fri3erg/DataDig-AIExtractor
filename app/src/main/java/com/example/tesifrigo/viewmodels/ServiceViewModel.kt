@@ -17,7 +17,7 @@ class ServiceViewModel @Inject constructor(
 ) : ViewModel(){
 
     val progress: StateFlow<Float> = progressRepository.progress
-    val result: StateFlow<Extraction?> = progressRepository.result
+    val result: StateFlow<String?> = progressRepository.result
     val template: StateFlow<Template?> = progressRepository.template
     val options : StateFlow<Options?> = progressRepository.options
 

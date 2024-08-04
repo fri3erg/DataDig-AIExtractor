@@ -18,6 +18,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -53,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavHostController
@@ -61,6 +63,9 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.tesifrigo.models.Extraction
 import com.example.tesifrigo.models.Template
 import com.example.tesifrigo.services.ExtractionService
+import com.example.tesifrigo.utils.FileCard
+import com.example.tesifrigo.utils.MyImageArea
+import com.example.tesifrigo.viewmodels.ExtractionViewModel
 import com.example.tesifrigo.viewmodels.ServiceViewModel
 import com.example.tesifrigo.viewmodels.TemplateViewModel
 import com.guru.fontawesomecomposelib.FaIcon
@@ -88,7 +93,7 @@ fun CameraScreen(templateId: String?, navController: NavHostController) {
         ***REMOVED***
     ***REMOVED***
     var imageCapture: ImageCapture? by remember { mutableStateOf(null) ***REMOVED*** // For capturing images
-    var lensFacing by remember { mutableStateOf(CameraSelector.LENS_FACING_BACK) ***REMOVED***
+    var lensFacing by remember { mutableIntStateOf(CameraSelector.LENS_FACING_BACK) ***REMOVED***
 
 
 
@@ -102,7 +107,7 @@ fun CameraScreen(templateId: String?, navController: NavHostController) {
                     imageUris = imageUris + listOf(newUris)  // Concatenate the lists
                     Log.d("CameraScreen", "Image URIs: $imageUris")
                 ***REMOVED***,
-                n_photos = imageUris.size,
+                nPhotos = imageUris.size,
                 changeActivePhoto = {
                     activePhoto = false
                 ***REMOVED***
@@ -112,6 +117,7 @@ fun CameraScreen(templateId: String?, navController: NavHostController) {
             MyImageArea(
                 imageUris = imageUris,
 ***REMOVED***
+            Spacer(modifier = Modifier.height(16.dp))
             if(!activeExtraction) {
                 Button(
                     modifier = Modifier
@@ -148,8 +154,6 @@ fun ProgressBar() {
     val serviceViewModel = hiltViewModel<ServiceViewModel>()
     val progress by serviceViewModel.progress.collectAsState()
     val result by serviceViewModel.result.collectAsState()
-
-
     Row {
         Text("Progress: ")
         Spacer(modifier = Modifier.width(8.dp))
@@ -176,46 +180,22 @@ fun Spinner(isActive: Boolean) {
 ***REMOVED***
 
 
-@Composable
-fun MyImageArea(
-    imageUris: List<Uri>,
-) {
 
-    Column (
-        modifier = Modifier.fillMaxWidth()
-    ) {
-
-//preview selfie
-        HorizontalPager(
-            state = rememberPagerState(pageCount = { imageUris.size ***REMOVED***),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp) // Adjust height as needed
-        ) { page ->
-            Card(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .fillMaxWidth()
-                    .aspectRatio(1f), // Maintain aspect ratio for square images
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-***REMOVED*** {
-                AsyncImage(
-                    model = imageUris[page],
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop // Crop to fit the card
-    ***REMOVED***
-            ***REMOVED***
-        ***REMOVED***
-
-    ***REMOVED***
-***REMOVED***
 
 @Composable
 fun ShownExtraction(navController: NavHostController) {
     val serviceViewModel = hiltViewModel<ServiceViewModel>()
+    val extractionViewModel = hiltViewModel<ExtractionViewModel>()
     val result by serviceViewModel.result.collectAsState()
-    if (result != null) {
+    var extraction by remember { mutableStateOf<Extraction?>(null) ***REMOVED***
+    LaunchedEffect(key1 = result) {
+        result?.let {
+            extractionViewModel.queryExtraction(it).collect { fetchedExtraction ->
+                extraction = fetchedExtraction
+            ***REMOVED***
+        ***REMOVED***
+    ***REMOVED***
+    if (extraction != null) {
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -223,18 +203,19 @@ fun ShownExtraction(navController: NavHostController) {
             Row {
             Text("Extraction Result:")
                 Button(
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier
+                        .padding(16.dp)
                         .size(100.dp, 50.dp),
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(Color.Red),
                     onClick = {
-                    navController.navigate("singleExtraction/extractionId=${result!!.id.toHexString()***REMOVED***")
+                    navController.navigate("singleExtraction/extractionId=${result***REMOVED***")
                 ***REMOVED***) {
                     Text("Go to Extraction")
                 ***REMOVED***
             ***REMOVED***
-            if (result!!.fileUri != null) {
-                FileCard(result!!)
+            if (extraction!!.fileUri != null) {
+                FileCard(extraction!!)
             ***REMOVED***
         ***REMOVED***
     ***REMOVED***
@@ -242,90 +223,6 @@ fun ShownExtraction(navController: NavHostController) {
 
 
 
-
-
-@Composable
-fun FileCard(
-    extraction: Extraction,
-    modifier: Modifier = Modifier
-) {
-
-    val context = LocalContext.current
-    val openFileLauncher = remember {
-        (context as? ComponentActivity)?.activityResultRegistry?.register(
-            "openFile",
-            ActivityResultContracts.StartActivityForResult()
-        ) { result ->
-            // Handle the result if needed
-        ***REMOVED***
-    ***REMOVED***
-
-    fun openFile(uri: Uri) {
-        val intent = Intent(Intent.ACTION_VIEW).apply {
-            setDataAndType(uri, context.contentResolver.getType(uri))
-            flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-        ***REMOVED***
-        openFileLauncher?.launch(intent)
-    ***REMOVED***
-
-    Surface(
-        modifier = modifier
-            .clickable(onClick = { openFile(Uri.parse(extraction.fileUri!!)) ***REMOVED***)
-            .padding(8.dp),
-        shape = RoundedCornerShape(8.dp),
-        color = Color.White
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Preview Section
-            Box(
-                modifier = Modifier
-                    .size(60.dp)
-                    .background(Color.Gray.copy(alpha = 0.3f), shape = RoundedCornerShape(4.dp)),
-                contentAlignment = Alignment.Center
-***REMOVED*** {
-                FaIcon(
-                    faIcon = FaIcons.File,
-                    tint = Color.Gray,
-                    size = 24.dp
-    ***REMOVED***
-            ***REMOVED***
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            // File Info Section
-            Column(
-                modifier = Modifier.weight(1f)
-***REMOVED*** {
-                Text(
-                    text = extraction.template!!.title,
-                    fontSize = 16.sp,
-                    color = Color.Black
-    ***REMOVED***
-                Spacer(modifier = Modifier.height(4.dp))
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-    ***REMOVED*** {
-                    FaIcon(
-                        faIcon = FaIcons.Download,
-                        tint = Color.Gray,
-                        size = 20.dp
-        ***REMOVED***
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "Download",
-                        fontSize = 14.sp,
-                        color = Color.Gray
-        ***REMOVED***
-                ***REMOVED***
-            ***REMOVED***
-        ***REMOVED***
-    ***REMOVED***
-***REMOVED***
 
 @Composable
 fun ImageFromUri(imageUriString: String) {
@@ -352,7 +249,7 @@ fun CameraPreview(
     modifier: Modifier = Modifier,
     scaleType: PreviewView.ScaleType = PreviewView.ScaleType.FILL_CENTER,
     onSetUri: (Uri) -> Unit = { ***REMOVED***,
-    n_photos: Int = 0,
+    nPhotos: Int = 0,
     changeActivePhoto: () -> Unit = { ***REMOVED***
 ) {
     val context = LocalContext.current
@@ -371,7 +268,7 @@ fun CameraPreview(
     ***REMOVED***
 
     var showFlash by remember { mutableStateOf(false) ***REMOVED***
-    val lensFacing by remember { mutableStateOf(CameraSelector.LENS_FACING_BACK) ***REMOVED***
+    val lensFacing by remember { mutableIntStateOf(CameraSelector.LENS_FACING_BACK) ***REMOVED***
 
     LaunchedEffect(key1 = showFlash) {
         if (showFlash) {
@@ -467,7 +364,7 @@ fun CameraPreview(
         ***REMOVED***
 
         // Gallery Button
-        if (n_photos > 0) {
+        if (nPhotos > 0) {
             Button(
                 modifier = Modifier
                     .padding(bottom = 20.dp, end = 20.dp)
@@ -495,7 +392,7 @@ fun CameraPreview(
             .align(Alignment.TopStart),
             contentAlignment = Alignment.Center,
 ***REMOVED*** {
-            Text(text = "$n_photos taken", color = Color.Black, textAlign = TextAlign.Center, fontSize = 14.sp)
+            Text(text = "$nPhotos taken", color = Color.Black, textAlign = TextAlign.Center, fontSize = 14.sp)
         ***REMOVED***
         // Flash effect
         AnimatedVisibility(

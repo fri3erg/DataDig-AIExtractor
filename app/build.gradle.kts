@@ -94,31 +94,40 @@ android {
         ***REMOVED***
     ***REMOVED***
 
+
 dependencies {
-    implementation(libs.androidx.material3.android)
+    implementation(libs.androidx.ui.v1610)
+    implementation(libs.composetheme)
+
+    implementation(libs.material3) // Or the latest version
     implementation(libs.vision.common)
     implementation(libs.play.services.mlkit.text.recognition.common)
     implementation(libs.play.services.mlkit.text.recognition)
     implementation(libs.androidx.paging.common.android)
     implementation(libs.firebase.crashlytics.buildtools)
     val nav_version = "2.8.0-alpha08"
-    implementation("com.google.mlkit:text-recognition:16.0.0") // Or latest version
-    implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
+    implementation(libs.text.recognition) // Or latest version
+    implementation(libs.androidx.navigation.fragment.ktx)
     implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
-    implementation("androidx.navigation:navigation-compose:$nav_version")
-    implementation("com.google.dagger:hilt-android:2.51")
+    implementation(libs.navigation.compose)
+    implementation(libs.hilt.android)
     implementation(libs.androidx.room.ktx)
     implementation(libs.tess.two) // Or latest version
     kapt("com.google.dagger:hilt-android-compiler:2.51")
-    kapt("com.google.dagger:hilt-android:2.51")
-    implementation("androidx.hilt:hilt-work:1.0.0")
-    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
-    kapt("androidx.hilt:hilt-compiler:1.0.0")
+    implementation (libs.androidx.ui.v133)
+    implementation (libs.androidx.material3.v100)
+    implementation (libs.ui.tooling.preview)
+    implementation (libs.androidx.activity.compose.v161)
+    kapt(libs.hilt.android)
+    implementation(libs.androidx.hilt.work)
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+    kapt("androidx.hilt:hilt-compiler:1.2.0")
     implementation("androidx.work:work-runtime-ktx:2.8.1")
     implementation("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.5.0") // Use the latest version
     implementation ("com.google.accompanist:accompanist-pager:0.31.2-alpha") // Replace with the latest version
-    implementation("com.google.accompanist:accompanist-pager:0.28.0")
-    implementation("androidx.compose.foundation:foundation:1.4.3") // Or the latest version
+    implementation(libs.google.accompanist.pager)
+    implementation("androidx.compose.foundation:foundation:1.6.8") // Or the latest version
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -126,15 +135,15 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
-    implementation("androidx.core:core-ktx:1.12.0") // Or the latest version
-    implementation("com.google.accompanist:accompanist-permissions:0.28.0") // Replace with your desired version
-    implementation("androidx.camera:camera-camera2:1.3.3") // Or latest stable version
+    implementation(libs.androidx.core.ktx.v1131) // Or the latest version
+    implementation(libs.accompanist.permissions) // Replace with your desired version
+    implementation(libs.camera.camera2.v133) // Or latest stable version
     implementation(libs.androidx.camera.core)
-    implementation("androidx.compose.ui:ui:1.4.0") // Or a more recent version
-    implementation("androidx.compose.runtime:runtime-livedata:1.4.0") // Or same version
-    implementation("androidx.security:security-crypto:1.1.0-alpha03") // Or the latest version
-    implementation("androidx.localbroadcastmanager:localbroadcastmanager:1.1.0")
-    implementation ("com.github.Gurupreet:FontAwesomeCompose:1.0.0")
+    implementation(libs.ui) // Or a more recent version
+    implementation("androidx.compose.runtime:runtime-livedata:1.6.8") // Or same version
+    implementation(libs.androidx.security.crypto) // Or the latest version
+    implementation(libs.androidx.localbroadcastmanager)
+    implementation (libs.fontawesomecompose)
     implementation("io.coil-kt:coil-compose:2.2.2")
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.cronet.embedded)
@@ -152,9 +161,9 @@ dependencies {
     implementation (libs.camera.camera2)
     implementation (libs.androidx.camera.lifecycle.v130alpha06)
     implementation (libs.androidx.camera.view.v130alpha06)
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+    implementation(libs.kotlinx.serialization.json)
     implementation("io.realm.kotlin:library-base:1.11.0")
-    implementation ("com.google.code.gson:gson:2.8.6")
+    implementation ("com.google.code.gson:gson:2.10.1")
 
 
 

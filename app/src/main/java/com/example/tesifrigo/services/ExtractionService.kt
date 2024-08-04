@@ -108,7 +108,7 @@ class ExtractionService : Service(){
         val localContext = this
 
         val onResult: (PyObject) -> Unit = { result ->
-            serviceRepository.updateResult(extractResult(result, template, imageUris, localContext))
+            serviceRepository.updateResult(extractResult(result, template, imageUris),localContext)
         ***REMOVED***
 
         serviceScope.launch {
@@ -230,7 +230,7 @@ private fun copyAssetsToStorage(context: Context, assetPath: String, targetDirec
     ***REMOVED***
 ***REMOVED***
 
-private fun extractResult(pyResult:PyObject, templateOg: Template, imageUris: List<Uri>, context: Context): Extraction{
+private fun extractResult(pyResult:PyObject, templateOg: Template, imageUris: List<Uri>): Extraction{
 
     val extracted = Extraction().apply {
         image.addAll(imageUris.map { it.toString() ***REMOVED***)
@@ -273,14 +273,7 @@ private fun extractResult(pyResult:PyObject, templateOg: Template, imageUris: Li
     ***REMOVED***
 
     // Convert to JSON and save to file
-    when(extracted.format){
-        "json" -> {
-        ***REMOVED***
-        "csv" -> {
 
-            ***REMOVED***
-        ***REMOVED***
-    extracted.fileUri = JsonCreator().convertToJsonFile(extracted, context).toString()
 
     return extracted
 ***REMOVED***

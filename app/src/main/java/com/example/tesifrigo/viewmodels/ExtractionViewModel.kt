@@ -1,9 +1,12 @@
 package com.example.tesifrigo.viewmodels
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tesifrigo.MyApp
+import com.example.tesifrigo.fileCreator.CsvCreator
+import com.example.tesifrigo.fileCreator.JsonCreator
 import com.example.tesifrigo.models.Extraction
 import com.example.tesifrigo.models.ExtractionField
 import com.example.tesifrigo.models.ExtractionTable
@@ -85,7 +88,7 @@ class ExtractionViewModel @Inject constructor() : ViewModel(){
         //createSampleExtraction()
     ***REMOVED***
 
-    fun queryTemplate(id: String): StateFlow<Extraction?> {
+    fun queryExtraction(id: String): StateFlow<Extraction?> {
         return extractions.map { extractionList ->
             extractionList.find {
                 Log.d("TemplateViewModel", "Querying template with ID: ${it.id.toHexString()***REMOVED*** and title: $id and $extractionList")
@@ -285,5 +288,36 @@ class ExtractionViewModel @Inject constructor() : ViewModel(){
     // Function to toggle ascending/descending order
     fun toggleAscending() {
         _ascending.value = !_ascending.value
+    ***REMOVED***
+
+    fun removeTag(extraction: Extraction, tag: String) {
+        viewModelScope.launch {
+            realm.writeBlocking {
+                extraction.tags.remove(tag)
+            ***REMOVED***
+        ***REMOVED***
+
+    ***REMOVED***
+
+    fun changeFormat(extraction: Extraction, format: String, context: Context) {
+        var newFile: String? = extraction.fileUri
+        when (format) {
+            "json" -> {
+                newFile= JsonCreator().convertToJsonFile(extraction, context).toString()
+            ***REMOVED***
+            "csv" -> {
+                newFile= CsvCreator().convertToCsvFile(extraction, context).toString()
+            ***REMOVED***
+            "pdf" -> {
+                // Convert to PDF
+            ***REMOVED***
+        ***REMOVED***
+        viewModelScope.launch {
+            realm.writeBlocking {
+                extraction.format = format
+                extraction.fileUri = newFile
+            ***REMOVED***
+        ***REMOVED***
+
     ***REMOVED***
 ***REMOVED***
