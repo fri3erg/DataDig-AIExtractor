@@ -1,14 +1,16 @@
 package com.example.tesifrigo.ui.template
 
-import android.widget.NumberPicker
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +18,7 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -25,10 +28,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
@@ -36,7 +38,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -46,6 +51,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -55,17 +61,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.tesifrigo.models.Template
+import com.example.tesifrigo.models.TemplateField
 import com.example.tesifrigo.models.TemplateTable
 import com.example.tesifrigo.viewmodels.TemplateViewModel
 import com.guru.fontawesomecomposelib.FaIcon
@@ -122,7 +132,7 @@ fun EditTemplateScreen(
 
                 // Template Fields Section
                 itemsIndexed(template?.fields ?: emptyList()) { index, _ ->
-                    TemplateField(template, index, viewModel)
+                    TemplateFieldComposable(template, index, viewModel)
                 ***REMOVED***
                 item {
                     TemplateTablesSection(template!!, viewModel)
@@ -202,8 +212,10 @@ fun TemplateTagsSection(template: Template, viewModel: TemplateViewModel) {
                 ***REMOVED***
         )
     ***REMOVED***
-***REMOVED***@Composable
-fun TemplateField(
+***REMOVED***
+
+@Composable
+fun TemplateFieldComposable(
     template: Template?,
     index: Int,
     viewModel: TemplateViewModel
@@ -285,6 +297,14 @@ fun TemplateField(
                         ***REMOVED***,
                         modifier = Modifier.weight(1f)
         ***REMOVED***
+
+                ***REMOVED***
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(
+                    onClick = { viewModel.deleteField(template, index) ***REMOVED***,
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+    ***REMOVED*** {
+                    Text("Delete Field")
                 ***REMOVED***
             ***REMOVED***
             ***REMOVED***
@@ -310,8 +330,6 @@ fun TemplateTablesSection(template: Template, viewModel: TemplateViewModel) {
     ***REMOVED***
 ***REMOVED***@Composable
 fun TemplateTableCard(table: TemplateTable, tableIndex: Int, viewModel: TemplateViewModel, template: Template) {
-    var numRows by remember { mutableStateOf(maxOf(2, table.rows.size)) ***REMOVED*** // Start with at least 2 rows
-    var numCols by remember { mutableStateOf(maxOf(2, table.columns.size)) ***REMOVED*** // Start with at least 2 columns
 
     Card(
         modifier = Modifier
@@ -343,7 +361,7 @@ fun TemplateTableCard(table: TemplateTable, tableIndex: Int, viewModel: Template
             Spacer(modifier = Modifier.height(16.dp))
 
             // Table Grid
-            TableGrid(table, viewModel, tableIndex, numRows, numCols, template)
+            TableGrid(table, viewModel, tableIndex, template)
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -357,169 +375,319 @@ fun TemplateTableCard(table: TemplateTable, tableIndex: Int, viewModel: Template
         ***REMOVED***
     ***REMOVED***
 ***REMOVED***
-
 @Composable
-fun TableGrid(table: TemplateTable, viewModel: TemplateViewModel, tableIndex: Int, numRows: Int, numCols: Int, template: Template) {
-    Column {
-        // Header Row (Column Headers)
-        Row {
-            // Empty cell for row index
-            TableCellTemplate(text = "", isHeader = true, isAddButton = true, onClick = {
-                viewModel.addColumnToTable(template, tableIndex, "")
-            ***REMOVED***, modifier = Modifier.weight(1f))
+fun TableGrid(table: TemplateTable, viewModel: TemplateViewModel, tableIndex: Int, template: Template) {
 
+    var showDialog by remember { mutableStateOf(false) ***REMOVED***
+    var newText by remember { mutableStateOf("") ***REMOVED***
+    var isColumn by remember { mutableStateOf(false) ***REMOVED***
+
+    val scrollState = rememberScrollState()
+
+
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .padding(1.dp)) {
+        // Column Headers
+        Row(modifier = Modifier
+            .padding(1.dp)
+            .fillMaxWidth()
+            .horizontalScroll(scrollState)){ // Apply horizontal scrolling){ // Make the header row horizontally scrollable) { // Wrap column headers in a Row with weight
+            TableCellTemplate(
+                text = "",
+                modifier = Modifier.weight(1f),
+                invisible = true
+***REMOVED*** // Add a blank cell for the button column
             for ((columnIndex, columnField) in table.columns.withIndex()) {
                 TableCellTemplate(
                     text = columnField.title,
                     isHeader = true,
                     onValueChange = { newText ->
-                        viewModel.updateTableColumnHeader(template, tableIndex, columnIndex, newText)
-                    ***REMOVED***, modifier = Modifier.weight(1f)
+                        viewModel.updateTableColumnHeader(
+                            template,
+                            tableIndex,
+                            columnIndex,
+                            newText
+            ***REMOVED***
+                    ***REMOVED***,
+                    modifier = Modifier.weight(1f)
     ***REMOVED***
             ***REMOVED***
+            // Add Column Button (top right, outside the table)
+
+            TableCellTemplate(
+                text = "",
+                modifier = Modifier.weight(1f),
+                isButton = true,
+                buttonClick = {
+                    showDialog = true; isColumn = true
+                ***REMOVED***) // Add a blank cell for the button column
         ***REMOVED***
 
-        // Data Rows (with row indexes and editable cells)
-        for ((rowIndex, row) in table.rows.withIndex()) {
-            Row {
-                // Row index cell (editable)
+        for ((rowIndex, rowField) in table.rows.withIndex()) {
+            Row(modifier = Modifier.padding(1.dp)) {
                 TableCellTemplate(
-                    text = row.title,
+                    text = rowField.title,
                     isHeader = true,
                     onValueChange = { newText ->
                         viewModel.updateTableRowHeader(template, tableIndex, rowIndex, newText)
-                    ***REMOVED***, modifier = Modifier.weight(1f)
+                    ***REMOVED***,
+                    modifier = Modifier.weight(1f)
     ***REMOVED***
-
-                for ((columnIndex, _) in table.columns.withIndex()) { // Iterate over columns to create cells
-                    TableCellTemplate(text = "", modifier = Modifier.weight(1f)) // Initially empty cells
-                ***REMOVED***
-            ***REMOVED***
-        ***REMOVED***
-
-        // Add Row Button (fake row)
-        Row {
-            TableCellTemplate(text = "", isHeader = true, modifier = Modifier.weight(1f)) // Empty cell for row index
-
-            for (colIndex in 0 until numCols) {
-                if (colIndex == numCols - 1) {
-                    TableCellTemplate(text = "+", isAddButton = true, modifier = Modifier.weight(1f), onClick = {
-                        viewModel.addRowToTable(template, tableIndex, "")
-                    ***REMOVED***)
-                ***REMOVED*** else {
+                for (templateField in table.columns) {
                     TableCellTemplate(text = "", modifier = Modifier.weight(1f))
                 ***REMOVED***
+                TableCellTemplate(
+                    text = "",
+                    modifier = Modifier.weight(1f),
+                    invisible = true
+    ***REMOVED*** // Add a blank cell for the button column
             ***REMOVED***
+        ***REMOVED***
+        Row(modifier = Modifier.padding(1.dp)) {
+            TableCellTemplate(text = "", modifier = Modifier.weight(1f), isButton = true, buttonClick = { showDialog=true; isColumn=false ***REMOVED***) // Add a blank cell for the button column
+
+            for (templateField in table.columns) {
+                TableCellTemplate(text = "", modifier = Modifier.weight(1f), invisible = true)
+            ***REMOVED***
+            TableCellTemplate(text = "", modifier = Modifier.weight(1f), invisible = true)
+
+        ***REMOVED***
+    ***REMOVED***
+
+    if (showDialog) {
+        val nMax= if (isColumn) {table.columns.size***REMOVED*** else {table.rows.size***REMOVED***
+        val context = LocalContext.current
+        if (nMax>15){
+            Toast.makeText(context, "Max number of rows and columns is 15", Toast.LENGTH_SHORT).show()
+            showDialog=false
+        ***REMOVED***
+        else {
+            AlertTable(
+                editedText = newText,
+                changeText = { newText = it ***REMOVED***,
+                onValueChange = {it->
+                    if (isColumn) {
+                        viewModel.addColumnToTable(template, tableIndex, it)
+                    ***REMOVED*** else {
+                        viewModel.addRowToTable(template, tableIndex, it)
+                    ***REMOVED***
+                    showDialog = false
+                    newText = ""
+                ***REMOVED***,
+                changeShowDialog = { showDialog = it ***REMOVED***,
+***REMOVED***
+
         ***REMOVED***
     ***REMOVED***
 ***REMOVED***
 
 @Composable
-fun TableCellTemplate(text: String, modifier: Modifier = Modifier, isHeader: Boolean = false, isAddButton: Boolean = false, onValueChange: (String) -> Unit = {***REMOVED***, onClick: () -> Unit = {***REMOVED***) {
+fun TableCellTemplate(text: String, modifier: Modifier = Modifier, isHeader: Boolean = false, onValueChange: (TemplateField) -> Unit = {***REMOVED***, invisible: Boolean = false, isButton: Boolean = false, buttonClick: () -> Unit = {***REMOVED***) {
 
+    var modifierPadded =
+        modifier
+            .padding(1.dp)
+            .defaultMinSize(minWidth = 24.dp, minHeight = 24.dp) // Ensure a minimum width for cells
+    var boxSize by remember { mutableStateOf(IntSize.Zero) ***REMOVED***
+
+
+    if (!invisible) {
+        modifierPadded = modifierPadded.border(1.dp, Color.Gray)
+    ***REMOVED***
+    if (isHeader) {
+        modifierPadded = modifierPadded.background(Color.LightGray)
+    ***REMOVED***
+    if (isButton) {//pls round the button
+        modifierPadded =
+            modifierPadded
+                .background(Color.Blue)
+                .clip(shape = RoundedCornerShape(4.dp))
+    ***REMOVED***
     var showDialog by remember { mutableStateOf(false) ***REMOVED***
     var editedText by remember { mutableStateOf(text) ***REMOVED***
     Box(
-        modifier = modifier
-            .padding(8.dp)
-            .border(1.dp, Color.LightGray), // Add a border to each cell
-                contentAlignment = Alignment.Center
+        modifier = modifierPadded.onSizeChanged { size ->
+            boxSize = size
+        ***REMOVED***,
+        contentAlignment = Alignment.Center
+
     ) {
-        if (isHeader && !isAddButton) {
+        if (isHeader) {
             Text(
                 text = text,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1, // Limit to a single line
                 modifier = Modifier.clickable {
                     showDialog = true
                     editedText = text // Initialize with current text
                 ***REMOVED***
 ***REMOVED***
-
             if (showDialog) {
-                AlertDialog(
-                    onDismissRequest = { showDialog = false ***REMOVED***,
-                    title = { Text("Edit Header") ***REMOVED***,
-                    text = {
-                        OutlinedTextField(
-                            value = editedText,
-                            onValueChange = { editedText = it ***REMOVED***,
-                            label = { Text("Enter Header") ***REMOVED***
-            ***REMOVED***
-                    ***REMOVED***,
-                    confirmButton = {
-                        TextButton(onClick = {
-                            onValueChange(editedText)
-                            showDialog = false
-                        ***REMOVED***) {
-                            Text("OK")
-                        ***REMOVED***
-                    ***REMOVED***,
-                    dismissButton = {
-                        TextButton(onClick = { showDialog = false ***REMOVED***) {
-                            Text("Cancel")
-                        ***REMOVED***
-                    ***REMOVED***
+                AlertTable(
+                    editedText = editedText,
+                    changeText = { editedText = it ***REMOVED***,
+                    onValueChange = { onValueChange(it) ***REMOVED***,
+                    changeShowDialog = { showDialog = it ***REMOVED***,
     ***REMOVED***
             ***REMOVED***
-        ***REMOVED*** else if (isAddButton) {
-            Button(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
-                Text(text)
+        ***REMOVED*** else if (isButton) {
+            val iconSize = if (boxSize != IntSize.Zero) {
+                LocalDensity.current.run { minOf(boxSize.width, boxSize.height).toDp() / 2 ***REMOVED***
+            ***REMOVED*** else {
+                16.dp
             ***REMOVED***
-        ***REMOVED*** else {
-            Text(
-                text = text,
-                textAlign = TextAlign.Center
+
+                FaIcon(
+                    faIcon = FaIcons.Plus,
+                    tint = Color.White,
+                    size = iconSize,
+                    modifier = Modifier.clickable {
+                        buttonClick()
+                    ***REMOVED***
+
+    ***REMOVED***
+
+            ***REMOVED*** else {
+                Text(
+                    text = text,
+                    textAlign = TextAlign.Center,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1 // Limit to a single line
+
+    ***REMOVED***
+            ***REMOVED***
+        ***REMOVED***
+    ***REMOVED***
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AlertTable(editedText: String, changeText: (String) -> Unit, onValueChange: (TemplateField) -> Unit,changeShowDialog: (Boolean) -> Unit) {
+
+    var selectedType by remember { mutableStateOf("Any") ***REMOVED*** // Default type
+    var selectedRequired by remember { mutableStateOf(false) ***REMOVED***
+    AlertDialog(
+        onDismissRequest = { changeShowDialog(false) ***REMOVED***,
+        title = { Text("Edit Header") ***REMOVED***,
+        text = {
+            Column {
+                OutlinedTextField(
+                    value = editedText,
+                    onValueChange = { changeText(it) ***REMOVED***,
+                    label = { Text("Enter Header") ***REMOVED***
+    ***REMOVED***
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Type Dropdown
+                var expanded by remember { mutableStateOf(false) ***REMOVED***
+                val typeOptions = listOf("Any", "String", "Date", "Number")
+
+                ExposedDropdownMenuBox(
+                    expanded = expanded,
+                    onExpandedChange = { expanded = !expanded ***REMOVED***
+    ***REMOVED*** {
+                    TextField(
+                        value = selectedType,
+                        onValueChange = {***REMOVED***,
+                        readOnly = true,
+                        label = { Text("Type") ***REMOVED***,
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) ***REMOVED***,
+                        colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                        modifier = Modifier.menuAnchor()
+        ***REMOVED***
+
+                    ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false ***REMOVED***) {
+                        typeOptions.forEach { type ->
+                            DropdownMenuItem(
+                                text = { Text(type) ***REMOVED***,
+                                onClick = {
+                                    selectedType = type
+                                    expanded = false
+                                ***REMOVED***
+                ***REMOVED***
+                        ***REMOVED***
+                    ***REMOVED***
+                    Spacer(modifier = Modifier.height(8.dp))
+                    // Required Checkbox
+                    BooleanFieldWithLabel(
+                        label = "Required",
+                        value = selectedRequired,
+                        onValueChange = { newValue -> selectedRequired = newValue ***REMOVED***
+        ***REMOVED***
+                ***REMOVED***
+            ***REMOVED***
+        ***REMOVED***,
+        confirmButton = {
+            TextButton(onClick = {
+                val newField= TemplateField().apply {
+                    this.title=editedText
+                    this.type=selectedType
+                    this.required=selectedRequired
+                ***REMOVED***
+                onValueChange(newField) // Pass the edited text
+                // You'll likely want to pass the selectedType to your ViewModel as well
+                changeShowDialog(false)
+            ***REMOVED***) {
+                Text("OK")
+            ***REMOVED***
+        ***REMOVED***,
+        dismissButton = {
+            TextButton(onClick = { changeShowDialog(false) ***REMOVED***) {
+                Text("Cancel")
+            ***REMOVED***
+        ***REMOVED***
+    )***REMOVED***
+
+
+@Composable
+    fun BooleanFieldWithLabel(
+        label: String,
+        value: Boolean,
+        onValueChange: (Boolean) -> Unit,
+        modifier: Modifier = Modifier
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = modifier
+
+        ) {
+            Text(label)
+            Spacer(modifier = Modifier.width(8.dp))
+            Switch(
+                checked = value,
+                onCheckedChange = onValueChange
 ***REMOVED***
         ***REMOVED***
     ***REMOVED***
-***REMOVED***
 
+    // Help Icon Button Composable (with modal tooltip)
+    @Composable
+    fun HelpIconButton(helpText: String) {
+        var showDialog by remember { mutableStateOf(false) ***REMOVED***
 
-@Composable
-fun BooleanFieldWithLabel(
-    label: String,
-    value: Boolean,
-    onValueChange: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
+        IconButton(
+            onClick = { showDialog = true ***REMOVED***,
+            modifier = Modifier.size(20.dp) // Make the icon smaller
+        ) {
+            FaIcon(FaIcons.InfoCircle, modifier = Modifier.offset(y = (-4).dp))
 
-    ) {
-        Text(label)
-        Spacer(modifier = Modifier.width(8.dp))
-        Switch(
-            checked = value,
-            onCheckedChange = onValueChange
-        )
-    ***REMOVED***
-***REMOVED***
+        ***REMOVED***
 
-// Help Icon Button Composable (with modal tooltip)
-@Composable
-fun HelpIconButton(helpText: String) {
-    var showDialog by remember { mutableStateOf(false) ***REMOVED***
-
-    IconButton(
-        onClick = { showDialog = true ***REMOVED***,
-        modifier = Modifier.size(20.dp) // Make the icon smaller
-    ) {
-        Icon(Icons.Filled.Build, contentDescription = "Help", modifier = Modifier.offset(y = (-4).dp)) // Adjust position slightly up
-    ***REMOVED***
-
-    if (showDialog) {
-        AlertDialog(
-            onDismissRequest = { showDialog = false ***REMOVED***,
-            title = { Text("Help") ***REMOVED***,
-            text = { Text(helpText) ***REMOVED***,
-            confirmButton = {
-                TextButton(onClick = { showDialog = false ***REMOVED***) {
-                    Text("OK")
+        if (showDialog) {
+            AlertDialog(
+                onDismissRequest = { showDialog = false ***REMOVED***,
+                title = { Text("Help") ***REMOVED***,
+                text = { Text(helpText) ***REMOVED***,
+                confirmButton = {
+                    TextButton(onClick = { showDialog = false ***REMOVED***) {
+                        Text("OK")
+                    ***REMOVED***
                 ***REMOVED***
-            ***REMOVED***
-        )
-    ***REMOVED***
 ***REMOVED***
+        ***REMOVED***
+    ***REMOVED***
+
 

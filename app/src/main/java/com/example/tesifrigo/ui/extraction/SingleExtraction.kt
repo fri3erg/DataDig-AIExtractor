@@ -10,13 +10,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.*
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -54,8 +52,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.tesifrigo.models.Extraction
@@ -126,7 +122,7 @@ fun SingleExtractionScreen(
             ***REMOVED***
                     ***REMOVED***
                     itemsIndexed(extraction!!.extractedFields) { index, field ->
-                        ExtractionField(extraction!!, index, viewModel)
+                        ExtractionFieldComposable(extraction!!, index, viewModel)
                     ***REMOVED***
                 ***REMOVED***
 
@@ -401,7 +397,7 @@ fun FormatSection(extraction: Extraction, viewModel: ExtractionViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ExtractionField(
+fun ExtractionFieldComposable(
     extraction: Extraction,
     index: Int,
     viewModel: ExtractionViewModel,

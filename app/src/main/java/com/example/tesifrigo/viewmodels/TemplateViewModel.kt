@@ -338,10 +338,24 @@ class TemplateViewModel : ViewModel() {
     ***REMOVED***
 
     fun addTable(template: Template) {
+        val newField = TemplateField().apply {
+            title = ""
+        ***REMOVED***
+        val newField2 = TemplateField().apply {
+            title = ""
+        ***REMOVED***
+        val newField3 = TemplateField().apply {
+            title = ""
+        ***REMOVED***
+        val newField4 = TemplateField().apply {
+            title = ""
+        ***REMOVED***
         val newTable = TemplateTable().apply {
             title = "New Table"
             description = "This is a new table"
             keywords = realmListOf("tag1 ")
+            rows = realmListOf(newField, newField2)
+            columns = realmListOf(newField3, newField4)
         ***REMOVED***
         viewModelScope.launch {
             realm.write {
@@ -383,26 +397,7 @@ class TemplateViewModel : ViewModel() {
         ***REMOVED***
     ***REMOVED***
 
-    fun updateTableRows(template: Template, tableIndex: Int, it: Any) {
-        viewModelScope.launch {
-            realm.writeBlocking {
-                val latestTemplate = findLatest(template) ?: return@writeBlocking
-                val table = latestTemplate.tables[tableIndex]
-                table.rows.add(it as TemplateField)
-            ***REMOVED***
-        ***REMOVED***
-    ***REMOVED***
 
-    fun updateTableColumns(template: Template, tableIndex: Int, it: Any) {
-        viewModelScope.launch {
-            realm.writeBlocking {
-                val latestTemplate = findLatest(template) ?: return@writeBlocking
-                val table = latestTemplate.tables[tableIndex]
-                table.columns.add(it as TemplateField)
-            ***REMOVED***
-        ***REMOVED***
-
-    ***REMOVED***
 
     fun deleteTable(template: Template, tableIndex: Int) {
         viewModelScope.launch {
@@ -414,31 +409,28 @@ class TemplateViewModel : ViewModel() {
 
     ***REMOVED***
 
-    fun updateTableRowHeader(template: Any, tableIndex: Int, rowIndex: Int, newText: String) {
+    fun updateTableRowHeader(template: Any, tableIndex: Int, rowIndex: Int, newField: TemplateField) {
         viewModelScope.launch {
             realm.writeBlocking {
                 val latestTemplate = findLatest(template as Template) ?: return@writeBlocking
                 val table = latestTemplate.tables[tableIndex]
-                table.rows[rowIndex].title = newText
+                table.rows[rowIndex] = newField
             ***REMOVED***
         ***REMOVED***
     ***REMOVED***
 
-    fun updateTableColumnHeader(template: Any, tableIndex: Int, columnIndex: Int, newText: Any) {
+    fun updateTableColumnHeader(template: Any, tableIndex: Int, columnIndex: Int, newField: TemplateField) {
         viewModelScope.launch {
             realm.writeBlocking {
                 val latestTemplate = findLatest(template as Template) ?: return@writeBlocking
                 val table = latestTemplate.tables[tableIndex]
-                table.columns[columnIndex].title = newText.toString()
+                table.columns[columnIndex]= newField
             ***REMOVED***
         ***REMOVED***
     ***REMOVED***
 
-    fun addRowToTable(template: Template, tableIndex: Int, newRowHeader: String) {
-        val newField = TemplateField().apply {
-            title = newRowHeader
-            description = "This is a new field"
-        ***REMOVED***
+    fun addRowToTable(template: Template, tableIndex: Int, newField: TemplateField) {
+
         viewModelScope.launch {
             realm.write {
                 val latestTemplate = findLatest(template) ?: return@write
@@ -448,15 +440,22 @@ class TemplateViewModel : ViewModel() {
 
     ***REMOVED***
 
-    fun addColumnToTable(template: Template, tableIndex: Int, newColumnHeader: String) {
-        val newField = TemplateField().apply {
-            title = newColumnHeader
-            description = "This is a new field"
-        ***REMOVED***
+    fun addColumnToTable(template: Template, tableIndex: Int, newField: TemplateField) {
+
         viewModelScope.launch {
             realm.write {
                 val latestTemplate = findLatest(template) ?: return@write
                 latestTemplate.tables[tableIndex].columns.add(newField)
+            ***REMOVED***
+
+        ***REMOVED***
+    ***REMOVED***
+
+    fun deleteField(template: Template, index: Int) {
+        viewModelScope.launch {
+            realm.writeBlocking {
+                val latestTemplate = findLatest(template) ?: return@writeBlocking
+                latestTemplate.fields.removeAt(index)
             ***REMOVED***
 
         ***REMOVED***
