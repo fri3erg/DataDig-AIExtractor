@@ -168,7 +168,7 @@ class ExtractionService : Service(){
             val chosenOption = classesOptionModule.callAttr(
                 "Options",  // Directly call the constructor
                 PyObject.fromJava("gpt-4"),
-                PyObject.fromJava("en"),
+                PyObject.fromJava("it"),
                 PyObject.fromJava(false),
                 PyObject.fromJava(getApiKey)
 ***REMOVED***

@@ -315,8 +315,9 @@ class ExtractionViewModel @Inject constructor() : ViewModel(){
         ***REMOVED***
         viewModelScope.launch {
             realm.writeBlocking {
-                extraction.format = format
-                extraction.fileUri = newFile
+                val latestExtraction = findLatest(extraction) ?: return@writeBlocking
+                latestExtraction.format = format
+                latestExtraction.fileUri = newFile
             ***REMOVED***
         ***REMOVED***
 

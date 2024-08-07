@@ -1,6 +1,7 @@
 package com.example.tesifrigo.services
 
 import android.graphics.Bitmap
+import android.util.Log
 import com.google.android.gms.tasks.Tasks
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
@@ -19,6 +20,7 @@ class ImageOCR {
                     stringBuilder.append(line.text).append("\n")
                 ***REMOVED***
             ***REMOVED***
+            Log.d("OCR", "Extracted text: $stringBuilder")
             stringBuilder.toString()
         ***REMOVED*** catch (e: Exception) {
             "Failed to extract text from image: ${e.message***REMOVED***" // Handle errors

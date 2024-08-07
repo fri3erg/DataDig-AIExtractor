@@ -188,6 +188,8 @@ def llm_extraction_and_tag(page, template:Template, file_id, pydantic_class, opt
         print("error in extraction", e)
         response = str(page)
     response = str.replace(r"\*\*", "", response)
+    
+    print("response:",response)
     # To ensure optimal data standardization
     try:
         tagged = Models.tag(response, pydantic_class, file_id)

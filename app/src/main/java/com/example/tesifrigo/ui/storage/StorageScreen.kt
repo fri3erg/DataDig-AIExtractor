@@ -175,6 +175,7 @@ fun ExtractionItem(extraction: Extraction, viewModel:ExtractionViewModel, navCon
             .clickable {
                 navController.navigate(Screen.SingleExtraction.withArgs("extractionId" to extraction.id.toHexString()))
             ***REMOVED***,
+        border = CardDefaults.outlinedCardBorder(),
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp) // Add elevation for better visuals
 
     ) {

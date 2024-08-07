@@ -88,16 +88,24 @@ fun CameraScreen(templateId: String?, navController: NavHostController) {
     val serviceViewModel = hiltViewModel<ServiceViewModel>()
     var imageUris by remember { mutableStateOf<List<Uri>>(emptyList()) ***REMOVED*** // Store multiple URIs
     val templateViewModel = hiltViewModel<TemplateViewModel>()
-    var template by remember { mutableStateOf<Template?>(null) ***REMOVED***
+    val template by templateViewModel.template.collectAsState()
     if (templateId != null) {
-        template = templateViewModel.queryTemplate(templateId).collectAsState().value
+        templateViewModel.queryTemplate(templateId)
         if (template != null){
             serviceViewModel.setTemplate(template!!)
         ***REMOVED***
     ***REMOVED***
     var imageCapture: ImageCapture? by remember { mutableStateOf(null) ***REMOVED*** // For capturing images
     var lensFacing by remember { mutableIntStateOf(CameraSelector.LENS_FACING_BACK) ***REMOVED***
+LaunchedEffect(key1 = templateId){
+    if (templateId != null) {
+        templateViewModel.queryTemplate(templateId)
+        if (template != null) {
 
+            serviceViewModel.setTemplate(template!!)
+        ***REMOVED***
+    ***REMOVED***
+***REMOVED***
 
 
     Column (modifier = Modifier.fillMaxSize()){

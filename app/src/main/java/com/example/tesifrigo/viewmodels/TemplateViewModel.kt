@@ -1,7 +1,5 @@
 package com.example.tesifrigo.viewmodels
 
-import android.util.Log
-import androidx.compose.ui.focus.FocusRequester
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tesifrigo.MyApp
@@ -36,6 +34,9 @@ class TemplateViewModel : ViewModel() {
 
     val _focusRequesterIndex = MutableStateFlow<Int?>(null) // Index of the element to focus
     val focusRequesterIndex: StateFlow<Int?> get() = _focusRequesterIndex.asStateFlow()
+
+    private val _template = MutableStateFlow<Template?>(realm.query<Template>().first().find()) // Initialize with your template data
+    val template: StateFlow<Template?> = _template.asStateFlow()
 
 
 
@@ -340,15 +341,23 @@ class TemplateViewModel : ViewModel() {
     fun addTable(template: Template) {
         val newField = TemplateField().apply {
             title = ""
+            type = "Any"
+            required = false
         ***REMOVED***
         val newField2 = TemplateField().apply {
             title = ""
+            type = "Any"
+            required = false
         ***REMOVED***
         val newField3 = TemplateField().apply {
             title = ""
+            type = "Any"
+            required = false
         ***REMOVED***
         val newField4 = TemplateField().apply {
             title = ""
+            type = "Any"
+            required = false
         ***REMOVED***
         val newTable = TemplateTable().apply {
             title = "New Table"

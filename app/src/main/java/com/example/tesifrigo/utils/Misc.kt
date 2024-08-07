@@ -361,12 +361,12 @@ fun FileCard(
             // Handle the result if needed
         ***REMOVED***
     ***REMOVED***
-    fun downloadFile(uri: Uri?) {
-        uri?.let { fileUri ->
+    fun downloadFile(uri: Uri?, failedOpen: Boolean = false) {
+        if (uri == null || uri.path == null) return
             val contentUri = FileProvider.getUriForFile(
                 context,
                 "com.example.tesifrigo.fileprovider",
-                File(fileUri.path!!)
+                File(uri.path!!)
 ***REMOVED***
 
             // Get the filename from the content URI
@@ -388,33 +388,77 @@ fun FileCard(
                 ***REMOVED***
 
                 // Show a Toast message indicating success
-                Toast.makeText(context, "File downloaded to Downloads folder", Toast.LENGTH_SHORT).show()
-
+                if (!failedOpen) {
+                    Toast.makeText(
+                        context,
+                        "File downloaded to Downloads folder",
+                        Toast.LENGTH_SHORT
+        ***REMOVED***.show()
+                ***REMOVED***
             ***REMOVED*** catch (e: IOException) {
                 // Handle exceptions (e.g., log the error, show an error message to the user)
                 if ((e is FileNotFoundException) && (e.message?.contains("EEXIST") == true)){
 
-                            Toast.makeText(context, "File already downloaded", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "File already downloaded", Toast.LENGTH_SHORT).show()
 
-                    ***REMOVED***
-                    else{
-                        // Handle other IOException cases
-                        e.printStackTrace()
-                        Toast.makeText(context, "Error downloading file", Toast.LENGTH_SHORT).show()
-                    ***REMOVED***
+                ***REMOVED*** else{
+                    // Handle other IOException cases
+                    e.printStackTrace()
+                    Toast.makeText(context, "Error downloading file", Toast.LENGTH_SHORT).show()
+                ***REMOVED***
             ***REMOVED***
-        ***REMOVED***
     ***REMOVED***
     fun openFile(uri: Uri) {
+        if (uri.path == null) return
         val contentUri = FileProvider.getUriForFile(
             context,
             "com.example.tesifrigo.fileprovider",
             File(uri.path!!)
         )
 
-        val intent = Intent(Intent.ACTION_VIEW).apply {
-            setDataAndType(contentUri, context.contentResolver.getType(contentUri))
+        val mimeType = context.contentResolver.getType(contentUri)
+
+        // First, try to open the file using ACTION_VIEW
+        val viewIntent = Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(contentUri, mimeType)
             flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+        ***REMOVED***
+
+        val packageManager = context.packageManager
+        val viewActivities = packageManager.queryIntentActivities(viewIntent, PackageManager.MATCH_DEFAULT_ONLY)
+
+        // Filter activities based on MIME type
+        val filteredActivities = viewActivities.filter {
+            it.activityInfo.exported && it.filter?.hasDataType(mimeType) == true
+        ***REMOVED***
+
+        if (filteredActivities.isNotEmpty()) {
+            // There's a default app that can handle the intent, so launch it
+            openFileLauncher?.launch(viewIntent)
+        ***REMOVED*** else {
+                // No suitable app found, so download the file
+            Toast.makeText(context, "No app found to open the file, downloading instead", Toast.LENGTH_SHORT).show()
+                downloadFile(uri, true)
+            ***REMOVED***
+
+    ***REMOVED***
+
+    fun downloadFileExtra(uri: Uri) {
+        if (uri.path == null) return
+        val contentUri = FileProvider.getUriForFile(
+            context,
+            "com.example.tesifrigo.fileprovider",
+            File(uri.path!!)
+        )
+
+        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply { // Use ACTION_CREATE_DOCUMENT
+            type = context.contentResolver.getType(contentUri)
+            putExtra(Intent.EXTRA_STREAM, contentUri)
+            // Suggest a filename for the downloaded file (optional)
+            val fileName = contentUri.lastPathSegment ?: "downloaded_file"
+            putExtra(Intent.EXTRA_TITLE, fileName)
+            addCategory(Intent.CATEGORY_OPENABLE)
+            flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
         ***REMOVED***
 
         val packageManager = context.packageManager
@@ -422,19 +466,18 @@ fun FileCard(
 
         if (activities.isNotEmpty())
         {
-            // There's at least one app that can handle the intent, so launch it
             openFileLauncher?.launch(intent)
         ***REMOVED*** else {
-            // No app can handle the intent, so download the file
+            // If no app can handle ACTION_CREATE_DOCUMENT, fall back to manual download
             downloadFile(uri)
         ***REMOVED***
     ***REMOVED***
     fun shareFile(uri: Uri?) {
-        uri?.let { fileUri ->
+        if (uri == null || uri.path == null) return
             val contentUri = FileProvider.getUriForFile(
                 context,
                 "com.example.tesifrigo.fileprovider",
-                File(fileUri.path!!)
+                File(uri.path!!)
 ***REMOVED***
 
             val shareIntent = Intent(Intent.ACTION_SEND).apply {
@@ -444,7 +487,6 @@ fun FileCard(
             ***REMOVED***
 
             context.startActivity(Intent.createChooser(shareIntent, "Share File"))
-        ***REMOVED***
     ***REMOVED***
 
     Surface(
@@ -457,7 +499,7 @@ fun FileCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
-                .clickable(onClick = { openFile(Uri.parse(extraction.fileUri!!)) ***REMOVED***), // Make the Row clickable
+                .clickable(onClick = { openFile(Uri.parse(extraction.fileUri)) ***REMOVED***), // Make the Row clickable
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Preview Section
@@ -481,7 +523,7 @@ fun FileCard(
                 modifier = Modifier.weight(1f)
 ***REMOVED*** {
                 Text(
-                    text = extraction.template!!.title,
+                    text = extraction.title,
                     fontSize = 16.sp,
                     color = Color.Black
     ***REMOVED***
@@ -494,7 +536,9 @@ fun FileCard(
                     // Make the icons clickable
                     Box(modifier = Modifier
                         .clickable {
-                            downloadFile(Uri.parse(extraction.fileUri!!))
+                            if (extraction.fileUri != null) {
+                                downloadFileExtra(Uri.parse(extraction.fileUri))
+                            ***REMOVED***
                         ***REMOVED***
         ***REMOVED*** {
                         FaIcon(
@@ -508,7 +552,9 @@ fun FileCard(
 
                     Box(modifier = Modifier
                         .clickable {
-                            shareFile(Uri.parse(extraction.fileUri!!))
+                            if (extraction.fileUri != null) {
+                                shareFile(Uri.parse(extraction.fileUri))
+                            ***REMOVED***
                         ***REMOVED***
         ***REMOVED*** {
                         FaIcon(

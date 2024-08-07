@@ -421,6 +421,7 @@ fun ExtractionFieldComposable(
     viewModel: ExtractionViewModel,
     modifier: Modifier = Modifier
 ) {
+    var value by remember { mutableStateOf(extraction.extractedFields[index].value) ***REMOVED***
     extraction.extractedFields[index].templateField?.let { templateField ->
         Column(
             modifier = modifier
@@ -433,8 +434,9 @@ fun ExtractionFieldComposable(
                 style = MaterialTheme.typography.titleMedium
 ***REMOVED***
             OutlinedTextField(
-                value = extraction.extractedFields[index].value,
+                value = value,
                 onValueChange = { newText ->
+                    value = newText
                     viewModel.updateField(extraction.extractedFields[index], newText)
                 ***REMOVED***,
                 label = { Text(text = "Value") ***REMOVED***,
