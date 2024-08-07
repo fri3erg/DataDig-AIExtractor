@@ -6,12 +6,14 @@ import io.realm.kotlin.ext.realmListOf
 import io.realm.kotlin.types.RealmList
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
-import kotlinx.serialization.Serializable
 import org.mongodb.kbson.ObjectId
 class Extraction : RealmObject {
     @PrimaryKey
     @Expose(serialize = false, deserialize = false) // Exclude from serialization
     var id: ObjectId = ObjectId()
+
+    @Expose
+    var title: String = ""
 
     @Expose
     var extractedFields: RealmList<ExtractionField> = realmListOf()
@@ -28,8 +30,7 @@ class Extraction : RealmObject {
     @Expose(serialize = false, deserialize = false) // Exclude from serialization
     var image: RealmList<String> = realmListOf()
 
-    @Expose
-    @SerializedName("template_title")  // Rename in JSON
+    @Expose(serialize = false, deserialize = false)
     var template: Template? = null
 
     @Expose(serialize = false, deserialize = false) // Exclude from serialization
@@ -48,6 +49,7 @@ class ExtractionTable : RealmObject {
     var id: ObjectId = ObjectId()
 
     @Expose
+    @SerializedName("template_table_title")  // Rename in JSON
     var templateTable: TemplateTable? = null
 
     @Expose
@@ -63,7 +65,7 @@ class ExtractionTableRow : RealmObject {
     var id: ObjectId = ObjectId()
 
     @Expose
-    var rowIndex: String = ""
+    var rowName: String = ""
 
     @Expose
     var fields: RealmList<ExtractionField> = realmListOf()
@@ -97,10 +99,7 @@ class ExtractionField : RealmObject {
     var value: String = ""
 ***REMOVED***
 
-@Serializable
-data class Extracted (val title: String, val description: String, val tags: List<String>){
-    constructor(): this("", "", listOf())
-    ***REMOVED***
+
 
 
 

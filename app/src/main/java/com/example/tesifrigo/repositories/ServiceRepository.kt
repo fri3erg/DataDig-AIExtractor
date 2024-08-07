@@ -89,13 +89,14 @@ class ServiceRepository @Inject constructor(
             ***REMOVED***
             when (newResult.format) {
                 "json" -> {
+                    newResult.fileUri = JsonCreator().convertToJsonFile(newResult, context).toString()
                 ***REMOVED***
 
                 "csv" -> {
+                    newResult.fileUri = CsvCreator().convertToCsvFile(newResult, context).toString()
 
                 ***REMOVED***
             ***REMOVED***
-            newResult.fileUri = CsvCreator().convertToCsvFile(newResult, context).toString()
             copyToRealm(newResult, UpdatePolicy.ALL)
             _result.value = newResult.id.toHexString()
 

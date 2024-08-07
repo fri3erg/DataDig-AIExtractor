@@ -22,12 +22,12 @@ class CsvCreator {
 
                 return try {
                     FileWriter(outputFile).use { writer ->
-                        writer.write("type,template_title,extraction_costs,exception_occurred_error,exception_occurred_type,exception_occurred_description,template_field_title,value,row_index,column_index\n")
+                        writer.write("type,title,extraction_costs,exception_occurred_error,exception_occurred_type,exception_occurred_description,template_field_title,value,row_index,column_index\n")
 
                         // Write Extraction row
                         val extractionRow = listOf(
                             "Extraction",
-                            extraction.template?.title,
+                            extraction.title,
                             extraction.extractionCosts,
                             extraction.exceptionsOccurred.firstOrNull()?.error,
                             extraction.exceptionsOccurred.firstOrNull()?.errorType,

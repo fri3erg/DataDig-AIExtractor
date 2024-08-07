@@ -39,6 +39,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -49,6 +50,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -60,6 +62,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
+import com.example.tesifrigo.Screen
 import com.example.tesifrigo.models.Extraction
 import com.example.tesifrigo.models.Template
 import com.example.tesifrigo.services.ExtractionService
@@ -113,7 +116,20 @@ fun CameraScreen(templateId: String?, navController: NavHostController) {
                 ***REMOVED***
 ***REMOVED***
         ***REMOVED***
+        else if(template==null){
+            Text("Please select a template first", modifier = Modifier.padding(16.dp))
+        ***REMOVED***
         else {
+            Text("Extraction:", modifier = Modifier.padding(16.dp).align(Alignment.CenterHorizontally),
+                fontSize = 20.sp,
+                color = Color.Black,
+                fontWeight = FontWeight.Bold
+***REMOVED***
+            Text("Template: ${template!!.title***REMOVED***", modifier = Modifier.padding(start=16.dp, end=16.dp).align(Alignment.CenterHorizontally),
+                fontSize = 14.sp,
+                color = Color.Black,
+***REMOVED***
+            Spacer(modifier = Modifier.height(30.dp))
             MyImageArea(
                 imageUris = imageUris,
 ***REMOVED***
@@ -133,11 +149,13 @@ fun CameraScreen(templateId: String?, navController: NavHostController) {
                         activeExtraction = true
                         ContextCompat.startForegroundService(context, intent)
                     ***REMOVED***) {
-                    Text(text = "Extract!", color = Color.White)
+                    Text(text = "Extract!", color = Color.Black)
                 ***REMOVED***
             ***REMOVED***
             else {
                 ProgressBar()
+                Spacer(modifier = Modifier.height(16.dp))
+                HorizontalDivider()
                 ShownExtraction(navController = navController)
         ***REMOVED***
             ***REMOVED***
@@ -155,14 +173,17 @@ fun ProgressBar() {
     val progress by serviceViewModel.progress.collectAsState()
     val result by serviceViewModel.result.collectAsState()
     Row {
-        Text("Progress: ")
-        Spacer(modifier = Modifier.width(8.dp))
+        Text("Progress: ${progress * 100***REMOVED***%", modifier = Modifier.padding(start=12.dp))
+        Spacer(modifier = Modifier.width(16.dp))
+        Spinner(isActive = result == null)
+        Spacer(modifier = Modifier.width(16.dp))
         LinearProgressIndicator(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 10.dp, end = 16.dp),
             progress = { progress ***REMOVED***,
             color = Color.Blue
         )
-        Spacer(modifier = Modifier.width(16.dp))
-        Spinner(isActive = result == null)
 
     ***REMOVED***
 
@@ -200,20 +221,33 @@ fun ShownExtraction(navController: NavHostController) {
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row {
-            Text("Extraction Result:")
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+***REMOVED***{
+                Text(
+                    "Extraction Result:",
+                    modifier = Modifier.padding(16.dp),
+                    fontSize = 20.sp,
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold
+    ***REMOVED***
                 Button(
                     modifier = Modifier
                         .padding(16.dp)
-                        .size(100.dp, 50.dp),
+                        .size(150.dp, 60.dp),
+
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(Color.Red),
                     onClick = {
-                    navController.navigate("singleExtraction/extractionId=${result***REMOVED***")
-                ***REMOVED***) {
+                        navController.navigate(Screen.SingleExtraction.withArgs("extractionId" to extraction!!.id.toHexString()))
+
+                    ***REMOVED***) {
                     Text("Go to Extraction")
                 ***REMOVED***
             ***REMOVED***
+
             if (extraction!!.fileUri != null) {
                 FileCard(extraction!!)
             ***REMOVED***

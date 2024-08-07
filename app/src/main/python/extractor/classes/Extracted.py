@@ -24,6 +24,7 @@ class Extracted:
         self.template: Template=template
         self.format=format
         self.tags=tags
+        self.title=template.title
         
         
         

@@ -16,7 +16,6 @@ import androidx.core.app.NotificationCompat
 import com.chaquo.python.PyObject
 import com.chaquo.python.Python
 import com.chaquo.python.android.AndroidPlatform
-import com.example.tesifrigo.fileCreator.JsonCreator
 import com.example.tesifrigo.R
 import com.example.tesifrigo.models.ExceptionOccurred
 import com.example.tesifrigo.models.Extraction
@@ -191,7 +190,6 @@ class ExtractionService : Service(){
                 val currentProgress = module["global_progress"]?.toFloat()
                 if (currentProgress != null) {
                     progressCallback(currentProgress)
-                    Log.d("TestService", "Progress: $currentProgress")
                 ***REMOVED***
                 delay(10)
             ***REMOVED***
@@ -243,6 +241,7 @@ private fun extractResult(pyResult:PyObject, templateOg: Template, imageUris: Li
         ***REMOVED***
 
         extractionCosts = pyResult["extraction_costs"].toString() // Adjust conversion as needed
+        title = pyResult["title"].toString()
         pyResult["exceptions_occurred"]?.asList()?.let {
             exceptionsOccurred.addAll(
                 it.map { pyException ->
@@ -299,7 +298,7 @@ private fun extractTable(pyExtractedTable: PyObject, template: Template): Extrac
                     ***REMOVED***
                 ***REMOVED***
                 rows.add(ExtractionTableRow().apply {
-                    this.rowIndex = rowIndex.toString()
+                    this.rowName = rowIndex.toString()
                     this.fields.addAll(fields)
                 ***REMOVED***)
             ***REMOVED***
@@ -326,7 +325,6 @@ private fun getTemplate(classesModule: PyObject,builtinsModule: PyObject, templa
             PyObject.fromJava(realmField.extraDescription),
             PyObject.fromJava(realmField.type),
             PyObject.fromJava(realmField.required),
-            PyObject.fromJava(realmField.tags.toList()),
             PyObject.fromJava(realmField.intelligentExtraction)
         )
         )  // Add Base64 image to the Python list
@@ -347,7 +345,6 @@ private fun getTemplate(classesModule: PyObject,builtinsModule: PyObject, templa
                 PyObject.fromJava(tableField.extraDescription),
                 PyObject.fromJava(tableField.type),
                 PyObject.fromJava(tableField.required),
-                PyObject.fromJava(tableField.tags.toList()),
                 PyObject.fromJava(tableField.intelligentExtraction)
 ***REMOVED***
 ***REMOVED***  // Add Base64 image to the Python list
@@ -362,7 +359,6 @@ private fun getTemplate(classesModule: PyObject,builtinsModule: PyObject, templa
                     PyObject.fromJava(tableField.extraDescription),
                     PyObject.fromJava(tableField.type),
                     PyObject.fromJava(tableField.required),
-                    PyObject.fromJava(tableField.tags.toList()),
                     PyObject.fromJava(tableField.intelligentExtraction)
     ***REMOVED***
 ***REMOVED***  // Add Base64 image to the Python list

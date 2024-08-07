@@ -1,14 +1,13 @@
 
 from typing import Dict, List, Tuple
 class TemplateField:
-    def __init__(self, id:str, title: str, description:str, extra_description: str, tags: List[str], type: str | None, required: bool, intelligent_extraction= False):
+    def __init__(self, id:str, title: str, description:str, extra_description: str, type: str | None, required: bool, intelligent_extraction= False):
         self.id = id
         self.title = title
         self.description = description
         self.extra_description = extra_description
         self.type = type
         self.required= required
-        self.tags = tags  # List of strings 
         self.intelligent_extraction = intelligent_extraction # Boolean indicating whether intelligent extraction is enabled for this field
 
 

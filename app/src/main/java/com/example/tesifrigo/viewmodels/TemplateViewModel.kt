@@ -1,6 +1,7 @@
 package com.example.tesifrigo.viewmodels
 
 import android.util.Log
+import androidx.compose.ui.focus.FocusRequester
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tesifrigo.MyApp
@@ -32,6 +33,11 @@ class TemplateViewModel : ViewModel() {
 
     private val _searchText = MutableStateFlow("")
     val searchText: StateFlow<String> = _searchText.asStateFlow()
+
+    val _focusRequesterIndex = MutableStateFlow<Int?>(null) // Index of the element to focus
+    val focusRequesterIndex: StateFlow<Int?> get() = _focusRequesterIndex.asStateFlow()
+
+
 
     // ... other StateFlows (sortOrder, ascending) ...
 
@@ -100,10 +106,6 @@ class TemplateViewModel : ViewModel() {
     fun queryTemplate(id: String): StateFlow<Template?> {
         return templates.map { templateList ->
             templateList.find {
-                Log.d(
-                    "TemplateViewModel",
-                    "Querying template with ID: ${it.id.toHexString()***REMOVED*** and title: $id and $templateList"
-    ***REMOVED***
                 it.id.toHexString() == id
             ***REMOVED***
         ***REMOVED***.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
@@ -132,7 +134,6 @@ class TemplateViewModel : ViewModel() {
                     type = "text"
                     required = true
                     intelligentExtraction = false
-                    tags = realmListOf("freezer")
                 ***REMOVED***
                 val templateField2 = TemplateField().apply {
                     title = "Field 2"
@@ -141,7 +142,6 @@ class TemplateViewModel : ViewModel() {
                     type = "text"
                     required = true
                     intelligentExtraction = true
-                    tags = realmListOf("freezer")
                 ***REMOVED***
                 val templateField3 = TemplateField().apply {
                     title = "Field 3"
@@ -150,7 +150,6 @@ class TemplateViewModel : ViewModel() {
                     type = "text"
                     required = true
                     intelligentExtraction = false
-                    tags = realmListOf("freezer")
                 ***REMOVED***
 
                 val templateTable1 = TemplateTable().apply {
@@ -259,7 +258,6 @@ class TemplateViewModel : ViewModel() {
         val newField = TemplateField().apply {
             title = "New Field"
             description = "This is a new field"
-            tags = realmListOf("tag1 ")
         ***REMOVED***
         val newTemplate = Template().apply {
             title = "New Template"
@@ -280,12 +278,14 @@ class TemplateViewModel : ViewModel() {
         val newField = TemplateField().apply {
             title = "New Field"
             description = "This is a new field"
-            tags = realmListOf("tag1 ")
         ***REMOVED***
         viewModelScope.launch {
             realm.write {
                 val latestTemplate = findLatest(template) ?: return@write
                 latestTemplate.fields.add(newField)
+                _focusRequesterIndex.value = latestTemplate.fields.size - 1 // Focus on the last added field
+
+
             ***REMOVED***
         ***REMOVED***
     ***REMOVED***
@@ -361,6 +361,9 @@ class TemplateViewModel : ViewModel() {
             realm.write {
                 val latestTemplate = findLatest(template) ?: return@write
                 latestTemplate.tables.add(newTable)
+                _focusRequesterIndex.value = template.tables.size - 1 + template.fields.size // Focus on the last added table
+
+
 
             ***REMOVED***
         ***REMOVED***

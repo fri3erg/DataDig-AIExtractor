@@ -38,7 +38,6 @@ class TemplateField : RealmObject {
     var extraDescription: String = ""
     var type: String = ""
     var required: Boolean = false
-    var tags: RealmList<String> = realmListOf()
     var intelligentExtraction: Boolean = false
 
 ***REMOVED***

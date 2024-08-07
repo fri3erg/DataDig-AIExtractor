@@ -1,6 +1,7 @@
 package com.example.tesifrigo.ui.extraction
 
 import android.net.Uri
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -36,6 +37,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -54,6 +56,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.example.tesifrigo.Screen
 import com.example.tesifrigo.models.Extraction
 import com.example.tesifrigo.models.ExtractionTable
 import com.example.tesifrigo.utils.FileCard
@@ -108,7 +111,7 @@ fun SingleExtractionScreen(
                     ***REMOVED***
                     items(extraction!!.extractedTables) { table ->
 
-                            ExtractionTableDisplay(table)
+                            ExtractionTableDisplay(table, viewModel)
 
                     ***REMOVED***
                 ***REMOVED***
@@ -224,9 +227,7 @@ fun ExtractionTags(extraction: Extraction, viewModel: ExtractionViewModel) {
                     .pointerInput(Unit) {
                         detectTapGestures(
                             onPress = {
-                                showDismissIcon = true
-                                tryAwaitRelease()
-                                showDismissIcon = false
+                                showDismissIcon = !showDismissIcon
                             ***REMOVED***
             ***REMOVED***
                     ***REMOVED***
@@ -240,6 +241,8 @@ fun ExtractionTags(extraction: Extraction, viewModel: ExtractionViewModel) {
 
 @Composable
 fun TemplateInfo(extraction: Extraction, navController: NavHostController) {
+
+    val context = LocalContext.current
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -255,9 +258,13 @@ fun TemplateInfo(extraction: Extraction, navController: NavHostController) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        extraction.template?.id?.let { templateId ->
-                            navController.navigate("editTemplate/templateId=$templateId")
+                        val templateId = extraction.template?.id
+                        if(templateId!=null){
+                            navController.navigate(Screen.EditTemplate.routeWithOptionalArgs("templateId" to templateId.toString()))
                         ***REMOVED***
+                        else{
+                              Toast.makeText(context, "No connected template found", Toast.LENGTH_SHORT).show()
+                            ***REMOVED***
                     ***REMOVED***
                     .padding(8.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -270,12 +277,14 @@ fun TemplateInfo(extraction: Extraction, navController: NavHostController) {
                     color = MaterialTheme.colorScheme.primary
     ***REMOVED***
             ***REMOVED***
+            Spacer(modifier = Modifier.height(20.dp))
 
             // Image Carousel (if available)
             if (extraction.image.isNotEmpty()) {
                 MyImageArea(
                     imageUris = extraction.image.map { Uri.parse(it) ***REMOVED***,
                     modifier = Modifier.fillMaxWidth()
+
     ***REMOVED***
             ***REMOVED***
         ***REMOVED***
@@ -284,7 +293,7 @@ fun TemplateInfo(extraction: Extraction, navController: NavHostController) {
 
 
 @Composable
-fun ExtractionTableDisplay(extractionTable: ExtractionTable) {
+fun ExtractionTableDisplay(extractionTable: ExtractionTable, viewModel: ExtractionViewModel) {
     val columnHeaders = extractionTable.fields.firstOrNull()?.fields?.mapNotNull { it.templateField?.title ***REMOVED***
 
     Card(
@@ -301,33 +310,44 @@ fun ExtractionTableDisplay(extractionTable: ExtractionTable) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(Color.LightGray)
                         .padding(8.dp)
     ***REMOVED*** {
                     // Add an empty cell for the row index header
-                    TableCell(text = "", modifier = Modifier.weight(1f), isHeader = true)
+                    TableCell(text = "", modifier = Modifier.weight(1f), isHeader = true, onTextChange = {***REMOVED***)
 
                     for (header in columnHeaders) {
-                        TableCell(text = header, modifier = Modifier.weight(1f), isHeader = true)
+                        TableCell(text = header, modifier = Modifier.weight(1f), isHeader = true, onTextChange = {***REMOVED***)
                     ***REMOVED***
                 ***REMOVED***
             ***REMOVED***
 
             // Data Rows
             for ((rowIndex, row) in extractionTable.fields.withIndex()) {
+                HorizontalDivider(color = Color.LightGray)
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 4.dp)
     ***REMOVED*** {
                     // Add row index cell
-                    TableCell(text = (rowIndex + 1).toString(), modifier = Modifier.weight(1f), isHeader = true)
 
+                    Box( // Wrap the TableCell in a Box
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight(), // Make the Box fill the entire height of the Row
+
+                        contentAlignment = Alignment.CenterStart // Center the content vertically within the Box
+        ***REMOVED*** {
+                        TableCell(
+                            text = (rowIndex + 1).toString(),
+                            modifier = Modifier.align(Alignment.CenterStart),
+                            isHeader = true,
+                            onTextChange = {***REMOVED***)
+                    ***REMOVED***
                     for (field in row.fields) {
-                        TableCell(text = field.value, modifier = Modifier.weight(1f))
+                        TableCell(text = field.value, modifier = Modifier.weight(1f), onTextChange = {viewModel.updateField(field, it) ***REMOVED***)
                     ***REMOVED***
                 ***REMOVED***
-                HorizontalDivider(color = Color.LightGray)
             ***REMOVED***
         ***REMOVED***
     ***REMOVED***
@@ -381,8 +401,6 @@ fun FormatSection(extraction: Extraction, viewModel: ExtractionViewModel) {
         ***REMOVED***
     ***REMOVED***
 
-    // Extraction Tags Section (same as before)
-    // ...
 
     // File Card Section (display only if fileUri is available)
     Spacer(modifier = Modifier.height(16.dp))
@@ -417,12 +435,12 @@ fun ExtractionFieldComposable(
             OutlinedTextField(
                 value = extraction.extractedFields[index].value,
                 onValueChange = { newText ->
-                    viewModel.updateExtraction(extraction, newText, index)
+                    viewModel.updateField(extraction.extractedFields[index], newText)
                 ***REMOVED***,
                 label = { Text(text = "Value") ***REMOVED***,
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(8.dp),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
+                colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor
                     = MaterialTheme.colorScheme.primary,
                     unfocusedBorderColor = MaterialTheme.colorScheme.outline

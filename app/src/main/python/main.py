@@ -91,9 +91,9 @@ def create_test() -> tuple[Template, Options]:
     """Creates a test instance of the Template class with sample data."""
 
     # Create sample TemplateField objects
-    field1 = TemplateField("1", "Name", "Enter your full name", "", ["personal", "identification"],"str",True)
-    field2 = TemplateField("2", "Email", "Provide your email", "", ["contact", "personal"],"str",True)
-    field3 = TemplateField("3", "Date of Birth", "Your birthdate (YYYY-MM-DD)", "", ["personal", "date"],"date",True)
+    field1 = TemplateField("1", "Name", "Enter your full name", "","str",True)
+    field2 = TemplateField("2", "Email", "Provide your email", "","str",True)
+    field3 = TemplateField("3", "Date of Birth", "Your birthdate (YYYY-MM-DD)", "","date",True)
 
     # Create sample TemplateTable objects
     table1 = TemplateTable("1", "Personal Information", ["personal", "info"],"table that describes personal info", [field1, field2, field3], [field1, field2, field3])

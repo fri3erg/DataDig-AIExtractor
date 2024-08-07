@@ -63,18 +63,18 @@ class ExtractionViewModel @Inject constructor() : ViewModel(){
             if (searchQuery.isBlank()) { // Check if searchQuery is empty
                 // Default sorting if searchQuery is empty
                 when (order) {
-                    SortOrder.BY_TITLE -> compareValuesBy(t1, t2) { it.template?.title ***REMOVED*** * if (isAscending) 1 else -1
+                    SortOrder.BY_TITLE -> compareValuesBy(t1, t2) { it.title ***REMOVED*** * if (isAscending) 1 else -1
                     SortOrder.BY_DATE -> compareValuesBy(t1, t2) { it.id ***REMOVED*** * if (isAscending) 1 else -1
                 ***REMOVED***
             ***REMOVED*** else {
                 // Closeness-based sorting if searchQuery is not empty
-                val closenessComparison = compareValuesBy(t1, t2) { extraction ->
-                    extraction.template?.let { calculateCloseness(it.title, searchQuery) ***REMOVED***
+                val closenessComparison = compareValuesBy(t1, t2) { it ->
+                    calculateCloseness(it.title, searchQuery)
                 ***REMOVED***
                 if (closenessComparison == 0) {
                     // If a tie, apply secondary comparison
                     when (order) {
-                        SortOrder.BY_TITLE -> compareValuesBy(t1, t2) { it.template?.title ***REMOVED*** * if (isAscending) 1 else -1
+                        SortOrder.BY_TITLE -> compareValuesBy(t1, t2) { it.title ***REMOVED*** * if (isAscending) 1 else -1
                         SortOrder.BY_DATE -> compareValuesBy(t1, t2) { it.id ***REMOVED*** * if (isAscending) 1 else -1
                     ***REMOVED***
                 ***REMOVED*** else {
@@ -91,7 +91,6 @@ class ExtractionViewModel @Inject constructor() : ViewModel(){
     fun queryExtraction(id: String): StateFlow<Extraction?> {
         return extractions.map { extractionList ->
             extractionList.find {
-                Log.d("TemplateViewModel", "Querying template with ID: ${it.id.toHexString()***REMOVED*** and title: $id and $extractionList")
                 it.id.toHexString() == id ***REMOVED***
         ***REMOVED***.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
@@ -118,7 +117,6 @@ class ExtractionViewModel @Inject constructor() : ViewModel(){
                     type = "text"
                     required = true
                     intelligentExtraction = false
-                    tags = realmListOf("freezer")
                 ***REMOVED***)
                 val templateField2 = copyToRealm(TemplateField().apply {
                     title = "Field 2"
@@ -127,7 +125,6 @@ class ExtractionViewModel @Inject constructor() : ViewModel(){
                     type = "text"
                     required = true
                     intelligentExtraction = true
-                    tags = realmListOf("freezer")
                 ***REMOVED***)
                 val templateField3 = copyToRealm(TemplateField().apply {
                     title = "Field 3"
@@ -136,7 +133,6 @@ class ExtractionViewModel @Inject constructor() : ViewModel(){
                     type = "text"
                     required = true
                     intelligentExtraction = false
-                    tags = realmListOf("freezer")
                 ***REMOVED***)
 
                 val templateTable1 = copyToRealm(TemplateTable().apply {
@@ -184,7 +180,6 @@ class ExtractionViewModel @Inject constructor() : ViewModel(){
 
                 val extractionField1 = copyToRealm(ExtractionField().apply {
                     templateField = templateField1
-
                     value = "This is an extracted value"
                 ***REMOVED***)
                 val extractionField2 = copyToRealm(ExtractionField().apply {
@@ -199,11 +194,11 @@ class ExtractionViewModel @Inject constructor() : ViewModel(){
                 ***REMOVED***)
 
                 val extractionTableRow1 = copyToRealm(ExtractionTableRow().apply {
-                    rowIndex = "1"
+                    rowName = "1"
                     fields = realmListOf(extractionField1, extractionField2)
                 ***REMOVED***)
                 val extractionTableRow2 = copyToRealm(ExtractionTableRow().apply {
-                    rowIndex = "2"
+                    rowName = "2"
                     fields = realmListOf(extractionField2, extractionField3)
                 ***REMOVED***)
 
@@ -214,6 +209,7 @@ class ExtractionViewModel @Inject constructor() : ViewModel(){
                 ***REMOVED***)
 
                 val extraction1 = Extraction().apply {
+                    title = template1.title
                     image =  realmListOf("https://example.com/image.jpg")
                     format= "cvs"
                     extractedFields = realmListOf(extractionField1)
@@ -221,22 +217,27 @@ class ExtractionViewModel @Inject constructor() : ViewModel(){
                     extractionCosts = "100"
                     exceptionsOccurred = realmListOf()
                     template = template1
+                    tags = realmListOf("freezer")
                 ***REMOVED***
                 val extraction2 = Extraction().apply {
+                    title=template2.title
                     image = realmListOf("https://example.com/image.jpg")
                     format= "cvs"
                     extractedFields = realmListOf(extractionField2, extractionField1)
                     extractionCosts = "200"
                     exceptionsOccurred = realmListOf()
                     template = template2
+                    tags = realmListOf("freezer", "fridge")
                 ***REMOVED***
                 val extraction3 = Extraction().apply {
+                    title=template3.title
                     image = realmListOf()
                     format= "json"
                     extractedFields = realmListOf(extractionField3, extractionField2)
                     extractionCosts = "300"
                     exceptionsOccurred = realmListOf()
                     template = template3
+                    tags = realmListOf("freezer", "fridge")
                 ***REMOVED***
 
                 copyToRealm(extraction1)
@@ -316,6 +317,16 @@ class ExtractionViewModel @Inject constructor() : ViewModel(){
             realm.writeBlocking {
                 extraction.format = format
                 extraction.fileUri = newFile
+            ***REMOVED***
+        ***REMOVED***
+
+    ***REMOVED***
+
+    fun updateField(field: ExtractionField, newValue: String) {
+        viewModelScope.launch {
+            realm.writeBlocking {
+                val latestField = findLatest(field) ?: return@writeBlocking
+                latestField.value = newValue
             ***REMOVED***
         ***REMOVED***
 

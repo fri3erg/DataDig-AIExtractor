@@ -9,6 +9,7 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -28,6 +29,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -35,14 +37,12 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -54,14 +54,18 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
@@ -76,10 +80,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.tesifrigo.models.Template
 import com.example.tesifrigo.models.TemplateField
-import com.example.tesifrigo.models.TemplateTable
+import com.example.tesifrigo.utils.AddButton
+import com.example.tesifrigo.utils.DeleteButton
+import com.example.tesifrigo.utils.HelpIconButton
 import com.example.tesifrigo.viewmodels.TemplateViewModel
 import com.guru.fontawesomecomposelib.FaIcon
 import com.guru.fontawesomecomposelib.FaIcons
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -89,23 +96,22 @@ fun EditTemplateScreen(
 ) {
     val viewModel = viewModel<TemplateViewModel>()
     val template by viewModel.queryTemplate(templateId).collectAsState(initial = null)
+    val focusRequesterIndex by viewModel.focusRequesterIndex.collectAsState()
+    val listState = rememberLazyListState() // Remember the LazyListState
+    val scope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = template?.title ?: "Edit Template") ***REMOVED***,
+                title = { Text(text = template?.title ?: "Edit Template", fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(start = 16.dp)) ***REMOVED***,
                 navigationIcon = {
-                    FaIcon(faIcon = FaIcons.ArrowLeft)
+                    FaIcon(faIcon = FaIcons.ArrowLeft, modifier = Modifier.clickable {
+                        navController.navigateUp()
+                    ***REMOVED***)
+
                 ***REMOVED***
 ***REMOVED***
-        ***REMOVED***,
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { viewModel.addField(template!!) ***REMOVED***,
-                containerColor = MaterialTheme.colorScheme.primary
-***REMOVED*** {
-                FaIcon(faIcon = FaIcons.Plus)
-            ***REMOVED***
         ***REMOVED***
     ) { innerPadding ->
         LazyColumn(
@@ -113,7 +119,8 @@ fun EditTemplateScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            state = listState
         ) {
             if (template != null) {
                 // Template Title Section
@@ -129,26 +136,65 @@ fun EditTemplateScreen(
                 item {
                     TemplateTagsSection(template!!, viewModel)
                 ***REMOVED***
+                item{
+                    Text("Template Fields", style = MaterialTheme.typography.titleMedium)
+                ***REMOVED***
 
                 // Template Fields Section
                 itemsIndexed(template?.fields ?: emptyList()) { index, _ ->
-                    TemplateFieldComposable(template, index, viewModel)
+                    val listStateChange: () -> Unit ={
+                        scope.launch {
+                            listState.scrollToItem(index+3)
+                        ***REMOVED***
+                    ***REMOVED***
+
+                    TemplateFieldComposable(template, index, viewModel, focusRequesterIndex,listStateChange)
+                ***REMOVED***
+                item{
+                    AddButton(text = "Field", onClick = { viewModel.addField(template!!) ***REMOVED***)
+
+                ***REMOVED***
+                item{
+                    Text("Template Tables", style = MaterialTheme.typography.titleMedium)
+                ***REMOVED***
+                itemsIndexed(template?.tables ?: emptyList()) { index, _ ->
+                    val listStateChange: () -> Unit ={
+                        scope.launch {
+                            listState.animateScrollToItem(listState.layoutInfo.totalItemsCount)
+                        ***REMOVED***
+                    ***REMOVED***
+
+                    TemplateTableCard(index, viewModel, template!!, focusRequesterIndex, listStateChange)
                 ***REMOVED***
                 item {
-                    TemplateTablesSection(template!!, viewModel)
+                    // Add Table Button
+                    Spacer(modifier = Modifier.height(8.dp))
+                    AddButton(text = "Table", onClick = { viewModel.addTable(template!!) ***REMOVED***)
                 ***REMOVED***
 
-
             ***REMOVED*** else {
-                // ... (handle null template - same as before)
+
+                item {
+                    Text("Template not found")
+                ***REMOVED***
+                item {
+                    Button(onClick = {
+                        navController.navigateUp()
+                    ***REMOVED***) {
+                        Text("Back")
+                    ***REMOVED***
+                    ***REMOVED***
+                ***REMOVED***
             ***REMOVED***
         ***REMOVED***
+
     ***REMOVED***
-***REMOVED***
+
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun TemplateTagsSection(template: Template, viewModel: TemplateViewModel) {
+    val context = LocalContext.current
     Column {
         Text("Template Tags", style = MaterialTheme.typography.titleMedium)
         FlowRow(
@@ -160,7 +206,7 @@ fun TemplateTagsSection(template: Template, viewModel: TemplateViewModel) {
             var showDismissIcon by remember { mutableStateOf(false) ***REMOVED***
 
             AssistChip(
-                onClick = { /* Handle tag click (if needed) */ ***REMOVED***,
+                onClick = { showDismissIcon = !showDismissIcon ***REMOVED***,
                 label = { Text(tag) ***REMOVED***,
                 trailingIcon = {
                     AnimatedVisibility(
@@ -182,8 +228,6 @@ fun TemplateTagsSection(template: Template, viewModel: TemplateViewModel) {
                         detectTapGestures(
                             onPress = {
                                 showDismissIcon = true
-                                tryAwaitRelease()
-                                showDismissIcon = false
                             ***REMOVED***
             ***REMOVED***
                     ***REMOVED***
@@ -197,34 +241,61 @@ fun TemplateTagsSection(template: Template, viewModel: TemplateViewModel) {
             value = newTag,
             onValueChange = { newTag = it ***REMOVED***,
             label = { Text("Add Tag") ***REMOVED***,
+            maxLines = 1,
             modifier = Modifier.fillMaxWidth(),
             trailingIcon = {
-                FaIcon(faIcon = FaIcons.Plus, tint = Color.Gray)
-            ***REMOVED***
-        )
-
-        // Call changeTags when clicking outside the chips
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable {
-                    viewModel.changeTags(template, newTag)
+                FaIcon(faIcon = FaIcons.Plus, tint = Color.Gray, modifier = Modifier.clickable {
+                    when {
+                        newTag.isBlank() -> {
+                            Toast.makeText(context, "Tag cannot be empty", Toast.LENGTH_SHORT).show()
+                        ***REMOVED***
+                        template.tags.size >= 5 -> {
+                            Toast.makeText(context, "Max number of tags is 5", Toast.LENGTH_SHORT).show()
+                        ***REMOVED***
+                        else -> {
+                            viewModel.changeTags(template, newTag)
+                            newTag = ""
+                        ***REMOVED***
+                    ***REMOVED***
+                ***REMOVED***
+        ***REMOVED***
                 ***REMOVED***
         )
+
     ***REMOVED***
 ***REMOVED***
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TemplateFieldComposable(
     template: Template?,
     index: Int,
-    viewModel: TemplateViewModel
-) {
+    viewModel: TemplateViewModel,
+    focusRequesterIndex: Int? = null,
+    changelistState: () -> Unit,
+
+    ) {
+
+    val focusRequester = remember { FocusRequester() ***REMOVED*** // Create FocusRequester for field
+    val typeOptions = listOf("Any", "String", "Date", "Number")
+    var selectedType by remember { mutableStateOf(typeOptions[0]) ***REMOVED***
+    var expanded by remember { mutableStateOf(false) ***REMOVED***
+
+    LaunchedEffect(key1 = focusRequesterIndex) {
+        if (focusRequesterIndex == index) {
+            focusRequester.requestFocus()
+            changelistState()
+            viewModel._focusRequesterIndex.value = null // Reset after focusing
+        ***REMOVED***
+    ***REMOVED***
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(6.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            .padding(6.dp)
+            .focusRequester(focusRequester)
+            ,
+        elevation = CardDefaults.cardElevation(defaultElevation = 5.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             template?.fields?.get(index)?.let { field ->
@@ -262,14 +333,43 @@ fun TemplateFieldComposable(
 
                 // Type with Help Icon
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    OutlinedTextField(
-                        value = field.type,
-                        onValueChange = { newText ->
-                            viewModel.updateTemplateItem(template, "type" to newText, index)
-                        ***REMOVED***,
-                        label = { Text("Field Type") ***REMOVED***,
-                        modifier = Modifier.weight(1f)
-        ***REMOVED***
+
+                    ExposedDropdownMenuBox(
+                        expanded = expanded,
+                        onExpandedChange = { expanded = !expanded ***REMOVED***
+        ***REMOVED*** {
+                        TextField(
+                            value = selectedType,
+                            onValueChange = {***REMOVED***,
+                            readOnly = true,
+                            label = { Text("Type") ***REMOVED***,
+                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) ***REMOVED***,
+                            colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                            modifier = Modifier
+                                .menuAnchor()
+                                .focusRequester(focusRequester)
+            ***REMOVED***
+
+                        ExposedDropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false ***REMOVED***) {
+                            typeOptions.forEach { type ->
+                                DropdownMenuItem(
+                                    text = { Text(type) ***REMOVED***,
+                                    onClick = {
+                                        selectedType = type
+                                        viewModel.updateTemplateItem(
+                                            template,
+                                            "type" to type,
+                                            index
+                            ***REMOVED***
+                                        expanded = false
+
+                                    ***REMOVED***
+                    ***REMOVED***
+                            ***REMOVED***
+                        ***REMOVED***
+                    ***REMOVED***
                     Spacer(modifier = Modifier.width(4.dp)) // Reduced spacing
                     HelpIconButton(helpText = "Specify the type of data expected for this field (e.g., 'string', 'number', 'date').")
                 ***REMOVED***
@@ -299,43 +399,34 @@ fun TemplateFieldComposable(
         ***REMOVED***
 
                 ***REMOVED***
-                Spacer(modifier = Modifier.height(16.dp))
-                Button(
-                    onClick = { viewModel.deleteField(template, index) ***REMOVED***,
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
-    ***REMOVED*** {
-                    Text("Delete Field")
-                ***REMOVED***
+                Spacer(modifier = Modifier.height(8.dp))
+                DeleteButton(text = "Field", onClick = {  viewModel.deleteField(template, index)  ***REMOVED***)
             ***REMOVED***
             ***REMOVED***
         ***REMOVED***
     ***REMOVED***
+
+
 
 
 @Composable
-fun TemplateTablesSection(template: Template, viewModel: TemplateViewModel) {
-    Column {
-        Text("Template Tables", style = MaterialTheme.typography.titleMedium)
+fun TemplateTableCard(tableIndex: Int, viewModel: TemplateViewModel, template: Template, focusRequesterIndex: Int? = null, changelistState: () -> Unit) {
+    val table = template.tables[tableIndex]
+    val focusRequester = remember { FocusRequester() ***REMOVED***
 
-        // Display existing tables
-        for ((tableIndex, table) in template.tables.withIndex()) {
-            TemplateTableCard(table, tableIndex, viewModel, template)
-            Spacer(modifier = Modifier.height(8.dp))
-        ***REMOVED***
-
-        // Add Table Button
-        Button(onClick = { viewModel.addTable(template) ***REMOVED***) {
-            Text("Add Table")
+    LaunchedEffect(key1 = focusRequesterIndex) {
+        if (focusRequesterIndex == tableIndex+template.fields.size-1) {
+            focusRequester.requestFocus()
+            changelistState()
+            viewModel._focusRequesterIndex.value = -1 // Reset after focusing
         ***REMOVED***
     ***REMOVED***
-***REMOVED***@Composable
-fun TemplateTableCard(table: TemplateTable, tableIndex: Int, viewModel: TemplateViewModel, template: Template) {
-
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(6.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            .padding(6.dp)
+            .focusRequester(focusRequester),
+        elevation = CardDefaults.cardElevation(defaultElevation = 5.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             OutlinedTextField(
@@ -361,27 +452,22 @@ fun TemplateTableCard(table: TemplateTable, tableIndex: Int, viewModel: Template
             Spacer(modifier = Modifier.height(16.dp))
 
             // Table Grid
-            TableGrid(table, viewModel, tableIndex, template)
+            TableGrid(viewModel, tableIndex, template)
 
             Spacer(modifier = Modifier.height(16.dp))
 
             // Delete Table Button
-            Button(
-                onClick = { viewModel.deleteTable(template, tableIndex) ***REMOVED***,
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
-***REMOVED*** {
-                Text("Delete Table")
-            ***REMOVED***
+            DeleteButton(text = "Table", onClick = { viewModel.deleteTable(template, tableIndex) ***REMOVED***)
         ***REMOVED***
     ***REMOVED***
 ***REMOVED***
 @Composable
-fun TableGrid(table: TemplateTable, viewModel: TemplateViewModel, tableIndex: Int, template: Template) {
+fun TableGrid(viewModel: TemplateViewModel, tableIndex: Int, template: Template) {
 
     var showDialog by remember { mutableStateOf(false) ***REMOVED***
     var newText by remember { mutableStateOf("") ***REMOVED***
     var isColumn by remember { mutableStateOf(false) ***REMOVED***
-
+    val table = template.tables[tableIndex]
     val scrollState = rememberScrollState()
 
 
@@ -565,7 +651,7 @@ fun TableCellTemplate(text: String, modifier: Modifier = Modifier, isHeader: Boo
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlertTable(editedText: String, changeText: (String) -> Unit, onValueChange: (TemplateField) -> Unit,changeShowDialog: (Boolean) -> Unit) {
-
+    val focusRequester = remember { FocusRequester() ***REMOVED***
     var selectedType by remember { mutableStateOf("Any") ***REMOVED*** // Default type
     var selectedRequired by remember { mutableStateOf(false) ***REMOVED***
     AlertDialog(
@@ -596,7 +682,9 @@ fun AlertTable(editedText: String, changeText: (String) -> Unit, onValueChange: 
                         label = { Text("Type") ***REMOVED***,
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) ***REMOVED***,
                         colors = ExposedDropdownMenuDefaults.textFieldColors(),
-                        modifier = Modifier.menuAnchor()
+                        modifier = Modifier
+                            .menuAnchor()
+                            .focusRequester(focusRequester)
         ***REMOVED***
 
                     ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false ***REMOVED***) {
@@ -610,14 +698,15 @@ fun AlertTable(editedText: String, changeText: (String) -> Unit, onValueChange: 
                 ***REMOVED***
                         ***REMOVED***
                     ***REMOVED***
-                    Spacer(modifier = Modifier.height(8.dp))
-                    // Required Checkbox
-                    BooleanFieldWithLabel(
-                        label = "Required",
-                        value = selectedRequired,
-                        onValueChange = { newValue -> selectedRequired = newValue ***REMOVED***
-        ***REMOVED***
+
                 ***REMOVED***
+                Spacer(modifier = Modifier.height(8.dp))
+                // Required Checkbox
+                BooleanFieldWithLabel(
+                    label = "Required",
+                    value = selectedRequired,
+                    onValueChange = { newValue -> selectedRequired = newValue ***REMOVED***
+    ***REMOVED***
             ***REMOVED***
         ***REMOVED***,
         confirmButton = {
@@ -664,30 +753,6 @@ fun AlertTable(editedText: String, changeText: (String) -> Unit, onValueChange: 
     ***REMOVED***
 
     // Help Icon Button Composable (with modal tooltip)
-    @Composable
-    fun HelpIconButton(helpText: String) {
-        var showDialog by remember { mutableStateOf(false) ***REMOVED***
 
-        IconButton(
-            onClick = { showDialog = true ***REMOVED***,
-            modifier = Modifier.size(20.dp) // Make the icon smaller
-        ) {
-            FaIcon(FaIcons.InfoCircle, modifier = Modifier.offset(y = (-4).dp))
-
-        ***REMOVED***
-
-        if (showDialog) {
-            AlertDialog(
-                onDismissRequest = { showDialog = false ***REMOVED***,
-                title = { Text("Help") ***REMOVED***,
-                text = { Text(helpText) ***REMOVED***,
-                confirmButton = {
-                    TextButton(onClick = { showDialog = false ***REMOVED***) {
-                        Text("OK")
-                    ***REMOVED***
-                ***REMOVED***
-***REMOVED***
-        ***REMOVED***
-    ***REMOVED***
 
 

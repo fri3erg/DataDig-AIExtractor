@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,8 +28,11 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.tesifrigo.utils.HelpIconButton
 import com.example.tesifrigo.viewmodels.Keys
 import com.example.tesifrigo.viewmodels.ServiceViewModel
+import com.guru.fontawesomecomposelib.FaIcon
+import com.guru.fontawesomecomposelib.FaIcons
 
 @Composable
 fun SettingsScreen() {
@@ -41,30 +46,50 @@ fun SettingsScreen() {
     ) {
         Text(
             text = "Settings",
-        )
-        ClickableWebLink(
-            text = "OpenAI API KEY",
-            url = "https://platform.openai.com/api-keys",
-            color = Color.Blue,
-            fontSize = TextUnit.Unspecified,
+            style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
-            fontStyle = FontStyle.Normal,
-            textDecoration = TextDecoration.Underline
+            modifier = Modifier.padding(bottom = 16.dp)
         )
-        ApiKeyInput(
-            key = Keys.API_KEY_1,
-            viewModel = serviceViewModel,
-            keyName = "OpenAI API Key"
-        )
-        ClickableWebLink(
-            text = "AZURE API KEY",
-            url = "https://portal.azure.com/#create/Microsoft.CognitiveServicesFormRecognizer",
-            color = Color.Blue,
-            fontSize = TextUnit.Unspecified,
-            fontWeight = FontWeight.Bold,
-            fontStyle = FontStyle.Normal,
-            textDecoration = TextDecoration.Underline
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            ClickableWebLink(
+                text = "OpenAI API KEY",
+                url = "https://platform.openai.com/api-keys",
+                color = Color.Blue,
+                fontSize = TextUnit.Unspecified,
+                fontWeight = FontWeight.Bold,
+                fontStyle = FontStyle.Normal,
+                textDecoration = TextDecoration.Underline
+***REMOVED***
+            Spacer(modifier = Modifier.width(8.dp))
+            HelpIconButton(helpText = "OpenAI API Key")
+        ***REMOVED***
+            ApiKeyInput(
+                key = Keys.API_KEY_1,
+                viewModel = serviceViewModel,
+                keyName = "OpenAI API Key"
+***REMOVED***
+            HorizontalDivider()
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ){
+            ClickableWebLink(
+                text = "AZURE API KEY",
+                url = "https://portal.azure.com/#create/Microsoft.CognitiveServicesFormRecognizer",
+                color = Color.Blue,
+                fontSize = TextUnit.Unspecified,
+                fontWeight = FontWeight.Bold,
+                fontStyle = FontStyle.Normal,
+                textDecoration = TextDecoration.Underline
+***REMOVED***
+            Spacer(modifier =  Modifier.width(8.dp))
+            HelpIconButton(helpText = "Azure Form Recognizer API Key")
+        ***REMOVED***
         ApiKeyInput(
             key = Keys.API_KEY_2,
             viewModel = serviceViewModel,
@@ -92,27 +117,23 @@ fun ApiKeyInput(
     Column {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().padding(top=8.dp, bottom = 8.dp),
         ) {
             Text(text = keyName)
+            Spacer(modifier = Modifier.width(16.dp))
+            FaIcon(
+                faIcon = FaIcons.Check,
+                tint =if (apiKey) Color.Green else Color.Red
+***REMOVED***
             Spacer(modifier = Modifier.weight(1f)) // Push items to the right
-            if (apiKey) {
-                Icon(
-                    imageVector = Icons.Filled.Check,
-                    contentDescription = "Key present",
-                    tint = Color.Green
-    ***REMOVED***
-            ***REMOVED***
-            else{
-                Icon(
-                    imageVector = Icons.Filled.Check,
-                    contentDescription = "Key is not present",
-                    tint = Color.Red
-    ***REMOVED***
-            ***REMOVED***
-            Button(onClick = { showInput = !showInput ***REMOVED***) {
-                Text(if (showInput) "Hide Input" else "Show Input")
-            ***REMOVED***
+
+            FaIcon(
+                faIcon = if (showInput) FaIcons.ArrowUp else FaIcons.ArrowDown,
+                modifier = Modifier.clickable {
+                    showInput = !showInput
+                ***REMOVED***,
+                tint = Color.Black
+***REMOVED***
         ***REMOVED***
 
         if (showInput) {
@@ -120,25 +141,26 @@ fun ApiKeyInput(
                 OutlinedTextField(
                     value = newKey,
                     onValueChange = { newKey = it***REMOVED***,
-                    label = { Text("Enter $keyName") ***REMOVED***
+                    label = { Text("Enter $keyName") ***REMOVED***,
+                    trailingIcon = {
+                        FaIcon(
+                            modifier = Modifier
+                                .align(Alignment.End)
+                                .clickable {
+                                    if (newKey.isNotBlank()) {
+                                        viewModel.storeApiKey(key, newKey)
+                                        apiKey = true
+                                        showInput = false
+                                    ***REMOVED*** else {
+                                        apiKey = false
+                                        showInput = false
+                                    ***REMOVED***
+                                ***REMOVED***,
+                            faIcon = FaIcons.Check,
+            ***REMOVED***
+                    ***REMOVED***
     ***REMOVED***
-                Button(
-                    onClick = {
-                        if (newKey.isNotBlank()) {
-                            viewModel.storeApiKey(key, newKey)
-                            apiKey = true
-                            showInput = false
-                        ***REMOVED***
-                        else {
-                            viewModel.storeApiKey(key, newKey)
-                            apiKey = false
-                            showInput = false
-                        ***REMOVED***
-                    ***REMOVED***,
-                    modifier = Modifier.align(Alignment.End)
-    ***REMOVED*** {
-                    Text("Confirm")
-                ***REMOVED***
+
             ***REMOVED***
         ***REMOVED***
     ***REMOVED***
@@ -158,7 +180,6 @@ fun ClickableWebLink(
     textDecoration: TextDecoration? = TextDecoration.Underline
 ) {
     val context = LocalContext.current
-
     Text(
         text = text,
         modifier = modifier.clickable {
