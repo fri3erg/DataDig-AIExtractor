@@ -7,6 +7,7 @@ import android.content.Context
 import android.os.Build
 import com.example.tesifrigo.models.ExceptionOccurred
 import com.example.tesifrigo.models.Extraction
+import com.example.tesifrigo.models.ExtractionCosts
 import com.example.tesifrigo.models.ExtractionField
 import com.example.tesifrigo.models.ExtractionTable
 import com.example.tesifrigo.models.ExtractionTableRow
@@ -18,15 +19,14 @@ import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
 
 
-
 @HiltAndroidApp
-class MyApp: Application(){
-    companion object{
+class MyApp : Application() {
+    companion object {
         lateinit var realm: Realm
     ***REMOVED***
 
 
-    override fun onCreate(){
+    override fun onCreate() {
         super.onCreate()
 
 
@@ -39,26 +39,27 @@ class MyApp: Application(){
                 Template::class,
                 TemplateField::class,
                 TemplateTable::class,
-                ExceptionOccurred::class
+                ExceptionOccurred::class,
+                ExtractionCosts::class
 ***REMOVED***
-        ).schemaVersion(9).build()
+        ).schemaVersion(12).build()
 
         realm = Realm.open(
-        configuration
+            configuration
         )
 
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            val channel= NotificationChannel(
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
                 "extracting_data",
                 "Extracting Data",
                 NotificationManager.IMPORTANCE_HIGH
 ***REMOVED***
-            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val notificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         ***REMOVED***
     ***REMOVED***
-
 
 
 ***REMOVED***

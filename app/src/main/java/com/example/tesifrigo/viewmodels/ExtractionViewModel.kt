@@ -1,13 +1,16 @@
 package com.example.tesifrigo.viewmodels
 
 import android.content.Context
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tesifrigo.MyApp
 import com.example.tesifrigo.fileCreator.CsvCreator
 import com.example.tesifrigo.fileCreator.JsonCreator
+import com.example.tesifrigo.models.ExceptionOccurred
 import com.example.tesifrigo.models.Extraction
+import com.example.tesifrigo.models.ExtractionCosts
 import com.example.tesifrigo.models.ExtractionField
 import com.example.tesifrigo.models.ExtractionTable
 import com.example.tesifrigo.models.ExtractionTableRow
@@ -30,8 +33,8 @@ import org.mongodb.kbson.ObjectId
 import javax.inject.Inject
 
 @HiltViewModel
-class ExtractionViewModel @Inject constructor() : ViewModel(){
-    private  val realm =MyApp.realm
+class ExtractionViewModel @Inject constructor() : ViewModel() {
+    private val realm = MyApp.realm
 
     private val _sortOrder = MutableStateFlow(SortOrder.BY_TITLE)
     val sortOrder: StateFlow<SortOrder> = _sortOrder.asStateFlow()
@@ -42,18 +45,22 @@ class ExtractionViewModel @Inject constructor() : ViewModel(){
     private val _searchText = MutableStateFlow("")
     val searchText: StateFlow<String> = _searchText.asStateFlow()
 
+    init {
+        //Log.d("ExtractionViewModel", "init")
+        //createSampleExtraction()
+    ***REMOVED***
 
-
-    val extractions = realm
+    private val extractions = realm
         .query<Extraction>()
         .asFlow()
         .map {
             it.list.toList()
         ***REMOVED***
-        .stateIn(viewModelScope,
+        .stateIn(
+            viewModelScope,
             SharingStarted.WhileSubscribed(),
-            emptyList())
-
+            emptyList()
+        )
 
 
     val sortedExtractions: StateFlow<List<Extraction>> = combine(
@@ -63,19 +70,33 @@ class ExtractionViewModel @Inject constructor() : ViewModel(){
             if (searchQuery.isBlank()) { // Check if searchQuery is empty
                 // Default sorting if searchQuery is empty
                 when (order) {
-                    SortOrder.BY_TITLE -> compareValuesBy(t1, t2) { it.title ***REMOVED*** * if (isAscending) 1 else -1
-                    SortOrder.BY_DATE -> compareValuesBy(t1, t2) { it.id ***REMOVED*** * if (isAscending) 1 else -1
+                    SortOrder.BY_TITLE -> compareValuesBy(
+                        t1,
+                        t2
+        ***REMOVED*** { it.title ***REMOVED*** * if (isAscending) 1 else -1
+
+                    SortOrder.BY_DATE -> compareValuesBy(
+                        t1,
+                        t2
+        ***REMOVED*** { it.id ***REMOVED*** * if (isAscending) 1 else -1
                 ***REMOVED***
             ***REMOVED*** else {
                 // Closeness-based sorting if searchQuery is not empty
-                val closenessComparison = compareValuesBy(t1, t2) { it ->
+                val closenessComparison = compareValuesBy(t1, t2) {
                     calculateCloseness(it.title, searchQuery)
                 ***REMOVED***
                 if (closenessComparison == 0) {
                     // If a tie, apply secondary comparison
                     when (order) {
-                        SortOrder.BY_TITLE -> compareValuesBy(t1, t2) { it.title ***REMOVED*** * if (isAscending) 1 else -1
-                        SortOrder.BY_DATE -> compareValuesBy(t1, t2) { it.id ***REMOVED*** * if (isAscending) 1 else -1
+                        SortOrder.BY_TITLE -> compareValuesBy(
+                            t1,
+                            t2
+            ***REMOVED*** { it.title ***REMOVED*** * if (isAscending) 1 else -1
+
+                        SortOrder.BY_DATE -> compareValuesBy(
+                            t1,
+                            t2
+            ***REMOVED*** { it.id ***REMOVED*** * if (isAscending) 1 else -1
                     ***REMOVED***
                 ***REMOVED*** else {
                     closenessComparison
@@ -84,16 +105,18 @@ class ExtractionViewModel @Inject constructor() : ViewModel(){
         ***REMOVED***
     ***REMOVED***.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
-    init {
-        //createSampleExtraction()
-    ***REMOVED***
 
     fun queryExtraction(id: String): StateFlow<Extraction?> {
-        return extractions.map { extractionList ->
+        Log.d("ExtractionViewModel", extractions.value.toString())
+        for (extraction in extractions.value) {
+            Log.d("ExtractionViewModel", extraction.id.toHexString())
+        ***REMOVED***
+        val ex = extractions.map { extractionList ->
             extractionList.find {
-                it.id.toHexString() == id ***REMOVED***
+                it.id.toHexString() == id
+            ***REMOVED***
         ***REMOVED***.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
-
+        return ex
     ***REMOVED***
 
     private fun createSampleExtraction() {
@@ -108,6 +131,10 @@ class ExtractionViewModel @Inject constructor() : ViewModel(){
                 delete(extractionTableToDelete)
                 val extractionTableRowToDelete = query<ExtractionTableRow>().find()
                 delete(extractionTableRowToDelete)
+                val extractionCostsToDelete = query<ExtractionCosts>().find()
+                delete(extractionCostsToDelete)
+                val extractionExceptionToDelete = query<ExceptionOccurred>().find()
+                delete(extractionExceptionToDelete)
 
 
                 val templateField1 = copyToRealm(TemplateField().apply {
@@ -208,34 +235,60 @@ class ExtractionViewModel @Inject constructor() : ViewModel(){
                     fields = realmListOf(extractionTableRow1, extractionTableRow2)
                 ***REMOVED***)
 
+
+                val extractionCost = copyToRealm(ExtractionCosts().apply {
+                    name = "gpt-3.5-turbo"
+                    cost = 100f
+                    currency = "USD"
+                    tokens = 1000
+                ***REMOVED***)
+
+                val extractionCost2 = copyToRealm(ExtractionCosts().apply {
+                    name = "gpt-4"
+                    cost = 200f
+                    currency = "USD"
+                    tokens = 2000
+                ***REMOVED***)
+
+                val extractionException = copyToRealm(ExceptionOccurred().apply {
+                    error = "This is an exception"
+                    errorType = "error"
+                    errorDescription = "This is an error message"
+                ***REMOVED***)
+                val extractionException2 = copyToRealm(ExceptionOccurred().apply {
+                    error = "This is an exception 2"
+                    errorType = "error 2"
+                    errorDescription = "This is an error message 2"
+                ***REMOVED***)
+
                 val extraction1 = Extraction().apply {
                     title = template1.title
-                    image =  realmListOf("https://example.com/image.jpg")
-                    format= "cvs"
+                    image = realmListOf("https://example.com/image.jpg")
+                    format = "cvs"
                     extractedFields = realmListOf(extractionField1)
                     extractedTables = realmListOf(extractedTable1)
-                    extractionCosts = "100"
-                    exceptionsOccurred = realmListOf()
+                    extractionCosts = realmListOf(extractionCost, extractionCost2)
+                    exceptionsOccurred = realmListOf(extractionException, extractionException2)
                     template = template1
                     tags = realmListOf("freezer")
                 ***REMOVED***
                 val extraction2 = Extraction().apply {
-                    title=template2.title
+                    title = template2.title
                     image = realmListOf("https://example.com/image.jpg")
-                    format= "cvs"
+                    format = "cvs"
                     extractedFields = realmListOf(extractionField2, extractionField1)
-                    extractionCosts = "200"
-                    exceptionsOccurred = realmListOf()
+                    extractionCosts = realmListOf(extractionCost)
+                    exceptionsOccurred = realmListOf(extractionException2)
                     template = template2
                     tags = realmListOf("freezer", "fridge")
                 ***REMOVED***
                 val extraction3 = Extraction().apply {
-                    title=template3.title
+                    title = template3.title
                     image = realmListOf()
-                    format= "json"
+                    format = "json"
                     extractedFields = realmListOf(extractionField3, extractionField2)
-                    extractionCosts = "300"
-                    exceptionsOccurred = realmListOf()
+                    extractionCosts = realmListOf(extractionCost2)
+                    exceptionsOccurred = realmListOf(extractionException)
                     template = template3
                     tags = realmListOf("freezer", "fridge")
                 ***REMOVED***
@@ -248,32 +301,15 @@ class ExtractionViewModel @Inject constructor() : ViewModel(){
         ***REMOVED***
 
     ***REMOVED***
-    fun updateExtraction(extraction: Extraction, modifiedValue: String, index: Int) {
-        viewModelScope.launch {
-            realm.write { // Start a write transaction
-                val latestExtraction = findLatest(extraction) ?: copyToRealm(extraction)  // Find or create the latest extraction
-                latestExtraction.extractedFields[index].value = modifiedValue
 
-                // Update properties on latestExtraction, not extraction
-            ***REMOVED***
-        ***REMOVED***
-    ***REMOVED***
-    fun addExtraction(extraction: Extraction) { // Add a new extraction
+
+    fun deleteExtraction(id: String) {
         viewModelScope.launch {
             realm.write {
-                copyToRealm(extraction)
+                val extractionToDelete = query<Extraction>("id == $0", ObjectId(id)).find().first()
+                // Delete the parent object (deletes all embedded objects)
+                delete(extractionToDelete)
             ***REMOVED***
-        ***REMOVED***
-    ***REMOVED***
-
-
-    fun deleteExtraction(id:String){
-        viewModelScope.launch {
-            realm.write {
-                    val extractionToDelete = query<Extraction>("id == $0", ObjectId(id)).find().first()
-                    // Delete the parent object (deletes all embedded objects)
-                    delete(extractionToDelete)
-                ***REMOVED***
         ***REMOVED***
     ***REMOVED***
 
@@ -304,11 +340,13 @@ class ExtractionViewModel @Inject constructor() : ViewModel(){
         var newFile: String? = extraction.fileUri
         when (format) {
             "json" -> {
-                newFile= JsonCreator().convertToJsonFile(extraction, context).toString()
+                newFile = JsonCreator().convertToJsonFile(extraction, context).toString()
             ***REMOVED***
+
             "csv" -> {
-                newFile= CsvCreator().convertToCsvFile(extraction, context).toString()
+                newFile = CsvCreator().convertToCsvFile(extraction, context).toString()
             ***REMOVED***
+
             "pdf" -> {
                 // Convert to PDF
             ***REMOVED***
@@ -328,6 +366,16 @@ class ExtractionViewModel @Inject constructor() : ViewModel(){
             realm.writeBlocking {
                 val latestField = findLatest(field) ?: return@writeBlocking
                 latestField.value = newValue
+            ***REMOVED***
+        ***REMOVED***
+
+    ***REMOVED***
+
+    fun addExtraImage(extraction: Extraction, uri: Uri) {
+        viewModelScope.launch {
+            realm.writeBlocking {
+                val latestExtraction = findLatest(extraction) ?: return@writeBlocking
+                latestExtraction.extraImages.add(uri.toString())
             ***REMOVED***
         ***REMOVED***
 

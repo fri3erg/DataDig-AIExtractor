@@ -35,9 +35,8 @@ class TemplateViewModel : ViewModel() {
     val _focusRequesterIndex = MutableStateFlow<Int?>(null) // Index of the element to focus
     val focusRequesterIndex: StateFlow<Int?> get() = _focusRequesterIndex.asStateFlow()
 
-    private val _template = MutableStateFlow<Template?>(realm.query<Template>().first().find()) // Initialize with your template data
+    private val _template = MutableStateFlow(Template()) // Initialize with your template data
     val template: StateFlow<Template?> = _template.asStateFlow()
-
 
 
     // ... other StateFlows (sortOrder, ascending) ...
@@ -105,6 +104,9 @@ class TemplateViewModel : ViewModel() {
     ***REMOVED***
 
     fun queryTemplate(id: String): StateFlow<Template?> {
+        if (id.isEmpty()) {
+            return template
+        ***REMOVED***
         return templates.map { templateList ->
             templateList.find {
                 it.id.toHexString() == id
@@ -284,7 +286,8 @@ class TemplateViewModel : ViewModel() {
             realm.write {
                 val latestTemplate = findLatest(template) ?: return@write
                 latestTemplate.fields.add(newField)
-                _focusRequesterIndex.value = latestTemplate.fields.size - 1 // Focus on the last added field
+                _focusRequesterIndex.value =
+                    latestTemplate.fields.size - 1 // Focus on the last added field
 
 
             ***REMOVED***
@@ -370,8 +373,8 @@ class TemplateViewModel : ViewModel() {
             realm.write {
                 val latestTemplate = findLatest(template) ?: return@write
                 latestTemplate.tables.add(newTable)
-                _focusRequesterIndex.value = template.tables.size - 1 + template.fields.size // Focus on the last added table
-
+                _focusRequesterIndex.value =
+                    template.tables.size - 1 + template.fields.size // Focus on the last added table
 
 
             ***REMOVED***
@@ -410,7 +413,6 @@ class TemplateViewModel : ViewModel() {
     ***REMOVED***
 
 
-
     fun deleteTable(template: Template, tableIndex: Int) {
         viewModelScope.launch {
             realm.writeBlocking {
@@ -421,7 +423,12 @@ class TemplateViewModel : ViewModel() {
 
     ***REMOVED***
 
-    fun updateTableRowHeader(template: Any, tableIndex: Int, rowIndex: Int, newField: TemplateField) {
+    fun updateTableRowHeader(
+        template: Any,
+        tableIndex: Int,
+        rowIndex: Int,
+        newField: TemplateField
+    ) {
         viewModelScope.launch {
             realm.writeBlocking {
                 val latestTemplate = findLatest(template as Template) ?: return@writeBlocking
@@ -431,12 +438,17 @@ class TemplateViewModel : ViewModel() {
         ***REMOVED***
     ***REMOVED***
 
-    fun updateTableColumnHeader(template: Any, tableIndex: Int, columnIndex: Int, newField: TemplateField) {
+    fun updateTableColumnHeader(
+        template: Any,
+        tableIndex: Int,
+        columnIndex: Int,
+        newField: TemplateField
+    ) {
         viewModelScope.launch {
             realm.writeBlocking {
                 val latestTemplate = findLatest(template as Template) ?: return@writeBlocking
                 val table = latestTemplate.tables[tableIndex]
-                table.columns[columnIndex]= newField
+                table.columns[columnIndex] = newField
             ***REMOVED***
         ***REMOVED***
     ***REMOVED***
@@ -472,9 +484,16 @@ class TemplateViewModel : ViewModel() {
 
         ***REMOVED***
     ***REMOVED***
+
+    fun setActiveTemplate(template: Template) {
+        viewModelScope.launch {
+            _template.value = template
+        ***REMOVED***
+
+    ***REMOVED***
 ***REMOVED***
 
-    enum class SortOrder{
+enum class SortOrder {
     BY_TITLE,
     BY_DATE,
 ***REMOVED***

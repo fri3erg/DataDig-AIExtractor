@@ -7,19 +7,15 @@ import javax.inject.Inject
 class KeyManager @Inject constructor(
     private val encryptedSharedPrefs: SharedPreferences
 ) {
-    fun storeApiKey(apiKey: String, number:Keys) {
-            encryptedSharedPrefs.edit().putString(number.toString(), apiKey).apply()
+    fun storeApiKey(apiKey: String, number: Keys) {
+        encryptedSharedPrefs.edit().putString(number.toString(), apiKey).apply()
     ***REMOVED***
 
 
+    fun getApiKey(number: Keys): String? {
 
-
-        fun getApiKey(number: Keys): String? {
-
-                return encryptedSharedPrefs.getString(number.toString(), null)
-        ***REMOVED***
-
-
+        return encryptedSharedPrefs.getString(number.toString(), null)
+    ***REMOVED***
 
 
 ***REMOVED***

@@ -7,6 +7,7 @@ import io.realm.kotlin.types.RealmList
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
 import org.mongodb.kbson.ObjectId
+
 class Extraction : RealmObject {
     @PrimaryKey
     @Expose(serialize = false, deserialize = false) // Exclude from serialization
@@ -22,7 +23,7 @@ class Extraction : RealmObject {
     var extractedTables: RealmList<ExtractionTable> = realmListOf()
 
     @Expose
-    var extractionCosts: String = ""
+    var extractionCosts: RealmList<ExtractionCosts> = realmListOf()
 
     @Expose
     var exceptionsOccurred: RealmList<ExceptionOccurred> = realmListOf()
@@ -41,6 +42,15 @@ class Extraction : RealmObject {
 
     @Expose(serialize = false, deserialize = false) // Exclude from serialization
     var fileUri: String? = null
+
+    @Expose
+    var language: String? = null
+
+    @Expose
+    var model: String? = null
+
+    @Expose
+    var extraImages: RealmList<String> = realmListOf()
 ***REMOVED***
 
 class ExtractionTable : RealmObject {
@@ -100,16 +110,32 @@ class ExtractionField : RealmObject {
 ***REMOVED***
 
 
-
-
-
 data class Options(
     var model: String,
     var language: String,
     var azureOcr: Boolean,
     var getApiKey: (String) -> String?,
-    var format : String
+    var format: String
 
 ) {
-    constructor() : this("", "", false, {""***REMOVED***,"")
+    constructor() : this("", "", false, { "" ***REMOVED***, "")
+***REMOVED***
+
+
+class ExtractionCosts : RealmObject {
+    @PrimaryKey
+    @Expose(serialize = false, deserialize = false) // Exclude from serialization
+    var id: ObjectId = ObjectId()
+
+    @Expose
+    var name: String = ""
+
+    @Expose
+    var cost: Float = 0f
+
+    @Expose
+    var currency: String = ""
+
+    @Expose
+    var tokens: Int = 0
 ***REMOVED***

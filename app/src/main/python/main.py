@@ -133,7 +133,7 @@ def main_kotlin(base64_images : list , text:list[str],template: Template, option
     logging.basicConfig(level=logging.DEBUG, handlers=[AndroidLogHandler()])
     
     for key, item in keys_config.items():
-        os.environ[key] = options.get_api_key(item)
+        os.environ[key] = options.get_api_key(item) or ""
         
             
     

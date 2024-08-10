@@ -16,7 +16,7 @@ import com.guru.fontawesomecomposelib.FaIcons
 @Composable
 fun NavBar(navController: NavHostController) {
 
-    val (selectedItem, setSelectedItem) =  remember { mutableStateOf("Templates") ***REMOVED*** // Hoisted state
+    val (selectedItem, setSelectedItem) = remember { mutableStateOf("Templates") ***REMOVED*** // Hoisted state
 
     NavigationBar {
         NavigationBarItem(
@@ -34,7 +34,7 @@ fun NavBar(navController: NavHostController) {
             selected = selectedItem == "Camera",
             onClick = {
                 setSelectedItem("Camera")
-                navController.navigate( Screen.Camera.route)
+                navController.navigate(Screen.Camera.route)
             ***REMOVED***
         )
         NavigationBarItem(
@@ -46,8 +46,8 @@ fun NavBar(navController: NavHostController) {
                 navController.navigate(Screen.Storage.route)
             ***REMOVED***
         )
-        ***REMOVED***
     ***REMOVED***
+***REMOVED***
 
 
 

@@ -5,6 +5,7 @@ import threading
 from ..config.cost_config import cost_per_token
 import openai
 from typing import List, Optional, Any, Dict
+from ...classes.Extracted import ExtractionCosts
 import os
 import openai
 import threading
@@ -15,9 +16,7 @@ from langchain_community.llms import OpenAI as LangChainOpenAI
 from langchain.chat_models import ChatOpenAI # use ChatOpenAI from the core library
 from langchain.llms.base import LLM
 from langchain.prompts import ChatPromptTemplate
-from langchain.output_parsers import StructuredOutputParser, PydanticOutputParser
-from langchain.schema import OutputParserException
-from langchain.output_parsers.structured import ResponseSchema
+from langchain.output_parsers import PydanticOutputParser
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 openai.api_key = OPENAI_API_KEY 
@@ -133,58 +132,45 @@ class Models(LLM):
         cls.calc_costs(file_id, model, inputs=[pages, str(prompt)], outputs=[response])
         return response
     
+    
     @classmethod
     def calc_costs(cls, file_id, model, inputs=[], outputs=[]):
-        """
-        calculates and modifies the costs of the chain for that file
-
-        called by the extract and tag method, locks the cost variables while it adds the cost of input and output of the calls
-
-        Args:
-            model (str): model you are using
-            file_id (str): id of the file you are processing for threading and saving costs
-            inputs (list, optional): input strings. Defaults to [].
-            outputs (list, optional): output strings. Defaults to [].
-        """
         try:
             if file_id not in cls._costs:
-                cls._costs.update({file_id: {***REMOVED******REMOVED***)
+                cls._costs[file_id] = []
             if file_id not in cls._file_locks:
-                cls._file_locks.update({file_id: threading.Lock()***REMOVED***)
+                cls._file_locks[file_id] = threading.Lock()
             lock = cls._file_locks[file_id]
-            #encoding = tiktoken.encoding_for_model(model)
-            for i in inputs:
-                with lock:
-                    cls._costs[file_id][model]["tokens"] = cls._costs[file_id].setdefault(model, {***REMOVED***).get(
-                        "tokens", 0
-        ***REMOVED*** + num_tokens_from_string(i)
-                    cls._costs[file_id][model]["cost"] = (
-                        cls._costs[file_id][model].get("tokens", 0) * cost_per_token["input"][model]
-        ***REMOVED***
-            for o in outputs:
-                with lock:
-                    cls._costs[file_id][model]["tokens"] = cls._costs[file_id].setdefault(model, {***REMOVED***).get(
-                        "tokens", 0
-        ***REMOVED*** + num_tokens_from_string(o)
-                    cls._costs[file_id][model]["cost"] = (
-                        cls._costs[file_id][model].get("tokens", 0) * cost_per_token["output"][model]
-        ***REMOVED***
+
+            def add_cost(data_list, cost_type):
+                for data in data_list:
+                    with lock:
+                        tokens = num_tokens_from_string(data)
+                        cost = tokens * cost_per_token[cost_type][model]
+
+                        # Find existing ExtractionCosts object for the model
+                        existing_cost = next(
+                            (c for c in cls._costs[file_id] if c.name == model),
+                            None
+            ***REMOVED***
+
+                        if existing_cost:
+                            existing_cost.tokens += tokens
+                            existing_cost.cost += cost
+                        else:
+                            cls._costs[file_id].append(
+                                ExtractionCosts(model, tokens, cost, "EUR")
+                ***REMOVED***
+
+            add_cost(inputs, "input")
+            add_cost(outputs, "output")
+
         except Exception as error:
             print("ERROR in costs calc: {***REMOVED***".format(file_id) + repr(error))
 
     @classmethod
     def get_costs(cls, file_id):
-        """returns the costs of the file
-
-        Args:
-            file_id (str): id of the file to get the cost from
-
-        Returns:
-            dict: API costs
-        """
-        ret = cls._costs.get(file_id, {***REMOVED***)
-        return ret
-    
+        return cls._costs.get(file_id, [])
     
     @classmethod
     def clear_resources_file(cls, file_id):

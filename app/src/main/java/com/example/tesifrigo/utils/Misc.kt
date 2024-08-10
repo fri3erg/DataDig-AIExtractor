@@ -1,17 +1,15 @@
 package com.example.tesifrigo.utils
 
-import android.app.DownloadManager
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Environment
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -38,9 +36,12 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -72,28 +73,6 @@ import java.io.IOException
 
 
 @Composable
-fun EditableTextWithTitle(
-    title: String,
-    text: String,
-    onTextChange: (String) -> Unit,
-    modifier: Modifier
-) {
-    Column {
-        Text(
-            text = title,
-        )
-        OutlinedTextField(
-            modifier = modifier,
-            value = text,
-            onValueChange = onTextChange,
-            label = { Text("Enter text") ***REMOVED*** // Optional label
-        )
-    ***REMOVED***
-***REMOVED***
-
-
-
-@Composable
 fun DeleteButton(
     text: String,
     onClick: () -> Unit,
@@ -104,11 +83,17 @@ fun DeleteButton(
         onClick = { showAlert = true ***REMOVED***,
         colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
         border = BorderStroke(2.dp, Color.Red),
-                elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp),
+        elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp),
         modifier = modifier
             .fillMaxWidth(),
     ) {
-        Text("Delete $text",maxLines = 1, textAlign = TextAlign.Center, fontStyle = FontStyle.Normal, fontSize = 20.sp)
+        Text(
+            "Delete $text",
+            maxLines = 1,
+            textAlign = TextAlign.Center,
+            fontStyle = FontStyle.Normal,
+            fontSize = 20.sp
+        )
     ***REMOVED***
     if (showAlert)
         AlertDialog(
@@ -133,7 +118,12 @@ fun DeleteButton(
 
 
 @Composable
-fun TableCell(text: String, modifier: Modifier = Modifier, isHeader: Boolean = false, onTextChange: (String) -> Unit) {
+fun TableCell(
+    text: String,
+    modifier: Modifier = Modifier,
+    isHeader: Boolean = false,
+    onTextChange: (String) -> Unit
+) {
     val modifierPadded = modifier
         .padding(4.dp)
     Box(
@@ -145,11 +135,10 @@ fun TableCell(text: String, modifier: Modifier = Modifier, isHeader: Boolean = f
                 text = text,
                 fontSize = 14.sp,
                 textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Bold ,
+                fontWeight = FontWeight.Bold,
                 overflow = TextOverflow.Ellipsis,
 ***REMOVED***
-        ***REMOVED***
-        else {
+        ***REMOVED*** else {
             OutlinedTextField(
                 modifier = modifier.align(Alignment.Center),
                 colors = OutlinedTextFieldDefaults.colors(
@@ -159,7 +148,7 @@ fun TableCell(text: String, modifier: Modifier = Modifier, isHeader: Boolean = f
                     unfocusedContainerColor = Color.White,
                     focusedContainerColor = Color.White,
 
-    ***REMOVED***,
+        ***REMOVED***,
                 value = text,
                 onValueChange = {
                     onTextChange(it)
@@ -267,21 +256,69 @@ fun DropdownWithNavigation(onUse: () -> Unit, onEdit: () -> Unit, onDelete: () -
     ***REMOVED***
 ***REMOVED***
 
+@Composable
+fun LabeledSwitch(
+    label: String,
+
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically
+
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Switch(
+            checked = checked,
+            onCheckedChange = onCheckedChange,
+            colors = SwitchDefaults.colors( // Customize colors if needed
+                checkedThumbColor = MaterialTheme.colorScheme.primary,
+                checkedTrackColor = MaterialTheme.colorScheme.primaryContainer
+***REMOVED***
+        )
+    ***REMOVED***
+***REMOVED***
 
 @Composable
-fun TextWithTitle(
-    title: String,
-    text: String,
-    modifier: Modifier
+fun DropDownGeneral(
+    items: List<String>,
+    onItemSelected: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    defaultSelectedItemIndex: Int? = null
 ) {
-    Column {
-        Text(
-            text = title,
-        )
-        Text(
-            text = text,
-            modifier = modifier
-        )
+    var expanded by remember { mutableStateOf(false) ***REMOVED***
+    var selectedItem by remember { mutableStateOf(items[defaultSelectedItemIndex ?: 0]) ***REMOVED***
+
+    Box(modifier = modifier) {
+        TextButton(
+            onClick = { expanded = true ***REMOVED***,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(selectedItem)
+        ***REMOVED***
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false ***REMOVED***,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            items.forEach { item ->
+                DropdownMenuItem(
+                    text = { Text(item) ***REMOVED***,
+                    onClick = {
+                        selectedItem = item
+                        onItemSelected(item)
+                        expanded = false
+                    ***REMOVED***
+    ***REMOVED***
+            ***REMOVED***
+        ***REMOVED***
     ***REMOVED***
 ***REMOVED***
 
@@ -341,11 +378,6 @@ fun MyImageArea(
 ***REMOVED***
 
 
-
-
-
-
-
 @Composable
 fun FileCard(
     extraction: Extraction,
@@ -358,56 +390,61 @@ fun FileCard(
             "openFile",
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
-            // Handle the result if needed
+            Log.d("FileCard", "Result: $result")
         ***REMOVED***
     ***REMOVED***
+
     fun downloadFile(uri: Uri?, failedOpen: Boolean = false) {
         if (uri == null || uri.path == null) return
-            val contentUri = FileProvider.getUriForFile(
-                context,
-                "com.example.tesifrigo.fileprovider",
-                File(uri.path!!)
-***REMOVED***
+        val contentUri = FileProvider.getUriForFile(
+            context,
+            "com.example.tesifrigo.fileprovider",
+            File(uri.path!!)
+        )
 
-            // Get the filename from the content URI
-            val fileName = contentUri.lastPathSegment ?: "downloaded_file"
+        // Get the filename from the content URI
+        val fileName = contentUri.lastPathSegment ?: "downloaded_file"
 
-            // Create a destination file in the Downloads directory
-            val destinationFile = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), fileName)
+        // Create a destination file in the Downloads directory
+        val destinationFile = File(
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+            fileName
+        )
 
-            try {
-                // Open input and output streams
-                val inputStream = context.contentResolver.openInputStream(contentUri)
-                val outputStream = FileOutputStream(destinationFile)
+        try {
+            // Open input and output streams
+            val inputStream = context.contentResolver.openInputStream(contentUri)
+            val outputStream = FileOutputStream(destinationFile)
 
-                // Copy the file
-                inputStream?.use { input ->
-                    outputStream.use { output ->
-                        input.copyTo(output)
-                    ***REMOVED***
-                ***REMOVED***
-
-                // Show a Toast message indicating success
-                if (!failedOpen) {
-                    Toast.makeText(
-                        context,
-                        "File downloaded to Downloads folder",
-                        Toast.LENGTH_SHORT
-        ***REMOVED***.show()
-                ***REMOVED***
-            ***REMOVED*** catch (e: IOException) {
-                // Handle exceptions (e.g., log the error, show an error message to the user)
-                if ((e is FileNotFoundException) && (e.message?.contains("EEXIST") == true)){
-
-                    Toast.makeText(context, "File already downloaded", Toast.LENGTH_SHORT).show()
-
-                ***REMOVED*** else{
-                    // Handle other IOException cases
-                    e.printStackTrace()
-                    Toast.makeText(context, "Error downloading file", Toast.LENGTH_SHORT).show()
+            // Copy the file
+            inputStream?.use { input ->
+                outputStream.use { output ->
+                    input.copyTo(output)
                 ***REMOVED***
             ***REMOVED***
+
+            // Show a Toast message indicating success
+            if (!failedOpen) {
+                Toast.makeText(
+                    context,
+                    "File downloaded to Downloads folder",
+                    Toast.LENGTH_SHORT
+    ***REMOVED***.show()
+            ***REMOVED***
+        ***REMOVED*** catch (e: IOException) {
+            // Handle exceptions (e.g., log the error, show an error message to the user)
+            if ((e is FileNotFoundException) && (e.message?.contains("EEXIST") == true)) {
+
+                Toast.makeText(context, "File already downloaded", Toast.LENGTH_SHORT).show()
+
+            ***REMOVED*** else {
+                // Handle other IOException cases
+                e.printStackTrace()
+                Toast.makeText(context, "Error downloading file", Toast.LENGTH_SHORT).show()
+            ***REMOVED***
+        ***REMOVED***
     ***REMOVED***
+
     fun openFile(uri: Uri) {
         if (uri.path == null) return
         val contentUri = FileProvider.getUriForFile(
@@ -425,7 +462,8 @@ fun FileCard(
         ***REMOVED***
 
         val packageManager = context.packageManager
-        val viewActivities = packageManager.queryIntentActivities(viewIntent, PackageManager.MATCH_DEFAULT_ONLY)
+        val viewActivities =
+            packageManager.queryIntentActivities(viewIntent, PackageManager.MATCH_DEFAULT_ONLY)
 
         // Filter activities based on MIME type
         val filteredActivities = viewActivities.filter {
@@ -436,10 +474,14 @@ fun FileCard(
             // There's a default app that can handle the intent, so launch it
             openFileLauncher?.launch(viewIntent)
         ***REMOVED*** else {
-                // No suitable app found, so download the file
-            Toast.makeText(context, "No app found to open the file, downloading instead", Toast.LENGTH_SHORT).show()
-                downloadFile(uri, true)
-            ***REMOVED***
+            // No suitable app found, so download the file
+            Toast.makeText(
+                context,
+                "No app found to open the file, downloading instead",
+                Toast.LENGTH_SHORT
+***REMOVED***.show()
+            downloadFile(uri, true)
+        ***REMOVED***
 
     ***REMOVED***
 
@@ -462,31 +504,32 @@ fun FileCard(
         ***REMOVED***
 
         val packageManager = context.packageManager
-        val activities = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
+        val activities =
+            packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
 
-        if (activities.isNotEmpty())
-        {
+        if (activities.isNotEmpty()) {
             openFileLauncher?.launch(intent)
         ***REMOVED*** else {
             // If no app can handle ACTION_CREATE_DOCUMENT, fall back to manual download
             downloadFile(uri)
         ***REMOVED***
     ***REMOVED***
+
     fun shareFile(uri: Uri?) {
         if (uri == null || uri.path == null) return
-            val contentUri = FileProvider.getUriForFile(
-                context,
-                "com.example.tesifrigo.fileprovider",
-                File(uri.path!!)
-***REMOVED***
+        val contentUri = FileProvider.getUriForFile(
+            context,
+            "com.example.tesifrigo.fileprovider",
+            File(uri.path!!)
+        )
 
-            val shareIntent = Intent(Intent.ACTION_SEND).apply {
-                type = context.contentResolver.getType(contentUri)
-                putExtra(Intent.EXTRA_STREAM, contentUri)
-                flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-            ***REMOVED***
+        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+            type = context.contentResolver.getType(contentUri)
+            putExtra(Intent.EXTRA_STREAM, contentUri)
+            flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+        ***REMOVED***
 
-            context.startActivity(Intent.createChooser(shareIntent, "Share File"))
+        context.startActivity(Intent.createChooser(shareIntent, "Share File"))
     ***REMOVED***
 
     Surface(
@@ -570,19 +613,17 @@ fun FileCard(
 ***REMOVED***
 
 
-
-
 @Composable
 fun AddButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    Button(onClick = {
-        onClick()
-    ***REMOVED***,
-        modifier = modifier.fillMaxWidth()) {
+    Button(
+        onClick = {
+            onClick()
+        ***REMOVED***,
+        modifier = modifier.fillMaxWidth()
+    ) {
         Text("Add $text", textAlign = TextAlign.Center)
     ***REMOVED***
 ***REMOVED***
-
-
 
 
 fun calculateCloseness(text1: String, text2: String): Int {//simple Levenshtein implementation
@@ -606,5 +647,4 @@ fun calculateCloseness(text1: String, text2: String): Int {//simple Levenshtein 
     ***REMOVED***
     return d[m][n]
 ***REMOVED***
-
 

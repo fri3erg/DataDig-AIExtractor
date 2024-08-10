@@ -98,36 +98,35 @@ android {
 dependencies {
     implementation(libs.androidx.ui.v1610)
     implementation(libs.composetheme)
-
     implementation(libs.material3) // Or the latest version
     implementation(libs.vision.common)
     implementation(libs.play.services.mlkit.text.recognition.common)
     implementation(libs.play.services.mlkit.text.recognition)
     implementation(libs.androidx.paging.common.android)
     implementation(libs.firebase.crashlytics.buildtools)
-    val nav_version = "2.8.0-alpha08"
     implementation(libs.text.recognition) // Or latest version
     implementation(libs.androidx.navigation.fragment.ktx)
-    implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
+    implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.navigation.compose)
     implementation(libs.hilt.android)
     implementation(libs.androidx.room.ktx)
     implementation(libs.tess.two) // Or latest version
-    kapt("com.google.dagger:hilt-android-compiler:2.51")
+    kapt(libs.hilt.android.compiler)
+    implementation(libs.androidx.activity.compose.v180) // Or the latest version
+    implementation(libs.android.image.cropper) // or later version
     implementation (libs.androidx.ui.v133)
     implementation (libs.androidx.material3.v100)
     implementation (libs.ui.tooling.preview)
     implementation (libs.androidx.activity.compose.v161)
     kapt(libs.hilt.android)
     implementation(libs.androidx.hilt.work)
-    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
-    kapt("androidx.hilt:hilt-compiler:1.2.0")
-    implementation("androidx.work:work-runtime-ktx:2.8.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.5.0") // Use the latest version
-    implementation ("com.google.accompanist:accompanist-pager:0.31.2-alpha") // Replace with the latest version
+    implementation(libs.androidx.hilt.navigation.compose)
+    kapt(libs.androidx.hilt.compiler)
+    implementation(libs.androidx.work.runtime.ktx.v281)
+    implementation(libs.kotlinx.metadata.jvm) // Use the latest version
+    implementation (libs.accompanist.pager.v0312alpha) // Replace with the latest version
     implementation(libs.google.accompanist.pager)
-    implementation("androidx.compose.foundation:foundation:1.6.8") // Or the latest version
-
+    implementation(libs.androidx.foundation) // Or the latest version
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -140,11 +139,11 @@ dependencies {
     implementation(libs.camera.camera2.v133) // Or latest stable version
     implementation(libs.androidx.camera.core)
     implementation(libs.ui) // Or a more recent version
-    implementation("androidx.compose.runtime:runtime-livedata:1.6.8") // Or same version
+    implementation(libs.androidx.runtime.livedata) // Or same version
     implementation(libs.androidx.security.crypto) // Or the latest version
     implementation(libs.androidx.localbroadcastmanager)
     implementation (libs.fontawesomecompose)
-    implementation("io.coil-kt:coil-compose:2.2.2")
+    implementation(libs.coil.compose)
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.cronet.embedded)
     implementation(libs.androidx.camera.lifecycle)
@@ -162,13 +161,8 @@ dependencies {
     implementation (libs.androidx.camera.lifecycle.v130alpha06)
     implementation (libs.androidx.camera.view.v130alpha06)
     implementation(libs.kotlinx.serialization.json)
-    implementation("io.realm.kotlin:library-base:1.11.0")
-    implementation ("com.google.code.gson:gson:2.10.1")
-
-
-
-
-
+    implementation(libs.library.base)
+    implementation (libs.gson)
 ***REMOVED***
 kapt {
     correctErrorTypes = true

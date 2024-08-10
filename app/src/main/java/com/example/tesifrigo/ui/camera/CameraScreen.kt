@@ -1,10 +1,16 @@
 package com.example.tesifrigo.ui.camera
 
+import android.Manifest
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.util.Log
-import androidx.activity.ComponentActivity
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
@@ -17,38 +23,31 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -56,17 +55,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavHostController
-import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
 import com.example.tesifrigo.Screen
 import com.example.tesifrigo.models.Extraction
-import com.example.tesifrigo.models.Template
+import com.example.tesifrigo.models.Options
 import com.example.tesifrigo.services.ExtractionService
+import com.example.tesifrigo.utils.DropDownGeneral
 import com.example.tesifrigo.utils.FileCard
+import com.example.tesifrigo.utils.HelpIconButton
+import com.example.tesifrigo.utils.LabeledSwitch
 import com.example.tesifrigo.utils.MyImageArea
 import com.example.tesifrigo.viewmodels.ExtractionViewModel
 import com.example.tesifrigo.viewmodels.ServiceViewModel
@@ -81,98 +80,260 @@ import java.util.concurrent.Executor
 
 
 @Composable
-fun CameraScreen(templateId: String?, navController: NavHostController) {
+fun CameraScreen(
+    templateId: String?,
+    navController: NavHostController,
+    serviceViewModel: ServiceViewModel,
+    templateViewModel: TemplateViewModel,
+    extractionViewModel: ExtractionViewModel
+) {
 
+    val sharedPrefs =
+        LocalContext.current.getSharedPreferences("my_app_prefs", Context.MODE_PRIVATE)
 
     val context = LocalContext.current
-    val serviceViewModel = hiltViewModel<ServiceViewModel>()
-    var imageUris by remember { mutableStateOf<List<Uri>>(emptyList()) ***REMOVED*** // Store multiple URIs
-    val templateViewModel = hiltViewModel<TemplateViewModel>()
-    val template by templateViewModel.template.collectAsState()
+    val imageUris by serviceViewModel.imageUris.collectAsState()
+    val template by templateViewModel.queryTemplate(templateId ?: "").collectAsState(initial = null)
+    val activePhoto by serviceViewModel.activePhoto.collectAsState()
     if (templateId != null) {
-        templateViewModel.queryTemplate(templateId)
-        if (template != null){
-            serviceViewModel.setTemplate(template!!)
-        ***REMOVED***
+            template?.let {
+                serviceViewModel.setTemplate(it)
+                templateViewModel.setActiveTemplate(it)
+            ***REMOVED***
+
     ***REMOVED***
-    var imageCapture: ImageCapture? by remember { mutableStateOf(null) ***REMOVED*** // For capturing images
-    var lensFacing by remember { mutableIntStateOf(CameraSelector.LENS_FACING_BACK) ***REMOVED***
-LaunchedEffect(key1 = templateId){
-    if (templateId != null) {
-        templateViewModel.queryTemplate(templateId)
-        if (template != null) {
-
-            serviceViewModel.setTemplate(template!!)
-        ***REMOVED***
+    var activeExtraction by remember { mutableStateOf(false) ***REMOVED***
+    LaunchedEffect(template) {
+        template?.let { serviceViewModel.setTemplate(it) ***REMOVED***
     ***REMOVED***
-***REMOVED***
 
 
-    Column (modifier = Modifier.fillMaxSize()){
-        var activeExtraction by remember { mutableStateOf(false) ***REMOVED***
-        var activePhoto by remember { mutableStateOf(true) ***REMOVED***
-        if(activePhoto){
+    Column(modifier = Modifier.fillMaxSize()) {
+        if (activePhoto) {
             CameraPreview(
                 modifier = Modifier.fillMaxSize(),
-                onSetUri = { newUris ->
-                    imageUris = imageUris + listOf(newUris)  // Concatenate the lists
+                onSetUri = { newUri ->
+                    serviceViewModel.addImageUri(newUri)
                     Log.d("CameraScreen", "Image URIs: $imageUris")
                 ***REMOVED***,
                 nPhotos = imageUris.size,
-                changeActivePhoto = {
-                    activePhoto = false
-                ***REMOVED***
+                changeActivePhoto = { serviceViewModel.setActivePhoto(false) ***REMOVED***
 ***REMOVED***
-        ***REMOVED***
-        else if(template==null){
+        ***REMOVED*** else if (template == null) {
             Text("Please select a template first", modifier = Modifier.padding(16.dp))
+        ***REMOVED*** else {
+            ExtractionDetails(
+                template!!.title,
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                navController,
+                imageUris,
+                activeExtraction,
+                onExtractionClick = {
+
+                    val intent = Intent(context, ExtractionService::class.java).also {
+                        it.action = ExtractionService.Actions.START.toString()
+                        it.putParcelableArrayListExtra("imageUris", ArrayList(imageUris))
+                    ***REMOVED***
+                    activeExtraction = true
+                    ContextCompat.startForegroundService(context, intent)
+                ***REMOVED***,
+                serviceViewModel,
+                extractionViewModel,
+                sharedPrefs
+***REMOVED***
         ***REMOVED***
-        else {
-            Text("Extraction:", modifier = Modifier.padding(16.dp).align(Alignment.CenterHorizontally),
-                fontSize = 20.sp,
-                color = Color.Black,
-                fontWeight = FontWeight.Bold
-***REMOVED***
-            Text("Template: ${template!!.title***REMOVED***", modifier = Modifier.padding(start=16.dp, end=16.dp).align(Alignment.CenterHorizontally),
-                fontSize = 14.sp,
-                color = Color.Black,
-***REMOVED***
-            Spacer(modifier = Modifier.height(30.dp))
-            MyImageArea(
-                imageUris = imageUris,
-***REMOVED***
-            Spacer(modifier = Modifier.height(16.dp))
-            if(!activeExtraction) {
-                Button(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .size(100.dp, 50.dp),
-                    shape = RoundedCornerShape(8.dp),
-                    colors = ButtonDefaults.buttonColors(Color.Green),
-                    onClick = {
-                        val intent = Intent(context, ExtractionService::class.java).also {
-                            it.action = ExtractionService.Actions.START.toString()
-                            it.putParcelableArrayListExtra("imageUris", ArrayList(imageUris))
-                        ***REMOVED***
-                        activeExtraction = true
-                        ContextCompat.startForegroundService(context, intent)
-                    ***REMOVED***) {
-                    Text(text = "Extract!", color = Color.Black)
-                ***REMOVED***
-            ***REMOVED***
-            else {
-                ProgressBar()
-                Spacer(modifier = Modifier.height(16.dp))
-                HorizontalDivider()
-                ShownExtraction(navController = navController)
-        ***REMOVED***
-            ***REMOVED***
-
-
-
     ***REMOVED***
 ***REMOVED***
 
+
+@Composable
+fun ExtractionDetails(
+    templateTitle: String?,
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+    imageUris: List<Uri> = emptyList(),
+    activeExtraction: Boolean = false,
+    onExtractionClick: () -> Unit = {***REMOVED***,
+    serviceViewModel: ServiceViewModel,
+    extractionViewModel: ExtractionViewModel,
+    sharedPrefs: SharedPreferences
+) {
+
+    val defaultOptions = Options()
+
+    LaunchedEffect(Unit) { // Execute only once when the composable is first created
+        with(sharedPrefs) {
+            with(edit()) {
+                if (!contains("model")) {
+                    putString("model", "GPT 4")
+                ***REMOVED***
+                if (!contains("language")) {
+                    putString("language", "en")
+                ***REMOVED***
+                if (!contains("azureOcr")) {
+                    putBoolean("azureOcr", false)
+                ***REMOVED***
+                if (!contains("format")) {
+                    putString("format", "json")
+                ***REMOVED***
+                apply()
+            ***REMOVED***
+
+            defaultOptions.model = getString("model", defaultOptions.model) ?: "GPT 4"
+            defaultOptions.language = getString("language", defaultOptions.language) ?: "en"
+            defaultOptions.azureOcr = getBoolean("azureOcr", defaultOptions.azureOcr)
+            defaultOptions.format = getString("format", defaultOptions.format) ?: "json"
+        ***REMOVED***
+        serviceViewModel.setOptions(defaultOptions) // Set the options in the ViewModel
+    ***REMOVED***
+    Text(
+        "Extraction:", modifier = modifier
+            .padding(16.dp),
+        fontSize = 20.sp,
+        color = Color.Black,
+        fontWeight = FontWeight.Bold
+    )
+    Text(
+        "Template: $templateTitle",
+        modifier = modifier
+            .padding(start = 16.dp, end = 16.dp),
+        fontSize = 14.sp,
+        color = Color.Black,
+    )
+    Spacer(modifier = Modifier.height(30.dp))
+    MyImageArea(
+        imageUris = imageUris,
+    )
+    HorizontalDivider()
+    ButtonBar(serviceViewModel, sharedPrefs)
+    HorizontalDivider()
+
+    if (!activeExtraction) {
+        Button(
+            modifier = Modifier
+                .padding(16.dp)
+                .size(100.dp, 50.dp),
+            shape = RoundedCornerShape(8.dp),
+            colors = ButtonDefaults.buttonColors(Color.Green),
+            onClick = onExtractionClick
+        ) {
+            Text(text = "Extract!", color = Color.Black)
+        ***REMOVED***
+    ***REMOVED*** else {
+        ProgressBar()
+        Spacer(modifier = Modifier.height(16.dp))
+        HorizontalDivider()
+        ShownExtraction(
+            navController = navController,
+            serviceViewModel = serviceViewModel,
+            extractionViewModel = extractionViewModel
+        )
+    ***REMOVED***
+
+***REMOVED***
+
+@Composable
+fun ButtonBar(serviceViewModel: ServiceViewModel, sharedPrefs: SharedPreferences) {
+    val options by serviceViewModel.options.collectAsState()
+
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        IconButton(onClick = {
+            serviceViewModel.setActivePhoto(true)
+        ***REMOVED***) {
+            FaIcon(
+                faIcon = FaIcons.Plus, // Using the plus icon
+                tint = Color.Black, // Set icon color
+                size = 24.dp // Set icon size
+***REMOVED***
+        ***REMOVED***
+        IconButton(onClick = {
+            serviceViewModel.clearImageUris()
+        ***REMOVED***) {
+            FaIcon(
+                faIcon = FaIcons.Redo, // Using the trash icon
+                tint = Color.Black, // Set icon color
+                size = 24.dp // Set icon size
+***REMOVED***
+        ***REMOVED***
+        IconButton(onClick = {
+            //change template
+        ***REMOVED***) {
+            FaIcon(faIcon = FaIcons.Table, tint = Color.Black, size = 24.dp)
+        ***REMOVED***
+        Spacer(modifier = Modifier.weight(1f))
+        options?.let {
+
+            var checked by remember { mutableStateOf(it.azureOcr) ***REMOVED***
+            LabeledSwitch(
+                label = "Azure OCR",
+                checked = checked,
+                onCheckedChange = { change ->
+                    serviceViewModel.changeOptions("azureOcr", change)
+                    with(sharedPrefs.edit()) {
+                        putBoolean("azureOcr", change)
+                        apply()
+                    ***REMOVED***
+                    checked = change
+                ***REMOVED***
+***REMOVED***
+
+            HelpIconButton("Use Azure OCR for the extraction")
+        ***REMOVED***
+
+    ***REMOVED***
+    Row {
+        options?.let {
+            val modelList = listOf("GPT 4", "GPT 3-5", "Smart Mix")
+            DropDownGeneral(
+                items = modelList,
+                onItemSelected = { selectedItem ->
+                    serviceViewModel.changeOptions("model", selectedItem)
+                    with(sharedPrefs.edit()) {
+                        putString("model", selectedItem)
+                        apply()
+                    ***REMOVED***
+                ***REMOVED***,
+                modifier = Modifier.weight(1f),
+                defaultSelectedItemIndex = modelList.indexOf(it.model)
+***REMOVED***
+            HelpIconButton("Select the model to use for the extraction")
+            val formatList = listOf("json", "csv", "xml")
+            DropDownGeneral(
+                items = formatList,
+                onItemSelected = { selectedItem ->
+                    serviceViewModel.changeOptions("format", selectedItem)
+                    with(sharedPrefs.edit()) {
+                        putString("format", selectedItem)
+                        apply()
+                    ***REMOVED***
+                ***REMOVED***,
+                modifier = Modifier.weight(1f),
+                defaultSelectedItemIndex = formatList.indexOf(it.format)
+***REMOVED***
+            HelpIconButton("Select the format to export the extraction")
+            val languageList = listOf("en", "it", "es", "fr", "de")
+            DropDownGeneral(
+                items = languageList,
+                onItemSelected = { selectedItem ->
+                    serviceViewModel.changeOptions("language", selectedItem)
+                    with(sharedPrefs.edit()) {
+                        putString("language", selectedItem)
+                        apply()
+                    ***REMOVED***
+                ***REMOVED***,
+                modifier = Modifier.weight(1f),
+                defaultSelectedItemIndex = languageList.indexOf(it.language)
+***REMOVED***
+
+            HelpIconButton("Select the language to use for the extraction")
+        ***REMOVED***
+    ***REMOVED***
+***REMOVED***
 
 
 @Composable
@@ -181,7 +342,7 @@ fun ProgressBar() {
     val progress by serviceViewModel.progress.collectAsState()
     val result by serviceViewModel.result.collectAsState()
     Row {
-        Text("Progress: ${progress * 100***REMOVED***%", modifier = Modifier.padding(start=12.dp))
+        Text("Progress: ${progress * 100***REMOVED***%", modifier = Modifier.padding(start = 12.dp))
         Spacer(modifier = Modifier.width(16.dp))
         Spinner(isActive = result == null)
         Spacer(modifier = Modifier.width(16.dp))
@@ -198,33 +359,38 @@ fun ProgressBar() {
 ***REMOVED***
 
 @Composable
-fun Spinner(isActive: Boolean) {
+fun Spinner(isActive: Boolean, content: @Composable () -> Unit = { CircularProgressIndicator() ***REMOVED***) {
     if (isActive) {
-        CircularProgressIndicator(
-            modifier = Modifier.size(36.dp), // Adjust size as needed
-            strokeWidth = 4.dp // Adjust stroke width as needed
-        )
+        content() // Display the provided content when active
     ***REMOVED***
-    // If not active, you can either show nothing or a placeholder
 ***REMOVED***
 
 
-
-
 @Composable
-fun ShownExtraction(navController: NavHostController) {
-    val serviceViewModel = hiltViewModel<ServiceViewModel>()
-    val extractionViewModel = hiltViewModel<ExtractionViewModel>()
+fun ShownExtraction(
+    navController: NavHostController,
+    serviceViewModel: ServiceViewModel,
+    extractionViewModel: ExtractionViewModel
+) {
     val result by serviceViewModel.result.collectAsState()
     var extraction by remember { mutableStateOf<Extraction?>(null) ***REMOVED***
+    var isLoading by remember { mutableStateOf(false) ***REMOVED***
+    var errorOccurred by remember { mutableStateOf(false) ***REMOVED***
     LaunchedEffect(key1 = result) {
+        isLoading = true // Show loading indicator
         result?.let {
             extractionViewModel.queryExtraction(it).collect { fetchedExtraction ->
                 extraction = fetchedExtraction
+                isLoading = false // Hide loading indicator
             ***REMOVED***
+        ***REMOVED*** ?: run {
+            errorOccurred = true
+            isLoading = false
         ***REMOVED***
     ***REMOVED***
-    if (extraction != null) {
+    if (isLoading) {
+        CircularProgressIndicator() // Show loading indicator
+    ***REMOVED*** else if (extraction != null) {
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -233,7 +399,7 @@ fun ShownExtraction(navController: NavHostController) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
-***REMOVED***{
+***REMOVED*** {
                 Text(
                     "Extraction Result:",
                     modifier = Modifier.padding(16.dp),
@@ -249,8 +415,12 @@ fun ShownExtraction(navController: NavHostController) {
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(Color.Red),
                     onClick = {
-                        navController.navigate(Screen.SingleExtraction.withArgs("extractionId" to extraction!!.id.toHexString()))
+                        extraction?.id.let { extractionId ->
 
+                            if (extractionId != null) {
+                                navController.navigate(Screen.SingleExtraction.withArgs("extractionId" to extractionId.toHexString()))
+                            ***REMOVED***
+                        ***REMOVED***
                     ***REMOVED***) {
                     Text("Go to Extraction")
                 ***REMOVED***
@@ -264,28 +434,6 @@ fun ShownExtraction(navController: NavHostController) {
 ***REMOVED***
 
 
-
-
-@Composable
-fun ImageFromUri(imageUriString: String) {
-    val imageUri = Uri.parse(imageUriString)
-    val filesDir = LocalContext.current.filesDir // Get the app's files directory
-    val errorImagePath = File(filesDir, "error_image.png").absolutePath
-    val placeholderImagePath = File(filesDir, "placeholder_image.png").absolutePath
-    val errorPainter =
-        rememberAsyncImagePainter(model = errorImagePath)  // Create a painter from the file path
-    val placeholderPainter = rememberAsyncImagePainter(model = placeholderImagePath)
-
-
-    AsyncImage(
-        model = imageUri, // Use the Uri parsed from the string
-        contentDescription = "Image from URI", // Add a content description (important for accessibility)
-        modifier = Modifier.fillMaxSize(), // Or any other modifier you want
-        error = errorPainter,         // Use the errorPainter you created
-        placeholder = placeholderPainter // Use the placeholderPainter you created
-    )
-***REMOVED***
-
 @Composable
 fun CameraPreview(
     modifier: Modifier = Modifier,
@@ -296,7 +444,17 @@ fun CameraPreview(
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
+
     val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickMultipleVisualMedia(),
+        onResult = { uris: List<Uri>? ->
+            uris?.forEach { uri ->
+                onSetUri(uri)
+            ***REMOVED***
+            changeActivePhoto()
+        ***REMOVED***
+    )
+    val imagePickerLauncherLegacy = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetMultipleContents(),
         onResult = { uris: List<Uri>? ->
             uris?.forEach { uri ->
@@ -305,8 +463,52 @@ fun CameraPreview(
             changeActivePhoto()
         ***REMOVED***
     )
+    val requestPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted: Boolean ->
+            if (isGranted) {
+                // Launch the image picker
+                imagePickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            ***REMOVED***
+        ***REMOVED***
+    )
+    val requestPermissionLauncherLegacy = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted: Boolean ->
+            if (isGranted) {
+                // Launch the image picker
+                imagePickerLauncherLegacy.launch("image/*")
+            ***REMOVED***
+        ***REMOVED***
+    )
     val onPhotoGalleryClick = {
-        imagePickerLauncher.launch("image/*")
+        // Check if we're on Android 13+ (API level 33 or higher)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // On Android 13+, use the PickVisualMedia contract
+            if (ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.READ_MEDIA_IMAGES
+    ***REMOVED*** == PackageManager.PERMISSION_GRANTED
+***REMOVED*** {
+                imagePickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            ***REMOVED*** else {
+                requestPermissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES)
+            ***REMOVED***
+        ***REMOVED*** else {
+            // On Android versions below 13, use the ACTION_PICK intent with the old contract
+            if (ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+    ***REMOVED*** == PackageManager.PERMISSION_GRANTED
+
+***REMOVED*** {
+                // Use the original imagePickerLauncher (ActivityResultContracts.StartActivityForResult())
+                imagePickerLauncherLegacy.launch("image/*")
+            ***REMOVED*** else {
+                requestPermissionLauncherLegacy.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+            ***REMOVED***
+
+        ***REMOVED***
     ***REMOVED***
 
     var showFlash by remember { mutableStateOf(false) ***REMOVED***
@@ -338,7 +540,7 @@ fun CameraPreview(
         ***REMOVED***
     ***REMOVED***
 
-    // Initialize and bind the camera use cases once
+// Initialize and bind the camera use cases once
     DisposableEffect(context) {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
         cameraProviderFuture.addListener({
@@ -374,7 +576,7 @@ fun CameraPreview(
             onClick = onPhotoGalleryClick
         ) {
             FaIcon(
-                faIcon =   FaIcons.Images, // Using the gallery icon
+                faIcon = FaIcons.Images, // Using the gallery icon
                 tint = Color.Black, // Set icon color
                 size = 24.dp // Set icon size
 ***REMOVED***
@@ -397,7 +599,8 @@ fun CameraPreview(
                     onImageCaptured = onSetUri,
                     onError = { error ->
                         Log.e("CameraX", "Image capture failed: ${error.message***REMOVED***")
-                    ***REMOVED***
+                    ***REMOVED***,
+                    context = context
     ***REMOVED***
                 showFlash = true
             ***REMOVED***
@@ -416,25 +619,31 @@ fun CameraPreview(
                 colors = ButtonDefaults.buttonColors(Color.White),
                 onClick = changeActivePhoto
 ***REMOVED*** {
-                    FaIcon(
-                        faIcon = FaIcons.Check,
-                        tint = Color.Black,
-                        size = 24.dp,
-        ***REMOVED***
+                FaIcon(
+                    faIcon = FaIcons.Check,
+                    tint = Color.Black,
+                    size = 24.dp,
+    ***REMOVED***
 
             ***REMOVED***
         ***REMOVED***
-        Box(modifier = Modifier
-            .padding(20.dp)
-            .size(70.dp, 35.dp)
-            .background(
-                Color.White,
-                shape = RoundedCornerShape(10.dp) // Apply RoundedCornerShape to background
-***REMOVED***
-            .align(Alignment.TopStart),
+        Box(
+            modifier = Modifier
+                .padding(20.dp)
+                .size(70.dp, 35.dp)
+                .background(
+                    Color.White,
+                    shape = RoundedCornerShape(10.dp) // Apply RoundedCornerShape to background
+    ***REMOVED***
+                .align(Alignment.TopStart),
             contentAlignment = Alignment.Center,
-***REMOVED*** {
-            Text(text = "$nPhotos taken", color = Color.Black, textAlign = TextAlign.Center, fontSize = 14.sp)
+        ) {
+            Text(
+                text = "$nPhotos taken",
+                color = Color.Black,
+                textAlign = TextAlign.Center,
+                fontSize = 14.sp
+***REMOVED***
         ***REMOVED***
         // Flash effect
         AnimatedVisibility(
@@ -457,7 +666,8 @@ private fun takePhoto(
     outputDirectory: File,
     executor: Executor,
     onImageCaptured: (Uri) -> Unit,
-    onError: (ImageCaptureException) -> Unit
+    onError: (ImageCaptureException) -> Unit,
+    context: Context
 ) {
     val filenameFormat = "yyyy-MM-dd-HH-mm-ss-SSS"
     val photoFile = File(
@@ -468,9 +678,21 @@ private fun takePhoto(
     val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
 
     imageCapture.takePicture(outputOptions, executor, object : ImageCapture.OnImageSavedCallback {
+
         override fun onError(exc: ImageCaptureException) {
-            Log.e("CameraX", "Photo capture failed: ${exc.message***REMOVED***", exc)
+            Log.e(
+                "CameraX", "Photo capture failed: ${exc.message***REMOVED***",
+                exc
+***REMOVED***
+            // Provide more specific error messages based on exc.imageCaptureError
+            val errorMessage = when (exc.imageCaptureError) {
+                ImageCapture.ERROR_FILE_IO -> "Error saving image."
+                ImageCapture.ERROR_CAMERA_CLOSED -> "Camera closed unexpectedly."
+                // ... handle other error cases
+                else -> "An error occurred while capturing the photo."
+            ***REMOVED***
             onError(exc)
+            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
         ***REMOVED***
 
         override fun onImageSaved(output: ImageCapture.OutputFileResults) {

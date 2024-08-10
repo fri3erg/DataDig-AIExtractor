@@ -1,7 +1,6 @@
 package com.example.tesifrigo.ui.template
 
 import  androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,14 +12,11 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -43,7 +39,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.tesifrigo.Screen
@@ -57,29 +52,35 @@ import com.guru.fontawesomecomposelib.FaIcons
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TemplateScreen(navController: NavHostController, photos: String?) {
-    val viewModel = viewModel<TemplateViewModel>()
-    val searchText by viewModel.searchText.collectAsState()
+fun TemplateScreen(
+    navController: NavHostController,
+    photos: String?,
+    templateViewModel: TemplateViewModel
+) {
+    val searchText by templateViewModel.searchText.collectAsState()
     var expanded by remember { mutableStateOf(false) ***REMOVED***
-    val ascending by viewModel.ascending.collectAsState()
-    val sortOrder : SortOrder by viewModel.sortOrder.collectAsState()
-    val templates by viewModel.sortedTemplates.collectAsState()
+    val ascending by templateViewModel.ascending.collectAsState()
+    val sortOrder: SortOrder by templateViewModel.sortOrder.collectAsState()
+    val templates by templateViewModel.sortedTemplates.collectAsState()
 
     Scaffold(
         topBar = {
             Row {
                 SearchBar(
                     text = searchText,
-                    onTextChange = { viewModel.updateSearchText(it)***REMOVED***,
-                    onSearch = {  viewModel.updateSearchText(it) ***REMOVED***
+                    onTextChange = { templateViewModel.updateSearchText(it) ***REMOVED***,
+                    onSearch = { templateViewModel.updateSearchText(it) ***REMOVED***
     ***REMOVED***
 
 
                 Spacer(modifier = Modifier.weight(1f))
-                IconButton(onClick = {
-                    navController.navigate(Screen.Settings.route)
-                ***REMOVED***,
-                    modifier = Modifier.align(Alignment.CenterVertically).padding(end=15.dp, top = 2.dp)
+                IconButton(
+                    onClick = {
+                        navController.navigate(Screen.Settings.route)
+                    ***REMOVED***,
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(end = 15.dp, top = 2.dp)
     ***REMOVED*** {
                     FaIcon(faIcon = FaIcons.Cog, tint = Color.Gray, size = 45.dp)
                 ***REMOVED***
@@ -87,29 +88,30 @@ fun TemplateScreen(navController: NavHostController, photos: String?) {
             ***REMOVED***
         ***REMOVED***,
         floatingActionButton = {
-            FloatingActionButton(onClick = {
-                val newId = viewModel.addTemplate()
-                navController.navigate(Screen.EditTemplate.withArgs("templateId" to newId))
-            ***REMOVED***,
+            FloatingActionButton(
+                onClick = {
+                    val newId = templateViewModel.addTemplate()
+                    navController.navigate(Screen.EditTemplate.withArgs("templateId" to newId))
+                ***REMOVED***,
                 containerColor = MaterialTheme.colorScheme.primary,
-    ***REMOVED*** {
-                FaIcon(faIcon = FaIcons.Plus, tint = Color.White,size = 30.dp)
+***REMOVED*** {
+                FaIcon(faIcon = FaIcons.Plus, tint = Color.White, size = 30.dp)
             ***REMOVED***
         ***REMOVED***,
 
-    ) { innerPadding->
+        ) { innerPadding ->
 
 
-        Column (
+        Column(
             modifier = Modifier.padding(innerPadding)
-        ){
+        ) {
 
-            Row{
+            Row {
 
                 val focusRequester = remember { FocusRequester() ***REMOVED***
                 val typeOptions = mapOf(
-                    "Title" to { viewModel.updateSortOrder(SortOrder.BY_TITLE) ***REMOVED***,
-                    "Date" to { viewModel.updateSortOrder(SortOrder.BY_DATE) ***REMOVED***
+                    "Title" to { templateViewModel.updateSortOrder(SortOrder.BY_TITLE) ***REMOVED***,
+                    "Date" to { templateViewModel.updateSortOrder(SortOrder.BY_DATE) ***REMOVED***
     ***REMOVED***
                 Spacer(modifier = Modifier.width(20.dp))
                 ExposedDropdownMenuBox(
@@ -117,15 +119,18 @@ fun TemplateScreen(navController: NavHostController, photos: String?) {
                     onExpandedChange = { expanded = !expanded ***REMOVED***
     ***REMOVED*** {
 
-                    Button(onClick = { expanded = true ***REMOVED***, modifier = Modifier
-                        .padding(end= 8.dp)
-                        .focusRequester(focusRequester)
-                        .menuAnchor(),
-                        colors= ButtonDefaults.buttonColors(containerColor = Color.Gray)
+                    Button(
+                        onClick = { expanded = true ***REMOVED***, modifier = Modifier
+                            .padding(end = 8.dp)
+                            .focusRequester(focusRequester)
+                            .menuAnchor(),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Gray)
         ***REMOVED*** {
                         Text("Sort")
                     ***REMOVED***
-                    ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false ***REMOVED***) {
+                    ExposedDropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false ***REMOVED***) {
                         typeOptions.forEach { (type, onCLick) ->
                             DropdownMenuItem(
                                 text = { Text(type) ***REMOVED***,
@@ -142,19 +147,21 @@ fun TemplateScreen(navController: NavHostController, photos: String?) {
 
 
 
-            Button(onClick = { viewModel.toggleAscending()***REMOVED***,
-                modifier = Modifier.align(Alignment.CenterVertically),
-                colors= ButtonDefaults.buttonColors(containerColor = Color.Gray)) {
-                if (ascending) {
-                    FaIcon(faIcon = FaIcons.ArrowUp, tint = Color.White)
-                ***REMOVED*** else {
-                    FaIcon(faIcon = FaIcons.ArrowDown, tint = Color.White)
+                Button(
+                    onClick = { templateViewModel.toggleAscending() ***REMOVED***,
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Gray)
+    ***REMOVED*** {
+                    if (ascending) {
+                        FaIcon(faIcon = FaIcons.ArrowUp, tint = Color.White)
+                    ***REMOVED*** else {
+                        FaIcon(faIcon = FaIcons.ArrowDown, tint = Color.White)
+                    ***REMOVED***
                 ***REMOVED***
             ***REMOVED***
-                ***REMOVED***
             LazyColumn {
                 items(templates) { template ->  // Iterate directly over templates
-                    TemplateItem(template, navController, viewModel)
+                    TemplateItem(template, navController, templateViewModel)
                 ***REMOVED***
             ***REMOVED***
 
@@ -185,7 +192,11 @@ fun SearchBar(text: String, onTextChange: (String) -> Unit, onSearch: (String) -
 ***REMOVED***
 
 @Composable
-fun TemplateItem(template: Template,navController: NavHostController, viewmodel: TemplateViewModel) {
+fun TemplateItem(
+    template: Template,
+    navController: NavHostController,
+    viewmodel: TemplateViewModel
+) {
     Card( // Consider using a Card for visual structure
         modifier = Modifier
             .fillMaxWidth() // Occupy full width
@@ -200,13 +211,21 @@ fun TemplateItem(template: Template,navController: NavHostController, viewmodel:
         Column(modifier = Modifier.padding(16.dp)) { // Inner Column for content
             Row {
 
-                Text(text = template.title)
+                Text(
+                    text = template.title, style = MaterialTheme.typography.headlineSmall,
+                    modifier = Modifier.padding(top = 8.dp, start = 8.dp)
+    ***REMOVED*** // Title
                 Spacer(modifier = Modifier.weight(1f)) // Creates space between text and button
-                val id= template.id.toHexString()
-                val onUse = {navController.navigate(Screen.Camera.routeWithOptionalArgs("templateId" to id))
+                val id = template.id.toHexString()
+                val onUse = {
+                    navController.navigate(Screen.Camera.routeWithOptionalArgs("templateId" to id))
                 ***REMOVED***
-                val onEdit = { navController.navigate(Screen.EditTemplate.withArgs("templateId" to id)) ***REMOVED***
-                DropdownWithNavigation(onUse = onUse, onEdit = onEdit, onDelete = { viewmodel.deleteTemplateById(id) ***REMOVED***)
+                val onEdit =
+                    { navController.navigate(Screen.EditTemplate.withArgs("templateId" to id)) ***REMOVED***
+                DropdownWithNavigation(
+                    onUse = onUse,
+                    onEdit = onEdit,
+                    onDelete = { viewmodel.deleteTemplateById(id) ***REMOVED***)
             ***REMOVED***
             LazyRow {
                 items(template.tags) { field ->

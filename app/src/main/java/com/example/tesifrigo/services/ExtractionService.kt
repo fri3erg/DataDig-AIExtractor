@@ -2,16 +2,16 @@ package com.example.tesifrigo.services
 
 import android.app.Notification
 import android.app.Service
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.os.IBinder
-import android.provider.MediaStore
 import android.util.Base64
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.chaquo.python.PyObject
 import com.chaquo.python.Python
@@ -19,6 +19,7 @@ import com.chaquo.python.android.AndroidPlatform
 import com.example.tesifrigo.R
 import com.example.tesifrigo.models.ExceptionOccurred
 import com.example.tesifrigo.models.Extraction
+import com.example.tesifrigo.models.ExtractionCosts
 import com.example.tesifrigo.models.ExtractionField
 import com.example.tesifrigo.models.ExtractionTable
 import com.example.tesifrigo.models.ExtractionTableRow
@@ -37,18 +38,16 @@ import javax.inject.Inject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
-import java.io.File
-import java.io.FileOutputStream
 
 @AndroidEntryPoint
-class ExtractionService : Service(){
-
+class ExtractionService : Service() {
 
 
     @Inject
     lateinit var serviceRepository: ServiceRepository
 
-    @Inject lateinit var keyManager: KeyManager
+    @Inject
+    lateinit var keyManager: KeyManager
 
 
     @Inject
@@ -61,15 +60,18 @@ class ExtractionService : Service(){
         return null // We'll use a started service, not a bound service
     ***REMOVED***
 
+    @RequiresApi(Build.VERSION_CODES.P)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        when(intent?.action) {
+        when (intent?.action) {
             Actions.STOP.toString() -> stopSelf()
             Actions.START.toString() -> start(intent)
         ***REMOVED***
         return START_NOT_STICKY // Service won't restart automatically if stopped
     ***REMOVED***
+
+    @RequiresApi(Build.VERSION_CODES.P)
     private fun start(intent: Intent?) {
-        startForeground(1,createNotification())
+        startForeground(1, createNotification())
 
         Log.d("TestService", "Service started")
         val imageUri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -95,19 +97,26 @@ class ExtractionService : Service(){
 
 
     private fun createNotification(): Notification {
-    return NotificationCompat.Builder(this,"extracting_data")
-        .setContentTitle("Service")
-        .setContentText("Service is running")
-        .setSmallIcon(R.drawable.ic_launcher_foreground)
-        .build()
+        return NotificationCompat.Builder(this, "extracting_data")
+            .setContentTitle("Service")
+            .setContentText("Service is running")
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .build()
     ***REMOVED***
 
     // Simulate image processing for now
-    private fun processImage(imageUris: List<Uri>, serviceRepository: ServiceRepository, keyManager: KeyManager, template: Template, options: Options?) {
+    @RequiresApi(Build.VERSION_CODES.P)
+    private fun processImage(
+        imageUris: List<Uri>,
+        serviceRepository: ServiceRepository,
+        keyManager: KeyManager,
+        template: Template,
+        options: Options?
+    ) {
         val localContext = this
 
         val onResult: (PyObject) -> Unit = { result ->
-            serviceRepository.updateResult(extractResult(result, template, imageUris),localContext)
+            serviceRepository.updateResult(extractResult(result, template, imageUris), localContext)
         ***REMOVED***
 
         serviceScope.launch {
@@ -119,7 +128,7 @@ class ExtractionService : Service(){
             ***REMOVED***
 
 
-            if (! Python.isStarted()) {
+            if (!Python.isStarted()) {
                 Python.start(AndroidPlatform(localContext))
             ***REMOVED***
             val py = Python.getInstance()
@@ -141,48 +150,63 @@ class ExtractionService : Service(){
                     Base64.encodeToString(byteArray, Base64.DEFAULT)
                 ***REMOVED***
                 if (base64Image != null) {
-                    pyListImages.callAttr("append", base64Image)  // Add Base64 image to the Python list
+                    pyListImages.callAttr(
+                        "append",
+                        base64Image
+        ***REMOVED***  // Add Base64 image to the Python list
                 ***REMOVED***
             ***REMOVED***
             progressCallback(0.15f)
             val imageUriOcr = ImageOCR()
             val pyListText = builtinsModule.callAttr("list") // Create an empty Python list
             imageUris.map { imageUri ->
-                val bitmap = MediaStore.Images.Media.getBitmap(localContext.contentResolver, imageUri)
-                pyListText.callAttr("append",imageUriOcr.extractTextFromBitmap(bitmap) )  // Add Base64 image to the Python list
+                val source = ImageDecoder.createSource(localContext.contentResolver, imageUri)
+                val bitmap = ImageDecoder.decodeBitmap(source) { decoder, _, _ ->
+                    decoder.allocator = ImageDecoder.ALLOCATOR_SOFTWARE // Choose an allocator
+                    decoder.isMutableRequired = true // Set if the image needs to be mutable
+                ***REMOVED***
+                pyListText.callAttr(
+                    "append",
+                    imageUriOcr.extractTextFromBitmap(bitmap)
+    ***REMOVED***  // Add Base64 image to the Python list
             ***REMOVED***
-
 
 
             val classesOptionModule = py.getModule("extractor.classes.Options") // Get the module
 
             val getApiKey = { key: String ->
-                    when(key){
-                        "API_KEY_1" -> keyManager.getApiKey(Keys.API_KEY_1)
-                        "API_KEY_2" -> keyManager.getApiKey(Keys.API_KEY_2)
-                        "API_KEY_3" -> keyManager.getApiKey(Keys.API_KEY_3)
-                        else -> null
-                    ***REMOVED***
+                when (key) {
+                    "API_KEY_1" -> keyManager.getApiKey(Keys.API_KEY_1)
+                    "API_KEY_2" -> keyManager.getApiKey(Keys.API_KEY_2)
+                    "API_KEY_3" -> keyManager.getApiKey(Keys.API_KEY_3)
+                    else -> null
+                ***REMOVED***
             ***REMOVED***
 
             val chosenOption = classesOptionModule.callAttr(
                 "Options",  // Directly call the constructor
-                PyObject.fromJava("gpt-4"),
-                PyObject.fromJava("it"),
-                PyObject.fromJava(false),
-                PyObject.fromJava(getApiKey)
+                PyObject.fromJava(options?.language),
+                PyObject.fromJava(options?.model),
+                PyObject.fromJava(options?.azureOcr),
+                PyObject.fromJava(getApiKey),
+                PyObject.fromJava(options?.format)
 ***REMOVED***
 
             progressCallback(0.2f)
 
             val classesModule = py.getModule("extractor.classes.Template") // Get the module
 
-            val pythonTemplate= getTemplate(classesModule,builtinsModule, template)
-
+            val pythonTemplate = getTemplate(classesModule, builtinsModule, template)
 
 
             val deferredPyResult = async(Dispatchers.Default) { // Use async for Python call
-                module.callAttr("main_kotlin", pyListImages, pyListText, pythonTemplate, chosenOption)
+                module.callAttr(
+                    "main_kotlin",
+                    pyListImages,
+                    pyListText,
+                    pythonTemplate,
+                    chosenOption
+    ***REMOVED***
             ***REMOVED***
 
             // Monitor progress in parallel
@@ -205,7 +229,6 @@ class ExtractionService : Service(){
     ***REMOVED***
 
 
-
     enum class Actions {
         START,
         STOP
@@ -214,21 +237,12 @@ class ExtractionService : Service(){
 
 ***REMOVED***
 
-private fun copyAssetsToStorage(context: Context, assetPath: String, targetDirectoryPath: String) {
-    val assetManager = context.assets
 
-    assetManager.list(assetPath)?.forEach { fileName ->
-        val inputStream = assetManager.open("$assetPath/$fileName")
-        val targetFile = File(targetDirectoryPath, fileName)
-
-        targetFile.parentFile?.mkdirs()
-        FileOutputStream(targetFile).use { outputStream ->
-            inputStream.copyTo(outputStream)
-        ***REMOVED***
-    ***REMOVED***
-***REMOVED***
-
-private fun extractResult(pyResult:PyObject, templateOg: Template, imageUris: List<Uri>): Extraction{
+private fun extractResult(
+    pyResult: PyObject,
+    templateOg: Template,
+    imageUris: List<Uri>
+): Extraction {
 
     val extracted = Extraction().apply {
         image.addAll(imageUris.map { it.toString() ***REMOVED***)
@@ -240,13 +254,26 @@ private fun extractResult(pyResult:PyObject, templateOg: Template, imageUris: Li
 ***REMOVED***
         ***REMOVED***
 
-        extractionCosts = pyResult["extraction_costs"].toString() // Adjust conversion as needed
+        pyResult["extraction_costs"]?.asList()?.let {
+            extractionCosts.addAll(
+                it.map { pyCost ->
+                    ExtractionCosts().apply {
+                        name = pyCost["name"].toString()
+                        tokens = pyCost["tokens"]?.toInt() ?: 0
+                        cost = pyCost["cost"]?.toFloat() ?: 0f
+                        currency = pyCost["currency"].toString()
+                    ***REMOVED***
+                ***REMOVED***
+***REMOVED***
+        ***REMOVED***
+
         title = pyResult["title"].toString()
         pyResult["exceptions_occurred"]?.asList()?.let {
             exceptionsOccurred.addAll(
                 it.map { pyException ->
+                    val errorFiltered = filterErrors(pyException["error"].toString())
                     ExceptionOccurred().apply {
-                        error = pyException["error"].toString() // Assuming error is a string
+                        error = errorFiltered
                         errorType = pyException["error_type"].toString()
                         errorDescription = pyException["error_description"].toString()
                     ***REMOVED***
@@ -257,9 +284,11 @@ private fun extractResult(pyResult:PyObject, templateOg: Template, imageUris: Li
             extractedFields.addAll(
                 pyObjects.map { pyExtractedField ->
                     ExtractionField().apply {
-                        templateField = templateOg.fields.first { it.id.toHexString() == pyExtractedField["template_field"]
-                            ?.get("id")
-                            .toString() ***REMOVED***
+                        templateField = templateOg.fields.first {
+                            it.id.toHexString() == pyExtractedField["template_field"]
+                                ?.get("id")
+                                .toString()
+                        ***REMOVED***
                         value = pyExtractedField["value"].toString()
                     ***REMOVED***
                 ***REMOVED***
@@ -268,7 +297,7 @@ private fun extractResult(pyResult:PyObject, templateOg: Template, imageUris: Li
         pyResult["extracted_tables"]?.asList()?.forEach { pyExtractedTable ->
             extractedTables.add(extractTable(pyExtractedTable, templateOg))
         ***REMOVED***
-        template=templateOg
+        template = templateOg
     ***REMOVED***
 
     // Convert to JSON and save to file
@@ -277,15 +306,29 @@ private fun extractResult(pyResult:PyObject, templateOg: Template, imageUris: Li
     return extracted
 ***REMOVED***
 
+fun filterErrors(error: String): String {
+    //if error string contains certain recognized words it rewords it for the user
+    return when {
+        error.contains("API key") -> "API key is invalid"
+        error.contains("Model") -> "Model is invalid"
+        error.contains("Language") -> "Language is invalid"
+        error.contains("Azure") -> "Azure OCR is invalid"
+        else -> error
+    ***REMOVED***
+
+***REMOVED***
+
 
 private fun extractTable(pyExtractedTable: PyObject, template: Template): ExtractionTable {
 
 
     val realmExtractionTable = ExtractionTable().apply {
-        templateTable = template.tables.first { it.id.toHexString() == pyExtractedTable["template_table"]
-            ?.get("id")
-            .toString() ***REMOVED***
-        dataframe= pyExtractedTable["dataframe"].toString()
+        templateTable = template.tables.first {
+            it.id.toHexString() == pyExtractedTable["template_table"]
+                ?.get("id")
+                .toString()
+        ***REMOVED***
+        dataframe = pyExtractedTable["dataframe"].toString()
         // Handle fields (nested dictionaries)
         val rows = mutableListOf<ExtractionTableRow>()
         val pyFields = pyExtractedTable["fields"]?.asMap()
@@ -309,24 +352,28 @@ private fun extractTable(pyExtractedTable: PyObject, template: Template): Extrac
 ***REMOVED***
 
 
-
-private fun getTemplate(classesModule: PyObject,builtinsModule: PyObject, template: Template): PyObject? {
+private fun getTemplate(
+    classesModule: PyObject,
+    builtinsModule: PyObject,
+    template: Template
+): PyObject? {
 
     val pyFields = builtinsModule.callAttr("list") // Create an empty Python list
 
     template.fields.map { realmField ->
 
-        pyFields.callAttr("append",
+        pyFields.callAttr(
+            "append",
             classesModule.callAttr(
-            "TemplateField",
-            PyObject.fromJava(realmField.id.toHexString()),
-            PyObject.fromJava(realmField.title),
-            PyObject.fromJava(realmField.description),
-            PyObject.fromJava(realmField.extraDescription),
-            PyObject.fromJava(realmField.type),
-            PyObject.fromJava(realmField.required),
-            PyObject.fromJava(realmField.intelligentExtraction)
-        )
+                "TemplateField",
+                PyObject.fromJava(realmField.id.toHexString()),
+                PyObject.fromJava(realmField.title),
+                PyObject.fromJava(realmField.description),
+                PyObject.fromJava(realmField.extraDescription),
+                PyObject.fromJava(realmField.type),
+                PyObject.fromJava(realmField.required),
+                PyObject.fromJava(realmField.intelligentExtraction)
+***REMOVED***
         )  // Add Base64 image to the Python list
 
     ***REMOVED***
@@ -336,21 +383,8 @@ private fun getTemplate(classesModule: PyObject,builtinsModule: PyObject, templa
         val pyTableRows = builtinsModule.callAttr("list") // Create an empty Python list
         val pyTableColumns = builtinsModule.callAttr("list") // Create an empty Python list
         realmTable.rows.map { tableField ->
-            pyTableRows.callAttr("append",
-                classesModule.callAttr(
-                "TemplateField",
-                PyObject.fromJava(tableField.id.toHexString()),
-                PyObject.fromJava(tableField.title),
-                PyObject.fromJava(tableField.description),
-                PyObject.fromJava(tableField.extraDescription),
-                PyObject.fromJava(tableField.type),
-                PyObject.fromJava(tableField.required),
-                PyObject.fromJava(tableField.intelligentExtraction)
-***REMOVED***
-***REMOVED***  // Add Base64 image to the Python list
-        ***REMOVED***
-        realmTable.columns.map { tableField ->
-            pyTableColumns.callAttr("append",
+            pyTableRows.callAttr(
+                "append",
                 classesModule.callAttr(
                     "TemplateField",
                     PyObject.fromJava(tableField.id.toHexString()),
@@ -363,16 +397,32 @@ private fun getTemplate(classesModule: PyObject,builtinsModule: PyObject, templa
     ***REMOVED***
 ***REMOVED***  // Add Base64 image to the Python list
         ***REMOVED***
-        pyTables.callAttr("append",
+        realmTable.columns.map { tableField ->
+            pyTableColumns.callAttr(
+                "append",
+                classesModule.callAttr(
+                    "TemplateField",
+                    PyObject.fromJava(tableField.id.toHexString()),
+                    PyObject.fromJava(tableField.title),
+                    PyObject.fromJava(tableField.description),
+                    PyObject.fromJava(tableField.extraDescription),
+                    PyObject.fromJava(tableField.type),
+                    PyObject.fromJava(tableField.required),
+                    PyObject.fromJava(tableField.intelligentExtraction)
+    ***REMOVED***
+***REMOVED***  // Add Base64 image to the Python list
+        ***REMOVED***
+        pyTables.callAttr(
+            "append",
             classesModule.callAttr(
-            "TemplateTable",
-            PyObject.fromJava(realmTable.id.toHexString()),
-            PyObject.fromJava(realmTable.title),
-            PyObject.fromJava(realmTable.keywords.toList()),
-            PyObject.fromJava(realmTable.description),
-            pyTableRows,
-            pyTableColumns
-        )
+                "TemplateTable",
+                PyObject.fromJava(realmTable.id.toHexString()),
+                PyObject.fromJava(realmTable.title),
+                PyObject.fromJava(realmTable.keywords.toList()),
+                PyObject.fromJava(realmTable.description),
+                pyTableRows,
+                pyTableColumns
+***REMOVED***
         )  // Add Base64 image to the Python list
     ***REMOVED***
 

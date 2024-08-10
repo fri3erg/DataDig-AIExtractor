@@ -7,8 +7,7 @@ import io.realm.kotlin.types.annotations.PrimaryKey
 import org.mongodb.kbson.ObjectId
 
 
-
-class Template: RealmObject {
+class Template : RealmObject {
     @PrimaryKey
     var id: ObjectId = ObjectId()
     var title: String = ""
@@ -33,7 +32,7 @@ class TemplateTable : RealmObject {
 class TemplateField : RealmObject {
     @PrimaryKey
     var id: ObjectId = ObjectId()
-    var title: String= ""
+    var title: String = ""
     var description: String = ""
     var extraDescription: String = ""
     var type: String = ""

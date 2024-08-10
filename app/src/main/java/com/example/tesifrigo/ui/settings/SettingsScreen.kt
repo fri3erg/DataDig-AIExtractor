@@ -5,11 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -35,8 +31,7 @@ import com.guru.fontawesomecomposelib.FaIcon
 import com.guru.fontawesomecomposelib.FaIcons
 
 @Composable
-fun SettingsScreen() {
-    val serviceViewModel: ServiceViewModel = hiltViewModel()
+fun SettingsScreen(serviceViewModel: ServiceViewModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -67,17 +62,17 @@ fun SettingsScreen() {
             Spacer(modifier = Modifier.width(8.dp))
             HelpIconButton(helpText = "OpenAI API Key")
         ***REMOVED***
-            ApiKeyInput(
-                key = Keys.API_KEY_1,
-                viewModel = serviceViewModel,
-                keyName = "OpenAI API Key"
-***REMOVED***
-            HorizontalDivider()
+        ApiKeyInput(
+            key = Keys.API_KEY_1,
+            viewModel = serviceViewModel,
+            keyName = "OpenAI API Key"
+        )
+        HorizontalDivider()
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
-        ){
+        ) {
             ClickableWebLink(
                 text = "AZURE API KEY",
                 url = "https://portal.azure.com/#create/Microsoft.CognitiveServicesFormRecognizer",
@@ -87,7 +82,7 @@ fun SettingsScreen() {
                 fontStyle = FontStyle.Normal,
                 textDecoration = TextDecoration.Underline
 ***REMOVED***
-            Spacer(modifier =  Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(8.dp))
             HelpIconButton(helpText = "Azure Form Recognizer API Key")
         ***REMOVED***
         ApiKeyInput(
@@ -117,13 +112,15 @@ fun ApiKeyInput(
     Column {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth().padding(top=8.dp, bottom = 8.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp, bottom = 8.dp),
         ) {
             Text(text = keyName)
             Spacer(modifier = Modifier.width(16.dp))
             FaIcon(
                 faIcon = FaIcons.Check,
-                tint =if (apiKey) Color.Green else Color.Red
+                tint = if (apiKey) Color.Green else Color.Red
 ***REMOVED***
             Spacer(modifier = Modifier.weight(1f)) // Push items to the right
 
@@ -140,7 +137,7 @@ fun ApiKeyInput(
             Column(modifier = Modifier.fillMaxWidth()) {
                 OutlinedTextField(
                     value = newKey,
-                    onValueChange = { newKey = it***REMOVED***,
+                    onValueChange = { newKey = it ***REMOVED***,
                     label = { Text("Enter $keyName") ***REMOVED***,
                     trailingIcon = {
                         FaIcon(
@@ -165,7 +162,6 @@ fun ApiKeyInput(
         ***REMOVED***
     ***REMOVED***
 ***REMOVED***
-
 
 
 @Composable

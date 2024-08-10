@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             ActivityCompat.requestPermissions(
                 this,
                 arrayOf(
@@ -34,8 +34,7 @@ class MainActivity : ComponentActivity() {
     ***REMOVED***,
                 1
 ***REMOVED***
-        ***REMOVED***
-        else{
+        ***REMOVED*** else {
             ActivityCompat.requestPermissions(
                 this,
                 arrayOf(
@@ -48,19 +47,21 @@ class MainActivity : ComponentActivity() {
         ***REMOVED***
 
 
-            setContent {
+        setContent {
             TesiFrigoTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
     ***REMOVED*** {
-                        MainAppScreen()
+                    MainAppScreen()
                 ***REMOVED***
             ***REMOVED***
         ***REMOVED***
+
     ***REMOVED***
 ***REMOVED***
+
 @Composable
 fun MainAppScreen() {
 
@@ -70,7 +71,7 @@ fun MainAppScreen() {
         bottomBar = { NavBar(navController) ***REMOVED***,
         modifier = Modifier.fillMaxSize(),
         content = { innerPadding -> // Important for content overlap
-            AppNavigation( navController, modifier = Modifier.padding(innerPadding))
+            AppNavigation(navController, modifier = Modifier.padding(innerPadding))
         ***REMOVED***
     )
 ***REMOVED***

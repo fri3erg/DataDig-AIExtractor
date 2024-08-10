@@ -9,7 +9,6 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -23,9 +22,7 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -44,7 +41,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -72,7 +68,6 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntSize
@@ -93,17 +88,17 @@ import kotlinx.coroutines.launch
 @Composable
 fun EditTemplateScreen(
     navController: NavHostController,
-    templateId: String
+    templateId: String,
+    templateViewModel: TemplateViewModel
 ) {
     if (templateId.isEmpty()) {
         navController.navigateUp()
     ***REMOVED***
-    val viewModel = viewModel<TemplateViewModel>()
-    val template by viewModel.queryTemplate(templateId).collectAsState(initial = null)
-    val focusRequesterIndex by viewModel.focusRequesterIndex.collectAsState()
+    val template by templateViewModel.queryTemplate(templateId).collectAsState(initial = null)
+    val focusRequesterIndex by templateViewModel.focusRequesterIndex.collectAsState()
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
-    var title  by remember { mutableStateOf(template?.title) ***REMOVED***
+    var title by remember { mutableStateOf(template?.title) ***REMOVED***
 
     LaunchedEffect(template) {
         if (template != null && title == null) {
@@ -119,8 +114,13 @@ fun EditTemplateScreen(
             TopAppBar(
                 title = {
                     title?.let {
-                        Text(text = it, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.padding(start = 16.dp))
+                        Text(
+                            text = it,
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.padding(start = 16.dp)
+            ***REMOVED***
                     ***REMOVED***
                 ***REMOVED***,
                 navigationIcon = {
@@ -145,8 +145,10 @@ fun EditTemplateScreen(
                     title?.let {
                         OutlinedTextField(
                             value = it,
-                            onValueChange = { viewModel.updateTemplateTitle(template!!, it)
-                                title = it***REMOVED***,
+                            onValueChange = {
+                                templateViewModel.updateTemplateTitle(template!!, it)
+                                title = it
+                            ***REMOVED***,
                             label = { Text("Template Title") ***REMOVED***,
                             modifier = Modifier.fillMaxWidth()
             ***REMOVED***
@@ -154,7 +156,7 @@ fun EditTemplateScreen(
                 ***REMOVED***
 
                 item {
-                    TemplateTagsSection(template!!, viewModel)
+                    TemplateTagsSection(template!!, templateViewModel)
                 ***REMOVED***
 
                 item {
@@ -163,35 +165,47 @@ fun EditTemplateScreen(
 
                 // Template Fields Section
                 itemsIndexed(template?.fields ?: emptyList()) { index, _ ->
-                    val listStateChange: () -> Unit ={
+                    val listStateChange: () -> Unit = {
                         scope.launch {
                             listState.scrollToItem(index + 3)
                         ***REMOVED***
                     ***REMOVED***
 
-                    TemplateFieldComposable(template, index, viewModel, focusRequesterIndex,listStateChange)
+                    TemplateFieldComposable(
+                        template,
+                        index,
+                        templateViewModel,
+                        focusRequesterIndex,
+                        listStateChange
+        ***REMOVED***
                 ***REMOVED***
 
                 item {
-                    AddButton(text = "Field", onClick = { viewModel.addField(template!!) ***REMOVED***)
+                    AddButton(text = "Field", onClick = { templateViewModel.addField(template!!) ***REMOVED***)
                 ***REMOVED***
 
                 item {
                     Text("Template Tables", style = MaterialTheme.typography.titleMedium)
                 ***REMOVED***
                 itemsIndexed(template?.tables ?: emptyList()) { index, _ ->
-                    val listStateChange: () -> Unit ={
+                    val listStateChange: () -> Unit = {
                         scope.launch {
                             listState.animateScrollToItem(listState.layoutInfo.totalItemsCount)
                         ***REMOVED***
                     ***REMOVED***
 
-                    TemplateTableCard(index, viewModel, template!!, focusRequesterIndex, listStateChange)
+                    TemplateTableCard(
+                        index,
+                        templateViewModel,
+                        template!!,
+                        focusRequesterIndex,
+                        listStateChange
+        ***REMOVED***
                 ***REMOVED***
 
                 item {
                     Spacer(modifier = Modifier.height(8.dp))
-                    AddButton(text = "Table", onClick = { viewModel.addTable(template!!) ***REMOVED***)
+                    AddButton(text = "Table", onClick = { templateViewModel.addTable(template!!) ***REMOVED***)
                 ***REMOVED***
             ***REMOVED*** else {
                 item {
@@ -221,38 +235,38 @@ fun TemplateTagsSection(template: Template, viewModel: TemplateViewModel) {
             horizontalArrangement = Arrangement.spacedBy(8.dp)
 
         ) {
-        for (tag in template.tags) {
-            var showDismissIcon by remember { mutableStateOf(false) ***REMOVED***
+            for (tag in template.tags) {
+                var showDismissIcon by remember { mutableStateOf(false) ***REMOVED***
 
-            AssistChip(
-                onClick = { showDismissIcon = !showDismissIcon ***REMOVED***,
-                label = { Text(tag) ***REMOVED***,
-                trailingIcon = {
-                    AnimatedVisibility(
-                        visible = showDismissIcon,
-                        enter = fadeIn() + scaleIn(),
-                        exit = fadeOut() + scaleOut()
-        ***REMOVED*** {
-                        Icon(
-                            Icons.Filled.Close,
-                            contentDescription = "Remove Tag",
-                            modifier = Modifier.clickable {
-                                viewModel.removeTag(template, tag)
-                            ***REMOVED***
-            ***REMOVED***
-                    ***REMOVED***
-                ***REMOVED***,
-                modifier = Modifier
-                    .pointerInput(Unit) {
-                        detectTapGestures(
-                            onPress = {
-                                showDismissIcon = true
-                            ***REMOVED***
-            ***REMOVED***
-                    ***REMOVED***
-***REMOVED***
-        ***REMOVED***
+                AssistChip(
+                    onClick = { showDismissIcon = !showDismissIcon ***REMOVED***,
+                    label = { Text(tag) ***REMOVED***,
+                    trailingIcon = {
+                        AnimatedVisibility(
+                            visible = showDismissIcon,
+                            enter = fadeIn() + scaleIn(),
+                            exit = fadeOut() + scaleOut()
+            ***REMOVED*** {
+                            Icon(
+                                Icons.Filled.Close,
+                                contentDescription = "Remove Tag",
+                                modifier = Modifier.clickable {
+                                    viewModel.removeTag(template, tag)
+                                ***REMOVED***
+                ***REMOVED***
+                        ***REMOVED***
+                    ***REMOVED***,
+                    modifier = Modifier
+                        .pointerInput(Unit) {
+                            detectTapGestures(
+                                onPress = {
+                                    showDismissIcon = true
+                                ***REMOVED***
+                ***REMOVED***
+                        ***REMOVED***
     ***REMOVED***
+            ***REMOVED***
+        ***REMOVED***
 
         // Add New Tag Section
         var newTag by remember { mutableStateOf("") ***REMOVED***
@@ -266,19 +280,23 @@ fun TemplateTagsSection(template: Template, viewModel: TemplateViewModel) {
                 FaIcon(faIcon = FaIcons.Plus, tint = Color.Gray, modifier = Modifier.clickable {
                     when {
                         newTag.isBlank() -> {
-                            Toast.makeText(context, "Tag cannot be empty", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Tag cannot be empty", Toast.LENGTH_SHORT)
+                                .show()
                         ***REMOVED***
+
                         template.tags.size >= 5 -> {
-                            Toast.makeText(context, "Max number of tags is 5", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Max number of tags is 5", Toast.LENGTH_SHORT)
+                                .show()
                         ***REMOVED***
+
                         else -> {
                             viewModel.changeTags(template, newTag)
                             newTag = ""
                         ***REMOVED***
                     ***REMOVED***
                 ***REMOVED***
-        ***REMOVED***
-                ***REMOVED***
+    ***REMOVED***
+            ***REMOVED***
         )
 
     ***REMOVED***
@@ -318,13 +336,12 @@ fun TemplateFieldComposable(
         modifier = Modifier
             .fillMaxWidth()
             .padding(6.dp)
-            .focusRequester(focusRequester)
-            ,
+            .focusRequester(focusRequester),
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             foundField.let { field ->
-                if (field != null &&template!=null) {
+                if (field != null && template != null) {
                     // Title with Help Icon
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         title?.let {
@@ -384,7 +401,11 @@ fun TemplateFieldComposable(
                                     onValueChange = {***REMOVED***,
                                     readOnly = true,
                                     label = { Text("Type") ***REMOVED***,
-                                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) ***REMOVED***,
+                                    trailingIcon = {
+                                        ExposedDropdownMenuDefaults.TrailingIcon(
+                                            expanded = expanded
+                            ***REMOVED***
+                                    ***REMOVED***,
                                     colors = ExposedDropdownMenuDefaults.textFieldColors(),
                                     modifier = Modifier
                                         .menuAnchor()
@@ -461,22 +482,26 @@ fun TemplateFieldComposable(
                         onClick = { viewModel.deleteField(template, index) ***REMOVED***)
                 ***REMOVED***
             ***REMOVED***
-            ***REMOVED***
         ***REMOVED***
     ***REMOVED***
-
-
+***REMOVED***
 
 
 @Composable
-fun TemplateTableCard(tableIndex: Int, viewModel: TemplateViewModel, template: Template, focusRequesterIndex: Int? = null, changelistState: () -> Unit) {
+fun TemplateTableCard(
+    tableIndex: Int,
+    viewModel: TemplateViewModel,
+    template: Template,
+    focusRequesterIndex: Int? = null,
+    changelistState: () -> Unit
+) {
     val table = template.tables[tableIndex]
     val focusRequester = remember { FocusRequester() ***REMOVED***
     var tableTitle by remember { mutableStateOf(table.title) ***REMOVED***
     var tableDescription by remember { mutableStateOf(table.description) ***REMOVED***
 
     LaunchedEffect(key1 = focusRequesterIndex) {
-        if (focusRequesterIndex == tableIndex+template.fields.size-1) {
+        if (focusRequesterIndex == tableIndex + template.fields.size - 1) {
             focusRequester.requestFocus()
             changelistState()
             viewModel._focusRequesterIndex.value = -1 // Reset after focusing
@@ -524,6 +549,7 @@ fun TemplateTableCard(tableIndex: Int, viewModel: TemplateViewModel, template: T
         ***REMOVED***
     ***REMOVED***
 ***REMOVED***
+
 @Composable
 fun TableGrid(viewModel: TemplateViewModel, tableIndex: Int, template: Template) {
 
@@ -534,14 +560,18 @@ fun TableGrid(viewModel: TemplateViewModel, tableIndex: Int, template: Template)
     val scrollState = rememberScrollState()
 
 
-    Column(modifier = Modifier
-        .fillMaxWidth()
-        .padding(1.dp)) {
-        // Column Headers
-        Row(modifier = Modifier
-            .padding(1.dp)
+    Column(
+        modifier = Modifier
             .fillMaxWidth()
-            .horizontalScroll(scrollState)){ // Apply horizontal scrolling){ // Make the header row horizontally scrollable) { // Wrap column headers in a Row with weight
+            .padding(1.dp)
+    ) {
+        // Column Headers
+        Row(
+            modifier = Modifier
+                .padding(1.dp)
+                .fillMaxWidth()
+                .horizontalScroll(scrollState)
+        ) { // Apply horizontal scrolling){ // Make the header row horizontally scrollable) { // Wrap column headers in a Row with weight
             TableCellTemplate(
                 modifier = Modifier.weight(1f),
                 invisible = true
@@ -591,7 +621,12 @@ fun TableGrid(viewModel: TemplateViewModel, tableIndex: Int, template: Template)
             ***REMOVED***
         ***REMOVED***
         Row(modifier = Modifier.padding(1.dp)) {
-            TableCellTemplate( modifier = Modifier.weight(1f), isButton = true, buttonClick = { showDialog=true; isColumn=false ***REMOVED***) // Add a blank cell for the button column
+            TableCellTemplate(
+                modifier = Modifier.weight(1f),
+                isButton = true,
+                buttonClick = {
+                    showDialog = true; isColumn = false
+                ***REMOVED***) // Add a blank cell for the button column
 
             for (templateField in table.columns) {
                 TableCellTemplate(modifier = Modifier.weight(1f), invisible = true)
@@ -602,16 +637,20 @@ fun TableGrid(viewModel: TemplateViewModel, tableIndex: Int, template: Template)
     ***REMOVED***
 
     if (showDialog) {
-        val nMax= if (isColumn) {table.columns.size***REMOVED*** else {table.rows.size***REMOVED***
-        val context = LocalContext.current
-        if (nMax>15){
-            Toast.makeText(context, "Max number of rows and columns is 15", Toast.LENGTH_SHORT).show()
-            showDialog=false
+        val nMax = if (isColumn) {
+            table.columns.size
+        ***REMOVED*** else {
+            table.rows.size
         ***REMOVED***
-        else {
+        val context = LocalContext.current
+        if (nMax > 15) {
+            Toast.makeText(context, "Max number of rows and columns is 15", Toast.LENGTH_SHORT)
+                .show()
+            showDialog = false
+        ***REMOVED*** else {
             AlertTable(
                 field = null,
-                onValueChange = {it->
+                onValueChange = { it ->
                     if (isColumn) {
                         viewModel.addColumnToTable(template, tableIndex, it)
                     ***REMOVED*** else {
@@ -628,7 +667,15 @@ fun TableGrid(viewModel: TemplateViewModel, tableIndex: Int, template: Template)
 ***REMOVED***
 
 @Composable
-fun TableCellTemplate(field: TemplateField?=null, modifier: Modifier = Modifier, isHeader: Boolean = false, onValueChange: (TemplateField) -> Unit = {***REMOVED***, invisible: Boolean = false, isButton: Boolean = false, buttonClick: () -> Unit = {***REMOVED***) {
+fun TableCellTemplate(
+    field: TemplateField? = null,
+    modifier: Modifier = Modifier,
+    isHeader: Boolean = false,
+    onValueChange: (TemplateField) -> Unit = {***REMOVED***,
+    invisible: Boolean = false,
+    isButton: Boolean = false,
+    buttonClick: () -> Unit = {***REMOVED***
+) {
 
     var modifierPadded =
         modifier
@@ -684,31 +731,35 @@ fun TableCellTemplate(field: TemplateField?=null, modifier: Modifier = Modifier,
                 16.dp
             ***REMOVED***
 
-                FaIcon(
-                    faIcon = FaIcons.Plus,
-                    tint = Color.White,
-                    size = iconSize,
-                    modifier = Modifier.clickable {
-                        buttonClick()
-                    ***REMOVED***
+            FaIcon(
+                faIcon = FaIcons.Plus,
+                tint = Color.White,
+                size = iconSize,
+                modifier = Modifier.clickable {
+                    buttonClick()
+                ***REMOVED***
 
-    ***REMOVED***
+***REMOVED***
 
-            ***REMOVED*** else {
-                Text(
-                    text = text,
-                    textAlign = TextAlign.Center,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 1 // Limit to a single line
+        ***REMOVED*** else {
+            Text(
+                text = text,
+                textAlign = TextAlign.Center,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1 // Limit to a single line
 
-    ***REMOVED***
-            ***REMOVED***
+***REMOVED***
         ***REMOVED***
     ***REMOVED***
+***REMOVED***
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AlertTable(field: TemplateField?, onValueChange: (TemplateField) -> Unit,changeShowDialog: (Boolean) -> Unit) {
+fun AlertTable(
+    field: TemplateField?,
+    onValueChange: (TemplateField) -> Unit,
+    changeShowDialog: (Boolean) -> Unit
+) {
     val focusRequester = remember { FocusRequester() ***REMOVED***
     var title by remember { mutableStateOf(field?.title ?: "") ***REMOVED***
     var selectedType by remember { mutableStateOf(field?.type ?: "Any") ***REMOVED*** // Default type
@@ -720,7 +771,7 @@ fun AlertTable(field: TemplateField?, onValueChange: (TemplateField) -> Unit,cha
             Column {
                 OutlinedTextField(
                     value = title,
-                    onValueChange = {  title = it***REMOVED***,
+                    onValueChange = { title = it ***REMOVED***,
                     label = { Text("Enter Header") ***REMOVED***
     ***REMOVED***
 
@@ -746,7 +797,9 @@ fun AlertTable(field: TemplateField?, onValueChange: (TemplateField) -> Unit,cha
                             .focusRequester(focusRequester)
         ***REMOVED***
 
-                    ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false ***REMOVED***) {
+                    ExposedDropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false ***REMOVED***) {
                         typeOptions.forEach { type ->
                             DropdownMenuItem(
                                 text = { Text(type) ***REMOVED***,
@@ -770,10 +823,10 @@ fun AlertTable(field: TemplateField?, onValueChange: (TemplateField) -> Unit,cha
         ***REMOVED***,
         confirmButton = {
             TextButton(onClick = {
-                val newField= TemplateField().apply {
-                    this.title=title
-                    this.type=selectedType
-                    this.required=selectedRequired
+                val newField = TemplateField().apply {
+                    this.title = title
+                    this.type = selectedType
+                    this.required = selectedRequired
                 ***REMOVED***
                 onValueChange(newField) // Pass the edited text
                 // You'll likely want to pass the selectedType to your ViewModel as well
@@ -787,31 +840,32 @@ fun AlertTable(field: TemplateField?, onValueChange: (TemplateField) -> Unit,cha
                 Text("Cancel")
             ***REMOVED***
         ***REMOVED***
-    )***REMOVED***
+    )
+***REMOVED***
 
 
 @Composable
-    fun BooleanFieldWithLabel(
-        label: String,
-        value: Boolean,
-        onValueChange: (Boolean) -> Unit,
-        modifier: Modifier = Modifier
+fun BooleanFieldWithLabel(
+    label: String,
+    value: Boolean,
+    onValueChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = modifier
-
-        ) {
-            Text(label)
-            Spacer(modifier = Modifier.width(8.dp))
-            Switch(
-                checked = value,
-                onCheckedChange = onValueChange
-***REMOVED***
-        ***REMOVED***
+        Text(label)
+        Spacer(modifier = Modifier.width(8.dp))
+        Switch(
+            checked = value,
+            onCheckedChange = onValueChange
+        )
     ***REMOVED***
+***REMOVED***
 
-    // Help Icon Button Composable (with modal tooltip)
+// Help Icon Button Composable (with modal tooltip)
 
 
 

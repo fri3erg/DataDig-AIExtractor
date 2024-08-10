@@ -1,13 +1,18 @@
 package com.example.tesifrigo.ui.extraction
 
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -27,6 +32,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AssistChip
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenuItem
@@ -41,7 +47,6 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -54,10 +59,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import android.Manifest
+import android.os.Build
+import android.provider.MediaStore
+import android.util.Log
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.compose.ui.text.style.TextOverflow
+import com.canhub.cropper.CropImage
+import com.canhub.cropper.CropImageContract
+import com.canhub.cropper.CropImageContractOptions
+import com.canhub.cropper.CropImageOptions
 import com.example.tesifrigo.Screen
+import com.example.tesifrigo.models.ExceptionOccurred
 import com.example.tesifrigo.models.Extraction
+import com.example.tesifrigo.models.ExtractionCosts
 import com.example.tesifrigo.models.ExtractionTable
 import com.example.tesifrigo.utils.FileCard
 import com.example.tesifrigo.utils.MyImageArea
@@ -67,16 +85,16 @@ import com.guru.fontawesomecomposelib.FaIcon
 import com.guru.fontawesomecomposelib.FaIcons
 
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SingleExtractionScreen(
     navController: NavHostController,
-    templateId: String
+    extractionId: String,
+    extractionViewModel: ExtractionViewModel
 ) {
-    val viewModel = viewModel<ExtractionViewModel>()
 
-    val extraction by viewModel.queryExtraction(templateId).collectAsState(initial = null)
+    val extraction by extractionViewModel.queryExtraction(extractionId)
+        .collectAsState(initial = null)
 
     Scaffold(
         topBar = {
@@ -90,105 +108,177 @@ fun SingleExtractionScreen(
 ***REMOVED***
         ***REMOVED***
     ) { innerPadding ->
-        if (extraction != null) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-***REMOVED*** {
-                item {
-                        TemplateInfo(extraction!!, navController)
-                    ***REMOVED***
-                // Extracted Tables Section
-                if (extraction!!.extractedTables.isNotEmpty()) {
+        if (extraction == null) {
+            Text(text = "No extraction found") // Handle null case
+        ***REMOVED*** else {
+            extraction?.let { extraction ->
+                LazyColumn( // Use extraction directly without null assertion
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+    ***REMOVED*** {
                     item {
-                        Text(
-                            text = "Extracted Tables",
-                            style = MaterialTheme.typography.titleLarge
-            ***REMOVED***
+                        TemplateInfo(extraction, navController, extractionViewModel)
                     ***REMOVED***
-                    items(extraction!!.extractedTables) { table ->
 
-                            ExtractionTableDisplay(table, viewModel)
-
+                    // Extracted Tables Section
+                    extraction.extractedTables.let { tables ->
+                        if (tables.isNotEmpty()) {
+                            item {
+                                Text(
+                                    text = "Extracted Tables",
+                                    style = MaterialTheme.typography.titleLarge
                     ***REMOVED***
-                ***REMOVED***
-
-                // Extracted Fields Section
-                if (extraction!!.extractedFields.isNotEmpty()) {
-                    item {
-                        Text(
-                            text = "Extracted Fields",
-                            style = MaterialTheme.typography.titleLarge
-            ***REMOVED***
-                    ***REMOVED***
-                    itemsIndexed(extraction!!.extractedFields) { index, field ->
-                        ExtractionFieldComposable(extraction!!, index, viewModel)
-                    ***REMOVED***
-                ***REMOVED***
-
-                // Other Attributes (extractionCosts, exceptionsOccurred)
-                item {
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-        ***REMOVED*** {
-                        Column(modifier = Modifier.padding(16.dp))
-                        {
-
-
-                            // Extraction Tags Section
-                            if (extraction!!.tags.isNotEmpty()) {
-                                ExtractionTags(extraction!!, viewModel)
                             ***REMOVED***
+                            items(tables) { table ->
+                                ExtractionTableDisplay(table, extractionViewModel)
+                            ***REMOVED***
+                        ***REMOVED***
+                    ***REMOVED***
 
-                            ExtractionExceptions(extraction!!)
-                            // Extraction Format Section
-                            FormatSection(extraction!!, viewModel)
+                    // Extracted Fields Section
+                    if (extraction.extractedFields.isNotEmpty()) {
+                        item {
+                            Text(
+                                text = "Extracted Fields",
+                                style = MaterialTheme.typography.titleLarge
+                ***REMOVED***
+                        ***REMOVED***
+                        itemsIndexed(extraction.extractedFields) { index, _ ->
+                            ExtractionFieldComposable(extraction, index, extractionViewModel)
+
+                        ***REMOVED***
+
+                    ***REMOVED***
+
+                    // Other Attributes (extractionCosts, exceptionsOccurred)
+                    item {
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            ***REMOVED*** {
+                            Column(modifier = Modifier.padding(16.dp)) {
+                                // Extraction Tags Section
+                                extraction.tags.let { tags ->
+                                    if (tags.isNotEmpty()) {
+                                        ExtractionTags(extraction, extractionViewModel)
+                                    ***REMOVED***
+                                ***REMOVED***
+
+                                ExtractionCostsComposable(extraction.extractionCosts)
+
+                                ExtractionExceptions(extraction.exceptionsOccurred)
+
+                                // Extraction Format Section
+                                FormatSection(extraction, extractionViewModel)
+                            ***REMOVED***
                         ***REMOVED***
                     ***REMOVED***
                 ***REMOVED***
             ***REMOVED***
-        ***REMOVED*** else {
-            // Handle the case where extraction is null
-            Text(text = "No extraction found")
         ***REMOVED***
     ***REMOVED***
 ***REMOVED***
 
 @Composable
-fun ExtractionExceptions(extraction: Extraction) {
+fun ExtractionExceptions(exceptionsOccurred: List<ExceptionOccurred>) {
 
-    Text("Extraction Costs", style = MaterialTheme.typography.titleMedium)
-    Text(
-        extraction.extractionCosts,
-        style = MaterialTheme.typography.bodyMedium
-    )
-
-    Spacer(modifier = Modifier.height(16.dp))
 
     Text(
         "Exceptions Occurred",
         style = MaterialTheme.typography.titleMedium
     )
-    if (extraction.exceptionsOccurred.isEmpty()) {
+    if (exceptionsOccurred.isEmpty()) {
         Text(
             "No exceptions occurred.",
             style = MaterialTheme.typography.bodyMedium
         )
     ***REMOVED*** else {
-        for (exception in extraction.exceptionsOccurred) {
-            Text(
-                "Error: ${exception.error***REMOVED***, Type: ${exception.errorType***REMOVED***, Description: ${exception.errorDescription***REMOVED***",
-                style = MaterialTheme.typography.bodyMedium
-***REMOVED***
+        Column {
+            for (exception in exceptionsOccurred) {
+                HorizontalDivider()
+                Row {
+                    Text(
+                        text = exception.error,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.weight(1f),
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+        ***REMOVED***
+                    Text(
+                        text = exception.errorType,
+                        style = MaterialTheme.typography.bodyMedium
+        ***REMOVED***
+                ***REMOVED***
+                Text(
+                    text = exception.errorDescription,
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 5,
+                    overflow = TextOverflow.Ellipsis
+    ***REMOVED***
+
+            ***REMOVED***
+            HorizontalDivider()
+
         ***REMOVED***
     ***REMOVED***
 
     Spacer(modifier = Modifier.height(16.dp))
 
+***REMOVED***
+
+@Composable
+fun ExtractionCostsComposable(extractionCosts: List<ExtractionCosts>) {
+
+    Text("Extraction Costs", style = MaterialTheme.typography.titleMedium)
+    Column(
+        modifier = Modifier
+            .fillMaxWidth(),
+    ) {
+        for (cost in extractionCosts) {
+            HorizontalDivider(color = Color.LightGray)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+***REMOVED*** {
+                Box(
+                    modifier = Modifier.weight(1f),
+                    contentAlignment = Alignment.CenterStart // Align to start
+    ***REMOVED*** {
+                    Text(
+                        text = "${cost.name***REMOVED***: ",
+                        style = MaterialTheme.typography.bodyMedium,
+
+            ***REMOVED***
+                ***REMOVED***
+                Box(
+                    modifier = Modifier.weight(1f),
+                    contentAlignment = Alignment.CenterStart // Align to start
+    ***REMOVED*** {
+                    Text(
+                        text = "${cost.tokens***REMOVED*** tokens",
+                        style = MaterialTheme.typography.bodyMedium,
+        ***REMOVED***
+                ***REMOVED***
+                Box(
+                    modifier = Modifier.weight(1f),
+                    contentAlignment = Alignment.CenterEnd // Align to start
+    ***REMOVED*** {
+                    Text(
+                        text = "${cost.cost***REMOVED*** ${cost.currency***REMOVED***",
+                        style = MaterialTheme.typography.bodyMedium,
+        ***REMOVED***
+                ***REMOVED***
+            ***REMOVED***
+        ***REMOVED***
+        HorizontalDivider()
+    ***REMOVED***
+
+    Spacer(modifier = Modifier.height(16.dp))
 ***REMOVED***
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -240,9 +330,127 @@ fun ExtractionTags(extraction: Extraction, viewModel: ExtractionViewModel) {
 
 
 @Composable
-fun TemplateInfo(extraction: Extraction, navController: NavHostController) {
-
+fun TemplateInfo(
+    extraction: Extraction,
+    navController: NavHostController,
+    viewModel: ExtractionViewModel
+) {
     val context = LocalContext.current
+
+
+    // Launcher for cropping the image
+    val cropImageLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult(),
+        onResult = { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val resultUri =
+                    result.data?.getParcelableExtra<CropImage.ActivityResult>(CropImage.CROP_IMAGE_EXTRA_RESULT)?.uriContent
+                if (resultUri != null) {
+                    viewModel.addExtraImage(extraction, resultUri)
+                ***REMOVED***
+            ***REMOVED***
+        ***REMOVED***
+    )
+
+    // Function to create the crop intent using CropImageContract
+    fun createCropIntent(imageUri: Uri, context: Context): Intent {
+        return CropImageContract().createIntent(
+            context as Activity,
+            CropImageContractOptions(imageUri, CropImageOptions())
+        )
+    ***REMOVED***
+
+
+    val pickImageLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = { uri ->
+            if (uri != null) {
+                cropImageLauncher.launch(createCropIntent(uri, context))
+            ***REMOVED*** else {
+                Log.d("PhotoPicker", "No media selected")
+            ***REMOVED***
+        ***REMOVED***
+    )
+
+    val imagePickerLauncherLegacy = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK && result.data != null) {
+            val imageUri = result.data?.data
+            imageUri?.let { cropImageLauncher.launch(createCropIntent(it, context)) ***REMOVED***
+        ***REMOVED***
+    ***REMOVED***
+
+
+    // Permission request launcher
+    val requestPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult
+        = { isGranted: Boolean ->
+            if (isGranted) {
+
+                pickImageLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+
+            ***REMOVED*** else {
+                // Permission is denied, handle accordingly (e.g., show a message to the user)
+                Toast.makeText(
+                    context,
+                    "Permission denied. Cannot access images.",
+                    Toast.LENGTH_SHORT
+    ***REMOVED***.show()
+            ***REMOVED***
+        ***REMOVED***
+    )
+
+    val requestPermissionLauncherLegacy = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted: Boolean ->
+            if (isGranted) {
+                // Launch the image picker using the legacy intent
+                val pickIntent = Intent(Intent.ACTION_PICK).apply {
+                    setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
+                ***REMOVED***
+                imagePickerLauncherLegacy.launch(pickIntent)
+            ***REMOVED*** else {
+                // Permission is denied, handle accordingly
+                Toast.makeText(
+                    context,
+                    "Permission denied. Cannot access images.",
+                    Toast.LENGTH_SHORT
+    ***REMOVED***.show()
+            ***REMOVED***
+        ***REMOVED***
+    )
+
+    val onPhotoGalleryClick = {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13+
+            if (ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.READ_MEDIA_IMAGES // Use READ_MEDIA_IMAGES
+    ***REMOVED*** == PackageManager.PERMISSION_GRANTED
+***REMOVED*** {
+                // Launch the image picker
+
+                pickImageLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            ***REMOVED*** else {
+                // Request permission
+                requestPermissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES) // Request READ_MEDIA_IMAGES
+            ***REMOVED***
+        ***REMOVED*** else // Android 7 to 12 (API 24-32)
+            if (ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+    ***REMOVED*** == PackageManager.PERMISSION_GRANTED
+***REMOVED*** {
+                // Launch
+                val pickIntent = Intent(Intent.ACTION_PICK).apply {
+                    setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
+                ***REMOVED***
+                imagePickerLauncherLegacy.launch(pickIntent)
+            ***REMOVED*** else {
+                requestPermissionLauncherLegacy.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+            ***REMOVED***
+    ***REMOVED***
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -259,12 +467,17 @@ fun TemplateInfo(extraction: Extraction, navController: NavHostController) {
                     .fillMaxWidth()
                     .clickable {
                         val templateId = extraction.template?.id
-                        if(templateId!=null){
+                        if (templateId != null) {
                             navController.navigate(Screen.EditTemplate.routeWithOptionalArgs("templateId" to templateId.toString()))
+                        ***REMOVED*** else {
+                            Toast
+                                .makeText(
+                                    context,
+                                    "No connected template found",
+                                    Toast.LENGTH_SHORT
+                    ***REMOVED***
+                                .show()
                         ***REMOVED***
-                        else{
-                              Toast.makeText(context, "No connected template found", Toast.LENGTH_SHORT).show()
-                            ***REMOVED***
                     ***REMOVED***
                     .padding(8.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -287,14 +500,42 @@ fun TemplateInfo(extraction: Extraction, navController: NavHostController) {
 
     ***REMOVED***
             ***REMOVED***
+            Spacer(modifier = Modifier.height(20.dp))
+            Text(
+                text = "Added Images:",
+                style = MaterialTheme.typography.titleMedium
+***REMOVED***
+            Spacer(modifier = Modifier.height(20.dp))
+
+            if (extraction.extraImages.isNotEmpty()) {
+                MyImageArea(
+                    imageUris = extraction.extraImages.map { Uri.parse(it) ***REMOVED***,
+                    modifier = Modifier.fillMaxWidth()
+    ***REMOVED***
+            ***REMOVED***
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.Center
+***REMOVED*** {
+                Button(
+                    onClick = {
+                        onPhotoGalleryClick()
+                    ***REMOVED***
+    ***REMOVED*** {
+                    Text("Add Images")
+                ***REMOVED***
+
+            ***REMOVED***
         ***REMOVED***
     ***REMOVED***
 ***REMOVED***
 
-
 @Composable
 fun ExtractionTableDisplay(extractionTable: ExtractionTable, viewModel: ExtractionViewModel) {
-    val columnHeaders = extractionTable.fields.firstOrNull()?.fields?.mapNotNull { it.templateField?.title ***REMOVED***
+    val columnHeaders =
+        extractionTable.fields.firstOrNull()?.fields?.mapNotNull { it.templateField?.title ***REMOVED***
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -313,10 +554,18 @@ fun ExtractionTableDisplay(extractionTable: ExtractionTable, viewModel: Extracti
                         .padding(8.dp)
     ***REMOVED*** {
                     // Add an empty cell for the row index header
-                    TableCell(text = "", modifier = Modifier.weight(1f), isHeader = true, onTextChange = {***REMOVED***)
+                    TableCell(
+                        text = "",
+                        modifier = Modifier.weight(1f),
+                        isHeader = true,
+                        onTextChange = {***REMOVED***)
 
                     for (header in columnHeaders) {
-                        TableCell(text = header, modifier = Modifier.weight(1f), isHeader = true, onTextChange = {***REMOVED***)
+                        TableCell(
+                            text = header,
+                            modifier = Modifier.weight(1f),
+                            isHeader = true,
+                            onTextChange = {***REMOVED***)
                     ***REMOVED***
                 ***REMOVED***
             ***REMOVED***
@@ -345,14 +594,16 @@ fun ExtractionTableDisplay(extractionTable: ExtractionTable, viewModel: Extracti
                             onTextChange = {***REMOVED***)
                     ***REMOVED***
                     for (field in row.fields) {
-                        TableCell(text = field.value, modifier = Modifier.weight(1f), onTextChange = {viewModel.updateField(field, it) ***REMOVED***)
+                        TableCell(
+                            text = field.value,
+                            modifier = Modifier.weight(1f),
+                            onTextChange = { viewModel.updateField(field, it) ***REMOVED***)
                     ***REMOVED***
                 ***REMOVED***
             ***REMOVED***
         ***REMOVED***
     ***REMOVED***
 ***REMOVED***
-
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -365,7 +616,7 @@ fun FormatSection(extraction: Extraction, viewModel: ExtractionViewModel) {
     var selectedFormat by remember { mutableStateOf(extraction.format) ***REMOVED***
     val formatOptions =
         listOf("json", "csv", "txt") // Add more formats if needed
-    val context= LocalContext.current
+    val context = LocalContext.current
 
     ExposedDropdownMenuBox(
         expanded = expanded,
@@ -413,7 +664,6 @@ fun FormatSection(extraction: Extraction, viewModel: ExtractionViewModel) {
 ***REMOVED***
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExtractionFieldComposable(
     extraction: Extraction,

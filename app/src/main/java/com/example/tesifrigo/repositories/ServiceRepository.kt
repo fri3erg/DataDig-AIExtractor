@@ -27,7 +27,8 @@ class ServiceRepository @Inject constructor(
 
 ) {
 
-    private val repositoryScope = CoroutineScope(SupervisorJob() + Dispatchers.IO) // IO dispatcher for Realm operations
+    private val repositoryScope =
+        CoroutineScope(SupervisorJob() + Dispatchers.IO) // IO dispatcher for Realm operations
 
 
     private val _progress = MutableStateFlow(0f)
@@ -69,38 +70,62 @@ class ServiceRepository @Inject constructor(
     ***REMOVED***
 
     fun updateResult(newResult: Extraction, context: Context) {
-        repositoryScope.launch() {
+        repositoryScope.launch{
 
-        realm.writeBlocking {
-            // Update existing nested objects (example)
-            newResult.template = newResult.template?.let { findLatest(it) ***REMOVED*** // Smart cast
+            realm.writeBlocking {
+                // Update existing nested objects (example)
+                newResult.template = newResult.template?.let { findLatest(it) ***REMOVED*** // Smart cast
 
 
-            for (table in newResult.extractedTables) {
-                table.templateTable = table.templateTable?.let { findLatest(it) ***REMOVED***
-                for (row in table.fields) {
-                    for (field in row.fields) {
-                        field.templateField = field.templateField?.let { findLatest(it) ***REMOVED***
+                for (table in newResult.extractedTables) {
+                    table.templateTable = table.templateTable?.let { findLatest(it) ***REMOVED***
+                    for (row in table.fields) {
+                        for (field in row.fields) {
+                            field.templateField = field.templateField?.let { findLatest(it) ***REMOVED***
+                        ***REMOVED***
                     ***REMOVED***
                 ***REMOVED***
-            ***REMOVED***
-            for (field in newResult.extractedFields) {
-                field.templateField = field.templateField?.let { findLatest(it) ***REMOVED***
-            ***REMOVED***
-            when (newResult.format) {
-                "json" -> {
-                    newResult.fileUri = JsonCreator().convertToJsonFile(newResult, context).toString()
+                for (field in newResult.extractedFields) {
+                    field.templateField = field.templateField?.let { findLatest(it) ***REMOVED***
                 ***REMOVED***
+                when (newResult.format) {
+                    "json" -> {
+                        newResult.fileUri =
+                            JsonCreator().convertToJsonFile(newResult, context).toString()
+                    ***REMOVED***
 
-                "csv" -> {
-                    newResult.fileUri = CsvCreator().convertToCsvFile(newResult, context).toString()
+                    "csv" -> {
+                        newResult.fileUri =
+                            CsvCreator().convertToCsvFile(newResult, context).toString()
 
+                    ***REMOVED***
                 ***REMOVED***
-            ***REMOVED***
-            copyToRealm(newResult, UpdatePolicy.ALL)
-            _result.value = newResult.id.toHexString()
+                copyToRealm(newResult, UpdatePolicy.ALL)
+                _result.value = newResult.id.toHexString()
 
+            ***REMOVED***
         ***REMOVED***
     ***REMOVED***
-***REMOVED***
+
+    fun changeOptions(field: String, value: Any) {
+        repositoryScope.launch{
+                when (field) {
+                    "language" -> {
+                        _options.value?.language = value.toString()
+                    ***REMOVED***
+                    "model" -> {
+                        _options.value?.model = value.toString()
+                    ***REMOVED***
+                    "format" -> {
+                        _options.value?.format = value.toString()
+                    ***REMOVED***
+                    "azureOcr" -> {
+                        _options.value?.azureOcr = value as Boolean
+                    ***REMOVED***
+
+                ***REMOVED***
+
+        ***REMOVED***
+
+    ***REMOVED***
 ***REMOVED***

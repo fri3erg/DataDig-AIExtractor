@@ -2,7 +2,7 @@ from abc import abstractmethod
 from typing import Any, Dict, List
 
 from pandas import DataFrame
-from ...classes.Extracted import Extracted, ExtractedField, ExtractedTable
+from ...classes.Extracted import Extracted, ExtractedField, ExtractedTable, ExtractionCosts
 from ...classes.Options import ExceptionsExtracted, Options
 from ..ai_manager.models import Models
 from ..config.cost_config import cost_per_token
@@ -250,26 +250,23 @@ class GeneralScanner:
             
         
 
-    def _process_costs(self):
+    def _process_costs(self) -> List[ExtractionCosts]:
         """processes the cost of the calls given local config and prepares them for the output
 
         Returns:
             _type_: _description_
         """
-        api_costs = Models.get_costs(self.file_id)
-        azure_costs = {
-            "azure": {"pages": len(self.di_tables_pages), "cost": len(self.di_tables_pages) * cost_per_token["azure"]***REMOVED***
-        ***REMOVED***
-        api_costs.update(azure_costs)
+        
+        api_costs:List[ExtractionCosts] = Models.get_costs(self.file_id)
+        api_costs.append(ExtractionCosts("azure", len(self.di_tables_pages), len(self.di_tables_pages) * cost_per_token["azure"], "EUR"))
 
-        total_tokens = sum(entry.get("tokens", 0) for entry in api_costs.values())
-        total_cost = sum(entry.get("cost", 0) for entry in api_costs.values())
+        total_tokens = sum(getattr(entry, "tokens", 0) for entry in api_costs)
+        total_cost = sum(getattr(entry, "cost", 0.0) for entry in api_costs)
 
         # Add the "total" element to the dictionary
-        api_costs["total"] = {"tokens": total_tokens, "cost": total_cost***REMOVED***
-        for entry in api_costs.values():
-            if "cost" in entry:
-                entry["cost"] = round(entry["cost"], 2)
+        api_costs.append(ExtractionCosts("total", total_tokens, total_cost, "EUR"))
+        for entry in api_costs:
+            setattr(entry,"cost", round(getattr(entry, "cost", 0.0), 2))
         return api_costs
 
     def extract_from_multiple_tables(self, pages, prompts_and_tags, complex=False):
