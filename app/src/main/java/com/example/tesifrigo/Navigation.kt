@@ -25,6 +25,7 @@ fun AppNavigation(navController: NavHostController, modifier: Modifier = Modifie
     val templateViewModel: TemplateViewModel = hiltViewModel()
     val serviceViewModel = hiltViewModel<ServiceViewModel>()
 
+
     NavHost(
         navController = navController,
         startDestination = Screen.Templates.route,

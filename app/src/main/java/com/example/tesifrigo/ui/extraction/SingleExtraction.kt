@@ -60,14 +60,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import android.Manifest
 import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.activity.result.PickVisualMediaRequest
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Slider
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.navigation.NavController
 import com.canhub.cropper.CropImage
 import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
@@ -77,6 +83,7 @@ import com.example.tesifrigo.models.ExceptionOccurred
 import com.example.tesifrigo.models.Extraction
 import com.example.tesifrigo.models.ExtractionCosts
 import com.example.tesifrigo.models.ExtractionTable
+import com.example.tesifrigo.models.Review
 import com.example.tesifrigo.utils.FileCard
 import com.example.tesifrigo.utils.MyImageArea
 import com.example.tesifrigo.utils.TableCell
@@ -92,16 +99,46 @@ fun SingleExtractionScreen(
     extractionId: String,
     extractionViewModel: ExtractionViewModel
 ) {
-
     val extraction by extractionViewModel.queryExtraction(extractionId)
         .collectAsState(initial = null)
+    var showRatingModal by remember { mutableStateOf(false) ***REMOVED***
+    var pendingDestinationRoute by remember { mutableStateOf<String?>(null) ***REMOVED***
+
+
+
+    DisposableEffect(navController) {
+        val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
+            val currentRoute = destination.route ?: return@OnDestinationChangedListener
+            if (!currentRoute.startsWith("singleExtraction") && !showRatingModal && extraction!= null && extraction?.review!=true) {
+                // Capture the intended destination route
+                pendingDestinationRoute = currentRoute
+                // Block the navigation by showing the modal
+                showRatingModal = true
+
+                // Reset to previous destination
+                navController.popBackStack()
+            ***REMOVED***
+        ***REMOVED***
+        navController.addOnDestinationChangedListener(listener)
+
+        onDispose {
+            navController.removeOnDestinationChangedListener(listener)
+        ***REMOVED***
+    ***REMOVED***
+    BackHandler {
+            val lastDestination= navController.previousBackStackEntry?.destination?.route ?: Screen.Storage.route
+            navController.navigate(lastDestination)
+    ***REMOVED***
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text(text = extraction?.template?.title ?: "Extraction Details") ***REMOVED***,
                 navigationIcon = {
-                    IconButton(onClick = { navController.navigateUp() ***REMOVED***) {
+                    IconButton(onClick = {
+                        val lastDestination= navController.previousBackStackEntry?.destination?.route ?: Screen.Storage.route
+                        navController.navigate(lastDestination)
+                    ***REMOVED***) {
                         FaIcon(faIcon = FaIcons.ArrowLeft)
                     ***REMOVED***
                 ***REMOVED***
@@ -179,7 +216,82 @@ fun SingleExtractionScreen(
                 ***REMOVED***
             ***REMOVED***
         ***REMOVED***
+
+        if (showRatingModal) {
+            extraction?.let {
+                RatingModal(
+                    onDismiss = {
+                        pendingDestinationRoute?.let {
+                            navController.navigate(it)
+                            pendingDestinationRoute = null
+                        ***REMOVED***
+
+                        showRatingModal = false
+                    ***REMOVED***,
+                    viewModel = extractionViewModel,
+                    extraction = it
     ***REMOVED***
+            ***REMOVED***
+        ***REMOVED***
+
+    ***REMOVED***
+***REMOVED***
+
+@Composable
+fun RatingModal(onDismiss: () -> Unit, viewModel: ExtractionViewModel, extraction: Extraction) {
+    var review by remember { mutableStateOf(Review(5, "")) ***REMOVED***
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Rate the Extraction") ***REMOVED***,
+        text = {
+            Column {
+                // Satisfaction Slider
+                Text("Satisfaction Rating:")
+                Row{
+                    Text("0")
+                    Slider(
+                        value = review.rating.toFloat(),
+                        onValueChange = {newRating  ->
+                            review = review.copy(rating = newRating.toInt()) // Update using copy
+                        ***REMOVED***,
+                        valueRange = 0f..10f,
+                        steps = 10
+        ***REMOVED***
+                    Text("10")
+                ***REMOVED***
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Optional Comment Textbox
+                OutlinedTextField(
+                    value = review.comment,
+                    onValueChange = { newComment ->
+                        review = review.copy(comment = newComment) // Update using copy
+                    ***REMOVED***,
+                    label = { Text("Optional Comments") ***REMOVED***,
+                    modifier = Modifier.fillMaxWidth()
+    ***REMOVED***
+            ***REMOVED***
+        ***REMOVED***,
+        confirmButton = {
+            TextButton(onClick = {
+                // Handle rating submission logic here (pass satisfactionRating and comment)
+                viewModel.changeReview(extraction)
+                viewModel.saveReview(review)
+                onDismiss()
+            ***REMOVED***,
+                colors = ButtonDefaults.textButtonColors(containerColor = Color.Green, contentColor = Color.Black)
+    ***REMOVED*** {
+                Text("Send")
+            ***REMOVED***
+        ***REMOVED***,
+        dismissButton = {
+            TextButton(onClick = onDismiss,
+                colors = ButtonDefaults.textButtonColors(containerColor = Color.LightGray, contentColor = Color.Gray)
+***REMOVED*** {
+                Text("Skip")
+            ***REMOVED***
+        ***REMOVED***
+    )
 ***REMOVED***
 
 @Composable

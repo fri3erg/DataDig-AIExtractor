@@ -42,7 +42,7 @@ class MyApp : Application() {
                 ExceptionOccurred::class,
                 ExtractionCosts::class
 ***REMOVED***
-        ).schemaVersion(12).build()
+        ).schemaVersion(13).build()
 
         realm = Realm.open(
             configuration

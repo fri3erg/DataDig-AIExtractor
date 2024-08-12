@@ -29,6 +29,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.AlertDialog
@@ -36,10 +37,12 @@ import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -49,6 +52,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -68,10 +72,12 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.tesifrigo.models.Template
@@ -79,10 +85,16 @@ import com.example.tesifrigo.models.TemplateField
 import com.example.tesifrigo.utils.AddButton
 import com.example.tesifrigo.utils.DeleteButton
 import com.example.tesifrigo.utils.HelpIconButton
+import com.example.tesifrigo.utils.NumberPicker
 import com.example.tesifrigo.viewmodels.TemplateViewModel
 import com.guru.fontawesomecomposelib.FaIcon
 import com.guru.fontawesomecomposelib.FaIcons
 import kotlinx.coroutines.launch
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -314,7 +326,7 @@ fun TemplateFieldComposable(
     ) {
 
     val focusRequester = remember { FocusRequester() ***REMOVED*** // Create FocusRequester for field
-    val typeOptions = listOf("Any", "String", "Date", "Number")
+    val typeOptions = listOf("Any", "Text", "Date", "Number")
     var expanded by remember { mutableStateOf(false) ***REMOVED***
     val foundField by remember { mutableStateOf(template?.fields?.get(index)) ***REMOVED***
     var title by remember { mutableStateOf(foundField?.title) ***REMOVED***
@@ -322,6 +334,7 @@ fun TemplateFieldComposable(
     var type by remember { mutableStateOf(foundField?.type) ***REMOVED***
     var required by remember { mutableStateOf(foundField?.required) ***REMOVED***
     var intelligentExtraction by remember { mutableStateOf(foundField?.intelligentExtraction) ***REMOVED***
+    var default by remember { mutableStateOf(foundField?.default) ***REMOVED***
 
 
     LaunchedEffect(key1 = focusRequesterIndex) {
@@ -421,6 +434,22 @@ fun TemplateFieldComposable(
                                         text = { Text(newType) ***REMOVED***,
                                         onClick = {
                                             type = newType
+                                            when(newType){
+                                                "Text" -> {
+                                                    default = "N/A"
+                                                ***REMOVED***
+                                                "Number" -> {
+                                                    default = "-1"
+                                                ***REMOVED***
+                                                "Date" -> {
+                                                    default = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+                                                ***REMOVED***
+                                            ***REMOVED***
+                                            viewModel.updateTemplateItem(
+                                                template,
+                                                "default" to (default?: ""),
+                                                index
+                                ***REMOVED***
                                             viewModel.updateTemplateItem(
                                                 template,
                                                 "type" to newType,
@@ -436,6 +465,90 @@ fun TemplateFieldComposable(
                         Spacer(modifier = Modifier.width(4.dp)) // Reduced spacing
                         HelpIconButton(helpText = "Specify the type of data expected for this field (e.g., 'string', 'number', 'date').")
                     ***REMOVED***
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+
+                        when(type){
+                            "Text", "Any", -> {
+                                default?.let {
+                                    OutlinedTextField(
+                                        value = it,
+                                        onValueChange = { newText ->
+                                            default = newText
+                                            viewModel.updateTemplateItem(
+                                                template,
+                                                "default" to newText,
+                                                index
+                                ***REMOVED***
+                                        ***REMOVED***,
+                                        label = { Text("Field Default") ***REMOVED***,
+                                        modifier = Modifier.weight(1f)
+                        ***REMOVED***
+                                ***REMOVED***
+                                Spacer(modifier = Modifier.width(4.dp)) // Reduced spacing
+                                HelpIconButton(helpText = " This is the default value for the field.")
+                            ***REMOVED***
+                            "Number" -> {
+                                default?.let {
+
+                                    OutlinedTextField(
+                                        value = it,
+                                        onValueChange = {
+                                            default = it
+                                            viewModel.updateTemplateItem(template, "default" to it, index)
+                                        ***REMOVED***,
+                                        label = { Text("Field Default (Number)") ***REMOVED***,
+                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                        modifier = Modifier.weight(1f)
+
+                        ***REMOVED***
+
+                                    Spacer(modifier = Modifier.width(4.dp)) // Reduced spacing
+                                    HelpIconButton(helpText = " This is the default value for the field.")
+
+                                ***REMOVED***
+                            ***REMOVED***
+                            "Date" -> {
+                                val datePickerState = rememberDatePickerState(
+                                    initialSelectedDateMillis = default?.let {
+                                        try {
+                                            SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).apply {
+                                                timeZone = TimeZone.getTimeZone("UTC")
+                                            ***REMOVED***.parse(it)?.time
+                                        ***REMOVED*** catch (e: ParseException) {
+                                            null
+                                        ***REMOVED***
+                                    ***REMOVED***
+                    ***REMOVED*** // State for DatePicker
+                                Box(modifier = Modifier
+                                    .weight(1f)
+                                    .border(1.dp, Color.Gray)
+                                    .padding(5.dp)
+                        ***REMOVED*** {
+
+                                    HelpIconButton(helpText = " This is the default value for the field.", modifier = Modifier.align(Alignment.TopEnd))
+                                    DatePicker( // Use DatePicker for "Date" type
+                                        state = datePickerState
+                        ***REMOVED***
+                                ***REMOVED***
+
+                                // Update the default value when the selected date changes
+                                LaunchedEffect(datePickerState.selectedDateMillis) {
+                                    val selectedDate = datePickerState.selectedDateMillis?.let {
+                                        // Use UTC time zone for formatting
+                                        SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).apply {
+                                            timeZone = TimeZone.getTimeZone("UTC")
+                                        ***REMOVED***.format(Date(it))
+                                    ***REMOVED*** ?: ""
+                                    default = selectedDate
+                                    viewModel.updateTemplateItem(template, "default" to selectedDate, index)
+                                ***REMOVED***
+                            ***REMOVED***
+                        ***REMOVED***
+                    ***REMOVED***
+                    HorizontalDivider()
+
                     Spacer(modifier = Modifier.height(8.dp))
 
                     // Required & Intelligent Extraction (separate composables with equal weight)
@@ -485,7 +598,6 @@ fun TemplateFieldComposable(
         ***REMOVED***
     ***REMOVED***
 ***REMOVED***
-
 
 @Composable
 fun TemplateTableCard(

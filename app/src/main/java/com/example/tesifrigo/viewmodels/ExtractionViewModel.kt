@@ -5,6 +5,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.tesifrigo.BuildConfig
 import com.example.tesifrigo.MyApp
 import com.example.tesifrigo.fileCreator.CsvCreator
 import com.example.tesifrigo.fileCreator.JsonCreator
@@ -14,11 +15,18 @@ import com.example.tesifrigo.models.ExtractionCosts
 import com.example.tesifrigo.models.ExtractionField
 import com.example.tesifrigo.models.ExtractionTable
 import com.example.tesifrigo.models.ExtractionTableRow
+import com.example.tesifrigo.models.Review
 import com.example.tesifrigo.models.Template
 import com.example.tesifrigo.models.TemplateField
 import com.example.tesifrigo.models.TemplateTable
 import com.example.tesifrigo.utils.calculateCloseness
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.createSupabaseClient
+import io.github.jan.supabase.gotrue.Auth
+import io.github.jan.supabase.postgrest.Postgrest
+import io.github.jan.supabase.postgrest.from
 import io.realm.kotlin.ext.query
 import io.realm.kotlin.ext.realmListOf
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,10 +38,16 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.mongodb.kbson.ObjectId
+import java.io.File
+import java.io.FileInputStream
+import java.io.IOException
+import java.util.Properties
 import javax.inject.Inject
 
 @HiltViewModel
-class ExtractionViewModel @Inject constructor() : ViewModel() {
+class ExtractionViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
+) : ViewModel() {
     private val realm = MyApp.realm
 
     private val _sortOrder = MutableStateFlow(SortOrder.BY_TITLE)
@@ -45,10 +59,30 @@ class ExtractionViewModel @Inject constructor() : ViewModel() {
     private val _searchText = MutableStateFlow("")
     val searchText: StateFlow<String> = _searchText.asStateFlow()
 
+    private lateinit var supabaseClient: SupabaseClient
+
+
     init {
+
         //Log.d("ExtractionViewModel", "init")
         //createSampleExtraction()
+        try {
+            supabaseClient = createSupabaseClient(
+                supabaseUrl = BuildConfig.EXPO_PUBLIC_SUPABASE_URL,
+                supabaseKey = BuildConfig.EXPO_PUBLIC_SUPABASE_ANON_KEY
+***REMOVED*** {
+                install(Auth)
+                install(Postgrest)
+                //install other modules
+            ***REMOVED***
+
+            // ... use the supabaseClient
+        ***REMOVED*** catch (e: IOException) {
+            // Handle the exception (e.g., log, show error message)
+            Log.e("ExtractionViewModel", "Error reading local.properties", e)
+        ***REMOVED***
     ***REMOVED***
+
 
     private val extractions = realm
         .query<Extraction>()
@@ -107,10 +141,7 @@ class ExtractionViewModel @Inject constructor() : ViewModel() {
 
 
     fun queryExtraction(id: String): StateFlow<Extraction?> {
-        Log.d("ExtractionViewModel", extractions.value.toString())
-        for (extraction in extractions.value) {
-            Log.d("ExtractionViewModel", extraction.id.toHexString())
-        ***REMOVED***
+
         val ex = extractions.map { extractionList ->
             extractionList.find {
                 it.id.toHexString() == id
@@ -302,6 +333,21 @@ class ExtractionViewModel @Inject constructor() : ViewModel() {
 
     ***REMOVED***
 
+    fun saveReview(review: Review) {
+        viewModelScope.launch {
+
+            try {
+
+                supabaseClient
+                    .from("reviews")
+                    .insert(review)
+            ***REMOVED*** catch (e: Exception) {
+                // Handle any unexpected exceptions (e.g., network errors)
+                println("Exception during review save: $e")
+            ***REMOVED***
+        ***REMOVED***
+    ***REMOVED***
+
 
     fun deleteExtraction(id: String) {
         viewModelScope.launch {
@@ -379,5 +425,16 @@ class ExtractionViewModel @Inject constructor() : ViewModel() {
             ***REMOVED***
         ***REMOVED***
 
+    ***REMOVED***
+
+    fun changeReview(extraction: Extraction) {
+
+        viewModelScope.launch {
+            realm.writeBlocking {
+                val latestExtraction = findLatest(extraction) ?: return@writeBlocking
+                latestExtraction.review = true
+            ***REMOVED***
+
+        ***REMOVED***
     ***REMOVED***
 ***REMOVED***

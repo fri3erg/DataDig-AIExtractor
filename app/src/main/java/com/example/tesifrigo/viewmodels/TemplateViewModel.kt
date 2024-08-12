@@ -134,25 +134,28 @@ class TemplateViewModel : ViewModel() {
                     title = "Field 1"
                     description = "This is a sample field"
                     extraDescription = "This is an extra description"
-                    type = "text"
+                    type = "Text"
                     required = true
                     intelligentExtraction = false
+                    default = "aaa"
                 ***REMOVED***
                 val templateField2 = TemplateField().apply {
                     title = "Field 2"
                     description = "This is a sample field 2"
                     extraDescription = "This is an extra description 2"
-                    type = "text"
+                    type = "Text"
                     required = true
                     intelligentExtraction = true
+                    default = "default"
                 ***REMOVED***
                 val templateField3 = TemplateField().apply {
                     title = "Field 3"
                     description = "This is a sample field 3"
                     extraDescription = "This is an extra description 3"
-                    type = "text"
+                    type = "Text"
                     required = true
                     intelligentExtraction = false
+                    default = "N/F"
                 ***REMOVED***
 
                 val templateTable1 = TemplateTable().apply {
@@ -238,6 +241,9 @@ class TemplateViewModel : ViewModel() {
 
                         "intelligentExtraction" -> {
                             latestTemplate.fields[index].intelligentExtraction = newText as Boolean
+                        ***REMOVED***
+                        "default" -> {
+                            latestTemplate.fields[index].default = newText.toString()
                         ***REMOVED***
 
                         else -> {

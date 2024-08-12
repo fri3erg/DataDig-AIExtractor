@@ -6,6 +6,7 @@ import io.realm.kotlin.ext.realmListOf
 import io.realm.kotlin.types.RealmList
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
+import kotlinx.serialization.Serializable
 import org.mongodb.kbson.ObjectId
 
 class Extraction : RealmObject {
@@ -51,6 +52,9 @@ class Extraction : RealmObject {
 
     @Expose
     var extraImages: RealmList<String> = realmListOf()
+
+    @Expose(serialize = false, deserialize = false) // Exclude from serialization
+    var review: Boolean = false
 ***REMOVED***
 
 class ExtractionTable : RealmObject {
@@ -139,3 +143,9 @@ class ExtractionCosts : RealmObject {
     @Expose
     var tokens: Int = 0
 ***REMOVED***
+
+@Serializable
+data class Review(
+    var rating: Int,
+    var comment: String
+)

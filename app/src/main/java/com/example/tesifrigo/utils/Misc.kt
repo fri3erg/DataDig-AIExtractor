@@ -61,6 +61,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.FileProvider
 import coil.compose.AsyncImage
 import com.example.tesifrigo.models.Extraction
@@ -161,14 +162,14 @@ fun TableCell(
 ***REMOVED***
 
 @Composable
-fun HelpIconButton(helpText: String) {
+fun HelpIconButton(helpText: String, modifier: Modifier = Modifier) {
     var showDialog by remember { mutableStateOf(false) ***REMOVED***
 
     IconButton(
         onClick = { showDialog = true ***REMOVED***,
-        modifier = Modifier.size(20.dp) // Make the icon smaller
+        modifier = modifier.size(20.dp) // Make the icon smaller
     ) {
-        FaIcon(FaIcons.InfoCircle, modifier = Modifier.offset(y = (-4).dp))
+        FaIcon(FaIcons.Info, modifier = Modifier.offset(y = (-4).dp))
 
     ***REMOVED***
 
@@ -255,6 +256,31 @@ fun DropdownWithNavigation(onUse: () -> Unit, onEdit: () -> Unit, onDelete: () -
         )
     ***REMOVED***
 ***REMOVED***
+
+
+@Composable
+fun NumberPicker(
+    value: Int,
+    onValueChange: (Int) -> Unit,
+    range: IntRange = 1..10, // Default range
+    modifier: Modifier = Modifier
+) {
+    AndroidView(
+        factory = { context ->
+            android.widget.NumberPicker(context).apply {
+                minValue = range.first
+                maxValue = range.last
+                this.value = value
+                setOnValueChangedListener { _, _, newValue ->
+                    onValueChange(newValue)
+                ***REMOVED***
+            ***REMOVED***
+        ***REMOVED***,
+        modifier = modifier
+    )
+***REMOVED***
+
+
 
 @Composable
 fun LabeledSwitch(

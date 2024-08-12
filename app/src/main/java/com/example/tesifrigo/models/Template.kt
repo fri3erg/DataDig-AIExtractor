@@ -38,5 +38,6 @@ class TemplateField : RealmObject {
     var type: String = ""
     var required: Boolean = false
     var intelligentExtraction: Boolean = false
+    var default : String = ""
 
 ***REMOVED***
