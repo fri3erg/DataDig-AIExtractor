@@ -204,3 +204,5 @@ config.json
 *.jpg
 *.png
 *.jpeg
+local.properties
+assets/

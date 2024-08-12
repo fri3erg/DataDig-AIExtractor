@@ -35,7 +35,7 @@ class TemplateViewModel : ViewModel() {
     val _focusRequesterIndex = MutableStateFlow<Int?>(null) // Index of the element to focus
     val focusRequesterIndex: StateFlow<Int?> get() = _focusRequesterIndex.asStateFlow()
 
-    private val _template = MutableStateFlow(Template()) // Initialize with your template data
+    private val _template = MutableStateFlow<Template?>(null) // Initialize with your template data
     val template: StateFlow<Template?> = _template.asStateFlow()
 
 
@@ -491,7 +491,7 @@ class TemplateViewModel : ViewModel() {
         ***REMOVED***
     ***REMOVED***
 
-    fun setActiveTemplate(template: Template) {
+    fun setActiveTemplate(template: Template?) {
         viewModelScope.launch {
             _template.value = template
         ***REMOVED***

@@ -23,30 +23,44 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -57,18 +71,22 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.tesifrigo.Screen
 import com.example.tesifrigo.models.Extraction
 import com.example.tesifrigo.models.Options
 import com.example.tesifrigo.services.ExtractionService
 import com.example.tesifrigo.utils.DropDownGeneral
+import com.example.tesifrigo.utils.DropdownWithNavigation
 import com.example.tesifrigo.utils.FileCard
 import com.example.tesifrigo.utils.HelpIconButton
 import com.example.tesifrigo.utils.LabeledSwitch
 import com.example.tesifrigo.utils.MyImageArea
+import com.example.tesifrigo.utils.SearchBar
 import com.example.tesifrigo.viewmodels.ExtractionViewModel
 import com.example.tesifrigo.viewmodels.ServiceViewModel
+import com.example.tesifrigo.viewmodels.SortOrder
 import com.example.tesifrigo.viewmodels.TemplateViewModel
 import com.guru.fontawesomecomposelib.FaIcon
 import com.guru.fontawesomecomposelib.FaIcons
@@ -95,14 +113,14 @@ fun CameraScreen(
     val imageUris by serviceViewModel.imageUris.collectAsState()
     val template by templateViewModel.queryTemplate(templateId ?: "").collectAsState(initial = null)
     val activePhoto by serviceViewModel.activePhoto.collectAsState()
+    val activeExtraction by serviceViewModel.activeExtraction.collectAsState()
     if (templateId != null) {
-            template?.let {
-                serviceViewModel.setTemplate(it)
-                templateViewModel.setActiveTemplate(it)
-            ***REMOVED***
+        template?.let {
+            serviceViewModel.setTemplate(it)
+            templateViewModel.setActiveTemplate(it)
+        ***REMOVED***
 
     ***REMOVED***
-    var activeExtraction by remember { mutableStateOf(false) ***REMOVED***
     LaunchedEffect(template) {
         template?.let { serviceViewModel.setTemplate(it) ***REMOVED***
     ***REMOVED***
@@ -110,40 +128,172 @@ fun CameraScreen(
 
     Column(modifier = Modifier.fillMaxSize()) {
         if (activePhoto) {
-            CameraPreview(
-                modifier = Modifier.fillMaxSize(),
-                onSetUri = { newUri ->
-                    serviceViewModel.addImageUri(newUri)
-                    Log.d("CameraScreen", "Image URIs: $imageUris")
-                ***REMOVED***,
-                nPhotos = imageUris.size,
-                changeActivePhoto = { serviceViewModel.setActivePhoto(false) ***REMOVED***
-***REMOVED***
-        ***REMOVED*** else if (template == null) {
-            Text("Please select a template first", modifier = Modifier.padding(16.dp))
-        ***REMOVED*** else {
-            ExtractionDetails(
-                template!!.title,
-                modifier = Modifier.align(Alignment.CenterHorizontally),
-                navController,
-                imageUris,
-                activeExtraction,
-                onExtractionClick = {
+                Column( modifier = Modifier.fillMaxSize()) {
+                    CameraPreview(
+                        modifier = Modifier.fillMaxSize(),
+                        onSetUri = { newUri ->
+                            serviceViewModel.addImageUri(newUri)
+                            Log.d("CameraScreen", "Image URIs: $imageUris")
+                        ***REMOVED***,
+                        nPhotos = imageUris.size,
+                        changeActivePhoto = { serviceViewModel.setActivePhoto(false) ***REMOVED***
+        ***REMOVED***
 
-                    val intent = Intent(context, ExtractionService::class.java).also {
-                        it.action = ExtractionService.Actions.START.toString()
-                        it.putParcelableArrayListExtra("imageUris", ArrayList(imageUris))
-                    ***REMOVED***
-                    activeExtraction = true
-                    ContextCompat.startForegroundService(context, intent)
-                ***REMOVED***,
-                serviceViewModel,
-                extractionViewModel,
-                sharedPrefs
-***REMOVED***
+                ***REMOVED***
+
+
+        ***REMOVED*** else if (template == null) {
+                ChooseTemplate(navController, templateViewModel)
+
+        ***REMOVED*** else {
+                ExtractionDetails(
+                    template!!.title,
+                    modifier = Modifier,
+                    navController,
+                    imageUris,
+                    activeExtraction,
+                    onExtractionClick = {
+
+                        val intent = Intent(context, ExtractionService::class.java).also {
+                            it.action = ExtractionService.Actions.START.toString()
+                            it.putParcelableArrayListExtra("imageUris", ArrayList(imageUris))
+                        ***REMOVED***
+                        serviceViewModel.setActiveExtraction(true)
+                        ContextCompat.startForegroundService(context, intent)
+                    ***REMOVED***,
+                    serviceViewModel,
+                    extractionViewModel,
+                    templateViewModel,
+                    sharedPrefs
+    ***REMOVED***
+
         ***REMOVED***
     ***REMOVED***
 ***REMOVED***
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ChooseTemplate(navController: NavHostController, templateViewModel: TemplateViewModel) {
+    val templates by templateViewModel.sortedTemplates.collectAsState()
+    val searchText by templateViewModel.searchText.collectAsState()
+    var expanded by remember { mutableStateOf(false) ***REMOVED***
+    val ascending by templateViewModel.ascending.collectAsState()
+    val focusRequester = remember { FocusRequester() ***REMOVED***
+
+    Scaffold(
+        topBar = {
+            Row {
+                SearchBar(
+                    text = searchText,
+                    onTextChange = { templateViewModel.updateSearchText(it) ***REMOVED***,
+                    onSearch = { templateViewModel.updateSearchText(it) ***REMOVED***,
+                    modifier= Modifier.weight(1f)
+    ***REMOVED***
+
+
+                    val typeOptions = mapOf(
+                        "Title" to { templateViewModel.updateSortOrder(SortOrder.BY_TITLE) ***REMOVED***,
+                        "Date" to { templateViewModel.updateSortOrder(SortOrder.BY_DATE) ***REMOVED***
+        ***REMOVED***
+                    Spacer(modifier = Modifier.width(4.dp))
+                    ExposedDropdownMenuBox(
+                        expanded = expanded,
+                        onExpandedChange = { expanded = !expanded ***REMOVED***
+        ***REMOVED*** {
+
+                        Button(
+                            onClick = { expanded = true ***REMOVED***, modifier = Modifier
+                                .padding(end = 8.dp, top = 24.dp)
+                                .align(Alignment.CenterVertically)
+                                .focusRequester(focusRequester)
+                                .menuAnchor(),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.Gray)
+            ***REMOVED*** {
+                            Text("Sort")
+                        ***REMOVED***
+                        ExposedDropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false ***REMOVED***) {
+                            typeOptions.forEach { (type, onCLick) ->
+                                DropdownMenuItem(
+                                    text = { Text(type) ***REMOVED***,
+                                    onClick = {
+                                        onCLick()
+                                        expanded = false
+                                    ***REMOVED***
+                    ***REMOVED***
+                            ***REMOVED***
+                        ***REMOVED***
+
+                    ***REMOVED***
+
+
+
+
+                    Button(
+                        onClick = { templateViewModel.toggleAscending() ***REMOVED***,
+                        modifier = Modifier.align(Alignment.CenterVertically).padding(end=16.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Gray)
+        ***REMOVED*** {
+                        if (ascending) {
+                            FaIcon(faIcon = FaIcons.ArrowUp, tint = Color.White)
+                        ***REMOVED*** else {
+                            FaIcon(faIcon = FaIcons.ArrowDown, tint = Color.White)
+                        ***REMOVED***
+                    ***REMOVED***
+
+            ***REMOVED***
+        ***REMOVED***
+    ) { innerPadding ->
+    LazyColumn(modifier = Modifier.padding(innerPadding)) {
+        item {
+            Text(text =
+            "Choose a template to start extracting",
+            modifier = Modifier.padding(16.dp),
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.Black,
+***REMOVED***
+        ***REMOVED***
+        items(templates) { template ->
+            Card( // Consider using a Card for visual structure
+                modifier = Modifier
+                    .fillMaxWidth() // Occupy full width
+                    .clickable {
+                        templateViewModel.setActiveTemplate(template)
+                    ***REMOVED***
+                    .padding(8.dp),
+                border = CardDefaults.outlinedCardBorder(), // Add a border
+                elevation = CardDefaults.cardElevation(defaultElevation = 5.dp) // Add elevation for better visuals
+
+***REMOVED*** {
+                Column(modifier = Modifier.padding(16.dp)) { // Inner Column for content
+                    Row {
+
+                        Text(
+                            text = template.title, style = MaterialTheme.typography.headlineSmall,
+                            modifier = Modifier.padding(top = 8.dp, start = 8.dp)
+            ***REMOVED*** // Title
+                        Spacer(modifier = Modifier.weight(1f)) // Creates space between text and button
+
+                        FaIcon( // Add an icon to the end of the row
+                            faIcon = FaIcons.Edit, // Using the right arrow icon
+                            tint = Color.Black, // Set icon color
+                            size = 24.dp, // Set icon size
+                            modifier = Modifier.clickable {
+                                navController.navigate(Screen.EditTemplate.withArgs("templateId" to template.id.toHexString()))
+                            ***REMOVED***.align(Alignment.CenterVertically) // Align the icon to the center vertically
+                                .padding(end=8.dp)
+            ***REMOVED***
+                    ***REMOVED***
+
+                ***REMOVED***
+            ***REMOVED***
+        ***REMOVED***
+    ***REMOVED***
+
+***REMOVED***
+    ***REMOVED***
 
 
 @Composable
@@ -156,6 +306,7 @@ fun ExtractionDetails(
     onExtractionClick: () -> Unit = {***REMOVED***,
     serviceViewModel: ServiceViewModel,
     extractionViewModel: ExtractionViewModel,
+    templateViewModel: TemplateViewModel,
     sharedPrefs: SharedPreferences
 ) {
 
@@ -187,17 +338,11 @@ fun ExtractionDetails(
         serviceViewModel.setOptions(defaultOptions) // Set the options in the ViewModel
     ***REMOVED***
     Text(
-        "Extraction:", modifier = modifier
-            .padding(16.dp),
-        fontSize = 20.sp,
-        color = Color.Black,
-        fontWeight = FontWeight.Bold
-    )
-    Text(
         "Template: $templateTitle",
         modifier = modifier
-            .padding(start = 16.dp, end = 16.dp),
-        fontSize = 14.sp,
+            .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+        fontSize = 28.sp,
+        fontWeight = FontWeight.Bold,
         color = Color.Black,
     )
     Spacer(modifier = Modifier.height(30.dp))
@@ -205,7 +350,7 @@ fun ExtractionDetails(
         imageUris = imageUris,
     )
     HorizontalDivider()
-    ButtonBar(serviceViewModel, sharedPrefs)
+    ButtonBar(serviceViewModel, sharedPrefs, templateViewModel)
     HorizontalDivider()
 
     if (!activeExtraction) {
@@ -220,6 +365,7 @@ fun ExtractionDetails(
             Text(text = "Extract!", color = Color.Black)
         ***REMOVED***
     ***REMOVED*** else {
+        Spacer(modifier = Modifier.height(16.dp))
         ProgressBar()
         Spacer(modifier = Modifier.height(16.dp))
         HorizontalDivider()
@@ -233,7 +379,11 @@ fun ExtractionDetails(
 ***REMOVED***
 
 @Composable
-fun ButtonBar(serviceViewModel: ServiceViewModel, sharedPrefs: SharedPreferences) {
+fun ButtonBar(
+    serviceViewModel: ServiceViewModel,
+    sharedPrefs: SharedPreferences,
+    templateViewModel: TemplateViewModel
+) {
     val options by serviceViewModel.options.collectAsState()
 
 
@@ -253,6 +403,7 @@ fun ButtonBar(serviceViewModel: ServiceViewModel, sharedPrefs: SharedPreferences
         ***REMOVED***
         IconButton(onClick = {
             serviceViewModel.clearImageUris()
+            serviceViewModel.setActivePhoto(true)
         ***REMOVED***) {
             FaIcon(
                 faIcon = FaIcons.Redo, // Using the trash icon
@@ -261,7 +412,7 @@ fun ButtonBar(serviceViewModel: ServiceViewModel, sharedPrefs: SharedPreferences
 ***REMOVED***
         ***REMOVED***
         IconButton(onClick = {
-            //change template
+            templateViewModel.setActiveTemplate(null)
         ***REMOVED***) {
             FaIcon(faIcon = FaIcons.Table, tint = Color.Black, size = 24.dp)
         ***REMOVED***
@@ -286,6 +437,7 @@ fun ButtonBar(serviceViewModel: ServiceViewModel, sharedPrefs: SharedPreferences
         ***REMOVED***
 
     ***REMOVED***
+    HorizontalDivider()
     Row {
         options?.let {
             val modelList = listOf("GPT 4", "GPT 3-5", "Smart Mix")
@@ -425,6 +577,7 @@ fun ShownExtraction(
                     Text("Go to Extraction")
                 ***REMOVED***
             ***REMOVED***
+            HorizontalDivider()
 
             if (extraction!!.fileUri != null) {
                 FileCard(extraction!!)

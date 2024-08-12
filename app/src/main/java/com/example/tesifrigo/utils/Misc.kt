@@ -28,6 +28,9 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -35,6 +38,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -161,6 +165,30 @@ fun TableCell(
     ***REMOVED***
 ***REMOVED***
 
+
+
+@Composable
+fun SearchBar(text: String, onTextChange: (String) -> Unit, onSearch: (String) -> Unit, modifier: Modifier= Modifier) {
+    OutlinedTextField(
+        value = text,
+        onValueChange = {
+            onTextChange(it) // Update the ViewModel's searchText state
+            onSearch(it) // Trigger the search function (optional)
+        ***REMOVED***,
+        label = { Text("Search") ***REMOVED***,
+        modifier = modifier
+            .padding(16.dp),
+        singleLine = true, // Ensure single-line input
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.Search,
+                contentDescription = "Search Icon"
+***REMOVED***
+        ***REMOVED***
+    )
+***REMOVED***
+
+
 @Composable
 fun HelpIconButton(helpText: String, modifier: Modifier = Modifier) {
     var showDialog by remember { mutableStateOf(false) ***REMOVED***
@@ -169,7 +197,11 @@ fun HelpIconButton(helpText: String, modifier: Modifier = Modifier) {
         onClick = { showDialog = true ***REMOVED***,
         modifier = modifier.size(20.dp) // Make the icon smaller
     ) {
-        FaIcon(FaIcons.Info, modifier = Modifier.offset(y = (-4).dp))
+        Icon(
+            imageVector = Icons.Default.Info,
+            contentDescription = "Help Icon",
+            tint = Color.Black
+        ) // Use the Info icon from Material Design
 
     ***REMOVED***
 

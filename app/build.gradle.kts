@@ -1,3 +1,6 @@
+import com.android.build.api.dsl.Packaging
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
@@ -7,18 +10,20 @@ plugins {
     id("io.realm.kotlin")
     kotlin("plugin.serialization") version "1.9.23"
 
-
 ***REMOVED***
 
+val localProperties = Properties().apply {
+    val file = rootProject.file("local.properties")
+    if (file.exists()) {
+        load(file.inputStream())
+    ***REMOVED***
+***REMOVED***
 
 android {
     namespace = "com.example.tesifrigo"
     compileSdk = 34
 
-
-
     defaultConfig {
-
         ndk {
             // On Apple silicon, you can omit x86_64.
             abiFilters += listOf("arm64-v8a", "x86_64")
@@ -29,6 +34,13 @@ android {
         versionCode = 1
         versionName = "1.0"
 
+        buildConfigField("String", "EXPO_PUBLIC_SUPABASE_URL",
+            localProperties.getProperty("EXPO_PUBLIC_SUPABASE_URL")
+        )
+        buildConfigField("String", "EXPO_PUBLIC_SUPABASE_ANON_KEY",
+            localProperties.getProperty("EXPO_PUBLIC_SUPABASE_ANON_KEY")
+        )
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
@@ -36,25 +48,38 @@ android {
     ***REMOVED***
 
     buildTypes {
+        debug {
+***REMOVED***"String", "EXPO_PUBLIC_SUPABASE_URL",
+***REMOVED***
+***REMOVED***
+***REMOVED***"String", "EXPO_PUBLIC_SUPABASE_ANON_KEY",
+***REMOVED***
+***REMOVED***
+        ***REMOVED***
+
         release {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
 ***REMOVED***
+***REMOVED***"String", "EXPO_PUBLIC_SUPABASE_URL", "\"https://evxuxenxmtadutqpunue.supabase.co\"")
+***REMOVED***"String", "EXPO_PUBLIC_SUPABASE_ANON_KEY", "\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV2eHV4ZW54bXRhZHV0cXB1bnVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjMzODg1MDYsImV4cCI6MjAzODk2NDUwNn0.o_kS_WFx5PsmuO9Jb51T_ytPjSqOZzicdQxPJXJpvFg\"")
         ***REMOVED***
     ***REMOVED***
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     ***REMOVED***
 
+
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     ***REMOVED***
     buildFeatures {
         compose = true
         viewBinding = true
+        buildConfig = true
     ***REMOVED***
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -69,11 +94,21 @@ android {
         create("py311") { dimension = "pyVersion" ***REMOVED***
     ***REMOVED***
     chaquopy {
+
+        compileOptions {
+            sourceCompatibility = JavaVersion.VERSION_11
+            targetCompatibility = JavaVersion.VERSION_11
+        ***REMOVED***
         productFlavors {
             getByName("py311") { version = "3.11" ***REMOVED***
         ***REMOVED***
         defaultConfig {
             version = "3.11"
+
+            java {
+                sourceCompatibility = JavaVersion.VERSION_11
+                targetCompatibility = JavaVersion.VERSION_11
+            ***REMOVED***
             pip {
                 // "-r"` followed by a requirements filename, relative to the
                 // project directory:
@@ -92,7 +127,18 @@ android {
     ***REMOVED***
         sourceSets {
         ***REMOVED***
+    kapt{
+        javacOptions {
+            option("-source", "11")
+            option("-target", "11")
+        ***REMOVED***
     ***REMOVED***
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+        kotlinOptions {
+            jvmTarget = "11"
+        ***REMOVED***
+    ***REMOVED***
+***REMOVED***
 
 
 dependencies {
@@ -163,6 +209,17 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.library.base)
     implementation (libs.gson)
+
+    implementation(platform("io.github.jan-tennert.supabase:bom:2.5.4"))
+    implementation(libs.postgrest.kt)
+    implementation(libs.supabase.gotrue.kt)
+    implementation(libs.realtime.kt)
+    implementation(libs.ktor.client.android)
+    implementation(libs.ktor.client.serialization.jvm) // Or the latest version
+
+
+
+
 ***REMOVED***
 kapt {
     correctErrorTypes = true

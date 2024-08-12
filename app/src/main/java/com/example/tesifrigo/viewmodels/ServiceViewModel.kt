@@ -28,11 +28,16 @@ class ServiceViewModel @Inject constructor(
     private val _imageUris = MutableStateFlow(emptyList<Uri>())
     val imageUris: StateFlow<List<Uri>> = _imageUris.asStateFlow()
 
-    private val _activePhoto = MutableStateFlow<Boolean>(true)
+    private val _activePhoto = MutableStateFlow(true)
     val activePhoto: StateFlow<Boolean> = _activePhoto.asStateFlow()
 
+    private val _activeExtraction = MutableStateFlow(false)
+    val activeExtraction: StateFlow<Boolean> = _activeExtraction.asStateFlow()
 
 
+    fun setActiveExtraction(active: Boolean) {
+        _activeExtraction.value = active
+    ***REMOVED***
 
     fun setActivePhoto(active: Boolean) {
         _activePhoto.value = active

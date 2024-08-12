@@ -44,6 +44,7 @@ import androidx.navigation.NavHostController
 import com.example.tesifrigo.Screen
 import com.example.tesifrigo.models.Template
 import com.example.tesifrigo.utils.DropdownWithNavigation
+import com.example.tesifrigo.utils.SearchBar
 import com.example.tesifrigo.viewmodels.SortOrder
 import com.example.tesifrigo.viewmodels.TemplateViewModel
 import com.guru.fontawesomecomposelib.FaIcon
@@ -60,7 +61,6 @@ fun TemplateScreen(
     val searchText by templateViewModel.searchText.collectAsState()
     var expanded by remember { mutableStateOf(false) ***REMOVED***
     val ascending by templateViewModel.ascending.collectAsState()
-    val sortOrder: SortOrder by templateViewModel.sortOrder.collectAsState()
     val templates by templateViewModel.sortedTemplates.collectAsState()
 
     Scaffold(
@@ -169,28 +169,6 @@ fun TemplateScreen(
     ***REMOVED***
 
 ***REMOVED***
-
-@Composable
-fun SearchBar(text: String, onTextChange: (String) -> Unit, onSearch: (String) -> Unit) {
-    OutlinedTextField(
-        value = text,
-        onValueChange = {
-            onTextChange(it) // Update the ViewModel's searchText state
-            onSearch(it) // Trigger the search function (optional)
-        ***REMOVED***,
-        label = { Text("Search") ***REMOVED***,
-        modifier = Modifier
-            .padding(16.dp),
-        singleLine = true, // Ensure single-line input
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Default.Search,
-                contentDescription = "Search Icon"
-***REMOVED***
-        ***REMOVED***
-    )
-***REMOVED***
-
 @Composable
 fun TemplateItem(
     template: Template,
@@ -203,7 +181,7 @@ fun TemplateItem(
             .clickable {
                 navController.navigate(Screen.EditTemplate.withArgs("templateId" to template.id.toHexString()))
             ***REMOVED*** // Make the entire item clickable
-            .padding(16.dp),
+            .padding(8.dp),
         border = CardDefaults.outlinedCardBorder(), // Add a border
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp) // Add elevation for better visuals
 

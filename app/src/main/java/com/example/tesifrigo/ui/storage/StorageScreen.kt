@@ -34,12 +34,10 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.tesifrigo.Screen
 import com.example.tesifrigo.models.Extraction
-import com.example.tesifrigo.ui.template.SearchBar
+import com.example.tesifrigo.utils.SearchBar
 import com.example.tesifrigo.viewmodels.ExtractionViewModel
 import com.example.tesifrigo.viewmodels.SortOrder
 import com.guru.fontawesomecomposelib.FaIcon
@@ -53,7 +51,6 @@ fun StorageScreen(navController: NavHostController, extractionViewModel: Extract
     val searchText by extractionViewModel.searchText.collectAsState()
     var expanded by remember { mutableStateOf(false) ***REMOVED***
     val ascending by extractionViewModel.ascending.collectAsState()
-    val sortOrder: SortOrder by extractionViewModel.sortOrder.collectAsState()
 
     val extractions by extractionViewModel.sortedExtractions.collectAsState()
     Scaffold(
