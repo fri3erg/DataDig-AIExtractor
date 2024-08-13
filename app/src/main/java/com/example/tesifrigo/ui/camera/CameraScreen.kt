@@ -30,7 +30,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -41,7 +40,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -71,14 +70,12 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.tesifrigo.Screen
 import com.example.tesifrigo.models.Extraction
 import com.example.tesifrigo.models.Options
 import com.example.tesifrigo.services.ExtractionService
 import com.example.tesifrigo.utils.DropDownGeneral
-import com.example.tesifrigo.utils.DropdownWithNavigation
 import com.example.tesifrigo.utils.FileCard
 import com.example.tesifrigo.utils.HelpIconButton
 import com.example.tesifrigo.utils.LabeledSwitch
@@ -114,6 +111,11 @@ fun CameraScreen(
     val template by templateViewModel.queryTemplate(templateId ?: "").collectAsState(initial = null)
     val activePhoto by serviceViewModel.activePhoto.collectAsState()
     val activeExtraction by serviceViewModel.activeExtraction.collectAsState()
+    var openGptKeysDialog by remember { mutableStateOf(false) ***REMOVED***
+    var openAzureKeysDialog by remember { mutableStateOf(false) ***REMOVED***
+    var reasonTable by remember { mutableStateOf(false) ***REMOVED***
+    val options by serviceViewModel.options.collectAsState()
+
     if (templateId != null) {
         template?.let {
             serviceViewModel.setTemplate(it)
@@ -153,13 +155,37 @@ fun CameraScreen(
                     imageUris,
                     activeExtraction,
                     onExtractionClick = {
+                        when {
+                            // If GPT keys are missing, show the GPT keys dialog
+                            !serviceViewModel.gptKeysExist() -> {
+                                openGptKeysDialog = true
+                            ***REMOVED***
 
-                        val intent = Intent(context, ExtractionService::class.java).also {
-                            it.action = ExtractionService.Actions.START.toString()
-                            it.putParcelableArrayListExtra("imageUris", ArrayList(imageUris))
+                            // If Azure keys are missing and the conditions for Azure OCR are met, show the Azure keys dialog
+                            !serviceViewModel.azureKeysExist() -> {
+                                when {
+                                    // If there are tables, set the reason for tables and show the dialog
+                                    template?.tables?.isNotEmpty() == true -> {
+                                        openAzureKeysDialog = true
+                                        reasonTable = true
+                                    ***REMOVED***
+                                    // If the Azure OCR option is enabled, show the dialog without table reasons
+                                    options?.azureOcr == true -> {
+                                        openAzureKeysDialog = true
+                                        reasonTable = false
+                                    ***REMOVED***
+                                    // If neither tables nor Azure OCR are required, proceed with extraction
+                                    else -> {
+                                        startExtraction(context, serviceViewModel, imageUris)
+                                    ***REMOVED***
+                                ***REMOVED***
+                            ***REMOVED***
+
+                            // If all necessary keys exist, proceed with extraction
+                            else -> {
+                                startExtraction(context, serviceViewModel, imageUris)
+                            ***REMOVED***
                         ***REMOVED***
-                        serviceViewModel.setActiveExtraction(true)
-                        ContextCompat.startForegroundService(context, intent)
                     ***REMOVED***,
                     serviceViewModel,
                     extractionViewModel,
@@ -169,6 +195,119 @@ fun CameraScreen(
 
         ***REMOVED***
     ***REMOVED***
+    if(openAzureKeysDialog) {
+        AzureKeysDialog({ openAzureKeysDialog=false ***REMOVED***,  navController, reasonTable)
+    ***REMOVED***
+    if(openGptKeysDialog) {
+        GptKeysDialog({ openGptKeysDialog=false ***REMOVED***,  navController)
+    ***REMOVED***
+
+***REMOVED***
+
+@Composable
+fun ExceptionsDialog(closeDialog: () -> Unit, extraction: Extraction) {
+    AlertDialog(
+        onDismissRequest = { closeDialog() ***REMOVED***,
+        title = {
+            Text("Errors occurred while fetching the extraction.")
+        ***REMOVED***,
+        text = {
+            LazyColumn {
+                items(extraction.exceptionsOccurred) { error ->
+                    Row {
+                        Text(text = error.error, modifier = Modifier.weight(1f))
+                        Text(text = error.errorType)
+                    ***REMOVED***
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(text = error.errorDescription)
+                    HorizontalDivider()
+                ***REMOVED***
+            ***REMOVED***
+        ***REMOVED***,
+        confirmButton = {
+            Button(
+                onClick = { closeDialog() ***REMOVED***
+***REMOVED*** {
+                Text("Ok")
+            ***REMOVED***
+        ***REMOVED***
+    )
+
+
+***REMOVED***
+
+
+fun startExtraction(context: Context, serviceViewModel: ServiceViewModel, imageUris: List<Uri>) {
+    val intent = Intent(context, ExtractionService::class.java).also {
+        it.action = ExtractionService.Actions.START.toString()
+        it.putParcelableArrayListExtra("imageUris", ArrayList(imageUris))
+    ***REMOVED***
+    serviceViewModel.setActiveExtraction(true)
+    ContextCompat.startForegroundService(context, intent)
+***REMOVED***
+
+@Composable
+fun AzureKeysDialog(changeOpen: () -> Unit, navController: NavHostController, reason1:Boolean) {
+
+    var text = if (reason1) {
+        "Your template contains table, Azure is required for table extraction"
+    ***REMOVED*** else {
+        "You cannot use Azure OCR without keys"
+    ***REMOVED***
+    text += "Please enter your Azure keys in the settings"
+    AlertDialog(
+        onDismissRequest = { changeOpen() ***REMOVED***,
+        title = { Text("Azure Keys") ***REMOVED***,
+        text = {
+            Text(text)
+        ***REMOVED***,
+        confirmButton = {
+            Button(
+                onClick = {
+                    changeOpen()
+                    navController.navigate(Screen.Settings.route)
+                ***REMOVED***
+***REMOVED*** {
+                Text("Go to settings")
+            ***REMOVED***
+        ***REMOVED***,
+        dismissButton = {
+            Button(
+                onClick = { changeOpen() ***REMOVED***
+***REMOVED*** {
+                Text("Ok")
+            ***REMOVED***
+        ***REMOVED***
+    )
+***REMOVED***
+
+
+@Composable
+fun GptKeysDialog(function: () -> Unit, navController: NavHostController) {
+    AlertDialog(
+        onDismissRequest = { function() ***REMOVED***,
+        title = { Text("OpenAi Keys") ***REMOVED***,
+        text = {
+            Text("You cannot extract without keys. Please enter your OpenAi keys in the settings")
+        ***REMOVED***,
+        confirmButton = {
+            Button(
+                onClick = { function()
+                navController.navigate(Screen.Settings.route)
+                ***REMOVED***
+***REMOVED*** {
+                Text("Go to settings")
+            ***REMOVED***
+        ***REMOVED***,
+        dismissButton = {
+            Button(
+                onClick = { function() ***REMOVED***
+***REMOVED*** {
+                Text("Ok")
+            ***REMOVED***
+        ***REMOVED***
+    )
+
 ***REMOVED***
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -232,7 +371,9 @@ fun ChooseTemplate(navController: NavHostController, templateViewModel: Template
 
                     Button(
                         onClick = { templateViewModel.toggleAscending() ***REMOVED***,
-                        modifier = Modifier.align(Alignment.CenterVertically).padding(end=16.dp),
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .padding(end = 16.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Gray)
         ***REMOVED*** {
                         if (ascending) {
@@ -280,10 +421,12 @@ fun ChooseTemplate(navController: NavHostController, templateViewModel: Template
                             faIcon = FaIcons.Edit, // Using the right arrow icon
                             tint = Color.Black, // Set icon color
                             size = 24.dp, // Set icon size
-                            modifier = Modifier.clickable {
-                                navController.navigate(Screen.EditTemplate.withArgs("templateId" to template.id.toHexString()))
-                            ***REMOVED***.align(Alignment.CenterVertically) // Align the icon to the center vertically
-                                .padding(end=8.dp)
+                            modifier = Modifier
+                                .clickable {
+                                    navController.navigate(Screen.EditTemplate.withArgs("templateId" to template.id.toHexString()))
+                                ***REMOVED***
+                                .align(Alignment.CenterVertically) // Align the icon to the center vertically
+                                .padding(end = 8.dp)
             ***REMOVED***
                     ***REMOVED***
 
@@ -340,7 +483,7 @@ fun ExtractionDetails(
     Text(
         "Template: $templateTitle",
         modifier = modifier
-            .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+            .padding(16.dp),
         fontSize = 28.sp,
         fontWeight = FontWeight.Bold,
         color = Color.Black,
@@ -349,11 +492,11 @@ fun ExtractionDetails(
     MyImageArea(
         imageUris = imageUris,
     )
+    if (!activeExtraction) {
     HorizontalDivider()
     ButtonBar(serviceViewModel, sharedPrefs, templateViewModel)
     HorizontalDivider()
 
-    if (!activeExtraction) {
         Button(
             modifier = Modifier
                 .padding(16.dp)
@@ -365,6 +508,10 @@ fun ExtractionDetails(
             Text(text = "Extract!", color = Color.Black)
         ***REMOVED***
     ***REMOVED*** else {
+        ExtractedBar(serviceViewModel,  templateViewModel)
+        
+        HorizontalDivider()
+
         Spacer(modifier = Modifier.height(16.dp))
         ProgressBar()
         Spacer(modifier = Modifier.height(16.dp))
@@ -376,6 +523,93 @@ fun ExtractionDetails(
         )
     ***REMOVED***
 
+***REMOVED***
+
+@Composable
+fun ExtractedBar(serviceViewModel: ServiceViewModel,  templateViewModel: TemplateViewModel) {
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+            // New Extraction
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable {
+                        serviceViewModel.clearImageUris()
+                        serviceViewModel.setActiveExtraction(false)
+                        serviceViewModel.setActivePhoto(true)
+                        templateViewModel.setActiveTemplate(null)
+                    ***REMOVED***
+                    .padding(8.dp), // Optional padding
+                horizontalAlignment = Alignment.CenterHorizontally
+***REMOVED*** {
+                FaIcon(
+                    faIcon = FaIcons.Plus, // Using the plus icon
+                    tint = Color.Black, // Set icon color
+                    size = 24.dp // Set icon size
+    ***REMOVED***
+                Spacer(modifier = Modifier.height(4.dp)) // Space between icon and text
+                Text(
+                    text = "New Extraction",
+                    fontSize = 12.sp, // Smaller font size
+                    textAlign = TextAlign.Center // Center align text
+    ***REMOVED***
+            ***REMOVED***
+
+            // Use New Photos
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable {
+                        serviceViewModel.clearImageUris()
+                        serviceViewModel.setActiveExtraction(false)
+                        serviceViewModel.setActivePhoto(true)
+                    ***REMOVED***
+                    .padding(8.dp), // Optional padding
+                horizontalAlignment = Alignment.CenterHorizontally
+***REMOVED*** {
+                FaIcon(
+                    faIcon = FaIcons.Camera, // Using the camera icon
+                    tint = Color.Black, // Set icon color
+                    size = 24.dp // Set icon size
+    ***REMOVED***
+                Spacer(modifier = Modifier.height(4.dp)) // Space between icon and text
+                Text(
+                    text = "Use New Photos",
+                    fontSize = 12.sp, // Smaller font size
+                    textAlign = TextAlign.Center // Center align text
+    ***REMOVED***
+            ***REMOVED***
+
+            // Change Template
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable {
+                        serviceViewModel.setActiveExtraction(false)
+                        templateViewModel.setActiveTemplate(null)
+                    ***REMOVED***
+                    .padding(8.dp), // Optional padding
+                horizontalAlignment = Alignment.CenterHorizontally
+***REMOVED*** {
+                FaIcon(
+                    faIcon = FaIcons.Table, // Using the table icon
+                    tint = Color.Black, // Set icon color
+                    size = 24.dp // Set icon size
+    ***REMOVED***
+                Spacer(modifier = Modifier.height(4.dp)) // Space between icon and text
+                Text(
+                    text = "Change Template",
+                    fontSize = 12.sp, // Smaller font size
+                    textAlign = TextAlign.Center // Center align text
+    ***REMOVED***
+            ***REMOVED***
+
+    ***REMOVED***
+    Spacer(modifier = Modifier.height(16.dp))
 ***REMOVED***
 
 @Composable
@@ -542,7 +776,8 @@ fun ShownExtraction(
     ***REMOVED***
     if (isLoading) {
         CircularProgressIndicator() // Show loading indicator
-    ***REMOVED*** else if (extraction != null) {
+    ***REMOVED*** else{
+        extraction?.let {
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -567,21 +802,22 @@ fun ShownExtraction(
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(Color.Red),
                     onClick = {
-                        extraction?.id.let { extractionId ->
+                        it.id.let { extractionId ->
 
-                            if (extractionId != null) {
-                                navController.navigate(Screen.SingleExtraction.withArgs("extractionId" to extractionId.toHexString()))
-                            ***REMOVED***
+                            navController.navigate(Screen.SingleExtraction.withArgs("extractionId" to extractionId.toHexString()))
                         ***REMOVED***
                     ***REMOVED***) {
                     Text("Go to Extraction")
                 ***REMOVED***
             ***REMOVED***
             HorizontalDivider()
-
-            if (extraction!!.fileUri != null) {
-                FileCard(extraction!!)
+            if (it.fileUri != null) {
+                FileCard(it)
             ***REMOVED***
+            if (errorOccurred) {
+                ExceptionsDialog( { errorOccurred = false ***REMOVED***, it)
+            ***REMOVED***
+        ***REMOVED***
         ***REMOVED***
     ***REMOVED***
 ***REMOVED***

@@ -1,7 +1,6 @@
 package com.example.tesifrigo.viewmodels
 
 import android.net.Uri
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.tesifrigo.models.Options
 import com.example.tesifrigo.models.Template
@@ -89,6 +88,15 @@ class ServiceViewModel @Inject constructor(
 
     fun clearImageUris() {
         _imageUris.value = emptyList()
+    ***REMOVED***
+
+    fun gptKeysExist(): Boolean {
+        return keyManager.getApiKey(Keys.API_KEY_1) != null
+
+    ***REMOVED***
+
+    fun azureKeysExist(): Boolean {
+        return keyManager.getApiKey(Keys.API_KEY_2) != null && keyManager.getApiKey(Keys.API_KEY_3) != null
     ***REMOVED***
 
 
