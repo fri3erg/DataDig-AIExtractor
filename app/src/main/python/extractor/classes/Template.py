@@ -1,7 +1,7 @@
 
 from typing import Dict, List, Tuple
 class TemplateField:
-    def __init__(self, id:str, title: str, description:str, extra_description: str, type: str | None, required: bool, intelligent_extraction= False):
+    def __init__(self, id:str, title: str, description:str, extra_description: str, type: str | None, required: bool, intelligent_extraction= False, default : str ="N/A"):
         self.id = id
         self.title = title
         self.description = description
@@ -9,7 +9,7 @@ class TemplateField:
         self.type = type
         self.required= required
         self.intelligent_extraction = intelligent_extraction # Boolean indicating whether intelligent extraction is enabled for this field
-
+        self.default = default
 
 class TemplateTable:
     def __init__(self,id:str, title:str, keywords: List[str],description:str, rows: List[TemplateField], columns:List[TemplateField]):
@@ -42,11 +42,8 @@ class Template:
         output_str += "Fields:\n  "
         for field in self.fields:
             required_str = "Required" if field.required else "Optional" 
-            output_str += f"- {field.title***REMOVED*** ({getattr(field.type, '__name__','type unknown')***REMOVED***): {field.description***REMOVED*** ({required_str***REMOVED***)\n  "
+            output_str += f"- {field.title***REMOVED*** ({getattr(field.type, '__name__','type unknown')***REMOVED***): {field.description***REMOVED*** ({required_str***REMOVED***)(dafault: {field.default***REMOVED***)\n  "
             
-            # Include extra description if available
-            #if field.extra_description:
-            #   output_str += f"  - Extra Description: {field.extra_description***REMOVED***\n"
 
         return output_str
 

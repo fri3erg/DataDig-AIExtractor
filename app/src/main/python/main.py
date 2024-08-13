@@ -31,14 +31,10 @@ def main(encoded_images : list,text : list[str], template: Template, options: Op
     """
     exceptions_occurred: List[ExceptionsExtracted] = []
     try:
-        #env_setter = EnvVarSetter(tenant="insurance")
-        #env_setter.configure_local_env_vars()
         images: list[bytes]= [base64.b64decode(image) for image in list(encoded_images)]
 
         #images: list[bytes] = [bytes(image, 'utf-8') for image in list(encoded_images)]  
         # testing
-        batch_size = 5
-        parallel = True
         extractor:MainExtractor | None = None
         # list all the pdf files in the folder
         print("START")
@@ -69,15 +65,6 @@ def main(encoded_images : list,text : list[str], template: Template, options: Op
             exceptions_occurred.append(ExceptionsExtracted(error=error, error_location="main phase",error_description=repr(error)))
             print("main phase error" + repr(error))
 
-
-        # give request id
-        # orders results
-        #results = pd.DataFrame(extractions)
-        # ordered = [col for col in column_order[file_type] if col in results.columns]
-        # results = results[ordered]
-        #excel_path = os.path.join(doc_folder + ".xlsx")
-        # saves results
-        #results.to_excel(excel_path, header=True, index=False)
         if extraction:
             extraction.add_exceptions(exceptions_occurred)
         print(extraction)
@@ -108,8 +95,10 @@ def create_test() -> tuple[Template, Options]:
         [table1,table2],         # Tables within the template
         ["general", "personal"],
     )
+    def fake_keys(progress):
+        return progress
     
-    option= Options(model="gpt-3.5-turbo",azure_ocr=True)
+    option= Options(model="gpt-4",language="en",azure_ocr=True,get_api_key= fake_keys)
 
     return template, option
 

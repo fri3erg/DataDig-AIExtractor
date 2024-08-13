@@ -17,6 +17,15 @@ class MainExtractor(GeneralScanner):
         self.intelligent_present: bool = any(field.intelligent_extraction for field in self.template.fields)
         
     def first_stage(self) -> float | None: 
+        """
+        Performs the first stage of the extraction process.
+        
+        This function attempts to extract basic and intelligent information from the template.
+        It checks for the presence of tables and complex information, and updates the progress accordingly.
+        
+        Returns:
+            float | None: The updated progress value, or None if an error occurs.
+        """
         
         try:
             #complex_info_present: bool = any(field.extra_description for field in self.template.fields)
@@ -43,6 +52,15 @@ class MainExtractor(GeneralScanner):
     
     
     def second_stage(self):
+        """
+        Performs the second stage of the extraction process.
+
+        This function attempts to extract information from tables and complex information.
+        It checks for the presence of tables and complex information, and updates the results accordingly.
+
+        Returns:
+            None
+        """
         try:
             functions_parameters = {
                 **({"info_from_tables": {"function": self.extract_from_tables, "args": {"tables": self.tables***REMOVED******REMOVED******REMOVED*** if self.tables_present else {***REMOVED***),
@@ -60,6 +78,16 @@ class MainExtractor(GeneralScanner):
             print("second stage error" + repr(error))
             
     def end_phase(self) -> Extracted:
+        """
+        Performs the final phase of the extraction process.
+
+        This function attempts to finalize the extraction by processing costs, 
+        creating an Extracted object, and handling any exceptions that may occur.
+
+        Returns:
+            Extracted: The final extracted object containing the template, fields, 
+            tables, extraction costs, exceptions, format, and tags.
+        """
         
         try:
 

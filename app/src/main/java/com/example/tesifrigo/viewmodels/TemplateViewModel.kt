@@ -497,6 +497,23 @@ class TemplateViewModel : ViewModel() {
         ***REMOVED***
 
     ***REMOVED***
+
+    fun removeKeyword(table: TemplateTable, indexOf: Int) {
+        viewModelScope.launch {
+            realm.writeBlocking {
+                table.keywords.removeAt(indexOf)
+            ***REMOVED***
+        ***REMOVED***
+    ***REMOVED***
+
+    fun addKeyword(table: TemplateTable, newKey: String) {
+        viewModelScope.launch {
+            realm.writeBlocking {
+                table.keywords.add(newKey)
+            ***REMOVED***
+        ***REMOVED***
+
+    ***REMOVED***
 ***REMOVED***
 
 enum class SortOrder {

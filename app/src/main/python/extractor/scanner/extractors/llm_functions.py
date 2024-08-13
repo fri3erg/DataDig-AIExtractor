@@ -1,14 +1,17 @@
+from typing import Optional
 from ...classes.Options import Options
 from ...classes.Template import Template
+from ...classes.Extracted import ExceptionsExtracted
 from ...scanner.extractors.utils import select_desired_page, upload_df_as_excel
 from ...scanner.extractors.utils import num_tokens_from_string
 from langchain.prompts import PromptTemplate
 from ..ai_manager.models import Models
 from ...configs.configs import prompts, prompts_intelligent
 from ..config.basic_tags import DocLanguage
+from ...configs.configs import desc_tabella
 
 
-def get_doc_language(text, file_id):
+def get_doc_language(text, file_id, options:Options):
     """Get the language of the document.
 
     Args:
@@ -20,7 +23,7 @@ def get_doc_language(text, file_id):
     """
     # Analyze first page
     sample_text = text[0][:300]
-    language = Models.tag(sample_text, DocLanguage, file_id, model="gpt-3.5-turbo")
+    language = Models.tag(sample_text, DocLanguage, file_id, options)
 
     # Check if language is mapped
     # NOTE: need to add more languages
@@ -63,7 +66,7 @@ def llm_extraction(page, template:Template, file_id, options:Options):
     return response
 
 
-def general_table_inspection(table, pydantic_class, file_id, add_text=""):
+def general_table_inspection(table, pydantic_class, file_id, options:Options, add_text=""):
     """tags data in a table
 
     Args:
@@ -80,14 +83,13 @@ def general_table_inspection(table, pydantic_class, file_id, add_text=""):
     try:
 
         # First normal extraction, then tagging
-        tag_model = "gpt-4-turbo"
-        add_text= f"descrizione della tabella=-> {add_text***REMOVED*** " if add_text else ""
-        table = f"{add_text***REMOVED*** TABELLA-> {table***REMOVED***"
+        add_text= f"{desc_tabella[options.language or 'en']***REMOVED*** {add_text***REMOVED*** " if add_text else ""
+        table = f"{add_text***REMOVED*** TABLE-> {table***REMOVED***"
 
-        extraction_adapted = Models.tag(table, pydantic_class, file_id, model=tag_model)
+        extraction_adapted = Models.tag(table, pydantic_class, file_id, options)
     except Exception as error:
         print("table extraction error" + repr(error))
-        extraction_adapted = {"ERROR": "ERROR"***REMOVED***
+        raise error
 
     return extraction_adapted
 
@@ -169,32 +171,34 @@ def llm_extraction_and_tag(page, template:Template, file_id, pydantic_class, opt
     Returns:
         dict(): data extracted
     """
+    model=options.model
     initial_prompt: str= prompts[options.language or "it"]
     template_readable=template.template_to_readable_string()
-    
+    optional_error:Optional[ExceptionsExtracted] = None
     input_variables: list[str] = ["template","context"]
     prompt = PromptTemplate(input_variables=input_variables, template=initial_prompt)
     # Select model size based on context
     if options.model == "gpt-3.5-turbo":
         total_token = num_tokens_from_string(prompt.template.format(context=page, template=template_readable))
         if total_token > 4000:
-           options.model = "gpt-3.5-turbo-16k"
+           model = "gpt-3.5-turbo-16k"
         else:
-            options.model = "gpt-3.5-turbo"
+            model = "gpt-3.5-turbo"
     # Construct chain and extract relevan info
     try:
-        response = Models.extract(file_id, options.model, prompt, page, template_readable)
+        response = Models.extract(file_id, model, prompt, page, template_readable)
     except Exception as e:
         print("error in extraction", e)
+        optional_error = ExceptionsExtracted(e, "llm_extraction",repr(e))
         response = str(page)
     response = str.replace(r"\*\*", "", response)
     
     print("response:",response)
     # To ensure optimal data standardization
     try:
-        tagged = Models.tag(response, pydantic_class, file_id)
+        tagged = Models.tag(response, pydantic_class,options,  file_id)
     except Exception as e:
         print("error in tagging", e)
         raise e
 
-    return tagged
+    return tagged, optional_error

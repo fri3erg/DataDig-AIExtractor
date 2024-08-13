@@ -40,8 +40,8 @@ class GeneralScanner:
         self.images = images
         self.options = options
         self.text: List[str] = text
-        if not options.language:
-            self.options.language = get_doc_language(self.text, self.file_id)
+        if  options.language == None or  options.language == "auto-detect":
+            self.options.language = get_doc_language(self.text, self.file_id, self.options)
         self.template: Template = template
         self.progress:float= 0
         self.di_tables_pages = {***REMOVED***
@@ -72,10 +72,16 @@ class GeneralScanner:
     
     
     def get_tables(self):
-        """calc table extractor, it extracts the three tables from the document asynchronously
+        """
+    	Retrieves tables from the document based on the provided template.
 
-        Returns:
-            dict([pandas.dataframe]): tables as dataframe
+    	Tables are extracted using the keywords specified in the template. If Azure OCR is enabled, 
+    	the function attempts to fill the tables before extraction. Any errors encountered during 
+    	this process are caught and appended to the exceptions_occurred list.
+
+    	Returns:
+    		dict: A dictionary containing the extracted tables, where each key is a table object 
+    		  and its corresponding value is the extracted table data.
         """
         tables=dict()
         if self.options.azure_ocr:
@@ -99,14 +105,27 @@ class GeneralScanner:
     
     
     def extract_intelligent_info(self, template:Template) -> List[ExtractedField]:
+        """
+        Extracts intelligent information from the given template using the text, file ID, and options.
+        
+        Args:
+            template (Template): The template object containing the information to be extracted.
+        
+        Returns:
+            List[ExtractedField]: A list of ExtractedField objects representing the extracted information.
+        
+        Raises:
+            Exception: If an error occurs during the extraction process.
+        """
         
         extraction_fields=[]
         try:
             # extract and clean
-            extraction = llm_extraction_and_tag(
+            extraction, optional_error = llm_extraction_and_tag(
                 self.text, template, self.file_id,create_intelligent_pydantic_class(template), self.options
 ***REMOVED***
-            #extraction = clean_response_regex(regex_cleaning, extraction)
+            if optional_error:
+                self.exceptions_occurred.append(optional_error)
             extraction_fields: List[ExtractedField] = extracted_from_pydantic(self.template, extraction)
             
         except Exception as error:
@@ -118,7 +137,7 @@ class GeneralScanner:
 
     def extract_basic_info(self, template: Template) -> List[ExtractedField]:
         """
-        Extract general data from the document. Namely RHP and SRI.
+        Extract general data from the document.  The data extracted is based on the template provided and has no intelligent extraction flag
 
         Returns:
             List[ExtractedField]: extracted data
@@ -126,10 +145,13 @@ class GeneralScanner:
         extraction_fields=[]
         try:
             # extract and clean
-            extraction = llm_extraction_and_tag(
+            extraction , optional_error = llm_extraction_and_tag(
                 self.text, template, self.file_id, create_pydantic_class(template), self.options
 ***REMOVED***
-            #extraction = clean_response_regex(regex_cleaning, extraction)
+            
+            if optional_error:
+                self.exceptions_occurred.append(optional_error)
+
             extraction_fields: List[ExtractedField] = extracted_from_pydantic(self.template, extraction)
             
 
@@ -139,7 +161,6 @@ class GeneralScanner:
 
         return extraction_fields
 
-    # REVIEW: NEED TO UPLOAD TABLE AS DF
     def extract_from_tables(self, tables:dict[TemplateTable, Any]) -> list[ExtractedTable]:
         """extracts riy from the document
 
@@ -152,12 +173,11 @@ class GeneralScanner:
             try:
             # Select page with RIY
             
-                extraction = general_table_inspection(table, create_pydantic_table_class(template), self.file_id, add_text=template.description)
+                extraction = general_table_inspection(table, create_pydantic_table_class(template), self.file_id,self.options, add_text=template.description)
                 extracted_fields: Dict[str,Dict[str,ExtractedField]]= extracted_from_pydantic_table(self, extraction, template)
                 extracted_table.append(ExtractedTable(template,fields=extracted_fields,dataframe=table))
                 
                 
-                #extraction = clean_response_regex(regex_cleaning, extraction)
             except Exception as error:
                 print("extract riy error" + repr(error))
                 self.exceptions_occurred.append(ExceptionsExtracted( error, f"extracting tables: {template.title***REMOVED***",repr(error)))
@@ -170,9 +190,12 @@ class GeneralScanner:
         
         extraction: List[ExtractedField] =[]
         try:
-            extracted = llm_extraction_and_tag(
+            extracted, optional_error = llm_extraction_and_tag(
                 extracted, self.template, self.file_id, create_pydantic_class(self.template), self.options
 ***REMOVED***
+            if optional_error:
+                self.exceptions_occurred.append(optional_error)
+                
             extraction= extracted_from_pydantic(self.template, extracted)
         except Exception as error:
             print("extract entry exit costs error" + repr(error))
@@ -195,41 +218,46 @@ class GeneralScanner:
         Returns:
             pandas.DataFrame: dataframe containing the table.
         """
-        try:
-            # Select page with table
+        # Select page with table
 
-            text = [page if i not in black_list_pages else "" for i, page in enumerate(self.text)]
-            page, _ = select_desired_page(text, keywords)
+        text = [page if i not in black_list_pages else "" for i, page in enumerate(self.text)]
+        page, _ = select_desired_page(text, keywords)
 
-            # Get all the tables from the page
-            if (self.di_tables_pages is not None and page not in self.di_tables_pages.keys()) or len(self.di_tables_pages.get(page, []))==0:
-                page_num = str(int(page) + 1)
-                tables, raw_data = get_tables_from_doc(self.images[int(page)], specific_pages=page_num, language=self.options.language or "it")
-                document=getattr(raw_data,"pages", None)
-                all_text = ""
-                for line in getattr(document[int(page)] if document else [],"lines"):
-                    all_text += line.content + "\n"
-                self.text[int(page)] = all_text
-                self.di_tables_pages[page] = tables
-                self.raw_data_pages[page] = raw_data
-            else:
-                tables = self.di_tables_pages[page]
-                raw_data = self.raw_data_pages[page]
+        # Get all the tables from the page
+        if (self.di_tables_pages is not None and page not in self.di_tables_pages.keys()) or len(self.di_tables_pages.get(page, []))==0:
+            page_num = str(int(page) + 1)
+            tables, raw_data = get_tables_from_doc(self.images[int(page)], specific_pages=page_num, language=self.options.language or "it")
+            document=getattr(raw_data,"pages", None)
+            all_text = ""
+            for line in getattr(document[int(page)] if document else [],"lines"):
+                all_text += line.content + "\n"
+            self.text[int(page)] = all_text
+            self.di_tables_pages[page] = tables
+            self.raw_data_pages[page] = raw_data
+        else:
+            tables = self.di_tables_pages[page]
+            #raw_data = self.raw_data_pages[page]
 
-            # Select the right table
-            table_nr = select_desired_table(tables, keywords)
-            return tables[int(table_nr)] if table_nr is not None else DataFrame()
+        # Select the right table
+        table_nr = select_desired_table(tables, keywords)
+        return tables[int(table_nr)] if table_nr is not None else DataFrame()
 
-        except Exception as error:
-            print("extract table error" + repr(error))
-            return "", ""
-            # @ELIA?
+            
 
     def fill_tables(self, pages:List[int] | None = None):
+        """
+        Fills the tables in the document asynchronously for faster runs.
+
+        Args:
+            pages (List[int] | None, optional): List of pages to fill tables for. If None, all pages will be filled. Defaults to None.
+
+        Returns:
+            None
+
+        This function fills the tables in the document asynchronously for faster runs. It takes an optional parameter `pages` which is a list of pages to fill tables for. If `pages` is None, all pages will be filled. The function first creates a dictionary `function_parameters` with the pages to fill tables for. It then calls the `threader` method with `function_parameters` to fill the tables asynchronously. The results are then stored in `self.di_tables_pages` and `self.raw_data_pages`. The text for each page is also extracted and stored in `self.text`.
+        """
         #experimental for faster runs, fills the tables in the document asynchronously all in one
 
-        #Args:
-            #page (_type_): _description_
         function_parameters = {***REMOVED***
         for i, image in enumerate(self.images):
             pages_exists= pages and i in pages

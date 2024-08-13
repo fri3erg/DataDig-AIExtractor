@@ -77,15 +77,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.tesifrigo.models.Template
 import com.example.tesifrigo.models.TemplateField
+import com.example.tesifrigo.models.TemplateTable
 import com.example.tesifrigo.utils.AddButton
 import com.example.tesifrigo.utils.DeleteButton
 import com.example.tesifrigo.utils.HelpIconButton
-import com.example.tesifrigo.utils.NumberPicker
 import com.example.tesifrigo.viewmodels.TemplateViewModel
 import com.guru.fontawesomecomposelib.FaIcon
 import com.guru.fontawesomecomposelib.FaIcons
@@ -157,9 +155,9 @@ fun EditTemplateScreen(
                     title?.let {
                         OutlinedTextField(
                             value = it,
-                            onValueChange = {
-                                templateViewModel.updateTemplateTitle(template!!, it)
-                                title = it
+                            onValueChange = { newValue->
+                                templateViewModel.updateTemplateTitle(template!!, newValue)
+                                title = newValue
                             ***REMOVED***,
                             label = { Text("Template Title") ***REMOVED***,
                             modifier = Modifier.fillMaxWidth()
@@ -167,9 +165,6 @@ fun EditTemplateScreen(
                     ***REMOVED***
                 ***REMOVED***
 
-                item {
-                    TemplateTagsSection(template!!, templateViewModel)
-                ***REMOVED***
 
                 item {
                     Text("Template Fields", style = MaterialTheme.typography.titleMedium)
@@ -238,21 +233,21 @@ fun EditTemplateScreen(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun TemplateTagsSection(template: Template, viewModel: TemplateViewModel) {
+fun TemplateKeyWordsSection(template: Template, table: TemplateTable, viewModel: TemplateViewModel) {
     val context = LocalContext.current
     Column {
-        Text("Template Tags", style = MaterialTheme.typography.titleMedium)
+        Text("Table Keywords", style = MaterialTheme.typography.titleMedium)
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
 
         ) {
-            for (tag in template.tags) {
+            for (keyword in table.keywords) {
                 var showDismissIcon by remember { mutableStateOf(false) ***REMOVED***
 
                 AssistChip(
                     onClick = { showDismissIcon = !showDismissIcon ***REMOVED***,
-                    label = { Text(tag) ***REMOVED***,
+                    label = { Text(keyword) ***REMOVED***,
                     trailingIcon = {
                         AnimatedVisibility(
                             visible = showDismissIcon,
@@ -261,9 +256,9 @@ fun TemplateTagsSection(template: Template, viewModel: TemplateViewModel) {
             ***REMOVED*** {
                             Icon(
                                 Icons.Filled.Close,
-                                contentDescription = "Remove Tag",
+                                contentDescription = "Remove Keyword",
                                 modifier = Modifier.clickable {
-                                    viewModel.removeTag(template, tag)
+                                    viewModel.removeKeyword(table, table.keywords.indexOf(keyword))
                                 ***REMOVED***
                 ***REMOVED***
                         ***REMOVED***
@@ -281,29 +276,29 @@ fun TemplateTagsSection(template: Template, viewModel: TemplateViewModel) {
         ***REMOVED***
 
         // Add New Tag Section
-        var newTag by remember { mutableStateOf("") ***REMOVED***
+        var newKey by remember { mutableStateOf("") ***REMOVED***
         OutlinedTextField(
-            value = newTag,
-            onValueChange = { newTag = it ***REMOVED***,
-            label = { Text("Add Tag") ***REMOVED***,
+            value = newKey,
+            onValueChange = { newKey = it ***REMOVED***,
+            label = { Text("Add Keyword") ***REMOVED***,
             maxLines = 1,
             modifier = Modifier.fillMaxWidth(),
             trailingIcon = {
                 FaIcon(faIcon = FaIcons.Plus, tint = Color.Gray, modifier = Modifier.clickable {
                     when {
-                        newTag.isBlank() -> {
-                            Toast.makeText(context, "Tag cannot be empty", Toast.LENGTH_SHORT)
+                        newKey.isBlank() -> {
+                            Toast.makeText(context, "Keyword cannot be empty", Toast.LENGTH_SHORT)
                                 .show()
                         ***REMOVED***
 
-                        template.tags.size >= 5 -> {
-                            Toast.makeText(context, "Max number of tags is 5", Toast.LENGTH_SHORT)
+                        template.tags.size >= 10 -> {
+                            Toast.makeText(context, "Max number of keywords is 10", Toast.LENGTH_SHORT)
                                 .show()
                         ***REMOVED***
 
                         else -> {
-                            viewModel.changeTags(template, newTag)
-                            newTag = ""
+                            viewModel.addKeyword(table, newKey)
+                            newKey = ""
                         ***REMOVED***
                     ***REMOVED***
                 ***REMOVED***
@@ -326,7 +321,7 @@ fun TemplateFieldComposable(
     ) {
 
     val focusRequester = remember { FocusRequester() ***REMOVED*** // Create FocusRequester for field
-    val typeOptions = listOf("Any", "Text", "Date", "Number")
+    val typeOptions = listOf("Any", "Text", "Date", "Number", "Boolean", "Float", "List")
     var expanded by remember { mutableStateOf(false) ***REMOVED***
     val foundField by remember { mutableStateOf(template?.fields?.get(index)) ***REMOVED***
     var title by remember { mutableStateOf(foundField?.title) ***REMOVED***
@@ -444,6 +439,13 @@ fun TemplateFieldComposable(
                                                 "Date" -> {
                                                     default = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
                                                 ***REMOVED***
+                                                "Any" -> {
+                                                    default = ""
+                                                ***REMOVED***
+                                                "Float" -> {
+                                                    default = "-1.0"
+                                                ***REMOVED***
+
                                             ***REMOVED***
                                             viewModel.updateTemplateItem(
                                                 template,
@@ -470,7 +472,7 @@ fun TemplateFieldComposable(
                     Row(verticalAlignment = Alignment.CenterVertically) {
 
                         when(type){
-                            "Text", "Any", -> {
+                            "Text", "Any" -> {
                                 default?.let {
                                     OutlinedTextField(
                                         value = it,
@@ -494,9 +496,9 @@ fun TemplateFieldComposable(
 
                                     OutlinedTextField(
                                         value = it,
-                                        onValueChange = {
-                                            default = it
-                                            viewModel.updateTemplateItem(template, "default" to it, index)
+                                        onValueChange = { newValue ->
+                                            default = newValue
+                                            viewModel.updateTemplateItem(template, "default" to newValue, index)
                                         ***REMOVED***,
                                         label = { Text("Field Default (Number)") ***REMOVED***,
                                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -543,6 +545,40 @@ fun TemplateFieldComposable(
                                     ***REMOVED*** ?: ""
                                     default = selectedDate
                                     viewModel.updateTemplateItem(template, "default" to selectedDate, index)
+                                ***REMOVED***
+                            ***REMOVED***
+                            "Boolean" -> {
+                                default?.let {
+                                    BooleanFieldWithLabel(
+                                        label = "Field Default",
+                                        value = it.toBoolean(),
+                                        onValueChange = { newValue ->
+                                            default = newValue.toString()
+                                            viewModel.updateTemplateItem(template, "default" to newValue.toString(), index)
+                                        ***REMOVED***,
+                                        modifier = Modifier.weight(1f)
+                        ***REMOVED***
+                                ***REMOVED***
+                                Spacer(modifier = Modifier.width(4.dp)) // Reduced spacing
+                                HelpIconButton(helpText = " This is the default value for the field.")
+                            ***REMOVED***
+                            "Float" -> {
+                                default?.let {
+                                    OutlinedTextField(
+                                        value = it,
+                                        onValueChange = { newValue ->
+                                            default = newValue
+                                            viewModel.updateTemplateItem(template, "default" to newValue, index)
+                                        ***REMOVED***,
+                                        label = { Text("Field Default (Float)") ***REMOVED***,
+                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                        modifier = Modifier.weight(1f)
+
+                        ***REMOVED***
+
+                                    Spacer(modifier = Modifier.width(4.dp)) // Reduced spacing
+                                    HelpIconButton(helpText = " This is the default value for the field.")
+
                                 ***REMOVED***
                             ***REMOVED***
                         ***REMOVED***
@@ -648,6 +684,10 @@ fun TemplateTableCard(
                 label = { Text("Table Description") ***REMOVED***,
                 modifier = Modifier.fillMaxWidth()
 ***REMOVED***
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            TemplateKeyWordsSection(template,table, viewModel)
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -762,7 +802,7 @@ fun TableGrid(viewModel: TemplateViewModel, tableIndex: Int, template: Template)
         ***REMOVED*** else {
             AlertTable(
                 field = null,
-                onValueChange = { it ->
+                onValueChange = {
                     if (isColumn) {
                         viewModel.addColumnToTable(template, tableIndex, it)
                     ***REMOVED*** else {
@@ -780,8 +820,8 @@ fun TableGrid(viewModel: TemplateViewModel, tableIndex: Int, template: Template)
 
 @Composable
 fun TableCellTemplate(
-    field: TemplateField? = null,
     modifier: Modifier = Modifier,
+    field: TemplateField? = null,
     isHeader: Boolean = false,
     onValueChange: (TemplateField) -> Unit = {***REMOVED***,
     invisible: Boolean = false,

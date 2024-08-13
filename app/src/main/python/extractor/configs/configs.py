@@ -55,3 +55,35 @@ keys_config={
     "AZURE_FORM_RECOGNIZER_ENPOINT": "API_KEY_2",
     "AZURE_FORM_RECOGNIZER_KEY": "API_KEY_3",
 ***REMOVED***
+
+
+template_prompt= {
+    "en":         "Extract information from the following text based on this schema:\n\n{schema***REMOVED***\n\nText:{text***REMOVED***\n\n"
+        "Please ensure your response strictly adheres to the schema.\n"
+        "remember to adhere to the enums in the schema, use one of the allowed values listed in the schema."
+        "there could be possibilities where all the fields or some are missing, in that case use their default values\n\n",
+    "it":         "Estrai informazioni dal testo seguente in base a questo schema:\n\n{schema***REMOVED***\n\nTesto:{text***REMOVED***\n\n"
+        "Assicurati di rispondere in modo strutturato rispetto al schema.\n"
+        "ricorda di aderire alle enums nel schema, usare uno dei valori consentiti nell'enum.\n"
+        "c'e' una possibilità che tutti i campi o alcuni siano mancanti, in quel caso usa i valori di default\n\n",
+    "es":         "Extrae información del siguiente texto basado en este esquema:\n\n{schema***REMOVED***\n\nTexto:{text***REMOVED***\n\n"
+        "Por favor asegúrese de que su respuesta se ajuste al esquema.\n"
+        "recuerde que debe aderir a los enums en el esquema, use uno de los valores permitidos en el enum.\n"
+        "hay una posibilidad que todos los campos o algunos estén ausentes, en ese caso use sus valores por defecto\n\n",
+    "fr":         "Extraire des informations du texte suivant en fonction de ce schéma :\n\n{schema***REMOVED***\n\nTexte:{text***REMOVED***\n\n"
+        "Veuillez vous assurer que votre rÃ©ponse se conforme au schéma.\n"
+        "Rappelons que tous les champs ou certains sont absents, dans ce cas, utilisez leurs valeurs par défaut\n\n",
+    "de":         "Erstelle Informationen aus dem folgenden Text basierend auf diesem Schema:\n\n{schema***REMOVED***\n\nText:{text***REMOVED***\n\n"
+        "Bitte stellen Sie sicher, dass Ihre Antwort den Schema entspricht.\n"
+        "merken Sie sich, dass alle Felder oder einige fehlen, in diesem Fall verwenden Sie ihren Standardwerten\n\n", 
+          
+***REMOVED***
+
+
+desc_tabella={
+    "it": "descrizione della tabella=-> ",
+    "en": "description of the table=-> ",
+    "es": "descripción de la tabla=-> ",
+    "fr": "description de la table=-> ",
+    "de": "beschreibung der tabelle=-> ",
+***REMOVED***

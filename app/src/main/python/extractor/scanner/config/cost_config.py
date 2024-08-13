@@ -4,16 +4,16 @@
 
 cost_per_token = {
     "input": {
-        "gpt-4-turbo": 0.00001,
-        "gpt-4": 0.000028,
-        "gpt-3.5-turbo-16k": 0.000003,
-        "gpt-3.5-turbo": 0.0000014,
+        "gpt-3.5-turbo": 1.5e-6,  # $1.50 per 1 million tokens
+        "gpt-3.5-turbo-16k": 3.0e-6,  # $3.00 per 1 million tokens
+        "gpt-4": 3.0e-5,  # $30.00 per 1 million tokens
+        "gpt-4-turbo": 1.0e-5,  # $10.00 per 1 million tokens
     ***REMOVED***,
     "output": {
-        "gpt-4-turbo": 0.000028,
-        "gpt-4": 0.000056,
-        "gpt-3.5-turbo-16k": 0.000004,
-        "gpt-3.5-turbo": 0.0000019,
+        "gpt-3.5-turbo": 2.0e-6,  # $2.00 per 1 million tokens
+        "gpt-3.5-turbo-16k": 4.0e-6,  # $4.00 per 1 million tokens
+        "gpt-4": 6.0e-5,  # $60.00 per 1 million tokens
+        "gpt-4-turbo": 3.0e-5,  # $30.00 per 1 million tokens
     ***REMOVED***,
     "azure": 0.01,
 ***REMOVED***

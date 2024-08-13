@@ -1,11 +1,13 @@
 from collections import defaultdict
+from datetime import date
+from email.policy import default
 import os
 import re
 from tempfile import NamedTemporaryFile
 import uuid
 from langchain_community.document_loaders import PyPDFLoader
 from pydantic import BaseModel, Field, create_model
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 from PIL import Image
 from io import BytesIO
 from ...classes.Extracted import ExtractedField
@@ -58,7 +60,7 @@ def select_desired_table(tables, words_repr):
 
     for i, table in enumerate(tables):
         for word in words_repr:
-            counter[str(i)] += table.apply(lambda col: col.str.count(word, flags=re.IGNORECASE)).sum().sum()
+            counter[str(i)] += table.apply(lambda col, word=word: col.str.count(word, flags=re.IGNORECASE)).sum().sum()
 
     # Check if counter is empty
     if len(counter) == 0:
@@ -625,15 +627,37 @@ def create_pydantic_class(template: Template):
         description = template_field.extra_description or template_field.description
         if template_field.required:
             description += " (required)"
+        if pydantic_type == date:
+            description += " (format: YYYY-MM-DD)"
 
         # Use Optional for non-required fields
         if not template_field.required:
             pydantic_type = Optional[pydantic_type]
+            
+        default= get_typed_default(template_field.default, pydantic_type)
 
         # Create the Pydantic field
-        fields[template_field.title] = (pydantic_type, Field(default='N/A', description=description))
+        fields[template_field.title] = (pydantic_type, Field(default=default, description=description))
 
     model = create_model("DynamicModel", **fields) 
+    return model
+
+def create_intelligent_pydantic_class(template: Template):
+    """Creates a Pydantic model based on the provided Template object."""
+
+    fields = {***REMOVED***
+    for template_field in template.fields:
+        description= ""
+        field_type:type = get_pydantic_type(template_field.type)
+        default= get_typed_default(template_field.default, field_type)
+        if template_field.required:  # Assuming TemplateField has a 'required' attribute
+            description="(required)"
+        if field_type == date:
+            description += " (format: YYYY-MM-DD)"
+        fields[template_field.title] = (Optional[field_type], Field(description=description, default=default))
+
+
+    model = create_model("DynamicModel", **fields)  # Use create_model for dynamic creation
     return model
 
 def create_pydantic_table_class(template: TemplateTable):
@@ -648,27 +672,14 @@ def create_pydantic_table_class(template: TemplateTable):
             description=f"row:{row.title***REMOVED***|column:{column.title***REMOVED***|"
             
             if required:  # Assuming TemplateField has a 'required' attribute
-                description +=",should be present,check well"
+                description +="(required)"
             fields[description] = (Optional[field_type]| str, Field(default="N/A",description=description))
 
 
     model = create_model("DynamicModel", **fields)  # Use create_model for dynamic creation
     return model
 
-def create_intelligent_pydantic_class(template: Template):
-    """Creates a Pydantic model based on the provided Template object."""
 
-    fields = {***REMOVED***
-    description= ""
-    for template_field in template.fields:
-        field_type:type = get_pydantic_type(template_field.type)
-        if template_field.required:  # Assuming TemplateField has a 'required' attribute
-            description="should be present,check well"
-        fields[template_field.title] = (Optional[field_type], Field(description=description))
-
-
-    model = create_model("DynamicModel", **fields)  # Use create_model for dynamic creation
-    return model
 
 
 def get_pydantic_type(type: str|None) -> type:
@@ -690,8 +701,38 @@ def get_pydantic_type(type: str|None) -> type:
         return bool
     elif type == "date":
         return str
+    elif type == "List":
+        return List[str]
     else:
         return str
+    
+    
+def get_typed_default(default:str, pydantic_type:type) -> Any:
+    """
+    Returns a typed default value based on the provided Pydantic type.
+
+    Args:
+        default (str): The default value to be typed.
+        pydantic_type (type): The Pydantic type to which the default value should be converted.
+
+    Returns:
+        Any: The typed default value.
+    """
+    if pydantic_type == str:
+        return default
+    elif pydantic_type == int:
+        return int(default)
+    elif pydantic_type == float:
+        return float(default)
+    elif pydantic_type == bool:
+        return default
+    elif pydantic_type == date:
+        return default
+    elif pydantic_type == List:
+        return []
+    else:
+        return default
+        
 
 
 def extracted_from_pydantic(template:Template, tagged) -> List[ExtractedField]:
@@ -706,6 +747,8 @@ def extracted_from_pydantic(template:Template, tagged) -> List[ExtractedField]:
     extracted = []
     for field in tagged.__fields__:
         value = getattr(tagged, field,"N/A")
+        if isinstance(value, list):
+            value = "| ".join(value)
         matching_template_field:TemplateField | None = next(
             (tf for tf in template.fields if tf.title == field), None
         )  

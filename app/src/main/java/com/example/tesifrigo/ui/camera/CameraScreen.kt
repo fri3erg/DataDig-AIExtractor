@@ -459,10 +459,10 @@ fun ExtractionDetails(
         with(sharedPrefs) {
             with(edit()) {
                 if (!contains("model")) {
-                    putString("model", "GPT 4")
+                    putString("model", "gpt-4")
                 ***REMOVED***
                 if (!contains("language")) {
-                    putString("language", "en")
+                    putString("language", "auto-detect")
                 ***REMOVED***
                 if (!contains("azureOcr")) {
                     putBoolean("azureOcr", false)
@@ -473,8 +473,8 @@ fun ExtractionDetails(
                 apply()
             ***REMOVED***
 
-            defaultOptions.model = getString("model", defaultOptions.model) ?: "GPT 4"
-            defaultOptions.language = getString("language", defaultOptions.language) ?: "en"
+            defaultOptions.model = getString("model", defaultOptions.model) ?: "gpt-4"
+            defaultOptions.language = getString("language", defaultOptions.language) ?: "auto-detect"
             defaultOptions.azureOcr = getBoolean("azureOcr", defaultOptions.azureOcr)
             defaultOptions.format = getString("format", defaultOptions.format) ?: "json"
         ***REMOVED***
@@ -674,18 +674,18 @@ fun ButtonBar(
     HorizontalDivider()
     Row {
         options?.let {
-            val modelList = listOf("GPT 4", "GPT 3-5", "Smart Mix")
+            val modelList = mapOf("GPT 4" to "gpt-4", "GPT 3-5" to "gpt-3.5-turbo", "Smart Mix" to "smart_mix")
             DropDownGeneral(
-                items = modelList,
+                items = modelList.keys.toList(),
                 onItemSelected = { selectedItem ->
-                    serviceViewModel.changeOptions("model", selectedItem)
+                    serviceViewModel.changeOptions("model", modelList[selectedItem] ?: "gpt-4")
                     with(sharedPrefs.edit()) {
-                        putString("model", selectedItem)
+                        putString("model", modelList[selectedItem] ?: "gpt-4")
                         apply()
                     ***REMOVED***
                 ***REMOVED***,
                 modifier = Modifier.weight(1f),
-                defaultSelectedItemIndex = modelList.indexOf(it.model)
+                defaultSelectedItemIndex = modelList.values.indexOf(it.model)
 ***REMOVED***
             HelpIconButton("Select the model to use for the extraction")
             val formatList = listOf("json", "csv", "xml")
@@ -702,7 +702,7 @@ fun ButtonBar(
                 defaultSelectedItemIndex = formatList.indexOf(it.format)
 ***REMOVED***
             HelpIconButton("Select the format to export the extraction")
-            val languageList = listOf("en", "it", "es", "fr", "de")
+            val languageList = listOf("auto-detect", "en", "it", "es", "fr", "de")
             DropDownGeneral(
                 items = languageList,
                 onItemSelected = { selectedItem ->

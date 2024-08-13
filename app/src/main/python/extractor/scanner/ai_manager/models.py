@@ -17,6 +17,8 @@ from langchain.chat_models import ChatOpenAI # use ChatOpenAI from the core libr
 from langchain.llms.base import LLM
 from langchain.prompts import ChatPromptTemplate
 from langchain.output_parsers import PydanticOutputParser
+from ...classes.Options import Options
+from ...configs.configs import template_prompt
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 openai.api_key = OPENAI_API_KEY 
@@ -85,13 +87,15 @@ class Models(LLM):
 
     
     @classmethod
-    def tag(cls, text, schema, file_id, model="gpt-3.5-turbo", temperature=0):
+    def tag(cls, text, schema, file_id, options:Options, temperature=0):
+        model=options.model
+        if options.model == "Smart-Mix":
+            model = "gpt-4"
+        
         llm = cls(model, temperature)._models[model][temperature]
+        word_prompt = template_prompt[options.language or "it"]
         prompt = ChatPromptTemplate.from_template(
-        "Extract information from the following text based on this schema:\n\n{schema***REMOVED***\n\nText:{text***REMOVED***\n\n"
-        "Please ensure your response strictly adheres to the schema.\n"
-        "remember to adhere to the enums in the schema, use one of the allowed values listed in the schema."
-        "there could be possibilities where all the fields or some are missing, in that case use their default values\n\n"         
+  
         )
         output = {***REMOVED***
         output_parser = PydanticOutputParser(pydantic_object=schema)  # Use PydanticOutputParser here
@@ -118,6 +122,8 @@ class Models(LLM):
     # Updated extract() method
     @classmethod
     def extract(cls, file_id, model, prompt, pages, template, temperature=0):
+        if model == "Smart-Mix":
+            model = "gpt-3.5-turbo"
         llm = cls(model, temperature)._models[model][temperature]  # Get the singleton instance
         try:
             chain = LLMChain(llm=llm, prompt=prompt)
