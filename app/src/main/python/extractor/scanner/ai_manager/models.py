@@ -158,8 +158,9 @@ class Models(LLM):
             raise e
         
         response: BaseMessage = asyncio.run(chain.ainvoke({"context": pages, "template": template***REMOVED***)) 
-        cls.calc_costs(file_id, model, inputs=[pages, str(prompt)], outputs=[response])
-        return response.content if isinstance(response.content, str) else response.content[0][0]
+        output= response.content if isinstance(response.content, str) else response.content[0][0]
+        cls.calc_costs(file_id, model, inputs=[pages, str(prompt)], outputs=[output])
+        return output
     
     
     @classmethod

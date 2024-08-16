@@ -104,7 +104,7 @@ def llm_extraction_and_tag(page, template:Template, file_id, pydantic_class, opt
     # To ensure optimal data standardization
     try:
         prompt= create_language_tag_messages(text= response,language= options.language or "it")
-        tagged = Models.tag(prompt, pydantic_class,options.model, file_id)
+        tagged = Models.tag(prompt, pydantic_class, file_id,options.model)
     except Exception as e:
         print("error in tagging", e)
         raise e
