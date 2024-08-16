@@ -1,35 +1,35 @@
 
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 class TemplateField:
-    def __init__(self, id:str, title: str, description:str, extra_description: str, type: str | None, required: bool, intelligent_extraction= False, default : str ="N/A"):
+    def __init__(self, id:str, title: str, description:Optional[str] = "", extra_description: Optional[str]="", type: Optional[str]=None, required: Optional[bool] = False, intelligent_extraction: Optional[bool]= False, default : Optional[str] ="N/A"):
         self.id = id
         self.title = title
         self.description = description
         self.extra_description = extra_description
-        self.type = type
+        self.type = type or "String"
         self.required= required
         self.intelligent_extraction = intelligent_extraction # Boolean indicating whether intelligent extraction is enabled for this field
         self.default = default
 
 class TemplateTable:
-    def __init__(self,id:str, title:str, keywords: List[str],description:str, rows: List[TemplateField], columns:List[TemplateField]):
+    def __init__(self,id:str, title:str, keywords: Optional[List[str]]= None,description:Optional[str]="", rows: Optional[List[TemplateField]]=None, columns:Optional[List[TemplateField]]=None):
         self.id = id
         self.title = title
-        self.keywords = keywords
+        self.keywords = keywords or []
         self.description = description
-        self.rows = rows
-        self.columns = columns
+        self.rows = rows or []
+        self.columns = columns or []
         
         
         
 class Template:
-    def __init__(self,id:str, title:str , description: str, fields: List[TemplateField] ,tables: List[TemplateTable], tags:List[str]):
+    def __init__(self,id:str, title:str , description: Optional[str], fields: Optional[List[TemplateField]] = None ,tables: Optional[List[TemplateTable]]=None, tags:Optional[List[str]]= None):
         self.id =id
         self.title = title
-        self.description = description
-        self.fields = fields  # List of TemplateField objects
-        self.tables = tables
-        self.tags = tags     # List of strings
+        self.description = description or ""
+        self.fields = fields or []  # List of TemplateField objects
+        self.tables = tables or []
+        self.tags = tags or []    # List of strings
 
 
 
@@ -42,7 +42,7 @@ class Template:
         output_str += "Fields:\n  "
         for field in self.fields:
             required_str = "Required" if field.required else "Optional" 
-            output_str += f"- {field.title***REMOVED*** ({getattr(field.type, '__name__','type unknown')***REMOVED***): {field.description***REMOVED*** ({required_str***REMOVED***)(dafault: {field.default***REMOVED***)\n  "
+            output_str += f"- {field.title***REMOVED*** ({getattr(field.type, '__name__','type unknown')***REMOVED***): {field.description***REMOVED*** ({required_str***REMOVED***)(Default: {field.default***REMOVED***)\n  "
             
 
         return output_str

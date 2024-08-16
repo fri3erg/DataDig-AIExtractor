@@ -1,12 +1,10 @@
 from collections import defaultdict
 from datetime import date
-from email.policy import default
 import os
 import re
 from tempfile import NamedTemporaryFile
-import uuid
 from langchain_community.document_loaders import PyPDFLoader
-from pydantic import BaseModel, Field, create_model
+from pydantic import  Field, create_model
 from typing import Any, Dict, List, Optional
 from PIL import Image
 from io import BytesIO
@@ -14,8 +12,6 @@ from ...classes.Extracted import ExtractedField
 from ...classes.Template import Template, TemplateTable, TemplateField
 import pytesseract
 from pdf2image import convert_from_bytes
-from langchain_community.document_loaders import UnstructuredExcelLoader
-#import tiktoken
 import pandas as pd
 
 
@@ -73,60 +69,9 @@ def select_desired_table(tables, words_repr):
     return tb_number
 
 
-def select_desired_table_only_header(tables, words_repr):  # change from normal is that it only looks at the header
-    """Select the table with the most occurrences of the words in words_repr.
-
-    Args:
-        tables (lst): list of df tables
-        words_repr (lst): list of words to look for in the pages provided
-
-    Returns:
-        int: table index with the most occurrences of the words in words_repr
-    """
-    new_tables = [table.iloc[0].to_frame() for table in tables]
-
-    counter = defaultdict(int)
-    # Search all the tables
-    for i, table in enumerate(new_tables):
-        for word in words_repr:
-            # print(word)
-            # print(table.apply(lambda col:col.str.count(word, flags=re.IGNORECASE)).sum().sum())
-
-            counter[str(i)] += table.apply(lambda col: col.str.count(word, flags=re.IGNORECASE)).sum().sum()
-
-    # Page with most occurrences
-    tb_number = max(counter, key=counter.get)
-    return tb_number
 
 
-# unused
-def upload_df_as_excel(df: pd.DataFrame):
-    """Upload DF as excel file for LargeLanguageModel analysis.
 
-    Args:
-        df (pd.DataFrame): dataframe to upload
-
-    Returns:
-        str: path of the uploaded file
-    """
-
-    if os.environ.get("ENV") == "local":
-        tmp_path = "tmp"
-    else:
-        tmp_path = "/tmp"
-    # Modify empty cells with " " to avoid upload errors
-    df = df.replace(to_replace="", value=" ")
-    df.fillna(" ", inplace=True)
-
-    # Save table to excel and upload it back
-    random_file_name = str(uuid.uuid4()) + ".xlsx"
-    save_name = os.path.join(tmp_path, random_file_name)
-    df.to_excel(save_name, index=False, header=False)
-    loader = UnstructuredExcelLoader(save_name)
-    loaded_table = loader.load()
-    os.remove(save_name)
-
-    return loaded_table
 
 
 def num_tokens_from_string(string: str|List[str], encoding_name: str = "gpt-4") -> int:
@@ -169,68 +114,6 @@ def is_more_number(text):
         return True
     else:
         return False
-
-
-def _decode_first_condtition(text):
-    """Decode the first condition
-
-    Args:
-        text (str): text to decode
-
-    Returns:
-        str: decoded text
-    """
-    return "".join(
-        char
-        for char in text
-        if char.isalnum() or char.isspace() or char in [",", ".", "€", "%", ":", ";", "(", ")", "-", "/"]
-    )
-
-
-def _decode_second_condition(text):
-    """Decode the second condition
-
-    Args:
-        text (str): text to decode
-
-    Returns:
-        str: decoded text
-    """
-    content = text.split("/")
-    return "".join([chr(int(code)) for code in content if code and 32 <= int(code) <= 110000000])
-
-
-def get_document_text_old(images):
-    """returns the text in the page
-
-    Args:
-        file_name (path): _description_
-
-    Returns:
-        _type_: _description_
-    """
-    try:
-        loader = PyPDFLoader(images)
-        pages = loader.load()
-        del loader
-
-        # Decoding conditions
-        first_page = pages[0].page_content
-        first_encoded_condition = first_page.count("\x00") > 100
-        second_encoded_condition = is_more_number(first_page)
-        # Decode
-        for page in pages:
-            content = page.page_content
-            if first_encoded_condition:
-                page.page_content = _decode_first_condtition(content)
-            elif second_encoded_condition:
-                page.page_content = _decode_second_condition(content)
-        return pages
-
-    except Exception as error:
-        print("get document text error" + repr(error))
-        raise error
-
 
 
 
@@ -298,7 +181,7 @@ def get_document_text(images: list[bytes],language:str|None) -> List[str]:
 
 
 def get_document_text_pdf(file_path: str) -> List[str]:
-    images:list[bytes] = convert_from_bytes(open(file_path, "rb").read())
+    images:list[bytes] = PyPDFLoader(file_path).load()
     return get_document_text(images,"it")
 
 
@@ -393,12 +276,16 @@ def extract_between(text, start, end):
     return matches[0][-1] if matches and matches[0] else None
 
 
-def extract_regex_text(pattern, value_to_search, page, boolean_to_check={***REMOVED***, str_to_check={***REMOVED***):
+def extract_regex_text(pattern, value_to_search, page, boolean_to_check=None, str_to_check=None):
     """Extracts the text from the page and checks if the regexes are present in the text.
 
     Returns:
         dict(): dictionary containing the callable
     """
+    if boolean_to_check is None:
+        boolean_to_check = {***REMOVED***
+    if str_to_check is None:
+        str_to_check = {***REMOVED***
     try:
         text = getattr(page, "page_content", "").replace("\n", " ")
         for key in boolean_to_check.keys():
@@ -793,19 +680,3 @@ def extracted_from_pydantic_table(self,tagged_data, template: TemplateTable) -> 
     return result_matrix
     
 
-
-def get_object_by_title(obj_list, target_title):
-    """
-    Finds and returns the first object in a list that has the specified title.
-
-    Args:
-        obj_list: The list of objects to search through.
-        target_title: The title string to match.
-
-    Returns:
-        The object with the matching title, or None if no match is found.
-    """
-    for obj in obj_list:
-        if hasattr(obj, 'title') and obj.title == target_title:
-            return obj
-    return None

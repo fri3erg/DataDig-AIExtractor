@@ -2,13 +2,13 @@ from typing import Optional
 from ...classes.Options import Options
 from ...classes.Template import Template
 from ...classes.Extracted import ExceptionsExtracted
-from ...scanner.extractors.utils import select_desired_page, upload_df_as_excel
 from ...scanner.extractors.utils import num_tokens_from_string
 from langchain.prompts import PromptTemplate
 from ..ai_manager.models import Models
-from ...configs.configs import prompts, prompts_intelligent
-from ..config.basic_tags import DocLanguage
+from ...configs.configs import table_prompt
+from ...configs.basic_tags import DocLanguage
 from ...configs.configs import desc_tabella
+from ...configs.configs import create_language_tag_messages
 
 
 def get_doc_language(text, file_id, options:Options):
@@ -22,8 +22,8 @@ def get_doc_language(text, file_id, options:Options):
         str: language of the document
     """
     # Analyze first page
-    sample_text = text[0][:300]
-    language = Models.tag(sample_text, DocLanguage, file_id, options)
+    prompt= create_language_tag_messages(text= text[0][:300],language= "en")
+    language = Models.tag(prompt, DocLanguage, file_id, options.model)
 
     # Check if language is mapped
     # NOTE: need to add more languages
@@ -34,36 +34,6 @@ def get_doc_language(text, file_id, options:Options):
     return doc_language
 
 
-def llm_extraction(page, template:Template, file_id, options:Options):
-    """extracts data from a document text
-
-    Args:
-        page ([str]): page in which data is found
-        type (str): type of data to extract
-        file_id (str): file_id for costs
-        template (str): prompt to use for extraction
-        model (str, optional): model to use for extraction. Defaults to 'gpt-4'.
-        rhp (str, optional): rhp of the document. Defaults to None.
-
-    Returns:
-        dict(): data extracted
-    """
-    initial_prompt: str= prompts[options.language or "it"]
-    template_readable=template.template_to_readable_string()
-    
-    input_variables: list[str] = ["template","context"]
-    prompt = PromptTemplate(input_variables=input_variables, template=initial_prompt)
-    # Select model size based on context
-    if options.model == "gpt-3.5-turbo":
-        total_token = num_tokens_from_string(prompt.template.format(context=page, template=template_readable))
-        if total_token > 4000:
-           options.model = "gpt-3.5-turbo-16k"
-        else:
-            options.model = "gpt-3.5-turbo"
-    # Construct chain and extract relevan info
-    response = Models.extract(file_id, options.model, prompt, page, template_readable)
-    
-    return response
 
 
 def general_table_inspection(table, pydantic_class, file_id, options:Options, add_text=""):
@@ -85,8 +55,8 @@ def general_table_inspection(table, pydantic_class, file_id, options:Options, ad
         # First normal extraction, then tagging
         add_text= f"{desc_tabella[options.language or 'en']***REMOVED*** {add_text***REMOVED*** " if add_text else ""
         table = f"{add_text***REMOVED*** TABLE-> {table***REMOVED***"
-
-        extraction_adapted = Models.tag(table, pydantic_class, file_id, options)
+        prompt= create_language_tag_messages(text= table,language= options.language or "it", table=True)
+        extraction_adapted = Models.tag(prompt, pydantic_class, file_id, options.model)
     except Exception as error:
         print("table extraction error" + repr(error))
         raise error
@@ -94,70 +64,8 @@ def general_table_inspection(table, pydantic_class, file_id, options:Options, ad
     return extraction_adapted
 
 
-def complex_table_inspection(table, rhp, prompt, pydantic_class, file_id, direct_tag=True):
-    """
-    searches table for information
-    saves excel file with table in tmp to get around llm bug with incomplete stringified dataframe
-    llm extraction first if direct_tag is false
-    Args:
-        table (pandas dataframe): dataframe to search
-        rhp (str): rhp to insert
-        type (str): type of data to extract
-        file_id (str): file_id for costs
-        direct_tag (bool, optional): if skip llm extraction. Defaults to True.
-        language (str, optional): language of the doc. Defaults to 'it'.
 
-    Returns:
-        dict: extracted data
-    """
-
-    try:
-
-        table = upload_df_as_excel(table)
-
-        # First normal extraction, then tagging
-        tag_model = "gpt-4-turbo"
-        if not direct_tag:
-            table = llm_extraction(table, prompt, file_id, model=tag_model, rhp=rhp)
-
-        if rhp is None:
-            adapt_extraction = "CONSIDERA 1 ANNO , EXTRACTION={***REMOVED***".format(table)
-        else:
-            adapt_extraction = "RHP={***REMOVED*** EXTRACTION={***REMOVED***".format(rhp, table)
-        extraction_adapted = Models.tag(adapt_extraction, pydantic_class, file_id, model=tag_model)
-    except Exception as error:
-        print("table extraction error" + repr(error))
-        extraction_adapted = {"ERROR": "ERROR"***REMOVED***
-
-    return extraction_adapted
-
-
-def tag_only(pages, keywords, pydantic_class, file_id):
-    """
-    Extracts basic information from a document, the basic information are the ones contained
-    in the InformazioniBase class.
-
-    Args:
-        pages (): The text of the document to extract information from.
-        keywords ([str]): keywords to search for
-        pydantic_class(PydanticModel): schema to use for tagging
-        file_id (str): file_id for costs
-
-    Returns:
-        str: The extracted basic information.
-    """
-    # Select page with RIY
-    page, _ = select_desired_page(pages, keywords)
-    page = pages[int(page)]
-
-    # To ensure optimal data standardization
-    total_prompt = "EXTRACTION={***REMOVED***".format(page)
-    extraction = Models.tag(total_prompt, pydantic_class, file_id)
-
-    return extraction
-
-
-def llm_extraction_and_tag(page, template:Template, file_id, pydantic_class, options:Options):
+def llm_extraction_and_tag(page, template:Template, file_id, pydantic_class, options:Options, initial_prompt:str):
     """extracts data from a document text
 
     Args:
@@ -172,21 +80,20 @@ def llm_extraction_and_tag(page, template:Template, file_id, pydantic_class, opt
         dict(): data extracted
     """
     model=options.model
-    initial_prompt: str= prompts[options.language or "it"]
     template_readable=template.template_to_readable_string()
     optional_error:Optional[ExceptionsExtracted] = None
     input_variables: list[str] = ["template","context"]
     prompt = PromptTemplate(input_variables=input_variables, template=initial_prompt)
     # Select model size based on context
     if options.model == "gpt-3.5-turbo":
-        total_token = num_tokens_from_string(prompt.template.format(context=page, template=template_readable))
+        total_token = num_tokens_from_string(str(page) +template_readable)
         if total_token > 4000:
            model = "gpt-3.5-turbo-16k"
         else:
             model = "gpt-3.5-turbo"
     # Construct chain and extract relevan info
     try:
-        response = Models.extract(file_id, model, prompt, page, template_readable)
+        response = Models.extract(file_id, model, prompt, page, template_readable,0)
     except Exception as e:
         print("error in extraction", e)
         optional_error = ExceptionsExtracted(e, "llm_extraction",repr(e))
@@ -196,7 +103,8 @@ def llm_extraction_and_tag(page, template:Template, file_id, pydantic_class, opt
     print("response:",response)
     # To ensure optimal data standardization
     try:
-        tagged = Models.tag(response, pydantic_class,options,  file_id)
+        prompt= create_language_tag_messages(text= response,language= options.language or "it")
+        tagged = Models.tag(prompt, pydantic_class,options.model, file_id)
     except Exception as e:
         print("error in tagging", e)
         raise e

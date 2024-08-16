@@ -5,15 +5,15 @@ from pandas import DataFrame
 from ...classes.Extracted import Extracted, ExtractedField, ExtractedTable, ExtractionCosts
 from ...classes.Options import ExceptionsExtracted, Options
 from ..ai_manager.models import Models
-from ..config.cost_config import cost_per_token
-from .utils import create_intelligent_pydantic_class, create_pydantic_class, create_pydantic_table_class, extracted_from_pydantic, extracted_from_pydantic_table, get_document_text, upload_df_as_excel
-from .llm_functions import get_doc_language, llm_extraction, llm_extraction_and_tag
+from ...configs.cost_config import cost_per_token
+from .utils import create_intelligent_pydantic_class, create_pydantic_class, create_pydantic_table_class, extracted_from_pydantic, extracted_from_pydantic_table
+from .llm_functions import get_doc_language, llm_extraction_and_tag
 from ...scanner.ai_manager.document_intelligence import get_tables_from_doc
 from .utils import select_desired_page, select_desired_table
 from ...scanner.extractors.llm_functions import general_table_inspection
-from ..config.JsonClasses import JSONExtraction
 import threading
 from ...classes.Template import Template, TemplateTable
+from ...configs.configs import prompts, prompts_intelligent
 
 
 class ThreadFunction(threading.Thread):
@@ -40,7 +40,7 @@ class GeneralScanner:
         self.images = images
         self.options = options
         self.text: List[str] = text
-        if  options.language == None or  options.language == "auto-detect":
+        if  options.language == None or options.language == "auto-detect":
             self.options.language = get_doc_language(self.text, self.file_id, self.options)
         self.template: Template = template
         self.progress:float= 0
@@ -122,7 +122,7 @@ class GeneralScanner:
         try:
             # extract and clean
             extraction, optional_error = llm_extraction_and_tag(
-                self.text, template, self.file_id,create_intelligent_pydantic_class(template), self.options
+                self.text, template, self.file_id,create_intelligent_pydantic_class(template), self.options, prompts_intelligent[self.options.language or "it"]
 ***REMOVED***
             if optional_error:
                 self.exceptions_occurred.append(optional_error)
@@ -146,7 +146,7 @@ class GeneralScanner:
         try:
             # extract and clean
             extraction , optional_error = llm_extraction_and_tag(
-                self.text, template, self.file_id, create_pydantic_class(template), self.options
+                self.text, template, self.file_id, create_pydantic_class(template), self.options, prompts[self.options.language or "it"]
 ***REMOVED***
             
             if optional_error:
@@ -191,7 +191,7 @@ class GeneralScanner:
         extraction: List[ExtractedField] =[]
         try:
             extracted, optional_error = llm_extraction_and_tag(
-                extracted, self.template, self.file_id, create_pydantic_class(self.template), self.options
+                extracted, self.template, self.file_id, create_pydantic_class(self.template), self.options, prompts[self.options.language or "it"]
 ***REMOVED***
             if optional_error:
                 self.exceptions_occurred.append(optional_error)
@@ -297,87 +297,6 @@ class GeneralScanner:
             setattr(entry,"cost", round(getattr(entry, "cost", 0.0), 2))
         return api_costs
 
-    def extract_from_multiple_tables(self, pages, prompts_and_tags, complex=False):
-        """extracts from multiple tables
-
-        Args:
-            pages (int[]): pages to extract from
-            prompts_and_tags ([pydantic_class] || [(str,pydantic_class)] ): prompts and tags to use, takes only tags if not complex, an array of tuples of prompts and tags if complex
-
-        Returns:
-            dict(): dict containing the results
-        """
-        extraction = dict()
-        try:
-
-            list_tables = list(self.di_tables_pages)
-            tables = []
-            concatenated_str = "i valori sono in una di queste tabelle e solo in una o in nessuna, se si riferisce all'allegato ignoralo "
-            for page in pages:
-                tables += self.di_tables_pages[list_tables[page]]
-
-            for idx, table in enumerate(tables):
-                table = upload_df_as_excel(table)
-                concatenated_str = concatenated_str + f"||||||||||||tabella numero {idx***REMOVED***:{table***REMOVED*** "
-
-            for tag in prompts_and_tags:
-                llm_extract = concatenated_str
-                if complex:
-                    prompt, tag = tag
-                    llm_extract = llm_extraction(concatenated_str, prompt, self.file_id)
-                extraction.update(
-                    dict(
-                        general_table_inspection(
-                            llm_extract,
-                            tag,
-                            self.file_id,
-            ***REMOVED***
-        ***REMOVED***
-    ***REMOVED***
-
-        except Exception as error:
-            print("extract multiple tables error" + repr(error))
-
-        return extraction
-
-    def create_json(self, results, type="kid"):
-        """creates a json from the results
-
-        Args:
-            results (dict()): results to convert
-
-        Returns:
-            json: json of the results
-        """
-        # dict for filename and costs, replace is for json format
-
-        # complete={renaming[key]:value for key,value in results.items() if key in renaming.keys()***REMOVED***
-
-        # return complete
-
-        extraction = JSONExtraction(doc_type=type, results=results, doc_path=self.images)
-
-        json_output = extraction.to_json()
-
-        return json_output
-
-    def raccorda(self, dictionary, renaming: dict, keep=False):  # could tecnically go to utils
-        """renames fiels
-
-        Args:
-            dictionary (dict()): dict to rename
-            rename (dict()): dict containing the renaming
-            keep (bool, optional): if true, keeps the old field. Defaults to False.
-
-        Returns:
-            new_dict dict(): dict renamed
-        """
-        # uncomment for extra fields
-        # dictionary=self.create_json(dictionary)
-        new_dict = {renaming[key]: value for key, value in dictionary.items() if key in renaming.keys()***REMOVED***
-        if keep:
-            new_dict.update({key: value for key, value in dictionary.items() if key not in renaming.keys()***REMOVED***)
-        return new_dict
 
     @abstractmethod
     async def process(self)->Extracted: ...

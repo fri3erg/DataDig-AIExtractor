@@ -1,4 +1,5 @@
 import os
+from azure.core.polling._poller import LROPoller
 import pandas as pd
 from azure.ai.formrecognizer._models import AnalyzeResult
 from azure.ai.formrecognizer import DocumentAnalysisClient
@@ -38,54 +39,29 @@ def analyze_general_documents(
     document_analysis_client = DocumentAnalysisClient(
         endpoint=endpoint, credential=AzureKeyCredential(key), api_version=api_version
     )
-    features_chosen = ["ocrHighResolution"]
+    features_chosen: list[str] = ["ocrHighResolution"]
     if query_list is not None:
         features_chosen.append("queryFields")
 
-    specific_pages = format_pages_num(specific_pages)
+    #specific_pages = format_pages_num(specific_pages)
 
     try:
 
         # Analyze full document or specific pages
-        poller = document_analysis_client.begin_analyze_document(
+        poller: LROPoller[AnalyzeResult] = document_analysis_client.begin_analyze_document(
             document=image,
             model_id="prebuilt-layout",
             locale=language_locale,
             features=features_chosen,
             #pages=specific_pages,
         )
-        result = poller.result()
+        result: AnalyzeResult = poller.result()
     except ClientAuthenticationError as auth_err:
         raise ValueError("Invalid Azure credentials (endpoint or key).") from auth_err
     except ServiceRequestError as req_err:
         raise ValueError(f"Error communicating with Azure Form Recognizer: {req_err***REMOVED***") from req_err
     return result
 
-
-def table_json_to_df(json_data):
-    """Converts a table json to a pandas dataframe
-
-    Args:
-        json_data (_type_): _description_
-    """
-
-    # Transform to dict
-    rows_data = {***REMOVED***
-
-    # Iterate over cells and group them by row index
-    for cell in json_data.cells:
-        row_index = cell.row_index
-        if row_index not in rows_data:
-            rows_data[row_index] = []
-        rows_data[row_index].append(cell.content)
-
-    # Convert the dictionary to a sorted list of rows
-    rows = [rows_data[row_index] for row_index in sorted(rows_data)]
-
-    # Create DataFrame from rows
-    df = pd.DataFrame(rows)
-
-    return df
 
 
 def get_tables_from_doc(

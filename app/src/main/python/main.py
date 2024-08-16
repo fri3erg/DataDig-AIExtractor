@@ -2,12 +2,9 @@ import os
 from threading import Thread
 from extractor.classes.Extracted import Extracted
 from extractor.classes.Options import ExceptionsExtracted, Options
-# from extractors.Derivati.Spot_KID_extractor import write_info
-# from extractors.Derivati.Global_KID_extractor import GlobalExtractor
 import logging
 import base64
-import asyncio
-from typing import Callable, List
+from typing import List
 from extractor.classes.Template import Template, TemplateField, TemplateTable
 from extractor.scanner.extractors.main_extractor.extractor import MainExtractor
 from extractor.configs.configs import keys_config
@@ -78,9 +75,9 @@ def create_test() -> tuple[Template, Options]:
     """Creates a test instance of the Template class with sample data."""
 
     # Create sample TemplateField objects
-    field1 = TemplateField("1", "Name", "Enter your full name", "","str",True)
-    field2 = TemplateField("2", "Email", "Provide your email", "","str",True)
-    field3 = TemplateField("3", "Date of Birth", "Your birthdate (YYYY-MM-DD)", "","date",True)
+    field1 = TemplateField("1", "Name", "Enter your full name", "","str",True, default="John Doe")
+    field2 = TemplateField("2", "Email", "Provide your email", "","str",True, True, default="VJHc6@example.com")
+    field3 = TemplateField("3", "Date of Birth", "Your birthdate (YYYY-MM-DD)", "","Date",True)
 
     # Create sample TemplateTable objects
     table1 = TemplateTable("1", "Personal Information", ["personal", "info"],"table that describes personal info", [field1, field2, field3], [field1, field2, field3])
@@ -93,12 +90,11 @@ def create_test() -> tuple[Template, Options]:
         "Collects essential personal details",
         [field1, field2, field3],  # Fields directly associated with the template
         [table1,table2],         # Tables within the template
-        ["general", "personal"],
     )
     def fake_keys(progress):
         return progress
     
-    option= Options(model="gpt-4",language="en",azure_ocr=True,get_api_key= fake_keys)
+    option= Options(model="gpt-4",language="auto-detect",azure_ocr=True,get_api_key= fake_keys)
 
     return template, option
 
@@ -147,7 +143,7 @@ def main_kotlin(base64_images : list , text:list[str],template: Template, option
     # Check if there are PDF files in the current directory
     # if any(file.endswith(".pdf") for file in files):
     # Call your existing function to process PDFs in the folder
-    main(base64_image,text, template, fake_callback, option)
+    main(base64_image,text, template, option)
 
 
         

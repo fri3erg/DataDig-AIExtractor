@@ -119,6 +119,7 @@ android {
                 //install("opencv-python")
                 install("regex")
                 install("pillow")
+                //test
                 install("-r", projectDir.absolutePath + "/src/main/python/requirements_kotlin.txt")
                 extractPackages("tesseract")
             ***REMOVED***

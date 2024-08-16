@@ -1,27 +1,23 @@
-from pydantic import BaseModel, ValidationError
-#import tiktoken
+from pydantic import   ValidationError
 from ...scanner.extractors.utils import num_tokens_from_string
 import threading
-from ..config.cost_config import cost_per_token
-import openai
+from ...configs.cost_config import cost_per_token
+from openai import OpenAI, AuthenticationError
 from typing import List, Optional, Any, Dict
 from ...classes.Extracted import ExtractionCosts
+from openai.types.chat import ChatCompletionMessageParam
+from langchain.prompts import PromptTemplate
 import os
-import openai
+import asyncio
+import instructor
 import threading
-from langchain.chains import LLMChain
 from langchain.llms.base import LLM
-from langchain.prompts import ChatPromptTemplate
-from langchain_community.llms import OpenAI as LangChainOpenAI
-from langchain.chat_models import ChatOpenAI # use ChatOpenAI from the core library
-from langchain.llms.base import LLM
-from langchain.prompts import ChatPromptTemplate
-from langchain.output_parsers import PydanticOutputParser
-from ...classes.Options import Options
-from ...configs.configs import template_prompt
+
+from langchain_openai.chat_models.base import ChatOpenAI # use ChatOpenAI from the core library
+from langchain.schema import BaseMessage
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-openai.api_key = OPENAI_API_KEY 
+api_key = OPENAI_API_KEY 
 
 
 from typing import Any
@@ -46,27 +42,26 @@ class Models(LLM):
     _instance: Optional["Models"] = None
     _models: Dict[str, Dict[float, ChatOpenAI]] = {***REMOVED***
     _lock = threading.Lock()
+    _openAI_instance: Optional[OpenAI] = None
     
     def __new__(cls, model_name: str, temperature: float = 0.0, **kwargs):
         with cls._lock:
             if cls._instance is None:
                 cls._instance = super().__new__(cls)
+                cls._openAI_instance = OpenAI()
             return cls._instance
 
     def __init__(self, model_name: str, temperature: float = 0.0, **kwargs):
         if model_name not in self._models:
             self._models[model_name] = {***REMOVED***
         if temperature not in self._models[model_name]:
-            model_kwargs = {
-                "model_name": model_name,
-                "temperature": temperature,
-                **kwargs  # Include any additional keyword arguments
-            ***REMOVED***
             self._models[model_name][temperature] = ChatOpenAI(
-                model_name=model_name,
+                model=model_name,
                 temperature=temperature,
                 **kwargs  # Include any additional keyword arguments
 ***REMOVED***
+        if self._openAI_instance is None:
+            self._openAI_instance = OpenAI()
 
     @property
     def _llm_type(self) -> str:
@@ -78,65 +73,93 @@ class Models(LLM):
         temperature = kwargs.get("temperature", 0.0)
 
         # Get the correct model instance
-        model_instance = self._models[model_name][temperature]
+        model_instance: ChatOpenAI = self._models[model_name][temperature]
+        
+        messages :List[BaseMessage] = [
+            BaseMessage(content=prompt, role="user")
+        ]
 
-        response = model_instance(prompt, stop=stop)
+        response: BaseMessage = model_instance(messages, stop=stop)
+        
+        string_response= ""
+        if isinstance(response.content, str):
+            string_response = response.content
+        else:
+            string_response = response.content[0][0]
                 
-        return response or ""
+        return string_response
 
 
     
     @classmethod
-    def tag(cls, text, schema, file_id, options:Options, temperature=0):
-        model=options.model
-        if options.model == "Smart-Mix":
+    def tag(cls, word_prompt :List[ChatCompletionMessageParam], schema, file_id: str, model: str = "gpt-4"):
+
+        if model == "Smart-Mix":
             model = "gpt-4"
-        
-        llm = cls(model, temperature)._models[model][temperature]
-        word_prompt = template_prompt[options.language or "it"]
-        prompt = ChatPromptTemplate.from_template(
-  
-        )
-        output = {***REMOVED***
-        output_parser = PydanticOutputParser(pydantic_object=schema)  # Use PydanticOutputParser here
+
+        if cls._openAI_instance is None:
+            cls._openAI_instance = OpenAI()
+        output = ""
         try:
-            chain = LLMChain(llm=llm, prompt=prompt,output_parser=output_parser)
+            client= instructor.from_openai(
+                cls._openAI_instance)
+            output = client.chat.completions.create(
+                model=model,  # Or your preferred model
+                messages=word_prompt,
+                max_retries=3,  # Retry up to 3 times if validation fails
+                response_model=schema
+***REMOVED***
+        except ValidationError as e:
+            print("Validation Error:", e)
+            raise e
+        except Exception as e:
+            print("Error in tag (GPT-4):", e)
+            raise e
+            
+            
+        """else:
+        # PydanticOutputParser for other models
+        output_parser = PydanticOutputParser(pydantic_object=schema)
+
+        try:
+            chain = LLMChain(llm=llm, prompt=prompt, output_parser=output_parser)
         except openai.AuthenticationError as auth_err:
             print("Authentication Error (Invalid API key?):", auth_err)
             raise ValueError("invalid OpenAI key")
-        # Handle invalid API key (e.g., log, raise a custom exception, prompt for a new key)
         except Exception as e:
-            print("Error in tag:", e)
+            print("Error creating LLMChain:", e)
             raise e
+
         try:
-            output = chain.run(schema=schema.schema_json(), text=text)            
+            output = chain.run(schema=schema.schema_json(), text=text)
         except ValidationError as e:
             print("Validation Error:", e)
-
+            output = schema()  # Create an empty instance on validation error
         except Exception as e:
-            print("Error in tag:", e)
-            output = schema
-        cls.calc_costs(file_id, model, inputs=[text], outputs=[str(output)])
-        return output  
+            print("Error in tag (other models):", e)
+            output = schema()  # Create an empty instance on other errors"""
+
+        cls.calc_costs(file_id, model, inputs=[str(word_prompt)], outputs=[str(output)])
+        return output
     
     # Updated extract() method
     @classmethod
-    def extract(cls, file_id, model, prompt, pages, template, temperature=0):
+    def extract(cls, file_id, model, prompt:PromptTemplate, pages, template, temperature=0) -> str:
         if model == "Smart-Mix":
             model = "gpt-3.5-turbo"
-        llm = cls(model, temperature)._models[model][temperature]  # Get the singleton instance
+        llm: ChatOpenAI = cls(model, temperature)._models[model][temperature]  # Get the singleton instance
         try:
-            chain = LLMChain(llm=llm, prompt=prompt)
-        except openai.AuthenticationError as auth_err:
+            chain = prompt | llm         
+        except AuthenticationError as auth_err:
             print("Authentication Error (Invalid API key?):", auth_err)
             raise ValueError("invalid OpenAI key")
         except Exception as e:
             print("Error in extract:", e)
             raise e
         
-        response = chain.run(context=pages, template=template)
+        response: BaseMessage = asyncio.run(chain.ainvoke({"context": pages, "template": template***REMOVED***)) 
         cls.calc_costs(file_id, model, inputs=[pages, str(prompt)], outputs=[response])
-        return response
+        return response.content if isinstance(response.content, str) else response.content[0][0]
     
     
     @classmethod

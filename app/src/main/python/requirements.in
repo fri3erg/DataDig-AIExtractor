@@ -15,4 +15,5 @@ pytesseract
 pdf2image
 tesseract
 opencv-python
-
+langchain_openai
+instructor
