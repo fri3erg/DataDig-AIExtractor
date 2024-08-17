@@ -21,15 +21,22 @@ class ThreadFunction(threading.Thread):
         threading.Thread.__init__(self)
         self.function = function
         self.args = args
+        self.exception = None  # Store any exception that occurs
 
     def run(self):
-        if self.args is None:
-            self.result = self.function()
-        else:
-            self.result = self.function(**self.args)
+        try:
+            if self.args is None:
+                self.result = self.function()
+            else:
+                self.result = self.function(**self.args)
+        except Exception as e:
+            self.exception = e  # Store the exception
 
     def get_result(self):
-        return self.result
+        if self.exception:
+            raise self.exception  # Re-raise the exception if one occurred
+        else:
+            return self.result
 
 
 class GeneralScanner:
@@ -46,6 +53,8 @@ class GeneralScanner:
         self.progress:float= 0
         self.di_tables_pages = {***REMOVED***
         self.raw_data_pages = {***REMOVED***
+        self.complex_info_present: bool = False
+        self.intelligent_present: bool = any(field.intelligent_extraction for field in self.template.fields)
         self.exceptions_occurred: List[ExceptionsExtracted] = []
         self.extracted_tables:List[ExtractedTable]= []
         self.extracted_fields:List[ExtractedField]= []
@@ -53,7 +62,22 @@ class GeneralScanner:
 
     # DOCSTRING MISSING
     def threader(self, functions_parameters):
+        """
+        This function manages the execution of multiple threads for a given set of functions and their parameters.
+        
+        It takes a dictionary of functions and their parameters, creates threads for each function, starts them, 
+        waits for their completion, and then retrieves and returns their results.
 
+        Args:
+            functions_parameters (dict): A dictionary where each key is a function name and each value is another dictionary 
+                containing the function object and its arguments.
+
+        Returns:
+            dict: A dictionary where each key is a function name and each value is the result of the corresponding function.
+
+        Raises:
+            Exception: If any exception occurs during the execution of the functions.
+        """
         threads = {***REMOVED***
         results = {***REMOVED***
         for function_name, parameters in functions_parameters.items():
@@ -65,9 +89,14 @@ class GeneralScanner:
         for _, thread in threads.items():
             thread.join()
         for function_name, thread in threads.items():
-            results[function_name] = thread.get_result()
+            try:
+                results[function_name] = thread.get_result()
+            except Exception as e:
+                # Handle or re-raise the exception as needed
+                print(f"Exception in {function_name***REMOVED***: {e***REMOVED***")
+                raise e
         return results
-    
+        
     
     
     
@@ -89,7 +118,7 @@ class GeneralScanner:
                 self.fill_tables()
             except Exception as error:
                 print("calc table error" + repr(error))
-                self.exceptions_occurred.append(ExceptionsExtracted( error, "filling tables",repr(error)))
+                self.add_exceptions(ExceptionsExtracted( error, "filling tables",repr(error)))
                     
         for table in self.template.tables:    
             try:
@@ -98,7 +127,7 @@ class GeneralScanner:
             except Exception as error:
                 #REDO ERROR HANDLING
                 print("calc table error" + repr(error))
-                self.exceptions_occurred.append(ExceptionsExtracted( error, f"extracting tables: {table.title***REMOVED***",repr(error)))
+                self.add_exceptions(ExceptionsExtracted( error, f"extracting tables: {table.title***REMOVED***",repr(error)))
 
 
         return tables
@@ -125,12 +154,12 @@ class GeneralScanner:
                 self.text, template, self.file_id,create_intelligent_pydantic_class(template), self.options, prompts_intelligent[self.options.language or "it"]
 ***REMOVED***
             if optional_error:
-                self.exceptions_occurred.append(optional_error)
+                self.add_exceptions(optional_error)
             extraction_fields: List[ExtractedField] = extracted_from_pydantic(self.template, extraction)
             
         except Exception as error:
             print("intelligent info extraction error" + repr(error))
-            self.exceptions_occurred.append(ExceptionsExtracted( error, "intelligent_info",repr(error)))
+            self.add_exceptions(ExceptionsExtracted( error, "intelligent_info",repr(error)))
             
         return extraction_fields
         
@@ -150,13 +179,13 @@ class GeneralScanner:
 ***REMOVED***
             
             if optional_error:
-                self.exceptions_occurred.append(optional_error)
+                self.add_exceptions(optional_error)
 
             extraction_fields: List[ExtractedField] = extracted_from_pydantic(self.template, extraction)
             
 
         except Exception as error:
-            self.exceptions_occurred.append(ExceptionsExtracted( error, "basic_info",repr(error)))
+            self.add_exceptions(ExceptionsExtracted( error, "basic_info",repr(error)))
             print("basic info extraction error" + repr(error))
 
         return extraction_fields
@@ -180,7 +209,7 @@ class GeneralScanner:
                 
             except Exception as error:
                 print("extract riy error" + repr(error))
-                self.exceptions_occurred.append(ExceptionsExtracted( error, f"extracting tables: {template.title***REMOVED***",repr(error)))
+                self.add_exceptions(ExceptionsExtracted( error, f"extracting tables: {template.title***REMOVED***",repr(error)))
 
 
         return extracted_table
@@ -194,12 +223,12 @@ class GeneralScanner:
                 extracted, self.template, self.file_id, create_pydantic_class(self.template), self.options, prompts[self.options.language or "it"]
 ***REMOVED***
             if optional_error:
-                self.exceptions_occurred.append(optional_error)
+                self.add_exceptions(optional_error)
                 
             extraction= extracted_from_pydantic(self.template, extracted)
         except Exception as error:
             print("extract entry exit costs error" + repr(error))
-            self.exceptions_occurred.append(ExceptionsExtracted( error, "complex_info",repr(error)))
+            self.add_exceptions(ExceptionsExtracted( error, "complex_info",repr(error)))
 
         return extraction
         
@@ -262,7 +291,7 @@ class GeneralScanner:
         for i, image in enumerate(self.images):
             pages_exists= pages and i in pages
             if str(i) not in self.di_tables_pages.keys() and (pages_exists or not pages):
-                function_parameters[f"{i***REMOVED***"] = {"function": get_tables_from_doc, "args": {"image": image, "language": self.options.language if self.options.language else "it"***REMOVED******REMOVED***
+                function_parameters[f"{i***REMOVED***"] = {"function": get_tables_from_doc, "args": {"image": image, "language": self.options.language or "it"***REMOVED******REMOVED***
         result = self.threader(function_parameters)
         for key, value in result.items():
             tables, raw_data = value
@@ -296,7 +325,40 @@ class GeneralScanner:
         for entry in api_costs:
             setattr(entry,"cost", round(getattr(entry, "cost", 0.0), 2))
         return api_costs
-
+    
+    def add_exceptions(self, exception:ExceptionsExtracted):
+        """Adds the exceptions to the output
+        """
+        existing_exception_types = [type(e.error) for e in self.exceptions_occurred]
+        if type(exception.error) not in existing_exception_types:
+            self.exceptions_occurred.append(exception)
+        
+        
+    def get_tags(self)->List[str]:
+        """returns the tags of the document
+        """
+        tags= []
+        if len(self.exceptions_occurred)!=0:
+            tags.append("errors occurred")
+        if len(self.extracted_tables)!=0:
+            tags.append("tables extracted")
+        if self.options.language:
+            tags.append(self.options.language)
+        if self.options.format:
+            tags.append(self.options.format)
+        if self.options.azure_ocr:
+            tags.append("azure_ocr")
+        if self.options.model:
+            tags.append(self.options.model)
+        if self.complex_info_present:
+            tags.append("complex_info")
+        if self.intelligent_present:
+            tags.append("intelligent_info")
+            
+        return tags
+            
+            
+        
 
     @abstractmethod
     async def process(self)->Extracted: ...

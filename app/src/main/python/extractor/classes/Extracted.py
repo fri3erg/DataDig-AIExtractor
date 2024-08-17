@@ -4,7 +4,7 @@ from ..classes.Options import ExceptionsExtracted
 from .Template import TemplateField, TemplateTable, Template
 
 class ExtractedField:
-    def __init__(self, template_field: TemplateField, value: Optional[Any] = None):
+    def __init__(self, template_field: TemplateField, value: Any = None):
         self.template_field: TemplateField = template_field
         self.value: Any = value
 

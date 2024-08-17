@@ -1,11 +1,13 @@
+from calendar import c
 from collections import defaultdict
 from datetime import date
+from email.policy import default
 import os
 import re
 from tempfile import NamedTemporaryFile
 from langchain_community.document_loaders import PyPDFLoader
 from pydantic import  Field, create_model
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, get_origin
 from PIL import Image
 from io import BytesIO
 from ...classes.Extracted import ExtractedField
@@ -36,6 +38,8 @@ def select_desired_page(text, words_repr):
             counter[str(i)] += content.count(word)
 
     # Page with most occurrences
+    if len(counter) == 0:
+        return 0,0 
     pg_number = max(counter, key=lambda i: counter[i])
 
     return pg_number, counter[pg_number]
@@ -511,11 +515,14 @@ def create_pydantic_class(template: Template):
     for template_field in template.fields:
         pydantic_type=get_pydantic_type(template_field.type)
 
-        description = template_field.extra_description or template_field.description
+        description = template_field.extra_description or template_field.description or ""
         if template_field.required:
             description += " (required)"
-        if pydantic_type == date:
-            description += " (format: YYYY-MM-DD)"
+        if template_field.type == "date":
+            description += "this field searches for a date, (format: YYYY-MM-DD)"
+            
+        if template_field.list:
+            pydantic_type = List[pydantic_type]
 
         # Use Optional for non-required fields
         if not template_field.required:
@@ -534,13 +541,15 @@ def create_intelligent_pydantic_class(template: Template):
 
     fields = {***REMOVED***
     for template_field in template.fields:
-        description= ""
         field_type:type = get_pydantic_type(template_field.type)
-        default= get_typed_default(template_field.default, field_type)
+        description= ""
         if template_field.required:  # Assuming TemplateField has a 'required' attribute
             description="(required)"
-        if field_type == date:
+        if template_field.type == "date":
             description += " (format: YYYY-MM-DD)"
+        if template_field.list:
+            field_type = List[field_type]
+        default= get_typed_default(template_field.default, field_type)
         fields[template_field.title] = (Optional[field_type], Field(description=description, default=default))
 
 
@@ -557,10 +566,10 @@ def create_pydantic_table_class(template: TemplateTable):
             field_type:type = get_pydantic_type(type_from)
             required= column.required or row.required
             description=f"row:{row.title***REMOVED***|column:{column.title***REMOVED***|"
-            
+            default= get_typed_default("N/A", field_type)
             if required:  # Assuming TemplateField has a 'required' attribute
                 description +="(required)"
-            fields[description] = (Optional[field_type]| str, Field(default="N/A",description=description))
+            fields[description] = (Optional[field_type]| str, Field(default=default,description=description))
 
 
     model = create_model("DynamicModel", **fields)  # Use create_model for dynamic creation
@@ -588,13 +597,11 @@ def get_pydantic_type(type: str|None) -> type:
         return bool
     elif type == "date":
         return str
-    elif type == "List":
-        return List[str]
     else:
         return str
     
     
-def get_typed_default(default:str, pydantic_type:type) -> Any:
+def get_typed_default(default:Optional[str], pydantic_type:type) -> Any:
     """
     Returns a typed default value based on the provided Pydantic type.
 
@@ -605,17 +612,35 @@ def get_typed_default(default:str, pydantic_type:type) -> Any:
     Returns:
         Any: The typed default value.
     """
-    if pydantic_type == str:
+    if default is None:
+        return default
+    elif pydantic_type == str:
         return default
     elif pydantic_type == int:
-        return int(default)
+        try:
+            return int(default)
+        except ValueError:
+            # Handle the conversion error (e.g., log it or return a specific default)
+            print(f"Warning: Failed to convert '{default***REMOVED***' to int. Using 0 as default.")
+            return -1  
+
     elif pydantic_type == float:
-        return float(default)
+        try:
+            return float(default)
+        except ValueError:
+            # Handle the conversion error
+            print(f"Warning: Failed to convert '{default***REMOVED***' to float. Using -1.0 as default.")
+            return -1.0  
     elif pydantic_type == bool:
-        return default
+        try:
+            return bool(default)
+        except ValueError:
+            # Handle the conversion error
+            print(f"Warning: Failed to convert '{default***REMOVED***' to bool. Using False as default.")
+            return False  
     elif pydantic_type == date:
         return default
-    elif pydantic_type == List:
+    elif get_origin(pydantic_type) is list:
         return []
     else:
         return default

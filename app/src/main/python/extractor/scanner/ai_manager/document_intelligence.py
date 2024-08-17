@@ -57,9 +57,9 @@ def analyze_general_documents(
         )
         result: AnalyzeResult = poller.result()
     except ClientAuthenticationError as auth_err:
-        raise ValueError("Invalid Azure credentials (endpoint or key).") from auth_err
+        raise ValueError("Invalid Azure credentials (endpoint or key).")
     except ServiceRequestError as req_err:
-        raise ValueError(f"Error communicating with Azure Form Recognizer: {req_err***REMOVED***") from req_err
+        raise ValueError(f"Error communicating with Azure Form Recognizer: {req_err***REMOVED***")
     return result
 
 

@@ -1,12 +1,13 @@
 
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 class TemplateField:
-    def __init__(self, id:str, title: str, description:Optional[str] = "", extra_description: Optional[str]="", type: Optional[str]=None, required: Optional[bool] = False, intelligent_extraction: Optional[bool]= False, default : Optional[str] ="N/A"):
+    def __init__(self, id:str, title: str, description:Optional[str] = "", extra_description: Optional[str]="", type: Optional[str]=None,list: Optional[bool]=False, required: Optional[bool] = False, intelligent_extraction: Optional[bool]= False, default : Optional[str] ="N/A"):
         self.id = id
         self.title = title
         self.description = description
         self.extra_description = extra_description
         self.type = type or "String"
+        self.list =list or False
         self.required= required
         self.intelligent_extraction = intelligent_extraction # Boolean indicating whether intelligent extraction is enabled for this field
         self.default = default

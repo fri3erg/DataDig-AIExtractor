@@ -1,4 +1,7 @@
 from typing import Optional
+
+import instructor
+import instructor.exceptions
 from ...classes.Options import Options
 from ...classes.Template import Template
 from ...classes.Extracted import ExceptionsExtracted
@@ -22,8 +25,13 @@ def get_doc_language(text, file_id, options:Options):
         str: language of the document
     """
     # Analyze first page
+    language = "it"
     prompt= create_language_tag_messages(text= text[0][:300],language= "en")
-    language = Models.tag(prompt, DocLanguage, file_id, options.model)
+    try:
+        language = Models.tag(prompt, DocLanguage, file_id, options.model)
+    except instructor.exceptions.InstructorRetryException:
+            raise ValueError("tag failed, check openai keys validity")
+        
 
     # Check if language is mapped
     # NOTE: need to add more languages
@@ -107,6 +115,9 @@ def llm_extraction_and_tag(page, template:Template, file_id, pydantic_class, opt
         tagged = Models.tag(prompt, pydantic_class, file_id,options.model)
     except Exception as e:
         print("error in tagging", e)
+        if optional_error:
+            raise optional_error.error
+            
         raise e
 
     return tagged, optional_error

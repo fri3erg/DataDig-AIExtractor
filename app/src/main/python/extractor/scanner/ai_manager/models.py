@@ -1,4 +1,4 @@
-from pydantic import   ValidationError
+import instructor.exceptions
 from ...scanner.extractors.utils import num_tokens_from_string
 import threading
 from ...configs.cost_config import cost_per_token
@@ -9,9 +9,11 @@ from openai.types.chat import ChatCompletionMessageParam
 from langchain.prompts import PromptTemplate
 import os
 import asyncio
+import openai
 import instructor
 import threading
 from langchain.llms.base import LLM
+from pydantic_core import ValidationError
 
 from langchain_openai.chat_models.base import ChatOpenAI # use ChatOpenAI from the core library
 from langchain.schema import BaseMessage

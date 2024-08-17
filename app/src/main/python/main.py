@@ -43,7 +43,7 @@ def main(encoded_images : list,text : list[str], template: Template, options: Op
             progress_callback(0.1)
             
         except Exception as error:
-            print("initialization error" + repr(error))
+            print("initialization error:" + repr(error))
             exceptions_occurred.append(ExceptionsExtracted(error=error, error_location="initialization",error_description=repr(error)))
         
         try:
@@ -75,12 +75,13 @@ def create_test() -> tuple[Template, Options]:
     """Creates a test instance of the Template class with sample data."""
 
     # Create sample TemplateField objects
-    field1 = TemplateField("1", "Name", "Enter your full name", "","str",True, default="John Doe")
-    field2 = TemplateField("2", "Email", "Provide your email", "","str",True, True, default="VJHc6@example.com")
-    field3 = TemplateField("3", "Date of Birth", "Your birthdate (YYYY-MM-DD)", "","Date",True)
+    field1 = TemplateField("1", "a", "", "","float",False,False)
+    field2 = TemplateField("2", "b", "", "","str",False,True, True)
+    field3 = TemplateField("3", "c", "", "","date",True,True)
+    
 
     # Create sample TemplateTable objects
-    table1 = TemplateTable("1", "Personal Information", ["personal", "info"],"table that describes personal info", [field1, field2, field3], [field1, field2, field3])
+    table1 = TemplateTable("1", "Personal Information", [],"table that describes personal info", [field1, field2, field3], [field1, field2, field3])
     table2 = TemplateTable("2", "Contact Information", ["contact", "info"],"", [field1, field2],[field1, field2, field3])
 
     # Create the Template instance
@@ -94,7 +95,7 @@ def create_test() -> tuple[Template, Options]:
     def fake_keys(progress):
         return progress
     
-    option= Options(model="gpt-4",language="auto-detect",azure_ocr=True,get_api_key= fake_keys)
+    option= Options(model="gpt-4",language="en",azure_ocr=True,get_api_key= fake_keys)
 
     return template, option
 
@@ -131,7 +132,7 @@ def main_kotlin(base64_images : list , text:list[str],template: Template, option
 
     
     template, option= create_test()
-    text=["This is a test"]
+    text=[""]
     base64_image = []
     with open('extractor\\test\\test.png', "rb") as image_file:  # Open in binary mode
         image_data = image_file.read()

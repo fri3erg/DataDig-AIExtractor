@@ -10,11 +10,8 @@ class MainExtractor(GeneralScanner):
     def __init__(self, images:list[bytes],text:list[str], template: Template, options:Options) -> None:
         super().__init__(images,text, template, options)
         self.tables:dict[TemplateTable, Any] = {***REMOVED***
-        self.tables_present: bool = False
-        self.complex_info_present: bool = False
-        self.results = {***REMOVED***
         self.tables_present: bool = self.template.tables != [] or self.options.azure_ocr
-        self.intelligent_present: bool = any(field.intelligent_extraction for field in self.template.fields)
+        self.results = {***REMOVED***
         
     def first_stage(self) -> float | None: 
         """
@@ -47,7 +44,7 @@ class MainExtractor(GeneralScanner):
             return self.progress
 
         except Exception as error:
-            self.exceptions_occurred.append(ExceptionsExtracted(error=error, error_location="first stage",error_description=repr(error)))
+            self.add_exceptions(ExceptionsExtracted(error=error, error_location="first stage",error_description=repr(error)))
             print("first stage error" + repr(error))
     
     
@@ -74,7 +71,7 @@ class MainExtractor(GeneralScanner):
             self.extracted_fields += self.results.get("complex_info") or []
 
         except Exception as error:
-            self.exceptions_occurred.append(ExceptionsExtracted(error=error, error_location="second stage",error_description=repr(error)))
+            self.add_exceptions(ExceptionsExtracted(error=error, error_location="second stage",error_description=repr(error)))
             print("second stage error" + repr(error))
             
     def end_phase(self) -> Extracted:
@@ -94,15 +91,16 @@ class MainExtractor(GeneralScanner):
             # REVIEW: what name do they need?
             filename = self.template.title
             
+            tags= self.get_tags()
 
             api_costs = self._process_costs()
             
-            self.extraction= Extracted(template=self.template, fields=self.extracted_fields, tables=self.extracted_tables, extraction_costs=api_costs, exceptions=self.exceptions_occurred, format=self.options.format, tags=["tag 1"])
+            self.extraction= Extracted(template=self.template, fields=self.extracted_fields, tables=self.extracted_tables, extraction_costs=api_costs, exceptions=self.exceptions_occurred, format=self.options.format, tags=tags)
 
 
         except Exception as error:
             print("final phase error" + repr(error))
-            self.exceptions_occurred.append(ExceptionsExtracted(error=error, error_location="final stage",error_description=repr(error)))
+            self.add_exceptions(ExceptionsExtracted(error=error, error_location="final stage",error_description=repr(error)))
             self.extraction = Extracted(template=self.template, fields=self.extracted_fields, tables=self.extracted_tables)
             filename = self.template.title
 
