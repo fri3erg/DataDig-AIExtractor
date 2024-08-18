@@ -22,6 +22,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -45,9 +46,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -58,8 +56,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -75,6 +71,9 @@ import com.example.tesifrigo.Screen
 import com.example.tesifrigo.models.Extraction
 import com.example.tesifrigo.models.Options
 import com.example.tesifrigo.services.ExtractionService
+import com.example.tesifrigo.ui.theme.cyan_custom
+import com.example.tesifrigo.ui.theme.light_gray
+import com.example.tesifrigo.ui.theme.vale
 import com.example.tesifrigo.utils.DropDownGeneral
 import com.example.tesifrigo.utils.FileCard
 import com.example.tesifrigo.utils.HelpIconButton
@@ -282,68 +281,67 @@ fun GptKeysDialog(function: () -> Unit, navController: NavHostController) {
 
 ***REMOVED***
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChooseTemplate(navController: NavHostController, templateViewModel: TemplateViewModel) {
     val templates by templateViewModel.sortedTemplates.collectAsState()
     val searchText by templateViewModel.searchText.collectAsState()
-    var expanded by remember { mutableStateOf(false) ***REMOVED***
     val ascending by templateViewModel.ascending.collectAsState()
-    val focusRequester = remember { FocusRequester() ***REMOVED***
 
     Scaffold(topBar = {
-        Row {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp)
+        ) {
+
             SearchBar(text = searchText,
                 onTextChange = { templateViewModel.updateSearchText(it) ***REMOVED***,
-                onSearch = { templateViewModel.updateSearchText(it) ***REMOVED***,
-                modifier = Modifier.weight(1f)
-***REMOVED***
+                onSearch = { templateViewModel.updateSearchText(it) ***REMOVED***)
+            Spacer(modifier = Modifier.height(12.dp))
+            Row {
+                val sortOrder = templateViewModel.sortOrder.collectAsState().value
 
-
-            val typeOptions =
-                mapOf("Title" to { templateViewModel.updateSortOrder(SortOrder.BY_TITLE) ***REMOVED***,
-                    "Date" to { templateViewModel.updateSortOrder(SortOrder.BY_DATE) ***REMOVED***)
-            Spacer(modifier = Modifier.width(4.dp))
-            ExposedDropdownMenuBox(expanded = expanded,
-                onExpandedChange = { expanded = !expanded ***REMOVED***) {
-
-                Button(
-                    onClick = { expanded = true ***REMOVED***,
-                    modifier = Modifier
-                        .padding(end = 8.dp, top = 24.dp)
-                        .align(Alignment.CenterVertically)
-                        .focusRequester(focusRequester)
-                        .menuAnchor(),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Gray)
-    ***REMOVED*** {
-                    Text("Sort")
-                ***REMOVED***
-                ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false ***REMOVED***) {
-                    typeOptions.forEach { (type, onCLick) ->
-                        DropdownMenuItem(text = { Text(type) ***REMOVED***, onClick = {
-                            onCLick()
-                            expanded = false
-                        ***REMOVED***)
+                Row {
+                    val sortOptions = listOf(SortOrder.BY_TITLE, SortOrder.BY_DATE)
+                    Spacer(modifier = Modifier.width(10.dp))
+                    sortOptions.forEach { option ->
+                        Button(colors = ButtonDefaults.buttonColors(
+                            containerColor = if (sortOrder == option) cyan_custom else light_gray, // Change color based on selection
+                            contentColor = if (sortOrder == option) Color.White else Color.Black, // Change text color based on selection
+            ***REMOVED***,
+                            border = BorderStroke(1.dp, cyan_custom),
+                            modifier = Modifier
+                                .height(40.dp)
+                                .width(100.dp)
+                                .padding(start = 10.dp), // Add padding only to the first button
+                            onClick = { templateViewModel.updateSortOrder(option) ***REMOVED***) {
+                            Text(text = option.name.removePrefix("BY_").lowercase())
+                        ***REMOVED***
                     ***REMOVED***
                 ***REMOVED***
 
-            ***REMOVED***
 
 
+                Spacer(modifier = Modifier.weight(1f))
 
+                Button(
+                    onClick = { templateViewModel.toggleAscending() ***REMOVED***,
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .height(40.dp)
+                        .width(60.dp)
+                        .padding(end = 2.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        contentColor = cyan_custom, containerColor = light_gray
+        ***REMOVED***
+    ***REMOVED*** {
 
-            Button(
-                onClick = { templateViewModel.toggleAscending() ***REMOVED***,
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .padding(end = 16.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Gray)
-***REMOVED*** {
-                if (ascending) {
-                    FaIcon(faIcon = FaIcons.ArrowUp, tint = Color.White)
-                ***REMOVED*** else {
-                    FaIcon(faIcon = FaIcons.ArrowDown, tint = Color.White)
+                    FaIcon(
+                        faIcon = if (ascending) FaIcons.SortUp else FaIcons.SortDown,
+                        tint = cyan_custom
+        ***REMOVED***
                 ***REMOVED***
+                Spacer(modifier = Modifier.width(10.dp))
             ***REMOVED***
 
         ***REMOVED***
@@ -366,6 +364,10 @@ fun ChooseTemplate(navController: NavHostController, templateViewModel: Template
                             templateViewModel.setActiveTemplate(template)
                         ***REMOVED***
                         .padding(8.dp), border = CardDefaults.outlinedCardBorder(), // Add a border
+                    colors = CardDefaults.cardColors(
+                        containerColor = vale,
+                        contentColor = Color.Black
+        ***REMOVED***,
                     elevation = CardDefaults.cardElevation(defaultElevation = 5.dp) // Add elevation for better visuals
 
     ***REMOVED*** {
@@ -374,8 +376,9 @@ fun ChooseTemplate(navController: NavHostController, templateViewModel: Template
 
                             Text(
                                 text = template.title,
-                                style = MaterialTheme.typography.headlineSmall,
-                                modifier = Modifier.padding(top = 8.dp, start = 8.dp)
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 20.sp,
+                                modifier = Modifier.padding(top = 8.dp, start = 8.dp, bottom = 8.dp)
                 ***REMOVED*** // Title
                             Spacer(modifier = Modifier.weight(1f)) // Creates space between text and button
 

@@ -68,7 +68,7 @@ fun TemplateScreen(
 
                     Row {
                         val sortOptions = listOf(SortOrder.BY_TITLE, SortOrder.BY_DATE)
-
+                        Spacer(modifier = Modifier.width(10.dp))
                         sortOptions.forEach { option ->
                             Button(
                                 colors = ButtonDefaults.buttonColors(
@@ -98,13 +98,13 @@ fun TemplateScreen(
                             .align(Alignment.CenterVertically)
                             .height(40.dp)
                             .width(60.dp)
-                            .padding(end=2.dp),
+                            .padding(end = 2.dp),
                         colors = ButtonDefaults.buttonColors(contentColor = cyan_custom, containerColor = light_gray)
         ***REMOVED*** {
 
                             FaIcon(faIcon = if (ascending) FaIcons.SortUp else FaIcons.SortDown, tint = cyan_custom)
                         ***REMOVED***
-                    Spacer(modifier = Modifier.width(20.dp))
+                    Spacer(modifier = Modifier.width(10.dp))
                     ***REMOVED***
 
             ***REMOVED***
