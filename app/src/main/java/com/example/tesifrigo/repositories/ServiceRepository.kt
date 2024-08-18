@@ -12,12 +12,9 @@ import io.realm.kotlin.UpdatePolicy
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -37,8 +34,6 @@ class ServiceRepository @Inject constructor(
     private val _result = MutableStateFlow<String?>(null)
     val result: StateFlow<String?> = _result.asStateFlow()
 
-    private val _progressChannel = Channel<Float>()
-    val progressChannel: Flow<Float> = _progressChannel.receiveAsFlow()
 
     private val _template = MutableStateFlow<Template?>(null)
     val template: StateFlow<Template?> = _template.asStateFlow()
@@ -66,11 +61,10 @@ class ServiceRepository @Inject constructor(
 
     fun updateProgress(newProgress: Float) {
         _progress.value = newProgress
-        _progressChannel.trySend(newProgress) // Send to Channel for UI update
     ***REMOVED***
 
     fun updateResult(newResult: Extraction, context: Context) {
-        repositoryScope.launch{
+        repositoryScope.launch {
 
             realm.writeBlocking {
                 // Update existing nested objects (example)
@@ -108,24 +102,28 @@ class ServiceRepository @Inject constructor(
     ***REMOVED***
 
     fun changeOptions(field: String, value: Any) {
-        repositoryScope.launch{
-                when (field) {
-                    "language" -> {
-                        _options.value?.language = value.toString()
-                    ***REMOVED***
-                    "model" -> {
-                        _options.value?.model = value.toString()
-                    ***REMOVED***
-                    "format" -> {
-                        _options.value?.format = value.toString()
-                    ***REMOVED***
-                    "azureOcr" -> {
-                        _options.value?.azureOcr = value as Boolean
-                    ***REMOVED***
-
+        repositoryScope.launch {
+            when (field) {
+                "language" -> {
+                    _options.value?.language = value.toString()
                 ***REMOVED***
+
+                "model" -> {
+                    _options.value?.model = value.toString()
+                ***REMOVED***
+
+                "format" -> {
+                    _options.value?.format = value.toString()
+                ***REMOVED***
+
+                "azureOcr" -> {
+                    _options.value?.azureOcr = value as Boolean
+                ***REMOVED***
+
+            ***REMOVED***
 
         ***REMOVED***
 
     ***REMOVED***
+
 ***REMOVED***

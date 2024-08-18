@@ -1,10 +1,12 @@
 package com.example.tesifrigo.ui.storage
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -37,6 +39,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.tesifrigo.Screen
 import com.example.tesifrigo.models.Extraction
+import com.example.tesifrigo.ui.theme.cyan_custom
+import com.example.tesifrigo.ui.theme.light_gray
 import com.example.tesifrigo.utils.SearchBar
 import com.example.tesifrigo.viewmodels.ExtractionViewModel
 import com.example.tesifrigo.viewmodels.SortOrder
@@ -53,31 +57,65 @@ fun StorageScreen(navController: NavHostController, extractionViewModel: Extract
     val ascending by extractionViewModel.ascending.collectAsState()
 
     val extractions by extractionViewModel.sortedExtractions.collectAsState()
-    Scaffold(
-        topBar = {
+    Scaffold(topBar = {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp)
+        ) {
+
+            SearchBar(text = searchText,
+                onTextChange = { extractionViewModel.updateSearchText(it) ***REMOVED***,
+                onSearch = { extractionViewModel.updateSearchText(it) ***REMOVED***)
+            Spacer(modifier = Modifier.height(12.dp))
             Row {
-                SearchBar(
-                    text = searchText,
-                    onTextChange = { extractionViewModel.updateSearchText(it) ***REMOVED***,
-                    onSearch = { extractionViewModel.updateSearchText(it) ***REMOVED***
-    ***REMOVED***
+                val sortOrder = extractionViewModel.sortOrder.collectAsState().value
+
+                Row {
+                    val sortOptions = listOf(SortOrder.BY_TITLE, SortOrder.BY_DATE)
+
+                    sortOptions.forEach { option ->
+                        Button(colors = ButtonDefaults.buttonColors(
+                            containerColor = if (sortOrder == option) cyan_custom else light_gray, // Change color based on selection
+                            contentColor = if (sortOrder == option) Color.White else Color.Black, // Change text color based on selection
+            ***REMOVED***,
+                            border = BorderStroke(1.dp, cyan_custom),
+                            modifier = Modifier
+                                .height(40.dp)
+                                .width(100.dp)
+                                .padding(start = 10.dp), // Add padding only to the first button
+                            onClick = { extractionViewModel.updateSortOrder(option) ***REMOVED***) {
+                            Text(text = option.name.removePrefix("BY_").lowercase())
+                        ***REMOVED***
+                    ***REMOVED***
+                ***REMOVED***
+
 
 
                 Spacer(modifier = Modifier.weight(1f))
-                IconButton(
-                    onClick = {
-                        navController.navigate(Screen.Settings.route)
-                    ***REMOVED***,
+
+                Button(
+                    onClick = { extractionViewModel.toggleAscending() ***REMOVED***,
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
-                        .padding(end = 15.dp, top = 2.dp)
-    ***REMOVED*** {
-                    FaIcon(faIcon = FaIcons.Cog, tint = Color.Gray, size = 45.dp)
-                ***REMOVED***
-            ***REMOVED***
+                        .height(40.dp)
+                        .width(60.dp)
+                        .padding(end = 2.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        contentColor = cyan_custom, containerColor = light_gray
         ***REMOVED***
-    )
-    { innerPadding ->
+    ***REMOVED*** {
+
+                    FaIcon(
+                        faIcon = if (ascending) FaIcons.SortUp else FaIcons.SortDown,
+                        tint = cyan_custom
+        ***REMOVED***
+                ***REMOVED***
+                Spacer(modifier = Modifier.width(20.dp))
+            ***REMOVED***
+
+        ***REMOVED***
+    ***REMOVED***) { innerPadding ->
         Column(
             modifier = Modifier.padding(innerPadding)
         ) {
@@ -85,18 +123,17 @@ fun StorageScreen(navController: NavHostController, extractionViewModel: Extract
             Row {
 
                 val focusRequester = remember { FocusRequester() ***REMOVED***
-                val typeOptions = mapOf(
-                    "Title" to { extractionViewModel.updateSortOrder(SortOrder.BY_TITLE) ***REMOVED***,
-                    "Date" to { extractionViewModel.updateSortOrder(SortOrder.BY_DATE) ***REMOVED***
-    ***REMOVED***
+                val typeOptions =
+                    mapOf("Title" to { extractionViewModel.updateSortOrder(SortOrder.BY_TITLE) ***REMOVED***,
+                        "Date" to { extractionViewModel.updateSortOrder(SortOrder.BY_DATE) ***REMOVED***)
                 Spacer(modifier = Modifier.width(20.dp))
                 ExposedDropdownMenuBox(
                     expanded = expanded,
-                    onExpandedChange = { expanded = !expanded ***REMOVED***
-    ***REMOVED*** {
+                    onExpandedChange = { expanded = !expanded ***REMOVED***) {
 
                     Button(
-                        onClick = { expanded = true ***REMOVED***, modifier = Modifier
+                        onClick = { expanded = true ***REMOVED***,
+                        modifier = Modifier
                             .padding(end = 8.dp)
                             .focusRequester(focusRequester)
                             .menuAnchor(),
@@ -108,13 +145,10 @@ fun StorageScreen(navController: NavHostController, extractionViewModel: Extract
                         expanded = expanded,
                         onDismissRequest = { expanded = false ***REMOVED***) {
                         typeOptions.forEach { (type, onCLick) ->
-                            DropdownMenuItem(
-                                text = { Text(type) ***REMOVED***,
-                                onClick = {
-                                    onCLick()
-                                    expanded = false
-                                ***REMOVED***
-                ***REMOVED***
+                            DropdownMenuItem(text = { Text(type) ***REMOVED***, onClick = {
+                                onCLick()
+                                expanded = false
+                            ***REMOVED***)
                         ***REMOVED***
                     ***REMOVED***
 
@@ -152,11 +186,8 @@ fun StorageScreen(navController: NavHostController, extractionViewModel: Extract
 
 @Composable
 fun ExtractionItem(
-    extraction: Extraction,
-    viewModel: ExtractionViewModel,
-    navController: NavHostController
+    extraction: Extraction, viewModel: ExtractionViewModel, navController: NavHostController
 ) {
-    var showMenu by remember { mutableStateOf(false) ***REMOVED***
     var showDeleteDialog by remember { mutableStateOf(false) ***REMOVED***
 
     Card(
@@ -181,18 +212,14 @@ fun ExtractionItem(
                 IconButton(
                     onClick = {
                         showDeleteDialog = true
-                    ***REMOVED***,
-                    modifier = Modifier.align(Alignment.CenterVertically)
+                    ***REMOVED***, modifier = Modifier.align(Alignment.CenterVertically)
     ***REMOVED*** {
                     FaIcon(faIcon = FaIcons.Trash, tint = Color.Gray)
                 ***REMOVED***
             ***REMOVED***
             LazyRow {
                 items(extraction.tags) { field ->
-                    AssistChip(
-                        onClick = {***REMOVED***,
-                        label = { Text(field) ***REMOVED***
-        ***REMOVED***
+                    AssistChip(onClick = {***REMOVED***, label = { Text(field) ***REMOVED***)
                     Spacer(modifier = Modifier.width(4.dp))
                 ***REMOVED***
 
@@ -203,8 +230,7 @@ fun ExtractionItem(
 
 // Confirmation Dialog
         if (showDeleteDialog) {
-            AlertDialog(
-                onDismissRequest = { showDeleteDialog = false ***REMOVED***,
+            AlertDialog(onDismissRequest = { showDeleteDialog = false ***REMOVED***,
                 title = { Text("Confirm Delete") ***REMOVED***, // Confirm the action
                 text = { Text("Are you sure you want to delete this extraction?") ***REMOVED***,
                 confirmButton = {
@@ -219,8 +245,7 @@ fun ExtractionItem(
                     Button(onClick = { showDeleteDialog = false ***REMOVED***) {
                         Text("Cancel")
                     ***REMOVED***
-                ***REMOVED***
-***REMOVED***
+                ***REMOVED***)
         ***REMOVED***
     ***REMOVED***
 ***REMOVED***

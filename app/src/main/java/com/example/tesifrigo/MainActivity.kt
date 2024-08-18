@@ -26,22 +26,18 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             ActivityCompat.requestPermissions(
-                this,
-                arrayOf(
+                this, arrayOf(
                     android.Manifest.permission.POST_NOTIFICATIONS,
                     android.Manifest.permission.CAMERA,
                     android.Manifest.permission.READ_EXTERNAL_STORAGE
-    ***REMOVED***,
-                1
+    ***REMOVED***, 1
 ***REMOVED***
         ***REMOVED*** else {
             ActivityCompat.requestPermissions(
-                this,
-                arrayOf(
+                this, arrayOf(
                     android.Manifest.permission.CAMERA,
                     android.Manifest.permission.READ_EXTERNAL_STORAGE
-    ***REMOVED***,
-                1
+    ***REMOVED***, 1
 ***REMOVED***
 
         ***REMOVED***
@@ -51,8 +47,7 @@ class MainActivity : ComponentActivity() {
             TesiFrigoTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
     ***REMOVED*** {
                     MainAppScreen()
                 ***REMOVED***
@@ -67,12 +62,10 @@ fun MainAppScreen() {
 
     val navController = rememberNavController()
 
-    Scaffold(
-        bottomBar = { NavBar(navController) ***REMOVED***,
+    Scaffold(bottomBar = { NavBar(navController) ***REMOVED***,
         modifier = Modifier.fillMaxSize(),
         content = { innerPadding -> // Important for content overlap
             AppNavigation(navController, modifier = Modifier.padding(innerPadding))
-        ***REMOVED***
-    )
+        ***REMOVED***)
 ***REMOVED***
 

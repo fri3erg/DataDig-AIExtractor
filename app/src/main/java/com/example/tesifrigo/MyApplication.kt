@@ -42,7 +42,7 @@ class MyApp : Application() {
                 ExceptionOccurred::class,
                 ExtractionCosts::class
 ***REMOVED***
-        ).schemaVersion(13).build()
+        ).schemaVersion(14).build()
 
         realm = Realm.open(
             configuration
@@ -51,9 +51,7 @@ class MyApp : Application() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
-                "extracting_data",
-                "Extracting Data",
-                NotificationManager.IMPORTANCE_HIGH
+                "extracting_data", "Extracting Data", NotificationManager.IMPORTANCE_HIGH
 ***REMOVED***
             val notificationManager =
                 getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

@@ -32,14 +32,11 @@ fun AppNavigation(navController: NavHostController, modifier: Modifier = Modifie
         modifier = modifier
     ) {
         composable(route = Screen.Camera.route + "?templateId={templateId***REMOVED***",
-            arguments = listOf(
-                navArgument("templateId") {
-                    type = NavType.StringType
-                    defaultValue = null
-                    nullable = true
-                ***REMOVED***
-***REMOVED***
-        ) {
+            arguments = listOf(navArgument("templateId") {
+                type = NavType.StringType
+                defaultValue = null
+                nullable = true
+            ***REMOVED***)) {
             CameraScreen(
                 it.arguments?.getString("templateId"),
                 navController,
@@ -50,45 +47,25 @@ fun AppNavigation(navController: NavHostController, modifier: Modifier = Modifie
         ***REMOVED***
         composable(Screen.Storage.route) { StorageScreen(navController, extractionViewModel) ***REMOVED***
         composable(Screen.Settings.route) { SettingsScreen(serviceViewModel) ***REMOVED***
-        composable(Screen.Templates.route + "?photos={photos***REMOVED***",
-            arguments = listOf(
-                navArgument("photos") {
-                    type = NavType.StringType
-                    defaultValue = null
-                    nullable = true
-                ***REMOVED***
-***REMOVED***
-        ) {
-            TemplateScreen(navController, it.arguments?.getString("photos"), templateViewModel)
-        ***REMOVED***
+        composable(Screen.Templates.route) { TemplateScreen(navController, templateViewModel) ***REMOVED***
         composable(Screen.EditTemplate.route + "/templateId={templateId***REMOVED***",
-            arguments = listOf(
-                navArgument("templateId") {
-                    type = NavType.StringType
-                    defaultValue = ""
-                    nullable = false
-                ***REMOVED***
-***REMOVED***
-        ) {
+            arguments = listOf(navArgument("templateId") {
+                type = NavType.StringType
+                defaultValue = ""
+                nullable = false
+            ***REMOVED***)) {
             EditTemplateScreen(
-                navController,
-                it.arguments?.getString("templateId")!!,
-                templateViewModel
+                navController, it.arguments?.getString("templateId")!!, templateViewModel
 ***REMOVED***
         ***REMOVED***
         composable(Screen.SingleExtraction.route + "/extractionId={extractionId***REMOVED***",
-            arguments = listOf(
-                navArgument("extractionId") {
-                    type = NavType.StringType
-                    defaultValue = ""
-                    nullable = false
-                ***REMOVED***
-***REMOVED***
-        ) {
+            arguments = listOf(navArgument("extractionId") {
+                type = NavType.StringType
+                defaultValue = ""
+                nullable = false
+            ***REMOVED***)) {
             SingleExtractionScreen(
-                navController,
-                it.arguments?.getString("extractionId")!!,
-                extractionViewModel
+                navController, it.arguments?.getString("extractionId")!!, extractionViewModel
 ***REMOVED***
         ***REMOVED***
 

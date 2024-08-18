@@ -44,16 +44,10 @@ class TemplateViewModel : ViewModel() {
     // Function to update search text
 
 
-    val templates = realm
-        .query<Template>()
-        .asFlow()
-        .map {
+    val templates = realm.query<Template>().asFlow().map {
             it.list.toList()
-        ***REMOVED***
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(),
-            emptyList()
+        ***REMOVED***.stateIn(
+            viewModelScope, SharingStarted.WhileSubscribed(), emptyList()
         )
 
     val sortedTemplates: StateFlow<List<Template>> = combine(
@@ -64,13 +58,11 @@ class TemplateViewModel : ViewModel() {
                 // Default sorting if searchQuery is empty
                 when (order) {
                     SortOrder.BY_TITLE -> compareValuesBy(
-                        t1,
-                        t2
+                        t1, t2
         ***REMOVED*** { it.title ***REMOVED*** * if (isAscending) 1 else -1
 
                     SortOrder.BY_DATE -> compareValuesBy(
-                        t1,
-                        t2
+                        t1, t2
         ***REMOVED*** { it.id ***REMOVED*** * if (isAscending) 1 else -1
                 ***REMOVED***
             ***REMOVED*** else {
@@ -82,13 +74,11 @@ class TemplateViewModel : ViewModel() {
                     // If a tie, apply secondary comparison
                     when (order) {
                         SortOrder.BY_TITLE -> compareValuesBy(
-                            t1,
-                            t2
+                            t1, t2
             ***REMOVED*** { it.title ***REMOVED*** * if (isAscending) 1 else -1
 
                         SortOrder.BY_DATE -> compareValuesBy(
-                            t1,
-                            t2
+                            t1, t2
             ***REMOVED*** { it.id ***REMOVED*** * if (isAscending) 1 else -1
                     ***REMOVED***
                 ***REMOVED*** else {
@@ -242,8 +232,13 @@ class TemplateViewModel : ViewModel() {
                         "intelligentExtraction" -> {
                             latestTemplate.fields[index].intelligentExtraction = newText as Boolean
                         ***REMOVED***
+
                         "default" -> {
                             latestTemplate.fields[index].default = newText.toString()
+                        ***REMOVED***
+
+                        "list" -> {
+                            latestTemplate.fields[index].list = newText as Boolean
                         ***REMOVED***
 
                         else -> {
@@ -430,10 +425,7 @@ class TemplateViewModel : ViewModel() {
     ***REMOVED***
 
     fun updateTableRowHeader(
-        template: Any,
-        tableIndex: Int,
-        rowIndex: Int,
-        newField: TemplateField
+        template: Any, tableIndex: Int, rowIndex: Int, newField: TemplateField
     ) {
         viewModelScope.launch {
             realm.writeBlocking {
@@ -445,10 +437,7 @@ class TemplateViewModel : ViewModel() {
     ***REMOVED***
 
     fun updateTableColumnHeader(
-        template: Any,
-        tableIndex: Int,
-        columnIndex: Int,
-        newField: TemplateField
+        template: Any, tableIndex: Int, columnIndex: Int, newField: TemplateField
     ) {
         viewModelScope.launch {
             realm.writeBlocking {
@@ -514,9 +503,26 @@ class TemplateViewModel : ViewModel() {
         ***REMOVED***
 
     ***REMOVED***
+
+    fun deleteRowFromTable(table: TemplateTable, rowIndex: Int) {
+        viewModelScope.launch {
+            realm.writeBlocking {
+                table.rows.removeAt(rowIndex)
+            ***REMOVED***
+        ***REMOVED***
+
+    ***REMOVED***
+
+    fun deleteColumnFromTable(table: TemplateTable, columnIndex: Int) {
+        viewModelScope.launch {
+            realm.writeBlocking {
+                table.columns.removeAt(columnIndex)
+            ***REMOVED***
+        ***REMOVED***
+
+    ***REMOVED***
 ***REMOVED***
 
 enum class SortOrder {
-    BY_TITLE,
-    BY_DATE,
+    BY_TITLE, BY_DATE,
 ***REMOVED***

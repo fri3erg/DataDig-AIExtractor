@@ -77,8 +77,7 @@ class ExtractionService : Service() {
         val imageUri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent?.getParcelableArrayListExtra("imageUris", Uri::class.java)
         ***REMOVED*** else {
-            @Suppress("DEPRECATION")
-            intent?.getParcelableArrayListExtra("imageUris")
+            @Suppress("DEPRECATION") intent?.getParcelableArrayListExtra("imageUris")
         ***REMOVED***
         if (imageUri != null) {
             val template = serviceRepository.getTemplate() ?: return
@@ -97,10 +96,8 @@ class ExtractionService : Service() {
 
 
     private fun createNotification(): Notification {
-        return NotificationCompat.Builder(this, "extracting_data")
-            .setContentTitle("Service")
-            .setContentText("Service is running")
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
+        return NotificationCompat.Builder(this, "extracting_data").setContentTitle("Service")
+            .setContentText("Service is running").setSmallIcon(R.drawable.ic_launcher_foreground)
             .build()
     ***REMOVED***
 
@@ -151,8 +148,7 @@ class ExtractionService : Service() {
                 ***REMOVED***
                 if (base64Image != null) {
                     pyListImages.callAttr(
-                        "append",
-                        base64Image
+                        "append", base64Image
         ***REMOVED***  // Add Base64 image to the Python list
                 ***REMOVED***
             ***REMOVED***
@@ -166,8 +162,7 @@ class ExtractionService : Service() {
                     decoder.isMutableRequired = true // Set if the image needs to be mutable
                 ***REMOVED***
                 pyListText.callAttr(
-                    "append",
-                    imageUriOcr.extractTextFromBitmap(bitmap)
+                    "append", imageUriOcr.extractTextFromBitmap(bitmap)
     ***REMOVED***  // Add Base64 image to the Python list
             ***REMOVED***
 
@@ -201,11 +196,7 @@ class ExtractionService : Service() {
 
             val deferredPyResult = async(Dispatchers.Default) { // Use async for Python call
                 module.callAttr(
-                    "main_kotlin",
-                    pyListImages,
-                    pyListText,
-                    pythonTemplate,
-                    chosenOption
+                    "main_kotlin", pyListImages, pyListText, pythonTemplate, chosenOption
     ***REMOVED***
             ***REMOVED***
 
@@ -230,8 +221,7 @@ class ExtractionService : Service() {
 
 
     enum class Actions {
-        START,
-        STOP
+        START, STOP
     ***REMOVED***
 
 
@@ -239,9 +229,7 @@ class ExtractionService : Service() {
 
 
 private fun extractResult(
-    pyResult: PyObject,
-    templateOg: Template,
-    imageUris: List<Uri>
+    pyResult: PyObject, templateOg: Template, imageUris: List<Uri>
 ): Extraction {
 
     val extracted = Extraction().apply {
@@ -249,50 +237,41 @@ private fun extractResult(
         format = pyResult["format"].toString()
         pyResult["tags"]?.let { pyTags ->
             val tagsList = pyTags.asList()
-            tags.addAll(
-                tagsList.map { it.toString() ***REMOVED***
-***REMOVED***
+            tags.addAll(tagsList.map { it.toString() ***REMOVED***)
         ***REMOVED***
 
         pyResult["extraction_costs"]?.asList()?.let {
-            extractionCosts.addAll(
-                it.map { pyCost ->
-                    ExtractionCosts().apply {
-                        name = pyCost["name"].toString()
-                        tokens = pyCost["tokens"]?.toInt() ?: 0
-                        cost = pyCost["cost"]?.toFloat() ?: 0f
-                        currency = pyCost["currency"].toString()
-                    ***REMOVED***
+            extractionCosts.addAll(it.map { pyCost ->
+                ExtractionCosts().apply {
+                    name = pyCost["name"].toString()
+                    tokens = pyCost["tokens"]?.toInt() ?: 0
+                    cost = pyCost["cost"]?.toFloat() ?: 0f
+                    currency = pyCost["currency"].toString()
                 ***REMOVED***
-***REMOVED***
+            ***REMOVED***)
         ***REMOVED***
 
         title = pyResult["title"].toString()
         pyResult["exceptions_occurred"]?.asList()?.let {
-            exceptionsOccurred.addAll(
-                it.map { pyException ->
-                    val errorFiltered = filterErrors(pyException["error"].toString())
-                    ExceptionOccurred().apply {
-                        error = errorFiltered
-                        errorType = pyException["error_type"].toString()
-                        errorDescription = pyException["error_description"].toString()
-                    ***REMOVED***
+            exceptionsOccurred.addAll(it.map { pyException ->
+                val errorFiltered = filterErrors(pyException["error"].toString())
+                ExceptionOccurred().apply {
+                    error = errorFiltered
+                    errorType = pyException["error_type"].toString()
+                    errorDescription = pyException["error_description"].toString()
                 ***REMOVED***
-***REMOVED***
+            ***REMOVED***)
         ***REMOVED***
         pyResult["extracted_fields"]?.asList()?.let { pyObjects ->
-            extractedFields.addAll(
-                pyObjects.map { pyExtractedField ->
-                    ExtractionField().apply {
-                        templateField = templateOg.fields.first {
-                            it.id.toHexString() == pyExtractedField["template_field"]
-                                ?.get("id")
-                                .toString()
-                        ***REMOVED***
-                        value = pyExtractedField["value"].toString()
+            extractedFields.addAll(pyObjects.map { pyExtractedField ->
+                ExtractionField().apply {
+                    templateField = templateOg.fields.first {
+                        it.id.toHexString() == pyExtractedField["template_field"]?.get("id")
+                            .toString()
                     ***REMOVED***
+                    value = pyExtractedField["value"].toString()
                 ***REMOVED***
-***REMOVED***
+            ***REMOVED***)
         ***REMOVED***
         pyResult["extracted_tables"]?.asList()?.forEach { pyExtractedTable ->
             extractedTables.add(extractTable(pyExtractedTable, templateOg))
@@ -324,9 +303,7 @@ private fun extractTable(pyExtractedTable: PyObject, template: Template): Extrac
 
     val realmExtractionTable = ExtractionTable().apply {
         templateTable = template.tables.first {
-            it.id.toHexString() == pyExtractedTable["template_table"]
-                ?.get("id")
-                .toString()
+            it.id.toHexString() == pyExtractedTable["template_table"]?.get("id").toString()
         ***REMOVED***
         dataframe = pyExtractedTable["dataframe"].toString()
         // Handle fields (nested dictionaries)
@@ -353,9 +330,7 @@ private fun extractTable(pyExtractedTable: PyObject, template: Template): Extrac
 
 
 private fun getTemplate(
-    classesModule: PyObject,
-    builtinsModule: PyObject,
-    template: Template
+    classesModule: PyObject, builtinsModule: PyObject, template: Template
 ): PyObject? {
 
     val pyFields = builtinsModule.callAttr("list") // Create an empty Python list
@@ -363,16 +338,17 @@ private fun getTemplate(
     template.fields.map { realmField ->
 
         pyFields.callAttr(
-            "append",
-            classesModule.callAttr(
+            "append", classesModule.callAttr(
                 "TemplateField",
                 PyObject.fromJava(realmField.id.toHexString()),
                 PyObject.fromJava(realmField.title),
                 PyObject.fromJava(realmField.description),
                 PyObject.fromJava(realmField.extraDescription),
                 PyObject.fromJava(realmField.type),
+                PyObject.fromJava(realmField.list),
                 PyObject.fromJava(realmField.required),
-                PyObject.fromJava(realmField.intelligentExtraction)
+                PyObject.fromJava(realmField.intelligentExtraction),
+                PyObject.fromJava(realmField.default)
 ***REMOVED***
         )  // Add Base64 image to the Python list
 
@@ -384,8 +360,7 @@ private fun getTemplate(
         val pyTableColumns = builtinsModule.callAttr("list") // Create an empty Python list
         realmTable.rows.map { tableField ->
             pyTableRows.callAttr(
-                "append",
-                classesModule.callAttr(
+                "append", classesModule.callAttr(
                     "TemplateField",
                     PyObject.fromJava(tableField.id.toHexString()),
                     PyObject.fromJava(tableField.title),
@@ -399,8 +374,7 @@ private fun getTemplate(
         ***REMOVED***
         realmTable.columns.map { tableField ->
             pyTableColumns.callAttr(
-                "append",
-                classesModule.callAttr(
+                "append", classesModule.callAttr(
                     "TemplateField",
                     PyObject.fromJava(tableField.id.toHexString()),
                     PyObject.fromJava(tableField.title),
@@ -413,8 +387,7 @@ private fun getTemplate(
 ***REMOVED***  // Add Base64 image to the Python list
         ***REMOVED***
         pyTables.callAttr(
-            "append",
-            classesModule.callAttr(
+            "append", classesModule.callAttr(
                 "TemplateTable",
                 PyObject.fromJava(realmTable.id.toHexString()),
                 PyObject.fromJava(realmTable.title),

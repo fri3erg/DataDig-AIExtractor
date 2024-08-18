@@ -46,6 +46,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -77,10 +78,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.tesifrigo.models.Template
 import com.example.tesifrigo.models.TemplateField
 import com.example.tesifrigo.models.TemplateTable
+import com.example.tesifrigo.ui.theme.dark_blue
+import com.example.tesifrigo.ui.theme.dark_red
+import com.example.tesifrigo.ui.theme.vale
 import com.example.tesifrigo.utils.AddButton
 import com.example.tesifrigo.utils.DeleteButton
 import com.example.tesifrigo.utils.HelpIconButton
@@ -97,9 +102,7 @@ import java.util.TimeZone
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditTemplateScreen(
-    navController: NavHostController,
-    templateId: String,
-    templateViewModel: TemplateViewModel
+    navController: NavHostController, templateId: String, templateViewModel: TemplateViewModel
 ) {
     if (templateId.isEmpty()) {
         navController.navigateUp()
@@ -119,28 +122,23 @@ fun EditTemplateScreen(
 
 
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    title?.let {
-                        Text(
-                            text = it,
-                            fontWeight = FontWeight.Bold,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.padding(start = 16.dp)
+    Scaffold(topBar = {
+        TopAppBar(title = {
+            title?.let {
+                Text(
+                    text = it,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(start = 16.dp)
+    ***REMOVED***
             ***REMOVED***
-                    ***REMOVED***
-                ***REMOVED***,
-                navigationIcon = {
-                    FaIcon(faIcon = FaIcons.ArrowLeft, modifier = Modifier.clickable {
-                        navController.navigateUp()
-                    ***REMOVED***)
-                ***REMOVED***
-***REMOVED***
-        ***REMOVED***
-    ) { innerPadding ->
+        ***REMOVED***, navigationIcon = {
+            FaIcon(faIcon = FaIcons.ArrowLeft, modifier = Modifier.clickable {
+                navController.navigateUp()
+            ***REMOVED***)
+        ***REMOVED***)
+    ***REMOVED***) { innerPadding ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -153,15 +151,20 @@ fun EditTemplateScreen(
                 // Template Title Section
                 item {
                     title?.let {
-                        OutlinedTextField(
-                            value = it,
-                            onValueChange = { newValue->
+                        OutlinedTextField(value = it,
+                            colors = OutlinedTextFieldDefaults.colors(
+                                unfocusedBorderColor = Color.Black,
+                                unfocusedLabelColor = Color.Black,
+                ***REMOVED***,
+                            onValueChange = { newValue ->
                                 templateViewModel.updateTemplateTitle(template!!, newValue)
                                 title = newValue
                             ***REMOVED***,
-                            label = { Text("Template Title") ***REMOVED***,
-                            modifier = Modifier.fillMaxWidth()
-            ***REMOVED***
+                            label = { Text("Template Title", color = Color.Black) ***REMOVED***,
+                            modifier = Modifier.fillMaxWidth(),
+                            trailingIcon = {
+                                HelpIconButton(helpText = "This is the title of the template.")
+                            ***REMOVED***)
                     ***REMOVED***
                 ***REMOVED***
 
@@ -179,11 +182,7 @@ fun EditTemplateScreen(
                     ***REMOVED***
 
                     TemplateFieldComposable(
-                        template,
-                        index,
-                        templateViewModel,
-                        focusRequesterIndex,
-                        listStateChange
+                        template, index, templateViewModel, focusRequesterIndex, listStateChange
         ***REMOVED***
                 ***REMOVED***
 
@@ -202,11 +201,7 @@ fun EditTemplateScreen(
                     ***REMOVED***
 
                     TemplateTableCard(
-                        index,
-                        templateViewModel,
-                        template!!,
-                        focusRequesterIndex,
-                        listStateChange
+                        index, templateViewModel, template!!, focusRequesterIndex, listStateChange
         ***REMOVED***
                 ***REMOVED***
 
@@ -233,20 +228,20 @@ fun EditTemplateScreen(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun TemplateKeyWordsSection(template: Template, table: TemplateTable, viewModel: TemplateViewModel) {
+fun TemplateKeyWordsSection(
+    template: Template, table: TemplateTable, viewModel: TemplateViewModel
+) {
     val context = LocalContext.current
     Column {
         Text("Table Keywords", style = MaterialTheme.typography.titleMedium)
         FlowRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)
 
         ) {
             for (keyword in table.keywords) {
                 var showDismissIcon by remember { mutableStateOf(false) ***REMOVED***
 
-                AssistChip(
-                    onClick = { showDismissIcon = !showDismissIcon ***REMOVED***,
+                AssistChip(onClick = { showDismissIcon = !showDismissIcon ***REMOVED***,
                     label = { Text(keyword) ***REMOVED***,
                     trailingIcon = {
                         AnimatedVisibility(
@@ -254,37 +249,35 @@ fun TemplateKeyWordsSection(template: Template, table: TemplateTable, viewModel:
                             enter = fadeIn() + scaleIn(),
                             exit = fadeOut() + scaleOut()
             ***REMOVED*** {
-                            Icon(
-                                Icons.Filled.Close,
+                            Icon(Icons.Filled.Close,
+                                tint = Color.Black,
                                 contentDescription = "Remove Keyword",
                                 modifier = Modifier.clickable {
                                     viewModel.removeKeyword(table, table.keywords.indexOf(keyword))
-                                ***REMOVED***
-                ***REMOVED***
+                                ***REMOVED***)
                         ***REMOVED***
                     ***REMOVED***,
-                    modifier = Modifier
-                        .pointerInput(Unit) {
-                            detectTapGestures(
-                                onPress = {
-                                    showDismissIcon = true
-                                ***REMOVED***
-                ***REMOVED***
-                        ***REMOVED***
-    ***REMOVED***
+                    modifier = Modifier.pointerInput(Unit) {
+                        detectTapGestures(onPress = {
+                            showDismissIcon = true
+                        ***REMOVED***)
+                    ***REMOVED***)
             ***REMOVED***
         ***REMOVED***
 
         // Add New Tag Section
         var newKey by remember { mutableStateOf("") ***REMOVED***
-        OutlinedTextField(
-            value = newKey,
+        OutlinedTextField(value = newKey,
+            colors = OutlinedTextFieldDefaults.colors(
+                unfocusedBorderColor = Color.Black,
+                unfocusedLabelColor = Color.Black,
+***REMOVED***,
             onValueChange = { newKey = it ***REMOVED***,
-            label = { Text("Add Keyword") ***REMOVED***,
+            label = { Text("Add Keyword", color = Color.Black) ***REMOVED***,
             maxLines = 1,
             modifier = Modifier.fillMaxWidth(),
             trailingIcon = {
-                FaIcon(faIcon = FaIcons.Plus, tint = Color.Gray, modifier = Modifier.clickable {
+                FaIcon(faIcon = FaIcons.Plus, tint = Color.Black, modifier = Modifier.clickable {
                     when {
                         newKey.isBlank() -> {
                             Toast.makeText(context, "Keyword cannot be empty", Toast.LENGTH_SHORT)
@@ -292,8 +285,9 @@ fun TemplateKeyWordsSection(template: Template, table: TemplateTable, viewModel:
                         ***REMOVED***
 
                         template.tags.size >= 10 -> {
-                            Toast.makeText(context, "Max number of keywords is 10", Toast.LENGTH_SHORT)
-                                .show()
+                            Toast.makeText(
+                                context, "Max number of keywords is 10", Toast.LENGTH_SHORT
+                ***REMOVED***.show()
                         ***REMOVED***
 
                         else -> {
@@ -301,10 +295,8 @@ fun TemplateKeyWordsSection(template: Template, table: TemplateTable, viewModel:
                             newKey = ""
                         ***REMOVED***
                     ***REMOVED***
-                ***REMOVED***
-    ***REMOVED***
-            ***REMOVED***
-        )
+                ***REMOVED***)
+            ***REMOVED***)
 
     ***REMOVED***
 ***REMOVED***
@@ -321,7 +313,7 @@ fun TemplateFieldComposable(
     ) {
 
     val focusRequester = remember { FocusRequester() ***REMOVED*** // Create FocusRequester for field
-    val typeOptions = listOf("Any", "Text", "Date", "Number", "Boolean", "Float", "List")
+    val typeOptions = listOf("Any", "Text", "Date", "Number", "Boolean", "Float")
     var expanded by remember { mutableStateOf(false) ***REMOVED***
     val foundField by remember { mutableStateOf(template?.fields?.get(index)) ***REMOVED***
     var title by remember { mutableStateOf(foundField?.title) ***REMOVED***
@@ -330,6 +322,7 @@ fun TemplateFieldComposable(
     var required by remember { mutableStateOf(foundField?.required) ***REMOVED***
     var intelligentExtraction by remember { mutableStateOf(foundField?.intelligentExtraction) ***REMOVED***
     var default by remember { mutableStateOf(foundField?.default) ***REMOVED***
+    var list by remember { mutableStateOf(foundField?.list) ***REMOVED***
 
 
     LaunchedEffect(key1 = focusRequesterIndex) {
@@ -345,6 +338,9 @@ fun TemplateFieldComposable(
             .fillMaxWidth()
             .padding(6.dp)
             .focusRequester(focusRequester),
+        colors = CardDefaults.cardColors(
+            containerColor = vale
+        ),
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -353,22 +349,20 @@ fun TemplateFieldComposable(
                     // Title with Help Icon
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         title?.let {
-                            OutlinedTextField(
-                                value = it,
+                            OutlinedTextField(value = it,
                                 onValueChange = { newText ->
                                     title = newText
                                     viewModel.updateTemplateItem(
-                                        template,
-                                        "title" to newText,
-                                        index
+                                        template, "title" to newText, index
                         ***REMOVED***
                                 ***REMOVED***,
                                 label = { Text("Field Title") ***REMOVED***,
-                                modifier = Modifier.weight(1f) // Occupy remaining space
-                ***REMOVED***
+                                modifier = Modifier.weight(1f), // Occupy remaining space
+                                trailingIcon = {
+                                    HelpIconButton(helpText = "This is the title of the field.")
+                                ***REMOVED***)
+
                         ***REMOVED***
-                        Spacer(modifier = Modifier.width(4.dp)) // Reduced spacing
-                        HelpIconButton(helpText = "This is the title of the field.")
                     ***REMOVED***
 
                     Spacer(modifier = Modifier.height(8.dp))
@@ -376,22 +370,19 @@ fun TemplateFieldComposable(
                     // Description with Help Icon
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         description?.let {
-                            OutlinedTextField(
-                                value = it,
+                            OutlinedTextField(value = it,
                                 onValueChange = { newText ->
                                     description = newText
                                     viewModel.updateTemplateItem(
-                                        template,
-                                        "description" to newText,
-                                        index
+                                        template, "description" to newText, index
                         ***REMOVED***
                                 ***REMOVED***,
                                 label = { Text("Field Description") ***REMOVED***,
-                                modifier = Modifier.weight(1f)
-                ***REMOVED***
+                                modifier = Modifier.weight(1f),
+                                trailingIcon = {
+                                    HelpIconButton(helpText = "This is the description of the field.")
+                                ***REMOVED***)
                         ***REMOVED***
-                        Spacer(modifier = Modifier.width(4.dp)) // Reduced spacing
-                        HelpIconButton(helpText = "This is a detailed description of the field.")
                     ***REMOVED***
 
                     Spacer(modifier = Modifier.height(8.dp))
@@ -401,11 +392,9 @@ fun TemplateFieldComposable(
 
                         ExposedDropdownMenuBox(
                             expanded = expanded,
-                            onExpandedChange = { expanded = !expanded ***REMOVED***
-            ***REMOVED*** {
+                            onExpandedChange = { expanded = !expanded ***REMOVED***) {
                             type?.let {
-                                TextField(
-                                    value = it,
+                                TextField(value = it,
                                     onValueChange = {***REMOVED***,
                                     readOnly = true,
                                     label = { Text("Type") ***REMOVED***,
@@ -414,53 +403,59 @@ fun TemplateFieldComposable(
                                             expanded = expanded
                             ***REMOVED***
                                     ***REMOVED***,
-                                    colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                                    colors = ExposedDropdownMenuDefaults.textFieldColors(
+                                        focusedLabelColor = Color.Black,
+                                        unfocusedLabelColor = Color.Black,
+                                        focusedIndicatorColor = Color.Black,
+                                        unfocusedIndicatorColor = Color.Black,
+                                        unfocusedContainerColor = vale,
+                                        focusedContainerColor = vale
+                        ***REMOVED***,
                                     modifier = Modifier
                                         .menuAnchor()
                                         .focusRequester(focusRequester)
                     ***REMOVED***
                             ***REMOVED***
 
-                            ExposedDropdownMenu(
+                            ExposedDropdownMenu(modifier = Modifier.background(Color.White),
                                 expanded = expanded,
                                 onDismissRequest = { expanded = false ***REMOVED***) {
                                 typeOptions.forEach { newType ->
-                                    DropdownMenuItem(
-                                        text = { Text(newType) ***REMOVED***,
-                                        onClick = {
-                                            type = newType
-                                            when(newType){
-                                                "Text" -> {
-                                                    default = "N/A"
-                                                ***REMOVED***
-                                                "Number" -> {
-                                                    default = "-1"
-                                                ***REMOVED***
-                                                "Date" -> {
-                                                    default = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-                                                ***REMOVED***
-                                                "Any" -> {
-                                                    default = ""
-                                                ***REMOVED***
-                                                "Float" -> {
-                                                    default = "-1.0"
-                                                ***REMOVED***
-
+                                    DropdownMenuItem(text = { Text(newType) ***REMOVED***, onClick = {
+                                        type = newType
+                                        when (newType) {
+                                            "Text" -> {
+                                                default = "N/A"
                                             ***REMOVED***
-                                            viewModel.updateTemplateItem(
-                                                template,
-                                                "default" to (default?: ""),
-                                                index
-                                ***REMOVED***
-                                            viewModel.updateTemplateItem(
-                                                template,
-                                                "type" to newType,
-                                                index
-                                ***REMOVED***
-                                            expanded = false
+
+                                            "Number" -> {
+                                                default = "-1"
+                                            ***REMOVED***
+
+                                            "Date" -> {
+                                                default = SimpleDateFormat(
+                                                    "yyyy-MM-dd", Locale.getDefault()
+                                    ***REMOVED***.format(Date())
+                                            ***REMOVED***
+
+                                            "Any" -> {
+                                                default = ""
+                                            ***REMOVED***
+
+                                            "Float" -> {
+                                                default = "-1.0"
+                                            ***REMOVED***
 
                                         ***REMOVED***
-                        ***REMOVED***
+                                        viewModel.updateTemplateItem(
+                                            template, "default" to (default ?: ""), index
+                            ***REMOVED***
+                                        viewModel.updateTemplateItem(
+                                            template, "type" to newType, index
+                            ***REMOVED***
+                                        expanded = false
+
+                                    ***REMOVED***)
                                 ***REMOVED***
                             ***REMOVED***
                         ***REMOVED***
@@ -468,167 +463,233 @@ fun TemplateFieldComposable(
                         HelpIconButton(helpText = "Specify the type of data expected for this field (e.g., 'string', 'number', 'date').")
                     ***REMOVED***
                     Spacer(modifier = Modifier.height(8.dp))
-
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-
-                        when(type){
-                            "Text", "Any" -> {
-                                default?.let {
-                                    OutlinedTextField(
-                                        value = it,
-                                        onValueChange = { newText ->
-                                            default = newText
-                                            viewModel.updateTemplateItem(
-                                                template,
-                                                "default" to newText,
-                                                index
-                                ***REMOVED***
-                                        ***REMOVED***,
-                                        label = { Text("Field Default") ***REMOVED***,
-                                        modifier = Modifier.weight(1f)
-                        ***REMOVED***
-                                ***REMOVED***
-                                Spacer(modifier = Modifier.width(4.dp)) // Reduced spacing
-                                HelpIconButton(helpText = " This is the default value for the field.")
-                            ***REMOVED***
-                            "Number" -> {
-                                default?.let {
-
-                                    OutlinedTextField(
-                                        value = it,
-                                        onValueChange = { newValue ->
-                                            default = newValue
-                                            viewModel.updateTemplateItem(template, "default" to newValue, index)
-                                        ***REMOVED***,
-                                        label = { Text("Field Default (Number)") ***REMOVED***,
-                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                        modifier = Modifier.weight(1f)
-
-                        ***REMOVED***
-
-                                    Spacer(modifier = Modifier.width(4.dp)) // Reduced spacing
-                                    HelpIconButton(helpText = " This is the default value for the field.")
-
-                                ***REMOVED***
-                            ***REMOVED***
-                            "Date" -> {
-                                val datePickerState = rememberDatePickerState(
-                                    initialSelectedDateMillis = default?.let {
-                                        try {
-                                            SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).apply {
-                                                timeZone = TimeZone.getTimeZone("UTC")
-                                            ***REMOVED***.parse(it)?.time
-                                        ***REMOVED*** catch (e: ParseException) {
-                                            null
-                                        ***REMOVED***
-                                    ***REMOVED***
-                    ***REMOVED*** // State for DatePicker
-                                Box(modifier = Modifier
-                                    .weight(1f)
-                                    .border(1.dp, Color.Gray)
-                                    .padding(5.dp)
-                        ***REMOVED*** {
-
-                                    HelpIconButton(helpText = " This is the default value for the field.", modifier = Modifier.align(Alignment.TopEnd))
-                                    DatePicker( // Use DatePicker for "Date" type
-                                        state = datePickerState
-                        ***REMOVED***
-                                ***REMOVED***
-
-                                // Update the default value when the selected date changes
-                                LaunchedEffect(datePickerState.selectedDateMillis) {
-                                    val selectedDate = datePickerState.selectedDateMillis?.let {
-                                        // Use UTC time zone for formatting
-                                        SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).apply {
-                                            timeZone = TimeZone.getTimeZone("UTC")
-                                        ***REMOVED***.format(Date(it))
-                                    ***REMOVED*** ?: ""
-                                    default = selectedDate
-                                    viewModel.updateTemplateItem(template, "default" to selectedDate, index)
-                                ***REMOVED***
-                            ***REMOVED***
-                            "Boolean" -> {
-                                default?.let {
-                                    BooleanFieldWithLabel(
-                                        label = "Field Default",
-                                        value = it.toBoolean(),
-                                        onValueChange = { newValue ->
-                                            default = newValue.toString()
-                                            viewModel.updateTemplateItem(template, "default" to newValue.toString(), index)
-                                        ***REMOVED***,
-                                        modifier = Modifier.weight(1f)
-                        ***REMOVED***
-                                ***REMOVED***
-                                Spacer(modifier = Modifier.width(4.dp)) // Reduced spacing
-                                HelpIconButton(helpText = " This is the default value for the field.")
-                            ***REMOVED***
-                            "Float" -> {
-                                default?.let {
-                                    OutlinedTextField(
-                                        value = it,
-                                        onValueChange = { newValue ->
-                                            default = newValue
-                                            viewModel.updateTemplateItem(template, "default" to newValue, index)
-                                        ***REMOVED***,
-                                        label = { Text("Field Default (Float)") ***REMOVED***,
-                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                        modifier = Modifier.weight(1f)
-
-                        ***REMOVED***
-
-                                    Spacer(modifier = Modifier.width(4.dp)) // Reduced spacing
-                                    HelpIconButton(helpText = " This is the default value for the field.")
-
-                                ***REMOVED***
-                            ***REMOVED***
-                        ***REMOVED***
+                    list?.let {
+                        BooleanFieldWithLabel(
+                            label = "List",
+                            value = it,
+                            help = "if the value is a list of the type submitted",
+                            onValueChange = { newValue ->
+                                list = newValue
+                                viewModel.updateTemplateItem(
+                                    template, "list" to newValue, index
                     ***REMOVED***
-                    HorizontalDivider()
+                            ***REMOVED***,
+            ***REMOVED***
+                    ***REMOVED***
 
+                    Spacer(modifier = Modifier.height(8.dp))
+                    DefaultPicker(
+                        default = default,
+                        changeDefault = { newDefault ->
+                            default = newDefault
+                        ***REMOVED***,
+                        isList = list ?: true,
+                        type = type ?: "Any",
+                        viewModel = viewModel,
+                        template = template,
+                        index = index
+        ***REMOVED***
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+
+                    HorizontalDivider()
                     Spacer(modifier = Modifier.height(8.dp))
 
                     // Required & Intelligent Extraction (separate composables with equal weight)
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ***REMOVED*** {
-                        required?.let {
-                            BooleanFieldWithLabel(
-                                label = "Required",
-                                value = it,
-                                onValueChange = { newValue ->
-                                    required = newValue
-                                    viewModel.updateTemplateItem(
-                                        template,
-                                        "required" to newValue,
-                                        index
-                        ***REMOVED***
-                                ***REMOVED***,
-                                modifier = Modifier.weight(1f)
-                ***REMOVED***
-                        ***REMOVED***
 
-                        intelligentExtraction?.let {
-                            BooleanFieldWithLabel(
-                                label = "Interpretative",
-                                value = it,
-                                onValueChange = { newValue ->
-                                    intelligentExtraction = newValue
-                                    viewModel.updateTemplateItem(
-                                        template,
-                                        "intelligentExtraction" to newValue,
-                                        index
-                        ***REMOVED***
-                                ***REMOVED***,
-                                modifier = Modifier.weight(1f)
-                ***REMOVED***
-                        ***REMOVED***
-
+                    required?.let {
+                        BooleanFieldWithLabel(
+                            label = "Required",
+                            value = it,
+                            help = "if the field is required",
+                            onValueChange = { newValue ->
+                                required = newValue
+                                viewModel.updateTemplateItem(
+                                    template, "required" to newValue, index
+                    ***REMOVED***
+                            ***REMOVED***,
+            ***REMOVED***
                     ***REMOVED***
                     Spacer(modifier = Modifier.height(8.dp))
+                    intelligentExtraction?.let {
+                        BooleanFieldWithLabel(
+                            label = "Interpretative",
+                            value = it,
+                            help = "the LLM will try to interpret the instruction given and return a more loose response, recommended if you want some processed information from the text instead of extracted information that is in the text",
+                            onValueChange = { newValue ->
+                                intelligentExtraction = newValue
+                                viewModel.updateTemplateItem(
+                                    template, "intelligentExtraction" to newValue, index
+                    ***REMOVED***
+                            ***REMOVED***,
+            ***REMOVED***
+
+
+                    ***REMOVED***
+                    Spacer(modifier = Modifier.height(12.dp))
                     DeleteButton(
                         text = "Field",
                         onClick = { viewModel.deleteField(template, index) ***REMOVED***)
+                ***REMOVED***
+            ***REMOVED***
+        ***REMOVED***
+    ***REMOVED***
+***REMOVED***
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DefaultPicker(
+    default: String?,
+    changeDefault: (String) -> Unit,
+    isList: Boolean = false,
+    type: String,
+    viewModel: TemplateViewModel,
+    template: Template,
+    index: Int
+) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+
+        when (type) {
+            "Text", "Any" -> {
+                default?.let {
+                    OutlinedTextField(value = it,
+                        enabled = !isList,
+                        onValueChange = { newText ->
+                            changeDefault(newText)
+                            viewModel.updateTemplateItem(
+                                template, "default" to newText, index
+                ***REMOVED***
+                        ***REMOVED***,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            unfocusedBorderColor = Color.Black,
+                            unfocusedLabelColor = Color.Black,
+
+                ***REMOVED***,
+                        label = { Text("Field Default") ***REMOVED***,
+                        modifier = Modifier.weight(1f),
+                        trailingIcon = {
+                            HelpIconButton(helpText = " This is the default value for the field.")
+                        ***REMOVED***)
+                ***REMOVED***
+            ***REMOVED***
+
+            "Number" -> {
+                default?.let {
+
+                    OutlinedTextField(value = it,
+                        onValueChange = { newValue ->
+                            changeDefault(newValue)
+                            viewModel.updateTemplateItem(
+                                template, "default" to newValue, index
+                ***REMOVED***
+                        ***REMOVED***,
+                        enabled = !isList,
+                        label = { Text("Field Default (Number)") ***REMOVED***,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        modifier = Modifier.weight(1f),
+                        trailingIcon = {
+                            HelpIconButton(helpText = " This is the default value for the field.")
+                        ***REMOVED***
+
+        ***REMOVED***
+
+                ***REMOVED***
+            ***REMOVED***
+
+            "Date" -> {
+                if (!isList) {
+                    val datePickerState =
+                        rememberDatePickerState(initialSelectedDateMillis = default?.let {
+                            try {
+                                SimpleDateFormat(
+                                    "yyyy-MM-dd", Locale.getDefault()
+                    ***REMOVED***.apply {
+                                    timeZone = TimeZone.getTimeZone("UTC")
+                                ***REMOVED***.parse(it)?.time
+                            ***REMOVED*** catch (e: ParseException) {
+                                null
+                            ***REMOVED***
+                        ***REMOVED***) // State for DatePicker
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .border(1.dp, Color.Gray, shape = RoundedCornerShape(4.dp))
+                            .padding(5.dp)
+        ***REMOVED*** {
+
+                        HelpIconButton(
+                            helpText = " This is the default value for the field.",
+                            modifier = Modifier
+                                .align(Alignment.TopEnd)
+                                .padding(6.dp)
+            ***REMOVED***
+                        Text(
+                            text = "Default date",
+                            modifier = Modifier
+                                .padding(6.dp)
+                                .align(Alignment.TopStart),
+                            color = Color.Black
+            ***REMOVED***
+                        DatePicker( // Use DatePicker for "Date" type
+                            state = datePickerState
+            ***REMOVED***
+                    ***REMOVED***
+
+                    // Update the default value when the selected date changes
+                    LaunchedEffect(datePickerState.selectedDateMillis) {
+                        val selectedDate = datePickerState.selectedDateMillis?.let {
+                            // Use UTC time zone for formatting
+                            SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).apply {
+                                timeZone = TimeZone.getTimeZone("UTC")
+                            ***REMOVED***.format(Date(it))
+                        ***REMOVED*** ?: ""
+                        changeDefault(selectedDate)
+                        viewModel.updateTemplateItem(
+                            template, "default" to selectedDate, index
+            ***REMOVED***
+                    ***REMOVED***
+                ***REMOVED***
+            ***REMOVED***
+
+            "Boolean" -> {
+                default?.let {
+                    BooleanFieldWithLabel(
+                        label = "Field Default",
+                        value = it.toBoolean(),
+                        onValueChange = { newValue ->
+                            changeDefault(newValue.toString())
+                            viewModel.updateTemplateItem(
+                                template, "default" to newValue.toString(), index
+                ***REMOVED***
+                        ***REMOVED***,
+                        help = " This is the default value for the field.",
+                        enabled = !isList,
+                        modifier = Modifier.weight(1f)
+        ***REMOVED***
+                ***REMOVED***
+            ***REMOVED***
+
+            "Float" -> {
+                default?.let {
+                    OutlinedTextField(value = it,
+                        onValueChange = { newValue ->
+                            changeDefault(newValue)
+                            viewModel.updateTemplateItem(
+                                template, "default" to newValue, index
+                ***REMOVED***
+                        ***REMOVED***,
+                        label = { Text("Field Default (Float)") ***REMOVED***,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        modifier = Modifier.weight(1f),
+                        trailingIcon = {
+                            HelpIconButton(helpText = " This is the default value for the field.")
+                        ***REMOVED***
+
+        ***REMOVED***
+
+
                 ***REMOVED***
             ***REMOVED***
         ***REMOVED***
@@ -660,34 +721,49 @@ fun TemplateTableCard(
             .fillMaxWidth()
             .padding(6.dp)
             .focusRequester(focusRequester),
-        elevation = CardDefaults.cardElevation(defaultElevation = 5.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = vale
+        )
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            OutlinedTextField(
-                value = tableTitle,
+            OutlinedTextField(value = tableTitle,
                 onValueChange = { newText ->
                     viewModel.updateTableItem(template, "title" to newText, tableIndex)
                     tableTitle = newText
                 ***REMOVED***,
                 label = { Text("Table Title") ***REMOVED***,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedBorderColor = Color.Black,
+                    unfocusedLabelColor = Color.Black,
+    ***REMOVED***,
+                trailingIcon = {
+                    HelpIconButton(helpText = "This is the title of the table.")
+                ***REMOVED***)
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            OutlinedTextField(value = tableDescription, colors = OutlinedTextFieldDefaults.colors(
+                unfocusedBorderColor = Color.Black,
+                unfocusedLabelColor = Color.Black,
+
+    ***REMOVED***, trailingIcon = {
+                HelpIconButton(helpText = "This is the description of the table.")
+            ***REMOVED***, onValueChange = { newText ->
+                viewModel.updateTableItem(template, "description" to newText, tableIndex)
+                tableDescription = newText
+            ***REMOVED***, label = {
+                Text(
+                    "Table Description",
+                    color = Color.Black,
+    ***REMOVED***
+            ***REMOVED***, modifier = Modifier.fillMaxWidth()
 ***REMOVED***
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            OutlinedTextField(
-                value = tableDescription,
-                onValueChange = { newText ->
-                    viewModel.updateTableItem(template, "description" to newText, tableIndex)
-                    tableDescription = newText
-                ***REMOVED***,
-                label = { Text("Table Description") ***REMOVED***,
-                modifier = Modifier.fillMaxWidth()
-***REMOVED***
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            TemplateKeyWordsSection(template,table, viewModel)
+            TemplateKeyWordsSection(template, table, viewModel)
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -725,60 +801,45 @@ fun TableGrid(viewModel: TemplateViewModel, tableIndex: Int, template: Template)
                 .horizontalScroll(scrollState)
         ) { // Apply horizontal scrolling){ // Make the header row horizontally scrollable) { // Wrap column headers in a Row with weight
             TableCellTemplate(
-                modifier = Modifier.weight(1f),
-                invisible = true
+                modifier = Modifier.weight(1f), invisible = true
 ***REMOVED*** // Add a blank cell for the button column
             for ((columnIndex, columnField) in table.columns.withIndex()) {
-                TableCellTemplate(
-                    field = columnField,
-                    isHeader = true,
-                    onValueChange = { field ->
-                        viewModel.updateTableColumnHeader(
-                            template,
-                            tableIndex,
-                            columnIndex,
-                            field
-            ***REMOVED***
-                    ***REMOVED***,
-                    modifier = Modifier.weight(1f)
+                TableCellTemplate(field = columnField, isHeader = true, onValueChange = { field ->
+                    viewModel.updateTableColumnHeader(
+                        template, tableIndex, columnIndex, field
+        ***REMOVED***
+                ***REMOVED***, onDelete = {
+                    viewModel.deleteColumnFromTable(table, columnIndex)
+                ***REMOVED***, modifier = Modifier.weight(1f)
     ***REMOVED***
             ***REMOVED***
             // Add Column Button (top right, outside the table)
 
-            TableCellTemplate(
-                modifier = Modifier.weight(1f),
-                isButton = true,
-                buttonClick = {
-                    showDialog = true; isColumn = true
-                ***REMOVED***) // Add a blank cell for the button column
+            TableCellTemplate(modifier = Modifier.weight(1f), isButton = true, buttonClick = {
+                showDialog = true; isColumn = true
+            ***REMOVED***) // Add a blank cell for the button column
         ***REMOVED***
 
         for ((rowIndex, rowField) in table.rows.withIndex()) {
             Row(modifier = Modifier.padding(1.dp)) {
-                TableCellTemplate(
-                    field = rowField,
-                    isHeader = true,
-                    onValueChange = { newText ->
-                        viewModel.updateTableRowHeader(template, tableIndex, rowIndex, newText)
-                    ***REMOVED***,
-                    modifier = Modifier.weight(1f)
+                TableCellTemplate(field = rowField, isHeader = true, onValueChange = { newText ->
+                    viewModel.updateTableRowHeader(template, tableIndex, rowIndex, newText)
+                ***REMOVED***, onDelete = {
+                    viewModel.deleteRowFromTable(table, rowIndex)
+                ***REMOVED***, modifier = Modifier.weight(1f)
     ***REMOVED***
                 for (templateField in table.columns) {
                     TableCellTemplate(modifier = Modifier.weight(1f))
                 ***REMOVED***
                 TableCellTemplate(
-                    modifier = Modifier.weight(1f),
-                    invisible = true
+                    modifier = Modifier.weight(1f), invisible = true
     ***REMOVED*** // Add a blank cell for the button column
             ***REMOVED***
         ***REMOVED***
         Row(modifier = Modifier.padding(1.dp)) {
-            TableCellTemplate(
-                modifier = Modifier.weight(1f),
-                isButton = true,
-                buttonClick = {
-                    showDialog = true; isColumn = false
-                ***REMOVED***) // Add a blank cell for the button column
+            TableCellTemplate(modifier = Modifier.weight(1f), isButton = true, buttonClick = {
+                showDialog = true; isColumn = false
+            ***REMOVED***) // Add a blank cell for the button column
 
             for (templateField in table.columns) {
                 TableCellTemplate(modifier = Modifier.weight(1f), invisible = true)
@@ -811,6 +872,9 @@ fun TableGrid(viewModel: TemplateViewModel, tableIndex: Int, template: Template)
                     showDialog = false
                     newText = ""
                 ***REMOVED***,
+                onDelete = {
+                    showDialog = false
+                ***REMOVED***,
                 changeShowDialog = { showDialog = it ***REMOVED***,
 ***REMOVED***
 
@@ -826,13 +890,13 @@ fun TableCellTemplate(
     onValueChange: (TemplateField) -> Unit = {***REMOVED***,
     invisible: Boolean = false,
     isButton: Boolean = false,
-    buttonClick: () -> Unit = {***REMOVED***
+    buttonClick: () -> Unit = {***REMOVED***,
+    onDelete: () -> Unit = {***REMOVED***
 ) {
 
-    var modifierPadded =
-        modifier
-            .padding(1.dp)
-            .defaultMinSize(minWidth = 24.dp, minHeight = 24.dp) // Ensure a minimum width for cells
+    var modifierPadded = modifier
+        .padding(1.dp)
+        .defaultMinSize(minWidth = 24.dp, minHeight = 24.dp) // Ensure a minimum width for cells
     var boxSize by remember { mutableStateOf(IntSize.Zero) ***REMOVED***
     val text = field?.title ?: ""
 
@@ -843,23 +907,20 @@ fun TableCellTemplate(
         modifierPadded = modifierPadded.background(Color.LightGray)
     ***REMOVED***
     if (isButton) {//pls round the button
-        modifierPadded =
-            modifierPadded
-                .background(Color.Blue)
-                .clip(shape = RoundedCornerShape(4.dp))
+        modifierPadded = modifierPadded
+            .background(dark_blue)
+            .clip(shape = RoundedCornerShape(4.dp))
     ***REMOVED***
     var showDialog by remember { mutableStateOf(false) ***REMOVED***
     var editedText by remember { mutableStateOf(text) ***REMOVED***
     Box(
         modifier = modifierPadded.onSizeChanged { size ->
             boxSize = size
-        ***REMOVED***,
-        contentAlignment = Alignment.Center
+        ***REMOVED***, contentAlignment = Alignment.Center
 
     ) {
         if (isHeader) {
-            Text(
-                text = text,
+            Text(text = text,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
                 overflow = TextOverflow.Ellipsis,
@@ -867,12 +928,12 @@ fun TableCellTemplate(
                 modifier = Modifier.clickable {
                     showDialog = true
                     editedText = text // Initialize with current text
-                ***REMOVED***
-***REMOVED***
+                ***REMOVED***)
             if (showDialog) {
                 AlertTable(
                     field = field,
                     onValueChange = { onValueChange(it) ***REMOVED***,
+                    onDelete = onDelete,
                     changeShowDialog = { showDialog = it ***REMOVED***,
     ***REMOVED***
             ***REMOVED***
@@ -883,8 +944,7 @@ fun TableCellTemplate(
                 16.dp
             ***REMOVED***
 
-            FaIcon(
-                faIcon = FaIcons.Plus,
+            FaIcon(faIcon = FaIcons.Plus,
                 tint = Color.White,
                 size = iconSize,
                 modifier = Modifier.clickable {
@@ -910,22 +970,25 @@ fun TableCellTemplate(
 fun AlertTable(
     field: TemplateField?,
     onValueChange: (TemplateField) -> Unit,
-    changeShowDialog: (Boolean) -> Unit
+    changeShowDialog: (Boolean) -> Unit,
+    onDelete: () -> Unit = {***REMOVED***
 ) {
     val focusRequester = remember { FocusRequester() ***REMOVED***
     var title by remember { mutableStateOf(field?.title ?: "") ***REMOVED***
     var selectedType by remember { mutableStateOf(field?.type ?: "Any") ***REMOVED*** // Default type
     var selectedRequired by remember { mutableStateOf(field?.required ?: false) ***REMOVED***
-    AlertDialog(
+    AlertDialog(containerColor = Color.White,
         onDismissRequest = { changeShowDialog(false) ***REMOVED***,
         title = { Text("Edit Header") ***REMOVED***,
         text = {
             Column {
-                OutlinedTextField(
-                    value = title,
+                OutlinedTextField(value = title,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedBorderColor = Color.Black,
+                        unfocusedLabelColor = Color.Black,
+        ***REMOVED***,
                     onValueChange = { title = it ***REMOVED***,
-                    label = { Text("Enter Header") ***REMOVED***
-    ***REMOVED***
+                    label = { Text("Enter Header", color = Color.Black) ***REMOVED***)
 
                 Spacer(modifier = Modifier.height(8.dp))
 
@@ -935,31 +998,34 @@ fun AlertTable(
 
                 ExposedDropdownMenuBox(
                     expanded = expanded,
-                    onExpandedChange = { expanded = !expanded ***REMOVED***
-    ***REMOVED*** {
+                    onExpandedChange = { expanded = !expanded ***REMOVED***) {
                     TextField(
                         value = selectedType,
                         onValueChange = { selectedType = it ***REMOVED***,
                         readOnly = true,
                         label = { Text("Type") ***REMOVED***,
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) ***REMOVED***,
-                        colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                        colors = ExposedDropdownMenuDefaults.textFieldColors(
+                            focusedLabelColor = Color.Black,
+                            unfocusedLabelColor = Color.Black,
+                            focusedIndicatorColor = Color.Black,
+                            unfocusedIndicatorColor = Color.Black,
+                            unfocusedContainerColor = Color.White,
+                            focusedContainerColor = Color.White
+            ***REMOVED***,
                         modifier = Modifier
                             .menuAnchor()
                             .focusRequester(focusRequester)
         ***REMOVED***
 
-                    ExposedDropdownMenu(
+                    ExposedDropdownMenu(modifier = Modifier.background(Color.White),
                         expanded = expanded,
                         onDismissRequest = { expanded = false ***REMOVED***) {
                         typeOptions.forEach { type ->
-                            DropdownMenuItem(
-                                text = { Text(type) ***REMOVED***,
-                                onClick = {
-                                    selectedType = type
-                                    expanded = false
-                                ***REMOVED***
-                ***REMOVED***
+                            DropdownMenuItem(text = { Text(type) ***REMOVED***, onClick = {
+                                selectedType = type
+                                expanded = false
+                            ***REMOVED***)
                         ***REMOVED***
                     ***REMOVED***
 
@@ -969,30 +1035,42 @@ fun AlertTable(
                 BooleanFieldWithLabel(
                     label = "Required",
                     value = selectedRequired,
-                    onValueChange = { newValue -> selectedRequired = newValue ***REMOVED***
+                    onValueChange = { newValue -> selectedRequired = newValue ***REMOVED***,
+                    help = "if the field is required"
     ***REMOVED***
             ***REMOVED***
         ***REMOVED***,
         confirmButton = {
-            TextButton(onClick = {
-                val newField = TemplateField().apply {
-                    this.title = title
-                    this.type = selectedType
-                    this.required = selectedRequired
+            Row {
+                TextButton(
+                    onClick = {
+                        onDelete()
+                        changeShowDialog(false)
+                    ***REMOVED***, modifier = Modifier.padding(end = 8.dp)
+    ***REMOVED*** {
+                    Text("Delete", color = dark_red)
                 ***REMOVED***
-                onValueChange(newField) // Pass the edited text
-                // You'll likely want to pass the selectedType to your ViewModel as well
-                changeShowDialog(false)
-            ***REMOVED***) {
-                Text("OK")
+                Spacer(modifier = Modifier.weight(1f))
+                TextButton(onClick = { changeShowDialog(false) ***REMOVED***) {
+                    Text("Cancel")
+                ***REMOVED***
+                Spacer(modifier = Modifier.width(4.dp))
+                TextButton(onClick = {
+                    val newField = TemplateField().apply {
+                        this.title = title
+                        this.type = selectedType
+                        this.required = selectedRequired
+                    ***REMOVED***
+                    onValueChange(newField) // Pass the edited text
+                    // You'll likely want to pass the selectedType to your ViewModel as well
+                    changeShowDialog(false)
+                ***REMOVED***) {
+                    Text("OK")
+                ***REMOVED***
+
             ***REMOVED***
-        ***REMOVED***,
-        dismissButton = {
-            TextButton(onClick = { changeShowDialog(false) ***REMOVED***) {
-                Text("Cancel")
-            ***REMOVED***
-        ***REMOVED***
-    )
+
+        ***REMOVED***)
 ***REMOVED***
 
 
@@ -1001,18 +1079,22 @@ fun BooleanFieldWithLabel(
     label: String,
     value: Boolean,
     onValueChange: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    help: String = "",
+    enabled: Boolean = true
 ) {
     Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
+        verticalAlignment = Alignment.CenterVertically, modifier = modifier
 
     ) {
-        Text(label)
-        Spacer(modifier = Modifier.width(8.dp))
+        Text(text = label, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+        if (help.isNotEmpty()) {
+            Spacer(modifier = Modifier.width(4.dp))
+            HelpIconButton(helpText = help)
+        ***REMOVED***
+        Spacer(modifier = Modifier.weight(1f))
         Switch(
-            checked = value,
-            onCheckedChange = onValueChange
+            enabled = enabled, checked = value, onCheckedChange = onValueChange
         )
     ***REMOVED***
 ***REMOVED***

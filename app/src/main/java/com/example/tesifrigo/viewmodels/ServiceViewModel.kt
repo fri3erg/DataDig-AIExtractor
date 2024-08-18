@@ -14,8 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ServiceViewModel @Inject constructor(
-    private val progressRepository: ServiceRepository,
-    private val keyManager: KeyManager
+    private val progressRepository: ServiceRepository, private val keyManager: KeyManager
 ) : ViewModel() {
 
     val progress: StateFlow<Float> = progressRepository.progress
@@ -33,6 +32,9 @@ class ServiceViewModel @Inject constructor(
     private val _activeExtraction = MutableStateFlow(false)
     val activeExtraction: StateFlow<Boolean> = _activeExtraction.asStateFlow()
 
+    init {
+        //progressRepository.deleteOptions()
+    ***REMOVED***
 
     fun setActiveExtraction(active: Boolean) {
         _activeExtraction.value = active
@@ -54,6 +56,7 @@ class ServiceViewModel @Inject constructor(
     fun setOptions(options: Options) {
         progressRepository.setOptions(options)
     ***REMOVED***
+
     fun changeOptions(field: String, value: Any) {
         progressRepository.changeOptions(field, value)
     ***REMOVED***
@@ -103,8 +106,6 @@ class ServiceViewModel @Inject constructor(
 ***REMOVED***
 
 enum class Keys {
-    API_KEY_1,
-    API_KEY_2,
-    API_KEY_3
+    API_KEY_1, API_KEY_2, API_KEY_3
 ***REMOVED***
 

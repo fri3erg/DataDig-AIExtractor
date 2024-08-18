@@ -84,17 +84,11 @@ class ExtractionViewModel @Inject constructor(
     ***REMOVED***
 
 
-    private val extractions = realm
-        .query<Extraction>()
-        .asFlow()
-        .map {
-            it.list.toList()
-        ***REMOVED***
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(),
-            emptyList()
-        )
+    private val extractions = realm.query<Extraction>().asFlow().map {
+        it.list.toList()
+    ***REMOVED***.stateIn(
+        viewModelScope, SharingStarted.WhileSubscribed(), emptyList()
+    )
 
 
     val sortedExtractions: StateFlow<List<Extraction>> = combine(
@@ -105,13 +99,11 @@ class ExtractionViewModel @Inject constructor(
                 // Default sorting if searchQuery is empty
                 when (order) {
                     SortOrder.BY_TITLE -> compareValuesBy(
-                        t1,
-                        t2
+                        t1, t2
         ***REMOVED*** { it.title ***REMOVED*** * if (isAscending) 1 else -1
 
                     SortOrder.BY_DATE -> compareValuesBy(
-                        t1,
-                        t2
+                        t1, t2
         ***REMOVED*** { it.id ***REMOVED*** * if (isAscending) 1 else -1
                 ***REMOVED***
             ***REMOVED*** else {
@@ -123,13 +115,11 @@ class ExtractionViewModel @Inject constructor(
                     // If a tie, apply secondary comparison
                     when (order) {
                         SortOrder.BY_TITLE -> compareValuesBy(
-                            t1,
-                            t2
+                            t1, t2
             ***REMOVED*** { it.title ***REMOVED*** * if (isAscending) 1 else -1
 
                         SortOrder.BY_DATE -> compareValuesBy(
-                            t1,
-                            t2
+                            t1, t2
             ***REMOVED*** { it.id ***REMOVED*** * if (isAscending) 1 else -1
                     ***REMOVED***
                 ***REMOVED*** else {
@@ -227,8 +217,7 @@ class ExtractionViewModel @Inject constructor(
                     title = "Sample Template 3"
                     description = "This is a sample template 3"
                     fields = realmListOf(
-                        templateField2,
-                        templateField3
+                        templateField2, templateField3
         ***REMOVED***
                     tables = realmListOf()
 
@@ -302,6 +291,7 @@ class ExtractionViewModel @Inject constructor(
                     exceptionsOccurred = realmListOf(extractionException, extractionException2)
                     template = template1
                     tags = realmListOf("freezer")
+                    fileUri = ""
                 ***REMOVED***
                 val extraction2 = Extraction().apply {
                     title = template2.title
@@ -312,6 +302,7 @@ class ExtractionViewModel @Inject constructor(
                     exceptionsOccurred = realmListOf(extractionException2)
                     template = template2
                     tags = realmListOf("freezer", "fridge")
+                    fileUri = ""
                 ***REMOVED***
                 val extraction3 = Extraction().apply {
                     title = template3.title
@@ -322,6 +313,7 @@ class ExtractionViewModel @Inject constructor(
                     exceptionsOccurred = realmListOf(extractionException)
                     template = template3
                     tags = realmListOf("freezer", "fridge")
+                    fileUri = ""
                 ***REMOVED***
 
                 copyToRealm(extraction1)
@@ -338,9 +330,7 @@ class ExtractionViewModel @Inject constructor(
 
             try {
 
-                supabaseClient
-                    .from("reviews")
-                    .insert(review)
+                supabaseClient.from("reviews").insert(review)
             ***REMOVED*** catch (e: Exception) {
                 // Handle any unexpected exceptions (e.g., network errors)
                 println("Exception during review save: $e")
@@ -436,5 +426,15 @@ class ExtractionViewModel @Inject constructor(
             ***REMOVED***
 
         ***REMOVED***
+    ***REMOVED***
+
+    fun addTag(extraction: Extraction, newKey: String) {
+        viewModelScope.launch {
+            realm.writeBlocking {
+                val latestExtraction = findLatest(extraction) ?: return@writeBlocking
+                latestExtraction.tags.add(newKey)
+            ***REMOVED***
+        ***REMOVED***
+
     ***REMOVED***
 ***REMOVED***

@@ -8,3 +8,8 @@ val Purple500 = Color(0xFF6200EE)
 val Purple700 = Color(0xFF3700B5)
 val Teal200 = Color(0xFF03DAC5)
 // Add any other custom colors for your theme
+val vale = Color(230, 236, 255)
+val dark_red = Color(204, 0, 0)
+val light_gray = Color(235, 235, 235, 255)
+val dark_blue = Color(0, 0, 128)
+val cyan_custom = Color(0, 177, 177, 255)

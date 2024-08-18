@@ -9,7 +9,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 private val LightColorScheme = lightColorScheme(
-    primary = Color(0xFF6750A4),  // Replace with your colors
+    primary = Color( 0,138, 230),  // Replace with your colors
     // ... other ColorScheme colors
 )
 

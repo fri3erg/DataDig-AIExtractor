@@ -130,108 +130,99 @@ fun CameraScreen(
 
     Column(modifier = Modifier.fillMaxSize()) {
         if (activePhoto) {
-                Column( modifier = Modifier.fillMaxSize()) {
-                    CameraPreview(
-                        modifier = Modifier.fillMaxSize(),
-                        onSetUri = { newUri ->
-                            serviceViewModel.addImageUri(newUri)
-                            Log.d("CameraScreen", "Image URIs: $imageUris")
-                        ***REMOVED***,
-                        nPhotos = imageUris.size,
-                        changeActivePhoto = { serviceViewModel.setActivePhoto(false) ***REMOVED***
-        ***REMOVED***
+            Column(modifier = Modifier.fillMaxSize()) {
+                CameraPreview(modifier = Modifier.fillMaxSize(),
+                    onSetUri = { newUri ->
+                        serviceViewModel.addImageUri(newUri)
+                        Log.d("CameraScreen", "Image URIs: $imageUris")
+                    ***REMOVED***,
+                    nPhotos = imageUris.size,
+                    changeActivePhoto = { serviceViewModel.setActivePhoto(false) ***REMOVED***)
 
-                ***REMOVED***
+            ***REMOVED***
 
 
         ***REMOVED*** else if (template == null) {
-                ChooseTemplate(navController, templateViewModel)
+            ChooseTemplate(navController, templateViewModel)
 
         ***REMOVED*** else {
-                ExtractionDetails(
-                    template!!.title,
-                    modifier = Modifier,
-                    navController,
-                    imageUris,
-                    activeExtraction,
-                    onExtractionClick = {
-                        when {
-                            // If GPT keys are missing, show the GPT keys dialog
-                            !serviceViewModel.gptKeysExist() -> {
-                                openGptKeysDialog = true
-                            ***REMOVED***
+            ExtractionDetails(
+                template!!.title,
+                modifier = Modifier,
+                navController,
+                imageUris,
+                activeExtraction,
+                onExtractionClick = {
+                    when {
+                        // If GPT keys are missing, show the GPT keys dialog
+                        !serviceViewModel.gptKeysExist() -> {
+                            openGptKeysDialog = true
+                        ***REMOVED***
 
-                            // If Azure keys are missing and the conditions for Azure OCR are met, show the Azure keys dialog
-                            !serviceViewModel.azureKeysExist() -> {
-                                when {
-                                    // If there are tables, set the reason for tables and show the dialog
-                                    template?.tables?.isNotEmpty() == true -> {
-                                        openAzureKeysDialog = true
-                                        reasonTable = true
-                                    ***REMOVED***
-                                    // If the Azure OCR option is enabled, show the dialog without table reasons
-                                    options?.azureOcr == true -> {
-                                        openAzureKeysDialog = true
-                                        reasonTable = false
-                                    ***REMOVED***
-                                    // If neither tables nor Azure OCR are required, proceed with extraction
-                                    else -> {
-                                        startExtraction(context, serviceViewModel, imageUris)
-                                    ***REMOVED***
+                        // If Azure keys are missing and the conditions for Azure OCR are met, show the Azure keys dialog
+                        !serviceViewModel.azureKeysExist() -> {
+                            when {
+                                // If there are tables, set the reason for tables and show the dialog
+                                template?.tables?.isNotEmpty() == true -> {
+                                    openAzureKeysDialog = true
+                                    reasonTable = true
+                                ***REMOVED***
+                                // If the Azure OCR option is enabled, show the dialog without table reasons
+                                options?.azureOcr == true -> {
+                                    openAzureKeysDialog = true
+                                    reasonTable = false
+                                ***REMOVED***
+                                // If neither tables nor Azure OCR are required, proceed with extraction
+                                else -> {
+                                    startExtraction(context, serviceViewModel, imageUris)
                                 ***REMOVED***
                             ***REMOVED***
-
-                            // If all necessary keys exist, proceed with extraction
-                            else -> {
-                                startExtraction(context, serviceViewModel, imageUris)
-                            ***REMOVED***
                         ***REMOVED***
-                    ***REMOVED***,
-                    serviceViewModel,
-                    extractionViewModel,
-                    templateViewModel,
-                    sharedPrefs
-    ***REMOVED***
+
+                        // If all necessary keys exist, proceed with extraction
+                        else -> {
+                            startExtraction(context, serviceViewModel, imageUris)
+                        ***REMOVED***
+                    ***REMOVED***
+                ***REMOVED***,
+                serviceViewModel,
+                extractionViewModel,
+                templateViewModel,
+                sharedPrefs
+***REMOVED***
 
         ***REMOVED***
     ***REMOVED***
-    if(openAzureKeysDialog) {
-        AzureKeysDialog({ openAzureKeysDialog=false ***REMOVED***,  navController, reasonTable)
+    if (openAzureKeysDialog) {
+        AzureKeysDialog({ openAzureKeysDialog = false ***REMOVED***, navController, reasonTable)
     ***REMOVED***
-    if(openGptKeysDialog) {
-        GptKeysDialog({ openGptKeysDialog=false ***REMOVED***,  navController)
+    if (openGptKeysDialog) {
+        GptKeysDialog({ openGptKeysDialog = false ***REMOVED***, navController)
     ***REMOVED***
 
 ***REMOVED***
 
 @Composable
 fun ExceptionsDialog(closeDialog: () -> Unit, extraction: Extraction) {
-    AlertDialog(
-        onDismissRequest = { closeDialog() ***REMOVED***,
-        title = {
-            Text("Errors occurred while fetching the extraction.")
-        ***REMOVED***,
-        text = {
-            LazyColumn {
-                items(extraction.exceptionsOccurred) { error ->
-                    Row {
-                        Text(text = error.error, modifier = Modifier.weight(1f))
-                        Text(text = error.errorType)
-                    ***REMOVED***
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(text = error.errorDescription)
-                    HorizontalDivider()
+    AlertDialog(onDismissRequest = { closeDialog() ***REMOVED***, title = {
+        Text("Errors occurred while fetching the extraction.")
+    ***REMOVED***, text = {
+        LazyColumn {
+            items(extraction.exceptionsOccurred) { error ->
+                Row {
+                    Text(text = error.error, modifier = Modifier.weight(1f))
+                    Text(text = error.errorType)
                 ***REMOVED***
-            ***REMOVED***
-        ***REMOVED***,
-        confirmButton = {
-            Button(
-                onClick = { closeDialog() ***REMOVED***
-***REMOVED*** {
-                Text("Ok")
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(text = error.errorDescription)
+                HorizontalDivider()
             ***REMOVED***
         ***REMOVED***
-    )
+    ***REMOVED***, confirmButton = {
+        Button(onClick = { closeDialog() ***REMOVED***) {
+            Text("Ok")
+        ***REMOVED***
+    ***REMOVED***)
 
 
 ***REMOVED***
@@ -247,7 +238,7 @@ fun startExtraction(context: Context, serviceViewModel: ServiceViewModel, imageU
 ***REMOVED***
 
 @Composable
-fun AzureKeysDialog(changeOpen: () -> Unit, navController: NavHostController, reason1:Boolean) {
+fun AzureKeysDialog(changeOpen: () -> Unit, navController: NavHostController, reason1: Boolean) {
 
     var text = if (reason1) {
         "Your template contains table, Azure is required for table extraction"
@@ -255,58 +246,39 @@ fun AzureKeysDialog(changeOpen: () -> Unit, navController: NavHostController, re
         "You cannot use Azure OCR without keys"
     ***REMOVED***
     text += "Please enter your Azure keys in the settings"
-    AlertDialog(
-        onDismissRequest = { changeOpen() ***REMOVED***,
-        title = { Text("Azure Keys") ***REMOVED***,
-        text = {
-            Text(text)
-        ***REMOVED***,
-        confirmButton = {
-            Button(
-                onClick = {
-                    changeOpen()
-                    navController.navigate(Screen.Settings.route)
-                ***REMOVED***
-***REMOVED*** {
-                Text("Go to settings")
-            ***REMOVED***
-        ***REMOVED***,
-        dismissButton = {
-            Button(
-                onClick = { changeOpen() ***REMOVED***
-***REMOVED*** {
-                Text("Ok")
-            ***REMOVED***
+    AlertDialog(onDismissRequest = { changeOpen() ***REMOVED***, title = { Text("Azure Keys") ***REMOVED***, text = {
+        Text(text)
+    ***REMOVED***, confirmButton = {
+        Button(onClick = {
+            changeOpen()
+            navController.navigate(Screen.Settings.route)
+        ***REMOVED***) {
+            Text("Go to settings")
         ***REMOVED***
-    )
+    ***REMOVED***, dismissButton = {
+        Button(onClick = { changeOpen() ***REMOVED***) {
+            Text("Ok")
+        ***REMOVED***
+    ***REMOVED***)
 ***REMOVED***
 
 
 @Composable
 fun GptKeysDialog(function: () -> Unit, navController: NavHostController) {
-    AlertDialog(
-        onDismissRequest = { function() ***REMOVED***,
-        title = { Text("OpenAi Keys") ***REMOVED***,
-        text = {
-            Text("You cannot extract without keys. Please enter your OpenAi keys in the settings")
-        ***REMOVED***,
-        confirmButton = {
-            Button(
-                onClick = { function()
-                navController.navigate(Screen.Settings.route)
-                ***REMOVED***
-***REMOVED*** {
-                Text("Go to settings")
-            ***REMOVED***
-        ***REMOVED***,
-        dismissButton = {
-            Button(
-                onClick = { function() ***REMOVED***
-***REMOVED*** {
-                Text("Ok")
-            ***REMOVED***
+    AlertDialog(onDismissRequest = { function() ***REMOVED***, title = { Text("OpenAi Keys") ***REMOVED***, text = {
+        Text("You cannot extract without keys. Please enter your OpenAi keys in the settings")
+    ***REMOVED***, confirmButton = {
+        Button(onClick = {
+            function()
+            navController.navigate(Screen.Settings.route)
+        ***REMOVED***) {
+            Text("Go to settings")
         ***REMOVED***
-    )
+    ***REMOVED***, dismissButton = {
+        Button(onClick = { function() ***REMOVED***) {
+            Text("Ok")
+        ***REMOVED***
+    ***REMOVED***)
 
 ***REMOVED***
 
@@ -319,124 +291,113 @@ fun ChooseTemplate(navController: NavHostController, templateViewModel: Template
     val ascending by templateViewModel.ascending.collectAsState()
     val focusRequester = remember { FocusRequester() ***REMOVED***
 
-    Scaffold(
-        topBar = {
-            Row {
-                SearchBar(
-                    text = searchText,
-                    onTextChange = { templateViewModel.updateSearchText(it) ***REMOVED***,
-                    onSearch = { templateViewModel.updateSearchText(it) ***REMOVED***,
-                    modifier= Modifier.weight(1f)
-    ***REMOVED***
-
-
-                    val typeOptions = mapOf(
-                        "Title" to { templateViewModel.updateSortOrder(SortOrder.BY_TITLE) ***REMOVED***,
-                        "Date" to { templateViewModel.updateSortOrder(SortOrder.BY_DATE) ***REMOVED***
-        ***REMOVED***
-                    Spacer(modifier = Modifier.width(4.dp))
-                    ExposedDropdownMenuBox(
-                        expanded = expanded,
-                        onExpandedChange = { expanded = !expanded ***REMOVED***
-        ***REMOVED*** {
-
-                        Button(
-                            onClick = { expanded = true ***REMOVED***, modifier = Modifier
-                                .padding(end = 8.dp, top = 24.dp)
-                                .align(Alignment.CenterVertically)
-                                .focusRequester(focusRequester)
-                                .menuAnchor(),
-                            colors = ButtonDefaults.buttonColors(containerColor = Color.Gray)
-            ***REMOVED*** {
-                            Text("Sort")
-                        ***REMOVED***
-                        ExposedDropdownMenu(
-                            expanded = expanded,
-                            onDismissRequest = { expanded = false ***REMOVED***) {
-                            typeOptions.forEach { (type, onCLick) ->
-                                DropdownMenuItem(
-                                    text = { Text(type) ***REMOVED***,
-                                    onClick = {
-                                        onCLick()
-                                        expanded = false
-                                    ***REMOVED***
-                    ***REMOVED***
-                            ***REMOVED***
-                        ***REMOVED***
-
-                    ***REMOVED***
-
-
-
-
-                    Button(
-                        onClick = { templateViewModel.toggleAscending() ***REMOVED***,
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .padding(end = 16.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Gray)
-        ***REMOVED*** {
-                        if (ascending) {
-                            FaIcon(faIcon = FaIcons.ArrowUp, tint = Color.White)
-                        ***REMOVED*** else {
-                            FaIcon(faIcon = FaIcons.ArrowDown, tint = Color.White)
-                        ***REMOVED***
-                    ***REMOVED***
-
-            ***REMOVED***
-        ***REMOVED***
-    ) { innerPadding ->
-    LazyColumn(modifier = Modifier.padding(innerPadding)) {
-        item {
-            Text(text =
-            "Choose a template to start extracting",
-            modifier = Modifier.padding(16.dp),
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black,
+    Scaffold(topBar = {
+        Row {
+            SearchBar(text = searchText,
+                onTextChange = { templateViewModel.updateSearchText(it) ***REMOVED***,
+                onSearch = { templateViewModel.updateSearchText(it) ***REMOVED***,
+                modifier = Modifier.weight(1f)
 ***REMOVED***
-        ***REMOVED***
-        items(templates) { template ->
-            Card( // Consider using a Card for visual structure
-                modifier = Modifier
-                    .fillMaxWidth() // Occupy full width
-                    .clickable {
-                        templateViewModel.setActiveTemplate(template)
+
+
+            val typeOptions =
+                mapOf("Title" to { templateViewModel.updateSortOrder(SortOrder.BY_TITLE) ***REMOVED***,
+                    "Date" to { templateViewModel.updateSortOrder(SortOrder.BY_DATE) ***REMOVED***)
+            Spacer(modifier = Modifier.width(4.dp))
+            ExposedDropdownMenuBox(expanded = expanded,
+                onExpandedChange = { expanded = !expanded ***REMOVED***) {
+
+                Button(
+                    onClick = { expanded = true ***REMOVED***,
+                    modifier = Modifier
+                        .padding(end = 8.dp, top = 24.dp)
+                        .align(Alignment.CenterVertically)
+                        .focusRequester(focusRequester)
+                        .menuAnchor(),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Gray)
+    ***REMOVED*** {
+                    Text("Sort")
+                ***REMOVED***
+                ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false ***REMOVED***) {
+                    typeOptions.forEach { (type, onCLick) ->
+                        DropdownMenuItem(text = { Text(type) ***REMOVED***, onClick = {
+                            onCLick()
+                            expanded = false
+                        ***REMOVED***)
                     ***REMOVED***
-                    .padding(8.dp),
-                border = CardDefaults.outlinedCardBorder(), // Add a border
-                elevation = CardDefaults.cardElevation(defaultElevation = 5.dp) // Add elevation for better visuals
+                ***REMOVED***
 
-***REMOVED*** {
-                Column(modifier = Modifier.padding(16.dp)) { // Inner Column for content
-                    Row {
-
-                        Text(
-                            text = template.title, style = MaterialTheme.typography.headlineSmall,
-                            modifier = Modifier.padding(top = 8.dp, start = 8.dp)
-            ***REMOVED*** // Title
-                        Spacer(modifier = Modifier.weight(1f)) // Creates space between text and button
-
-                        FaIcon( // Add an icon to the end of the row
-                            faIcon = FaIcons.Edit, // Using the right arrow icon
-                            tint = Color.Black, // Set icon color
-                            size = 24.dp, // Set icon size
-                            modifier = Modifier
-                                .clickable {
-                                    navController.navigate(Screen.EditTemplate.withArgs("templateId" to template.id.toHexString()))
-                                ***REMOVED***
-                                .align(Alignment.CenterVertically) // Align the icon to the center vertically
-                                .padding(end = 8.dp)
             ***REMOVED***
-                    ***REMOVED***
 
+
+
+
+            Button(
+                onClick = { templateViewModel.toggleAscending() ***REMOVED***,
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .padding(end = 16.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Gray)
+***REMOVED*** {
+                if (ascending) {
+                    FaIcon(faIcon = FaIcons.ArrowUp, tint = Color.White)
+                ***REMOVED*** else {
+                    FaIcon(faIcon = FaIcons.ArrowDown, tint = Color.White)
+                ***REMOVED***
+            ***REMOVED***
+
+        ***REMOVED***
+    ***REMOVED***) { innerPadding ->
+        LazyColumn(modifier = Modifier.padding(innerPadding)) {
+            item {
+                Text(
+                    text = "Choose a template to start extracting",
+                    modifier = Modifier.padding(16.dp),
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black,
+    ***REMOVED***
+            ***REMOVED***
+            items(templates) { template ->
+                Card( // Consider using a Card for visual structure
+                    modifier = Modifier
+                        .fillMaxWidth() // Occupy full width
+                        .clickable {
+                            templateViewModel.setActiveTemplate(template)
+                        ***REMOVED***
+                        .padding(8.dp), border = CardDefaults.outlinedCardBorder(), // Add a border
+                    elevation = CardDefaults.cardElevation(defaultElevation = 5.dp) // Add elevation for better visuals
+
+    ***REMOVED*** {
+                    Column(modifier = Modifier.padding(16.dp)) { // Inner Column for content
+                        Row {
+
+                            Text(
+                                text = template.title,
+                                style = MaterialTheme.typography.headlineSmall,
+                                modifier = Modifier.padding(top = 8.dp, start = 8.dp)
+                ***REMOVED*** // Title
+                            Spacer(modifier = Modifier.weight(1f)) // Creates space between text and button
+
+                            FaIcon( // Add an icon to the end of the row
+                                faIcon = FaIcons.Edit, // Using the right arrow icon
+                                tint = Color.Black, // Set icon color
+                                size = 24.dp, // Set icon size
+                                modifier = Modifier
+                                    .clickable {
+                                        navController.navigate(Screen.EditTemplate.withArgs("templateId" to template.id.toHexString()))
+                                    ***REMOVED***
+                                    .align(Alignment.CenterVertically) // Align the icon to the center vertically
+                                    .padding(end = 8.dp))
+                        ***REMOVED***
+
+                    ***REMOVED***
                 ***REMOVED***
             ***REMOVED***
         ***REMOVED***
-    ***REMOVED***
 
-***REMOVED***
     ***REMOVED***
+***REMOVED***
 
 
 @Composable
@@ -474,7 +435,8 @@ fun ExtractionDetails(
             ***REMOVED***
 
             defaultOptions.model = getString("model", defaultOptions.model) ?: "gpt-4"
-            defaultOptions.language = getString("language", defaultOptions.language) ?: "auto-detect"
+            defaultOptions.language =
+                getString("language", defaultOptions.language) ?: "auto-detect"
             defaultOptions.azureOcr = getBoolean("azureOcr", defaultOptions.azureOcr)
             defaultOptions.format = getString("format", defaultOptions.format) ?: "json"
         ***REMOVED***
@@ -482,8 +444,7 @@ fun ExtractionDetails(
     ***REMOVED***
     Text(
         "Template: $templateTitle",
-        modifier = modifier
-            .padding(16.dp),
+        modifier = modifier.padding(16.dp),
         fontSize = 28.sp,
         fontWeight = FontWeight.Bold,
         color = Color.Black,
@@ -493,9 +454,9 @@ fun ExtractionDetails(
         imageUris = imageUris,
     )
     if (!activeExtraction) {
-    HorizontalDivider()
-    ButtonBar(serviceViewModel, sharedPrefs, templateViewModel)
-    HorizontalDivider()
+        HorizontalDivider()
+        ButtonBar(serviceViewModel, sharedPrefs, templateViewModel)
+        HorizontalDivider()
 
         Button(
             modifier = Modifier
@@ -508,8 +469,8 @@ fun ExtractionDetails(
             Text(text = "Extract!", color = Color.Black)
         ***REMOVED***
     ***REMOVED*** else {
-        ExtractedBar(serviceViewModel,  templateViewModel)
-        
+        ExtractedBar(serviceViewModel, templateViewModel)
+
         HorizontalDivider()
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -526,87 +487,78 @@ fun ExtractionDetails(
 ***REMOVED***
 
 @Composable
-fun ExtractedBar(serviceViewModel: ServiceViewModel,  templateViewModel: TemplateViewModel) {
+fun ExtractedBar(serviceViewModel: ServiceViewModel, templateViewModel: TemplateViewModel) {
 
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
-            // New Extraction
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .clickable {
-                        serviceViewModel.clearImageUris()
-                        serviceViewModel.setActiveExtraction(false)
-                        serviceViewModel.setActivePhoto(true)
-                        templateViewModel.setActiveTemplate(null)
-                    ***REMOVED***
-                    .padding(8.dp), // Optional padding
-                horizontalAlignment = Alignment.CenterHorizontally
-***REMOVED*** {
-                FaIcon(
-                    faIcon = FaIcons.Plus, // Using the plus icon
-                    tint = Color.Black, // Set icon color
-                    size = 24.dp // Set icon size
-    ***REMOVED***
-                Spacer(modifier = Modifier.height(4.dp)) // Space between icon and text
-                Text(
-                    text = "New Extraction",
-                    fontSize = 12.sp, // Smaller font size
-                    textAlign = TextAlign.Center // Center align text
-    ***REMOVED***
+        // New Extraction
+        Column(modifier = Modifier
+            .weight(1f)
+            .clickable {
+                serviceViewModel.clearImageUris()
+                serviceViewModel.setActiveExtraction(false)
+                serviceViewModel.setActivePhoto(true)
+                templateViewModel.setActiveTemplate(null)
             ***REMOVED***
+            .padding(8.dp), // Optional padding
+            horizontalAlignment = Alignment.CenterHorizontally) {
+            FaIcon(
+                faIcon = FaIcons.Plus, // Using the plus icon
+                tint = Color.Black, // Set icon color
+                size = 24.dp // Set icon size
+***REMOVED***
+            Spacer(modifier = Modifier.height(4.dp)) // Space between icon and text
+            Text(
+                text = "New Extraction", fontSize = 12.sp, // Smaller font size
+                textAlign = TextAlign.Center // Center align text
+***REMOVED***
+        ***REMOVED***
 
-            // Use New Photos
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .clickable {
-                        serviceViewModel.clearImageUris()
-                        serviceViewModel.setActiveExtraction(false)
-                        serviceViewModel.setActivePhoto(true)
-                    ***REMOVED***
-                    .padding(8.dp), // Optional padding
-                horizontalAlignment = Alignment.CenterHorizontally
-***REMOVED*** {
-                FaIcon(
-                    faIcon = FaIcons.Camera, // Using the camera icon
-                    tint = Color.Black, // Set icon color
-                    size = 24.dp // Set icon size
-    ***REMOVED***
-                Spacer(modifier = Modifier.height(4.dp)) // Space between icon and text
-                Text(
-                    text = "Use New Photos",
-                    fontSize = 12.sp, // Smaller font size
-                    textAlign = TextAlign.Center // Center align text
-    ***REMOVED***
+        // Use New Photos
+        Column(modifier = Modifier
+            .weight(1f)
+            .clickable {
+                serviceViewModel.clearImageUris()
+                serviceViewModel.setActiveExtraction(false)
+                serviceViewModel.setActivePhoto(true)
             ***REMOVED***
+            .padding(8.dp), // Optional padding
+            horizontalAlignment = Alignment.CenterHorizontally) {
+            FaIcon(
+                faIcon = FaIcons.Camera, // Using the camera icon
+                tint = Color.Black, // Set icon color
+                size = 24.dp // Set icon size
+***REMOVED***
+            Spacer(modifier = Modifier.height(4.dp)) // Space between icon and text
+            Text(
+                text = "Use New Photos", fontSize = 12.sp, // Smaller font size
+                textAlign = TextAlign.Center // Center align text
+***REMOVED***
+        ***REMOVED***
 
-            // Change Template
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .clickable {
-                        serviceViewModel.setActiveExtraction(false)
-                        templateViewModel.setActiveTemplate(null)
-                    ***REMOVED***
-                    .padding(8.dp), // Optional padding
-                horizontalAlignment = Alignment.CenterHorizontally
-***REMOVED*** {
-                FaIcon(
-                    faIcon = FaIcons.Table, // Using the table icon
-                    tint = Color.Black, // Set icon color
-                    size = 24.dp // Set icon size
-    ***REMOVED***
-                Spacer(modifier = Modifier.height(4.dp)) // Space between icon and text
-                Text(
-                    text = "Change Template",
-                    fontSize = 12.sp, // Smaller font size
-                    textAlign = TextAlign.Center // Center align text
-    ***REMOVED***
+        // Change Template
+        Column(modifier = Modifier
+            .weight(1f)
+            .clickable {
+                serviceViewModel.setActiveExtraction(false)
+                templateViewModel.setActiveTemplate(null)
             ***REMOVED***
+            .padding(8.dp), // Optional padding
+            horizontalAlignment = Alignment.CenterHorizontally) {
+            FaIcon(
+                faIcon = FaIcons.Table, // Using the table icon
+                tint = Color.Black, // Set icon color
+                size = 24.dp // Set icon size
+***REMOVED***
+            Spacer(modifier = Modifier.height(4.dp)) // Space between icon and text
+            Text(
+                text = "Change Template", fontSize = 12.sp, // Smaller font size
+                textAlign = TextAlign.Center // Center align text
+***REMOVED***
+        ***REMOVED***
 
     ***REMOVED***
     Spacer(modifier = Modifier.height(16.dp))
@@ -654,18 +606,14 @@ fun ButtonBar(
         options?.let {
 
             var checked by remember { mutableStateOf(it.azureOcr) ***REMOVED***
-            LabeledSwitch(
-                label = "Azure OCR",
-                checked = checked,
-                onCheckedChange = { change ->
-                    serviceViewModel.changeOptions("azureOcr", change)
-                    with(sharedPrefs.edit()) {
-                        putBoolean("azureOcr", change)
-                        apply()
-                    ***REMOVED***
-                    checked = change
+            LabeledSwitch(label = "Azure OCR", checked = checked, onCheckedChange = { change ->
+                serviceViewModel.changeOptions("azureOcr", change)
+                with(sharedPrefs.edit()) {
+                    putBoolean("azureOcr", change)
+                    apply()
                 ***REMOVED***
-***REMOVED***
+                checked = change
+            ***REMOVED***)
 
             HelpIconButton("Use Azure OCR for the extraction")
         ***REMOVED***
@@ -674,18 +622,20 @@ fun ButtonBar(
     HorizontalDivider()
     Row {
         options?.let {
-            val modelList = mapOf("GPT 4" to "gpt-4", "GPT 3-5" to "gpt-3.5-turbo", "Smart Mix" to "smart_mix")
+            val modelList =
+                mapOf("GPT 4" to "gpt-4", "GPT 3-5" to "gpt-3.5-turbo", "Smart Mix" to "smart_mix")
+            var defaultIndex = modelList.values.indexOf(it.model)
+            if (defaultIndex == -1) {
+                defaultIndex = 0
+            ***REMOVED***
             DropDownGeneral(
-                items = modelList.keys.toList(),
-                onItemSelected = { selectedItem ->
+                items = modelList.keys.toList(), onItemSelected = { selectedItem ->
                     serviceViewModel.changeOptions("model", modelList[selectedItem] ?: "gpt-4")
                     with(sharedPrefs.edit()) {
                         putString("model", modelList[selectedItem] ?: "gpt-4")
                         apply()
                     ***REMOVED***
-                ***REMOVED***,
-                modifier = Modifier.weight(1f),
-                defaultSelectedItemIndex = modelList.values.indexOf(it.model)
+                ***REMOVED***, modifier = Modifier.weight(1f), defaultSelectedItemIndex = defaultIndex
 ***REMOVED***
             HelpIconButton("Select the model to use for the extraction")
             val formatList = listOf("json", "csv", "xml")
@@ -776,48 +726,47 @@ fun ShownExtraction(
     ***REMOVED***
     if (isLoading) {
         CircularProgressIndicator() // Show loading indicator
-    ***REMOVED*** else{
+    ***REMOVED*** else {
         extraction?.let {
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Row(
+            Column(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
+                horizontalAlignment = Alignment.CenterHorizontally
 ***REMOVED*** {
-                Text(
-                    "Extraction Result:",
-                    modifier = Modifier.padding(16.dp),
-                    fontSize = 20.sp,
-                    color = Color.Black,
-                    fontWeight = FontWeight.Bold
-    ***REMOVED***
-                Button(
-                    modifier = Modifier
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+    ***REMOVED*** {
+                    Text(
+                        "Extraction Result:",
+                        modifier = Modifier.padding(16.dp),
+                        fontSize = 20.sp,
+                        color = Color.Black,
+                        fontWeight = FontWeight.Bold
+        ***REMOVED***
+                    Button(modifier = Modifier
                         .padding(16.dp)
                         .size(150.dp, 60.dp),
 
-                    shape = RoundedCornerShape(8.dp),
-                    colors = ButtonDefaults.buttonColors(Color.Red),
-                    onClick = {
-                        it.id.let { extractionId ->
+                        shape = RoundedCornerShape(8.dp),
+                        colors = ButtonDefaults.buttonColors(Color.Red),
+                        onClick = {
+                            it.id.let { extractionId ->
 
-                            navController.navigate(Screen.SingleExtraction.withArgs("extractionId" to extractionId.toHexString()))
-                        ***REMOVED***
-                    ***REMOVED***) {
-                    Text("Go to Extraction")
+                                navController.navigate(Screen.SingleExtraction.withArgs("extractionId" to extractionId.toHexString()))
+                            ***REMOVED***
+                        ***REMOVED***) {
+                        Text("Go to Extraction")
+                    ***REMOVED***
+                ***REMOVED***
+                HorizontalDivider()
+                if (it.fileUri != null) {
+                    FileCard(it)
+                ***REMOVED***
+                if (errorOccurred) {
+                    ExceptionsDialog({ errorOccurred = false ***REMOVED***, it)
                 ***REMOVED***
             ***REMOVED***
-            HorizontalDivider()
-            if (it.fileUri != null) {
-                FileCard(it)
-            ***REMOVED***
-            if (errorOccurred) {
-                ExceptionsDialog( { errorOccurred = false ***REMOVED***, it)
-            ***REMOVED***
-        ***REMOVED***
         ***REMOVED***
     ***REMOVED***
 ***REMOVED***
@@ -834,49 +783,44 @@ fun CameraPreview(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    val imagePickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickMultipleVisualMedia(),
-        onResult = { uris: List<Uri>? ->
-            uris?.forEach { uri ->
-                onSetUri(uri)
-            ***REMOVED***
-            changeActivePhoto()
-        ***REMOVED***
-    )
-    val imagePickerLauncherLegacy = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetMultipleContents(),
-        onResult = { uris: List<Uri>? ->
-            uris?.forEach { uri ->
-                onSetUri(uri)
-            ***REMOVED***
-            changeActivePhoto()
-        ***REMOVED***
-    )
-    val requestPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-        onResult = { isGranted: Boolean ->
-            if (isGranted) {
-                // Launch the image picker
-                imagePickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-            ***REMOVED***
-        ***REMOVED***
-    )
-    val requestPermissionLauncherLegacy = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-        onResult = { isGranted: Boolean ->
-            if (isGranted) {
-                // Launch the image picker
-                imagePickerLauncherLegacy.launch("image/*")
-            ***REMOVED***
-        ***REMOVED***
-    )
+    val imagePickerLauncher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.PickMultipleVisualMedia(),
+            onResult = { uris: List<Uri>? ->
+                uris?.forEach { uri ->
+                    onSetUri(uri)
+                ***REMOVED***
+                changeActivePhoto()
+            ***REMOVED***)
+    val imagePickerLauncherLegacy =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.GetMultipleContents(),
+            onResult = { uris: List<Uri>? ->
+                uris?.forEach { uri ->
+                    onSetUri(uri)
+                ***REMOVED***
+                changeActivePhoto()
+            ***REMOVED***)
+    val requestPermissionLauncher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission(),
+            onResult = { isGranted: Boolean ->
+                if (isGranted) {
+                    // Launch the image picker
+                    imagePickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                ***REMOVED***
+            ***REMOVED***)
+    val requestPermissionLauncherLegacy =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission(),
+            onResult = { isGranted: Boolean ->
+                if (isGranted) {
+                    // Launch the image picker
+                    imagePickerLauncherLegacy.launch("image/*")
+                ***REMOVED***
+            ***REMOVED***)
     val onPhotoGalleryClick = {
         // Check if we're on Android 13+ (API level 33 or higher)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             // On Android 13+, use the PickVisualMedia contract
             if (ContextCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.READ_MEDIA_IMAGES
+                    context, Manifest.permission.READ_MEDIA_IMAGES
     ***REMOVED*** == PackageManager.PERMISSION_GRANTED
 ***REMOVED*** {
                 imagePickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
@@ -886,8 +830,7 @@ fun CameraPreview(
         ***REMOVED*** else {
             // On Android versions below 13, use the ACTION_PICK intent with the old contract
             if (ContextCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.READ_EXTERNAL_STORAGE
+                    context, Manifest.permission.READ_EXTERNAL_STORAGE
     ***REMOVED*** == PackageManager.PERMISSION_GRANTED
 
 ***REMOVED*** {
@@ -919,10 +862,7 @@ fun CameraPreview(
         try {
             cameraProvider.unbindAll()
             cameraProvider.bindToLifecycle(
-                lifecycleOwner,
-                cameraSelector,
-                preview,
-                imageCapture
+                lifecycleOwner, cameraSelector, preview, imageCapture
 ***REMOVED***
         ***REMOVED*** catch (exc: Exception) {
             Log.e("CameraX", "Use case binding failed", exc)
@@ -942,19 +882,15 @@ fun CameraPreview(
     ***REMOVED***
 
     Box(modifier = modifier) {
-        AndroidView(
-            modifier = Modifier.fillMaxSize(),
-            factory = { factoryContext ->
-                PreviewView(factoryContext).apply {
-                    this.scaleType = scaleType
-                    this.implementationMode = PreviewView.ImplementationMode.COMPATIBLE
-                    preview.setSurfaceProvider(this.surfaceProvider)
-                ***REMOVED***
-            ***REMOVED***,
-            update = { previewView ->
-                previewView.scaleType = scaleType
+        AndroidView(modifier = Modifier.fillMaxSize(), factory = { factoryContext ->
+            PreviewView(factoryContext).apply {
+                this.scaleType = scaleType
+                this.implementationMode = PreviewView.ImplementationMode.COMPATIBLE
+                preview.setSurfaceProvider(this.surfaceProvider)
             ***REMOVED***
-        )
+        ***REMOVED***, update = { previewView ->
+            previewView.scaleType = scaleType
+        ***REMOVED***)
         Button(
             modifier = Modifier
                 .padding(bottom = 20.dp, start = 24.dp)
@@ -972,13 +908,11 @@ fun CameraPreview(
         ***REMOVED***
 
         // Capture Button
-        Button(
-            modifier = Modifier
-                .padding(bottom = 20.dp)
-                .size(90.dp) // Adjust the size as needed
-                .clip(CircleShape) // Clip the button to be a circle
-                .align(Alignment.BottomCenter),
-            colors = ButtonDefaults.buttonColors(Color.White),
+        Button(modifier = Modifier
+            .padding(bottom = 20.dp)
+            .size(90.dp) // Adjust the size as needed
+            .clip(CircleShape) // Clip the button to be a circle
+            .align(Alignment.BottomCenter), colors = ButtonDefaults.buttonColors(Color.White),
 
             onClick = {
                 takePhoto(
@@ -992,8 +926,7 @@ fun CameraPreview(
                     context = context
     ***REMOVED***
                 showFlash = true
-            ***REMOVED***
-        ) {
+            ***REMOVED***) {
             Text("Capture")
         ***REMOVED***
 
@@ -1070,8 +1003,7 @@ private fun takePhoto(
 
         override fun onError(exc: ImageCaptureException) {
             Log.e(
-                "CameraX", "Photo capture failed: ${exc.message***REMOVED***",
-                exc
+                "CameraX", "Photo capture failed: ${exc.message***REMOVED***", exc
 ***REMOVED***
             // Provide more specific error messages based on exc.imageCaptureError
             val errorMessage = when (exc.imageCaptureError) {

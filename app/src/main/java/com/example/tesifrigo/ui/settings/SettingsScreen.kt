@@ -23,7 +23,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.tesifrigo.utils.HelpIconButton
 import com.example.tesifrigo.viewmodels.Keys
 import com.example.tesifrigo.viewmodels.ServiceViewModel
@@ -63,9 +62,7 @@ fun SettingsScreen(serviceViewModel: ServiceViewModel) {
             HelpIconButton(helpText = "OpenAI API Key")
         ***REMOVED***
         ApiKeyInput(
-            key = Keys.API_KEY_1,
-            viewModel = serviceViewModel,
-            keyName = "OpenAI API Key"
+            key = Keys.API_KEY_1, viewModel = serviceViewModel, keyName = "OpenAI API Key"
         )
         HorizontalDivider()
         Row(
@@ -86,14 +83,10 @@ fun SettingsScreen(serviceViewModel: ServiceViewModel) {
             HelpIconButton(helpText = "Azure Form Recognizer API Key")
         ***REMOVED***
         ApiKeyInput(
-            key = Keys.API_KEY_2,
-            viewModel = serviceViewModel,
-            keyName = "AZURE API Key"
+            key = Keys.API_KEY_2, viewModel = serviceViewModel, keyName = "AZURE API Key"
         )
         ApiKeyInput(
-            key = Keys.API_KEY_3,
-            viewModel = serviceViewModel,
-            keyName = "AZURE ENDPOINT"
+            key = Keys.API_KEY_3, viewModel = serviceViewModel, keyName = "AZURE ENDPOINT"
         )
 
     ***REMOVED***
@@ -119,8 +112,7 @@ fun ApiKeyInput(
             Text(text = keyName)
             Spacer(modifier = Modifier.width(16.dp))
             FaIcon(
-                faIcon = FaIcons.Check,
-                tint = if (apiKey) Color.Green else Color.Red
+                faIcon = FaIcons.Check, tint = if (apiKey) Color.Green else Color.Red
 ***REMOVED***
             Spacer(modifier = Modifier.weight(1f)) // Push items to the right
 
@@ -135,8 +127,7 @@ fun ApiKeyInput(
 
         if (showInput) {
             Column(modifier = Modifier.fillMaxWidth()) {
-                OutlinedTextField(
-                    value = newKey,
+                OutlinedTextField(value = newKey,
                     onValueChange = { newKey = it ***REMOVED***,
                     label = { Text("Enter $keyName") ***REMOVED***,
                     trailingIcon = {
@@ -155,8 +146,7 @@ fun ApiKeyInput(
                                 ***REMOVED***,
                             faIcon = FaIcons.Check,
             ***REMOVED***
-                    ***REMOVED***
-    ***REMOVED***
+                    ***REMOVED***)
 
             ***REMOVED***
         ***REMOVED***

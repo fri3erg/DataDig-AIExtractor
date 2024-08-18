@@ -10,6 +10,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,7 +21,6 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -40,6 +40,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -57,8 +58,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -68,7 +71,11 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.FileProvider
 import coil.compose.AsyncImage
+import com.example.tesifrigo.R
 import com.example.tesifrigo.models.Extraction
+import com.example.tesifrigo.ui.theme.cyan_custom
+import com.example.tesifrigo.ui.theme.dark_red
+import com.example.tesifrigo.ui.theme.light_gray
 import com.guru.fontawesomecomposelib.FaIcon
 import com.guru.fontawesomecomposelib.FaIcons
 import java.io.File
@@ -79,46 +86,44 @@ import java.io.IOException
 
 @Composable
 fun DeleteButton(
-    text: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    text: String, onClick: () -> Unit, modifier: Modifier = Modifier
 ) {
     var showAlert by remember { mutableStateOf(false) ***REMOVED***
     Button(
         onClick = { showAlert = true ***REMOVED***,
-        colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
-        border = BorderStroke(2.dp, Color.Red),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = light_gray,
+        ),
+        border = BorderStroke(2.dp, dark_red),
         elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp),
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
     ) {
         Text(
             "Delete $text",
             maxLines = 1,
             textAlign = TextAlign.Center,
             fontStyle = FontStyle.Normal,
-            fontSize = 20.sp
+            fontSize = 21.sp,
+            fontWeight = FontWeight.Bold,
+            color = dark_red
         )
     ***REMOVED***
-    if (showAlert)
-        AlertDialog(
-            onDismissRequest = { showAlert = false ***REMOVED***,
-            title = { Text("Delete $text?") ***REMOVED***,
-            text = { Text("Are you sure you want to delete this ${text.lowercase()***REMOVED***?") ***REMOVED***,
-            confirmButton = {
-                TextButton(onClick = {
-                    onClick()
-                    showAlert = false
-                ***REMOVED***) {
-                    Text("OK")
-                ***REMOVED***
-            ***REMOVED***,
-            dismissButton = {
-                TextButton(onClick = { showAlert = false ***REMOVED***) {
-                    Text("Cancel")
-                ***REMOVED***
+    if (showAlert) AlertDialog(onDismissRequest = { showAlert = false ***REMOVED***,
+        title = { Text("Delete $text?") ***REMOVED***,
+        text = { Text("Are you sure you want to delete this ${text.lowercase()***REMOVED***?") ***REMOVED***,
+        confirmButton = {
+            TextButton(onClick = {
+                onClick()
+                showAlert = false
+            ***REMOVED***) {
+                Text("OK")
             ***REMOVED***
-        )
+        ***REMOVED***,
+        dismissButton = {
+            TextButton(onClick = { showAlert = false ***REMOVED***) {
+                Text("Cancel")
+            ***REMOVED***
+        ***REMOVED***)
 ***REMOVED***
 
 
@@ -129,11 +134,9 @@ fun TableCell(
     isHeader: Boolean = false,
     onTextChange: (String) -> Unit
 ) {
-    val modifierPadded = modifier
-        .padding(4.dp)
+    val modifierPadded = modifier.padding(4.dp)
     Box(
-        modifier = modifierPadded,
-        contentAlignment = Alignment.Center
+        modifier = modifierPadded, contentAlignment = Alignment.Center
     ) {
         if (isHeader) {
             Text(
@@ -144,8 +147,7 @@ fun TableCell(
                 overflow = TextOverflow.Ellipsis,
 ***REMOVED***
         ***REMOVED*** else {
-            OutlinedTextField(
-                modifier = modifier.align(Alignment.Center),
+            OutlinedTextField(modifier = modifier.align(Alignment.Center),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Color.Blue,
                     unfocusedBorderColor = Color.LightGray,
@@ -166,56 +168,66 @@ fun TableCell(
 ***REMOVED***
 
 
-
 @Composable
-fun SearchBar(text: String, onTextChange: (String) -> Unit, onSearch: (String) -> Unit, modifier: Modifier= Modifier) {
-    OutlinedTextField(
-        value = text,
+fun SearchBar(
+    text: String,
+    onTextChange: (String) -> Unit,
+    onSearch: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    OutlinedTextField(value = text,
+        shape = RoundedCornerShape(16.dp),
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = cyan_custom,
+            unfocusedBorderColor = Color.Black,
+            focusedLeadingIconColor = cyan_custom,
+        ),
         onValueChange = {
             onTextChange(it) // Update the ViewModel's searchText state
             onSearch(it) // Trigger the search function (optional)
         ***REMOVED***,
         label = { Text("Search") ***REMOVED***,
         modifier = modifier
-            .padding(16.dp),
+            .padding(start = 16.dp, top = 16.dp, end = 16.dp)
+            .fillMaxWidth(),
         singleLine = true, // Ensure single-line input
         leadingIcon = {
             Icon(
-                imageVector = Icons.Default.Search,
-                contentDescription = "Search Icon"
+                imageVector = Icons.Default.Search, contentDescription = "Search Icon"
 ***REMOVED***
-        ***REMOVED***
-    )
+        ***REMOVED***)
 ***REMOVED***
 
 
 @Composable
-fun HelpIconButton(helpText: String, modifier: Modifier = Modifier) {
+fun HelpIconButton(helpText: String, modifier: Modifier = Modifier, title: String = "Help") {
     var showDialog by remember { mutableStateOf(false) ***REMOVED***
 
     IconButton(
-        onClick = { showDialog = true ***REMOVED***,
-        modifier = modifier.size(20.dp) // Make the icon smaller
+        onClick = { showDialog = true ***REMOVED***, modifier = modifier.size(20.dp), // Make the icon smaller
+        colors = IconButtonDefaults.filledIconButtonColors(
+            contentColor = Color.Black, containerColor = Color.Black
+        )
     ) {
+
         Icon(
             imageVector = Icons.Default.Info,
             contentDescription = "Help Icon",
-            tint = Color.Black
+            tint = Color.White,
+            //modifier = Modifier.border(1.dp, Color.Black, RoundedCornerShape(10.dp))
         ) // Use the Info icon from Material Design
 
     ***REMOVED***
 
     if (showDialog) {
-        AlertDialog(
-            onDismissRequest = { showDialog = false ***REMOVED***,
-            title = { Text("Help") ***REMOVED***,
+        AlertDialog(onDismissRequest = { showDialog = false ***REMOVED***,
+            title = { Text(title) ***REMOVED***,
             text = { Text(helpText) ***REMOVED***,
             confirmButton = {
                 TextButton(onClick = { showDialog = false ***REMOVED***) {
                     Text("OK")
                 ***REMOVED***
-            ***REMOVED***
-        )
+            ***REMOVED***)
     ***REMOVED***
 ***REMOVED***
 
@@ -240,36 +252,27 @@ fun DropdownWithNavigation(onUse: () -> Unit, onEdit: () -> Unit, onDelete: () -
             onDismissRequest = { expanded = false ***REMOVED***,
             modifier = Modifier
                 .width(150.dp) // Adjust width as needed
-                .align(Alignment.TopEnd) // Position at the top right corner
+                .align(Alignment.TopEnd)
+                .background(Color.White)
         ) {
-            DropdownMenuItem(
-                text = { Text("Use") ***REMOVED***,
-                onClick = {
-                    onUse()
-                    expanded = false
-                ***REMOVED***
-***REMOVED***
-            DropdownMenuItem(
-                text = { Text("Edit") ***REMOVED***,
-                onClick = {
-                    onEdit()
-                    expanded = false
-                ***REMOVED***
-***REMOVED***
-            DropdownMenuItem(
-                text = { Text("Delete") ***REMOVED***,
-                onClick = {
-                    showDeleteDialog = true
-                    expanded = false
-                ***REMOVED***
-***REMOVED***
+            DropdownMenuItem(text = { Text("Use") ***REMOVED***, onClick = {
+                onUse()
+                expanded = false
+            ***REMOVED***)
+            DropdownMenuItem(text = { Text("Edit") ***REMOVED***, onClick = {
+                onEdit()
+                expanded = false
+            ***REMOVED***)
+            DropdownMenuItem(text = { Text("Delete") ***REMOVED***, onClick = {
+                showDeleteDialog = true
+                expanded = false
+            ***REMOVED***)
         ***REMOVED***
     ***REMOVED***
 
     // Confirmation Dialog
     if (showDeleteDialog) {
-        AlertDialog(
-            onDismissRequest = { showDeleteDialog = false ***REMOVED***,
+        AlertDialog(onDismissRequest = { showDeleteDialog = false ***REMOVED***,
             title = { Text("Confirm Delete") ***REMOVED***,
             text = { Text("Are you sure you want to delete this template?") ***REMOVED***,
             confirmButton = {
@@ -284,47 +287,19 @@ fun DropdownWithNavigation(onUse: () -> Unit, onEdit: () -> Unit, onDelete: () -
                 Button(onClick = { showDeleteDialog = false ***REMOVED***) {
                     Text("Cancel")
                 ***REMOVED***
-            ***REMOVED***
-        )
+            ***REMOVED***)
     ***REMOVED***
 ***REMOVED***
-
-
-@Composable
-fun NumberPicker(
-    value: Int,
-    onValueChange: (Int) -> Unit,
-    range: IntRange = 1..10, // Default range
-    modifier: Modifier = Modifier
-) {
-    AndroidView(
-        factory = { context ->
-            android.widget.NumberPicker(context).apply {
-                minValue = range.first
-                maxValue = range.last
-                this.value = value
-                setOnValueChangedListener { _, _, newValue ->
-                    onValueChange(newValue)
-                ***REMOVED***
-            ***REMOVED***
-        ***REMOVED***,
-        modifier = modifier
-    )
-***REMOVED***
-
 
 
 @Composable
 fun LabeledSwitch(
     label: String,
 
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    checked: Boolean, onCheckedChange: (Boolean) -> Unit, modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically
+        modifier = modifier, verticalAlignment = Alignment.CenterVertically
 
     ) {
         Text(
@@ -355,8 +330,7 @@ fun DropDownGeneral(
 
     Box(modifier = modifier) {
         TextButton(
-            onClick = { expanded = true ***REMOVED***,
-            modifier = Modifier.fillMaxWidth()
+            onClick = { expanded = true ***REMOVED***, modifier = Modifier.fillMaxWidth()
         ) {
             Text(selectedItem)
         ***REMOVED***
@@ -367,14 +341,11 @@ fun DropDownGeneral(
             modifier = Modifier.fillMaxWidth()
         ) {
             items.forEach { item ->
-                DropdownMenuItem(
-                    text = { Text(item) ***REMOVED***,
-                    onClick = {
-                        selectedItem = item
-                        onItemSelected(item)
-                        expanded = false
-                    ***REMOVED***
-    ***REMOVED***
+                DropdownMenuItem(text = { Text(item) ***REMOVED***, onClick = {
+                    selectedItem = item
+                    onItemSelected(item)
+                    expanded = false
+                ***REMOVED***)
             ***REMOVED***
         ***REMOVED***
     ***REMOVED***
@@ -438,15 +409,13 @@ fun MyImageArea(
 
 @Composable
 fun FileCard(
-    extraction: Extraction,
-    modifier: Modifier = Modifier
+    extraction: Extraction, modifier: Modifier = Modifier
 ) {
 
     val context = LocalContext.current
     val openFileLauncher = remember {
         (context as? ComponentActivity)?.activityResultRegistry?.register(
-            "openFile",
-            ActivityResultContracts.StartActivityForResult()
+            "openFile", ActivityResultContracts.StartActivityForResult()
         ) { result ->
             Log.d("FileCard", "Result: $result")
         ***REMOVED***
@@ -455,9 +424,7 @@ fun FileCard(
     fun downloadFile(uri: Uri?, failedOpen: Boolean = false) {
         if (uri == null || uri.path == null) return
         val contentUri = FileProvider.getUriForFile(
-            context,
-            "com.example.tesifrigo.fileprovider",
-            File(uri.path!!)
+            context, "com.example.tesifrigo.fileprovider", File(uri.path!!)
         )
 
         // Get the filename from the content URI
@@ -465,8 +432,7 @@ fun FileCard(
 
         // Create a destination file in the Downloads directory
         val destinationFile = File(
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-            fileName
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), fileName
         )
 
         try {
@@ -484,9 +450,7 @@ fun FileCard(
             // Show a Toast message indicating success
             if (!failedOpen) {
                 Toast.makeText(
-                    context,
-                    "File downloaded to Downloads folder",
-                    Toast.LENGTH_SHORT
+                    context, "File downloaded to Downloads folder", Toast.LENGTH_SHORT
     ***REMOVED***.show()
             ***REMOVED***
         ***REMOVED*** catch (e: IOException) {
@@ -506,9 +470,7 @@ fun FileCard(
     fun openFile(uri: Uri) {
         if (uri.path == null) return
         val contentUri = FileProvider.getUriForFile(
-            context,
-            "com.example.tesifrigo.fileprovider",
-            File(uri.path!!)
+            context, "com.example.tesifrigo.fileprovider", File(uri.path!!)
         )
 
         val mimeType = context.contentResolver.getType(contentUri)
@@ -534,9 +496,7 @@ fun FileCard(
         ***REMOVED*** else {
             // No suitable app found, so download the file
             Toast.makeText(
-                context,
-                "No app found to open the file, downloading instead",
-                Toast.LENGTH_SHORT
+                context, "No app found to open the file, downloading instead", Toast.LENGTH_SHORT
 ***REMOVED***.show()
             downloadFile(uri, true)
         ***REMOVED***
@@ -546,9 +506,7 @@ fun FileCard(
     fun downloadFileExtra(uri: Uri) {
         if (uri.path == null) return
         val contentUri = FileProvider.getUriForFile(
-            context,
-            "com.example.tesifrigo.fileprovider",
-            File(uri.path!!)
+            context, "com.example.tesifrigo.fileprovider", File(uri.path!!)
         )
 
         val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply { // Use ACTION_CREATE_DOCUMENT
@@ -576,9 +534,7 @@ fun FileCard(
     fun shareFile(uri: Uri?) {
         if (uri == null || uri.path == null) return
         val contentUri = FileProvider.getUriForFile(
-            context,
-            "com.example.tesifrigo.fileprovider",
-            File(uri.path!!)
+            context, "com.example.tesifrigo.fileprovider", File(uri.path!!)
         )
 
         val shareIntent = Intent(Intent.ACTION_SEND).apply {
@@ -591,10 +547,7 @@ fun FileCard(
     ***REMOVED***
 
     Surface(
-        modifier = modifier
-            .padding(8.dp),
-        shape = RoundedCornerShape(8.dp),
-        color = Color.White
+        modifier = modifier.padding(8.dp), shape = RoundedCornerShape(8.dp), color = Color.White
     ) {
         Row(
             modifier = Modifier
@@ -611,9 +564,7 @@ fun FileCard(
                 contentAlignment = Alignment.Center
 ***REMOVED*** {
                 FaIcon(
-                    faIcon = FaIcons.File,
-                    tint = Color.Gray,
-                    size = 24.dp
+                    faIcon = FaIcons.File, tint = Color.Gray, size = 24.dp
     ***REMOVED***
             ***REMOVED***
 
@@ -624,9 +575,7 @@ fun FileCard(
                 modifier = Modifier.weight(1f)
 ***REMOVED*** {
                 Text(
-                    text = extraction.title,
-                    fontSize = 16.sp,
-                    color = Color.Black
+                    text = extraction.title, fontSize = 16.sp, color = Color.Black
     ***REMOVED***
 
                 Spacer(modifier = Modifier.height(4.dp))
@@ -635,33 +584,25 @@ fun FileCard(
                     verticalAlignment = Alignment.CenterVertically
     ***REMOVED*** {
                     // Make the icons clickable
-                    Box(modifier = Modifier
-                        .clickable {
+                    Box(modifier = Modifier.clickable {
                             if (extraction.fileUri != null) {
                                 downloadFileExtra(Uri.parse(extraction.fileUri))
                             ***REMOVED***
-                        ***REMOVED***
-        ***REMOVED*** {
+                        ***REMOVED***) {
                         FaIcon(
-                            faIcon = FaIcons.Download,
-                            tint = Color.Gray,
-                            size = 20.dp
+                            faIcon = FaIcons.Download, tint = Color.Gray, size = 20.dp
             ***REMOVED***
                     ***REMOVED***
 
                     Spacer(modifier = Modifier.width(8.dp))
 
-                    Box(modifier = Modifier
-                        .clickable {
+                    Box(modifier = Modifier.clickable {
                             if (extraction.fileUri != null) {
                                 shareFile(Uri.parse(extraction.fileUri))
                             ***REMOVED***
-                        ***REMOVED***
-        ***REMOVED*** {
+                        ***REMOVED***) {
                         FaIcon(
-                            faIcon = FaIcons.Share,
-                            tint = Color.Gray,
-                            size = 20.dp
+                            faIcon = FaIcons.Share, tint = Color.Gray, size = 20.dp
             ***REMOVED***
                     ***REMOVED***
                 ***REMOVED***
@@ -676,8 +617,7 @@ fun AddButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier) 
     Button(
         onClick = {
             onClick()
-        ***REMOVED***,
-        modifier = modifier.fillMaxWidth()
+        ***REMOVED***, modifier = modifier.fillMaxWidth()
     ) {
         Text("Add $text", textAlign = TextAlign.Center)
     ***REMOVED***

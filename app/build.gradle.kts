@@ -102,6 +102,7 @@ android {
         productFlavors {
             getByName("py311") { version = "3.11" ***REMOVED***
         ***REMOVED***
+
         defaultConfig {
             version = "3.11"
 
@@ -115,11 +116,9 @@ android {
                 install("numpy")
                 install("pandas")
                 install("greenlet")
-                install("multidict")
-                //install("opencv-python")
                 install("regex")
                 install("pillow")
-                //test
+                //install("instructor == 0.3.0")
                 install("-r", projectDir.absolutePath + "/src/main/python/requirements_kotlin.txt")
                 extractPackages("tesseract")
             ***REMOVED***
