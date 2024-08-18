@@ -1,7 +1,7 @@
-from typing import Optional
+from typing import Any, Optional
 
-import instructor
-import instructor.exceptions
+#import instructor
+#import instructor.exceptions
 from ...classes.Options import Options
 from ...classes.Template import Template
 from ...classes.Extracted import ExceptionsExtracted
@@ -27,10 +27,10 @@ def get_doc_language(text, file_id, options:Options):
     # Analyze first page
     language = "it"
     prompt= create_language_tag_messages(text= text[0][:300],language= "en")
-    try:
-        language = Models.tag(prompt, DocLanguage, file_id, options.model)
-    except instructor.exceptions.InstructorRetryException:
-            raise ValueError("tag failed, check openai keys validity")
+    language, error_occurred = Models.tag(prompt, DocLanguage, file_id, options.model)
+    if error_occurred:
+        raise error_occurred
+    #except instructor.exceptions.InstructorRetryException:)
         
 
     # Check if language is mapped
@@ -44,7 +44,7 @@ def get_doc_language(text, file_id, options:Options):
 
 
 
-def general_table_inspection(table, pydantic_class, file_id, options:Options, add_text=""):
+def general_table_inspection(table, pydantic_class, file_id, options:Options, add_text="")-> tuple[Any, Optional[Exception]]:
     """tags data in a table
 
     Args:
@@ -63,13 +63,14 @@ def general_table_inspection(table, pydantic_class, file_id, options:Options, ad
         # First normal extraction, then tagging
         add_text= f"{desc_tabella[options.language or 'en']***REMOVED*** {add_text***REMOVED*** " if add_text else ""
         table = f"{add_text***REMOVED*** TABLE-> {table***REMOVED***"
-        prompt= create_language_tag_messages(text= table,language= options.language or "it", table=True)
-        extraction_adapted = Models.tag(prompt, pydantic_class, file_id, options.model)
+        prompt= create_language_tag_messages(text= table,language= options.language or "it", is_table=True)
+        extraction_adapted, errors_occurred = Models.tag(prompt, pydantic_class, file_id, options.model)
+            
     except Exception as error:
         print("table extraction error" + repr(error))
-        raise error
+        return pydantic_class(), error
 
-    return extraction_adapted
+    return extraction_adapted, errors_occurred
 
 
 
@@ -112,12 +113,12 @@ def llm_extraction_and_tag(page, template:Template, file_id, pydantic_class, opt
     # To ensure optimal data standardization
     try:
         prompt= create_language_tag_messages(text= response,language= options.language or "it")
-        tagged = Models.tag(prompt, pydantic_class, file_id,options.model)
+        tagged, optional_error_tag = Models.tag(prompt, pydantic_class, file_id,options.model)
+        if optional_error_tag and not optional_error:
+            optional_error = ExceptionsExtracted(optional_error_tag, "llm_extraction",repr(optional_error_tag))
+            
     except Exception as e:
         print("error in tagging", e)
-        if optional_error:
-            raise optional_error.error
-            
-        raise e
+        tagged= pydantic_class()
 
     return tagged, optional_error

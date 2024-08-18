@@ -202,7 +202,9 @@ class GeneralScanner:
             try:
             # Select page with RIY
             
-                extraction = general_table_inspection(table, create_pydantic_table_class(template), self.file_id,self.options, add_text=template.description)
+                extraction, errors_occurred = general_table_inspection(table, create_pydantic_table_class(template), self.file_id,self.options, add_text=template.description)
+                if errors_occurred:
+                    self.add_exceptions(ExceptionsExtracted(errors_occurred, "extracting tables",repr(errors_occurred)))
                 extracted_fields: Dict[str,Dict[str,ExtractedField]]= extracted_from_pydantic_table(self, extraction, template)
                 extracted_table.append(ExtractedTable(template,fields=extracted_fields,dataframe=table))
                 

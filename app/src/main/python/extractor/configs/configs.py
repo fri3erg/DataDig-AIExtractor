@@ -1,5 +1,7 @@
 from typing import Any, List, Literal
-from openai.types.chat import ChatCompletionMessageParam
+#from openai.types.chat import ChatCompletionMessageParam
+from langchain.prompts import PromptTemplate
+
 
 
 prompts = {
@@ -168,51 +170,81 @@ keys_config={
 
 
 
+
 table_prompt= {
-    "en": """You are an information extractor. Analyze the given text and extract values that match the provided Pydantic schema , output instance of the schema containing the extracted values.
+    "en": """You are an information extractor. Analyze the given text and extract values that match the provided Pydantic schema,
             This text is a table, analyze it well and extract values in accord to the row and column they are in.
             Be careful of whitespaces and punctuation and try your best.
+            Do all you can to respond with a JSON output even if the input is not valid                
+            Respond with ONLY a valid JSON object that strictly adheres to the following schema:
+
+            {schema***REMOVED***.
             """,
-            
-    "es": """Eres un extractor de información. Analiza el texto proporcionado y extrae los valores que coincidan con el esquema Pydantic suministrado, devuelve una instancia del esquema que contenga los valores extraídos.
+
+    "es": """Eres un extractor de información. Analiza el texto proporcionado y extrae los valores que coincidan con el esquema Pydantic suministrado.
             Este texto es una tabla, analízala bien y extrae los valores de acuerdo a la fila y columna en la que se encuentran.
             Ten cuidado con los espacios en blanco y la puntuación, y haz tu mejor esfuerzo.
+            Responde SOLAMENTE con un objeto JSON válido que se adhiera estrictamente al siguiente esquema:
+
+            {schema***REMOVED***.
             """,
-            
-    "it": """Sei un estrattore di informazioni. Analizza il testo fornito ed estrai i valori che corrispondono allo schema Pydantic fornito, restituisci un'istanza dello schema contenente i valori estratti.
+
+    "it": """Sei un estrattore di informazioni. Analizza il testo fornito ed estrai i valori che corrispondono allo schema Pydantic fornito.
             Questo testo è una tabella, analizzala bene ed estrai i valori in base alla riga e alla colonna in cui si trovano.
             Fai attenzione agli spazi bianchi e alla punteggiatura e fai del tuo meglio.
+            Rispondi SOLO con un oggetto JSON valido che aderisca strettamente al seguente schema:
+
+            {schema***REMOVED***.
             """,
-            
-    "de": """Du bist ein Informationsextraktor. Analysiere den gegebenen Text und extrahiere Werte, die dem bereitgestellten Pydantic-Schema entsprechen, gib eine Instanz des Schemas aus, die die extrahierten Werte enthält.
+
+    "de": """Du bist ein Informationsextraktor. Analysiere den gegebenen Text und extrahiere Werte, die dem bereitgestellten Pydantic-Schema entsprechen.
             Dieser Text ist eine Tabelle, analysiere sie gut und extrahiere Werte entsprechend der Zeile und Spalte, in der sie sich befinden.
             Sei vorsichtig mit Leerzeichen und Satzzeichen und gib dein Bestes.
+            Antworte NUR mit einem gültigen JSON-Objekt, das sich strikt an das folgende Schema hält:
+
+            {schema***REMOVED***.
             """,
-            
-    "fr": """Vous êtes un extracteur d'informations. Analysez le texte donné et extrayez les valeurs qui correspondent au schéma Pydantic fourni, retournez une instance du schéma contenant les valeurs extraites.
+
+    "fr": """Vous êtes un extracteur d'informations. Analysez le texte donné et extrayez les valeurs qui correspondent au schéma Pydantic fourni.
             Ce texte est un tableau, analysez-le bien et extrayez les valeurs en fonction de la ligne et de la colonne dans lesquelles elles se trouvent.
             Faites attention aux espaces et à la ponctuation et faites de votre mieux.
+            Répondez UNIQUEMENT avec un objet JSON valide qui adhère strictement au schéma suivant :
+
+            {schema***REMOVED***.
             """
 ***REMOVED***
 
 
-
 system_prompt= {
-    "en": """You are an information extractor. Analyze the given text and extract values that match the provided Pydantic schema , output instance of the schema containing the extracted values.
-            """,
-            
-    "es": """Eres un extractor de información. Analiza el texto dado y extrae los valores que coincidan con el esquema Pydantic proporcionado, devuelve una instancia del esquema que contenga los valores extraídos.
-            """,
-            
-    "it": """Sei un estrattore di informazioni. Analizza il testo fornito ed estrai i valori che corrispondono allo schema Pydantic fornito, restituisci un'istanza dello schema contenente i valori estratti.
-            """,
-            
-    "de": """Du bist ein Informationsextraktor. Analysiere den gegebenen Text und extrahiere Werte, die dem bereitgestellten Pydantic-Schema entsprechen, gib eine Instanz des Schemas aus, die die extrahierten Werte enthält.
-            """,
-            
-    "fr": """Vous êtes un extracteur d'informations. Analysez le texte donné et extrayez les valeurs qui correspondent au schéma Pydantic fourni, retournez une instance du schéma contenant les valeurs extraites.
-            """
+    "en": """You are an information extractor. Analyze the given text and extract values that match the provided Pydantic schema :
+                ALWAYS Respond with ONLY a valid JSON object that strictly adheres to the following schema:
 
+            {schema***REMOVED***
+            """,
+            
+    "es": """Eres un extractor de información. Analiza el texto dado y extrae los valores que coincidan con el esquema Pydantic proporcionado. 
+            Responde SOLAMENTE con un objeto JSON válido que se adhiera estrictamente al siguiente esquema:
+
+            {schema***REMOVED***
+            """,
+
+    "it": """Sei un estrattore di informazioni. Analizza il testo fornito ed estrai i valori che corrispondono allo schema Pydantic fornito.
+            Rispondi SOLO con un oggetto JSON valido che aderisca strettamente al seguente schema:
+
+            {schema***REMOVED***.
+            """,
+
+    "de": """Du bist ein Informationsextraktor. Analysiere den gegebenen Text und extrahiere Werte, die dem bereitgestellten Pydantic-Schema entsprechen.
+            Antworte NUR mit einem gültigen JSON-Objekt, das sich strikt an das folgende Schema hält:
+
+            {schema***REMOVED***.
+            """,
+
+    "fr": """Vous êtes un extracteur d'informations. Analysez le texte donné et extrayez les valeurs qui correspondent au schéma Pydantic fourni.
+            Répondez UNIQUEMENT avec un objet JSON valide qui adhère strictement au schéma suivant :
+
+            {schema***REMOVED***.
+            """
 ***REMOVED***
 
 user_prompt={
@@ -221,12 +253,25 @@ user_prompt={
             """,
     "it": """
             Testo da analizzare: {text***REMOVED***
+            """,
+
+    "es": """
+            Texto a analizar: {text***REMOVED***
+            """,
+
+    "de": """
+            Text zum Analysieren: {text***REMOVED***
+            """,
+
+    "fr": """
+            Texte à analyser: {text***REMOVED***
             """
+
     
 ***REMOVED***
 
-def create_language_tag_messages(text: str, language: str, table=False) -> List[ChatCompletionMessageParam]:
-    return [
+def create_language_tag_messages(text: str, language: str, is_table=False) -> PromptTemplate:
+    """return [
         {
             "role": "system", 
             "content": table_prompt[language] if table else system_prompt[language]
@@ -235,7 +280,9 @@ def create_language_tag_messages(text: str, language: str, table=False) -> List[
             "role": "user", 
             "content": user_prompt[language].format(text=text)
         ***REMOVED***
-    ]
+    ]"""
+    template = (table_prompt[language] if is_table else system_prompt[language]) + user_prompt[language].format(text=text) 
+    return PromptTemplate(input_variables=["schema"], template=template)
 
     
 

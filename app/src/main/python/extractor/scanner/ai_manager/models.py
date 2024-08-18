@@ -1,4 +1,4 @@
-import instructor.exceptions
+#import instructor.exceptions
 from ...scanner.extractors.utils import num_tokens_from_string
 import threading
 from ...configs.cost_config import cost_per_token
@@ -10,12 +10,16 @@ from langchain.prompts import PromptTemplate
 import os
 import asyncio
 import openai
-import instructor
+#import instructor
 import threading
+from langchain.chains import LLMChain
 from langchain.llms.base import LLM
 from pydantic_core import ValidationError
-
-from langchain_openai.chat_models.base import ChatOpenAI # use ChatOpenAI from the core library
+from langchain_community.llms import OpenAI as LangChainOpenAI
+from langchain.chat_models import ChatOpenAI # use ChatOpenAI from the core library
+from langchain.llms.base import LLM
+from langchain.output_parsers import PydanticOutputParser
+#from langchain_openai.chat_models.base import ChatOpenAI # use ChatOpenAI from the core library
 from langchain.schema import BaseMessage
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
@@ -78,7 +82,7 @@ class Models(LLM):
         model_instance: ChatOpenAI = self._models[model_name][temperature]
         
         messages :List[BaseMessage] = [
-            BaseMessage(content=prompt, role="user")
+            BaseMessage(content=prompt, type="user"),
         ]
 
         response: BaseMessage = model_instance(messages, stop=stop)
@@ -94,12 +98,13 @@ class Models(LLM):
 
     
     @classmethod
-    def tag(cls, word_prompt :List[ChatCompletionMessageParam], schema, file_id: str, model: str = "gpt-4"):
+    def tag(cls, prompt :PromptTemplate, schema, file_id: str, model: str = "gpt-4") -> tuple[Any, Optional[Exception]]:
 
         if model == "Smart-Mix":
             model = "gpt-4"
+        llm = cls._models[model][0.0]
 
-        if cls._openAI_instance is None:
+        """if cls._openAI_instance is None:
             cls._openAI_instance = OpenAI()
         output = ""
         try:
@@ -118,31 +123,26 @@ class Models(LLM):
             print("Error in tag (GPT-4):", e)
             raise e
             
-            
-        """else:
+           else: 
+        """
         # PydanticOutputParser for other models
         output_parser = PydanticOutputParser(pydantic_object=schema)
-
+        error_occurred: Optional[Exception] = None
         try:
             chain = LLMChain(llm=llm, prompt=prompt, output_parser=output_parser)
+            output = chain.run(schema=schema.schema_json())
         except openai.AuthenticationError as auth_err:
             print("Authentication Error (Invalid API key?):", auth_err)
-            raise ValueError("invalid OpenAI key")
+            error_occurred= auth_err
+            output = schema()  # Create an empty instance on other errors"""
         except Exception as e:
             print("Error creating LLMChain:", e)
-            raise e
-
-        try:
-            output = chain.run(schema=schema.schema_json(), text=text)
-        except ValidationError as e:
-            print("Validation Error:", e)
-            output = schema()  # Create an empty instance on validation error
-        except Exception as e:
-            print("Error in tag (other models):", e)
             output = schema()  # Create an empty instance on other errors"""
+            error_occurred=e
 
-        cls.calc_costs(file_id, model, inputs=[str(word_prompt)], outputs=[str(output)])
-        return output
+
+        cls.calc_costs(file_id, model, inputs=[str(prompt)], outputs=[str(output)])
+        return output, error_occurred
     
     # Updated extract() method
     @classmethod

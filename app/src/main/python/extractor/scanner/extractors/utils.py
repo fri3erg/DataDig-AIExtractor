@@ -521,15 +521,17 @@ def create_pydantic_class(template: Template):
         if template_field.type == "date":
             description += "this field searches for a date, (format: YYYY-MM-DD)"
             
+            
+        default= get_typed_default(template_field.default, pydantic_type)
+            
         if template_field.list:
             pydantic_type = List[pydantic_type]
+            
 
         # Use Optional for non-required fields
         if not template_field.required:
             pydantic_type = Optional[pydantic_type]
             
-        default= get_typed_default(template_field.default, pydantic_type)
-
         # Create the Pydantic field
         fields[template_field.title] = (pydantic_type, Field(default=default, description=description))
 
@@ -547,9 +549,9 @@ def create_intelligent_pydantic_class(template: Template):
             description="(required)"
         if template_field.type == "date":
             description += " (format: YYYY-MM-DD)"
+        default= get_typed_default(template_field.default, field_type)
         if template_field.list:
             field_type = List[field_type]
-        default= get_typed_default(template_field.default, field_type)
         fields[template_field.title] = (Optional[field_type], Field(description=description, default=default))
 
 

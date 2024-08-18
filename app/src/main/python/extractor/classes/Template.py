@@ -1,7 +1,7 @@
 
 from typing import Any, Dict, List, Optional, Tuple
 class TemplateField:
-    def __init__(self, id:str, title: str, description:Optional[str] = "", extra_description: Optional[str]="", type: Optional[str]=None,list: Optional[bool]=False, required: Optional[bool] = False, intelligent_extraction: Optional[bool]= False, default : Optional[str] ="N/A"):
+    def __init__(self, id:str, title: str, description:Optional[str] = None, extra_description: Optional[str]="", type: Optional[str]=None,list: Optional[bool]=False, required: Optional[bool] = False, intelligent_extraction: Optional[bool]= False, default : Optional[str] ="N/A"):
         self.id = id
         self.title = title
         self.description = description
