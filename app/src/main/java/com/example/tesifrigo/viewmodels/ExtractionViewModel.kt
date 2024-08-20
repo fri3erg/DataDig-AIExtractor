@@ -9,6 +9,8 @@ import com.example.tesifrigo.BuildConfig
 import com.example.tesifrigo.MyApp
 import com.example.tesifrigo.fileCreator.CsvCreator
 import com.example.tesifrigo.fileCreator.JsonCreator
+import com.example.tesifrigo.fileCreator.TextCreator
+import com.example.tesifrigo.fileCreator.XmlCreator
 import com.example.tesifrigo.models.ExceptionOccurred
 import com.example.tesifrigo.models.Extraction
 import com.example.tesifrigo.models.ExtractionCosts
@@ -65,7 +67,7 @@ class ExtractionViewModel @Inject constructor(
     init {
 
         //Log.d("ExtractionViewModel", "init")
-        //createSampleExtraction()
+        createSampleExtraction()
         try {
             supabaseClient = createSupabaseClient(
                 supabaseUrl = BuildConfig.EXPO_PUBLIC_SUPABASE_URL,
@@ -162,15 +164,16 @@ class ExtractionViewModel @Inject constructor(
                     title = "Field 1"
                     description = "This is a sample field"
                     extraDescription = "This is an extra description"
-                    type = "text"
+                    type = "Text"
                     required = true
                     intelligentExtraction = false
+                    list = true
                 ***REMOVED***)
                 val templateField2 = copyToRealm(TemplateField().apply {
                     title = "Field 2"
                     description = "This is a sample field 2"
                     extraDescription = "This is an extra description 2"
-                    type = "text"
+                    type = "Text"
                     required = true
                     intelligentExtraction = true
                 ***REMOVED***)
@@ -178,7 +181,7 @@ class ExtractionViewModel @Inject constructor(
                     title = "Field 3"
                     description = "This is a sample field 3"
                     extraDescription = "This is an extra description 3"
-                    type = "text"
+                    type = "Text"
                     required = true
                     intelligentExtraction = false
                 ***REMOVED***)
@@ -227,7 +230,7 @@ class ExtractionViewModel @Inject constructor(
 
                 val extractionField1 = copyToRealm(ExtractionField().apply {
                     templateField = templateField1
-                    value = "This is an extracted value"
+                    value = "This is an extracted value| this is a second value| third"
                 ***REMOVED***)
                 val extractionField2 = copyToRealm(ExtractionField().apply {
                     templateField = templateField2
@@ -239,17 +242,26 @@ class ExtractionViewModel @Inject constructor(
                     templateField = templateField3
                     value = "This is an extracted value 3"
                 ***REMOVED***)
+                val extractionField4 = copyToRealm(ExtractionField().apply {
+                    templateField = templateField1
+                    value = "This is an extracted value 4"
+                ***REMOVED***)
+                val extractionField5 = copyToRealm(ExtractionField().apply {
+                    templateField = templateField2
+                    value = "This is an extracted value 5"
+                ***REMOVED***)
 
                 val extractionTableRow1 = copyToRealm(ExtractionTableRow().apply {
                     rowName = "1"
-                    fields = realmListOf(extractionField1, extractionField2)
+                    fields = realmListOf(extractionField3, extractionField2)
                 ***REMOVED***)
                 val extractionTableRow2 = copyToRealm(ExtractionTableRow().apply {
                     rowName = "2"
-                    fields = realmListOf(extractionField2, extractionField3)
+                    fields = realmListOf(extractionField5, extractionField4)
                 ***REMOVED***)
 
                 val extractedTable1 = copyToRealm(ExtractionTable().apply {
+                    title = "Extracted Table 1"
                     templateTable = templateTable1
                     dataframe = "This is a dataframe"
                     fields = realmListOf(extractionTableRow1, extractionTableRow2)
@@ -285,7 +297,7 @@ class ExtractionViewModel @Inject constructor(
                     title = template1.title
                     image = realmListOf("https://example.com/image.jpg")
                     format = "cvs"
-                    extractedFields = realmListOf(extractionField1)
+                    extractedFields = realmListOf(extractionField1, extractionField5)
                     extractedTables = realmListOf(extractedTable1)
                     extractionCosts = realmListOf(extractionCost, extractionCost2)
                     exceptionsOccurred = realmListOf(extractionException, extractionException2)
@@ -383,8 +395,11 @@ class ExtractionViewModel @Inject constructor(
                 newFile = CsvCreator().convertToCsvFile(extraction, context).toString()
             ***REMOVED***
 
-            "pdf" -> {
-                // Convert to PDF
+            "text" -> {
+                newFile = TextCreator().convertToTextFile(extraction, context).toString()
+            ***REMOVED***
+            "xml" -> {
+                newFile= XmlCreator().convertToXmlFile(extraction, context).toString()
             ***REMOVED***
         ***REMOVED***
         viewModelScope.launch {
@@ -433,6 +448,81 @@ class ExtractionViewModel @Inject constructor(
             realm.writeBlocking {
                 val latestExtraction = findLatest(extraction) ?: return@writeBlocking
                 latestExtraction.tags.add(newKey)
+            ***REMOVED***
+        ***REMOVED***
+
+    ***REMOVED***
+
+    fun removeExtraImage(extraction: Extraction, index: Int) {
+        viewModelScope.launch {
+            realm.writeBlocking {
+                val latestExtraction = findLatest(extraction) ?: return@writeBlocking
+                latestExtraction.extraImages.removeAt(index)
+            ***REMOVED***
+        ***REMOVED***
+
+    ***REMOVED***
+
+    fun removeColumn(extractionTable: ExtractionTable, header: String) {
+        viewModelScope.launch {
+            realm.writeBlocking {
+                val latestTable = findLatest(extractionTable) ?: return@writeBlocking
+                for (field in latestTable.fields) {
+                        field.fields.removeIf { it.templateField?.title == header***REMOVED***
+                        ***REMOVED***
+                    ***REMOVED***
+
+
+        ***REMOVED***
+
+    ***REMOVED***
+
+    fun removeRow(extractionTable: ExtractionTable, row: ExtractionTableRow) {
+        viewModelScope.launch {
+            realm.writeBlocking {
+                val latestTable = findLatest(extractionTable) ?: return@writeBlocking
+                latestTable.fields.remove(row)
+            ***REMOVED***
+        ***REMOVED***
+    ***REMOVED***
+
+    fun addRow(extractionTable: ExtractionTable, it: String) {
+        viewModelScope.launch {
+            realm.writeBlocking {
+                val latestTable = findLatest(extractionTable) ?: return@writeBlocking
+                val newFields = realmListOf<ExtractionField>()
+                for (field in latestTable.fields[0].fields) {
+                    val newField = ExtractionField().apply {
+                        templateField = field.templateField
+                        value = ""
+                    ***REMOVED***
+                    newFields.add(newField)
+                ***REMOVED***
+                val newRow = ExtractionTableRow().apply {
+                    rowName = it
+                    fields= newFields
+                ***REMOVED***
+                latestTable.fields.add(newRow)
+            ***REMOVED***
+        ***REMOVED***
+
+    ***REMOVED***
+
+    fun addColumn(extractionTable: ExtractionTable, it: String) {
+        viewModelScope.launch {
+            realm.writeBlocking {
+                val latestTable = findLatest(extractionTable) ?: return@writeBlocking
+                val newTemplateField = TemplateField().apply {
+                    title = it
+                    type = "text"
+                ***REMOVED***
+                for (row in latestTable.fields) {
+                    val newField = ExtractionField().apply {
+                        templateField = newTemplateField
+                        value = ""
+                    ***REMOVED***
+                    row.fields.add(newField)
+                ***REMOVED***
             ***REMOVED***
         ***REMOVED***
 

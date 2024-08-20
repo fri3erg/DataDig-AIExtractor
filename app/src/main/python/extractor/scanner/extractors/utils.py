@@ -572,6 +572,10 @@ def create_pydantic_table_class(template: TemplateTable):
             if required:  # Assuming TemplateField has a 'required' attribute
                 description +="(required)"
             fields[description] = (Optional[field_type]| str, Field(default=default,description=description))
+    title_field= {
+        "title": (str, Field(description="what the table is about", default="title", required=True)),
+    ***REMOVED***
+    fields.update(title_field)
 
 
     model = create_model("DynamicModel", **fields)  # Use create_model for dynamic creation
@@ -662,7 +666,11 @@ def extracted_from_pydantic(template:Template, tagged) -> List[ExtractedField]:
     for field in tagged.__fields__:
         value = getattr(tagged, field,"N/A")
         if isinstance(value, list):
+            
+            value= [str(v).replace("|", "\\") for v in value]
             value = "| ".join(value)
+        else:
+            value = str(value).replace("|", "\\")
         matching_template_field:TemplateField | None = next(
             (tf for tf in template.fields if tf.title == field), None
         )  
@@ -673,11 +681,14 @@ def extracted_from_pydantic(template:Template, tagged) -> List[ExtractedField]:
     return extracted
 
 
-def extracted_from_pydantic_table(self,tagged_data, template: TemplateTable) -> Dict[str, Dict[str, ExtractedField]]:
+def extracted_from_pydantic_table(self,tagged_data, template: TemplateTable) ->tuple[ Dict[str, Dict[str, ExtractedField]],str]:
     """Extracts structured data from a tagged Pydantic model into a matrix."""
 
     result_matrix: Dict[str, Dict[str, ExtractedField]] = {***REMOVED***
-
+    
+    title = getattr(tagged_data, "title", "title")
+    if getattr(tagged_data, 'title', None) is not None:
+        del tagged_data.title
     # Initialize empty dicts for each row
     for row in template.rows:
         result_matrix[row.title] = {***REMOVED***
@@ -704,6 +715,6 @@ def extracted_from_pydantic_table(self,tagged_data, template: TemplateTable) -> 
             # Store in result matrix
             result_matrix[matching_row.title][matching_col.title] = extracted_field
 
-    return result_matrix
+    return result_matrix, title
     
 

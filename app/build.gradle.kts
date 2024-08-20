@@ -118,6 +118,7 @@ android {
                 install("greenlet")
                 install("regex")
                 install("pillow")
+                //install("pydantic_core")
                 //install("instructor == 0.3.0")
                 install("-r", projectDir.absolutePath + "/src/main/python/requirements_kotlin.txt")
                 extractPackages("tesseract")

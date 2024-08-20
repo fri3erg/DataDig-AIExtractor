@@ -122,6 +122,7 @@ pydantic==1.10.0
     #   langchain-core
     #   langsmith
     #   openai
+
 pypdf==4.0.0
     # via -r requirements.in
 pytesseract==0.3.10

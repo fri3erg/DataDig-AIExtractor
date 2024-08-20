@@ -180,8 +180,8 @@ class ExtractionService : Service() {
 
             val chosenOption = classesOptionModule.callAttr(
                 "Options",  // Directly call the constructor
-                PyObject.fromJava(options?.language),
                 PyObject.fromJava(options?.model),
+                PyObject.fromJava(options?.language),
                 PyObject.fromJava(options?.azureOcr),
                 PyObject.fromJava(getApiKey),
                 PyObject.fromJava(options?.format)
@@ -302,6 +302,7 @@ private fun extractTable(pyExtractedTable: PyObject, template: Template): Extrac
 
 
     val realmExtractionTable = ExtractionTable().apply {
+        title = pyExtractedTable["title"].toString()
         templateTable = template.tables.first {
             it.id.toHexString() == pyExtractedTable["template_table"]?.get("id").toString()
         ***REMOVED***
@@ -386,12 +387,17 @@ private fun getTemplate(
     ***REMOVED***
 ***REMOVED***  // Add Base64 image to the Python list
         ***REMOVED***
+
+        val keywords = builtinsModule.callAttr("list") // Create an empty Python list
+        for (keyword in realmTable.keywords) {
+            keywords.callAttr("append", PyObject.fromJava(keyword))
+        ***REMOVED***
         pyTables.callAttr(
             "append", classesModule.callAttr(
                 "TemplateTable",
                 PyObject.fromJava(realmTable.id.toHexString()),
                 PyObject.fromJava(realmTable.title),
-                PyObject.fromJava(realmTable.keywords.toList()),
+                keywords,
                 PyObject.fromJava(realmTable.description),
                 pyTableRows,
                 pyTableColumns
@@ -407,7 +413,6 @@ private fun getTemplate(
         PyObject.fromJava(template.description),
         pyFields, // Pass the created Python TemplateField list
         pyTables, // Pass the created Python TemplateTable list
-        PyObject.fromJava(template.tags.toList())
     )
     return pythonTemplate
 ***REMOVED***

@@ -67,14 +67,25 @@ import android.provider.MediaStore
 import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.activity.result.PickVisualMediaRequest
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DatePicker
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MenuDefaults
+import androidx.compose.material3.MenuItemColors
 import androidx.compose.material3.Slider
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavController
 import com.canhub.cropper.CropImage
@@ -85,14 +96,23 @@ import com.example.tesifrigo.Screen
 import com.example.tesifrigo.models.ExceptionOccurred
 import com.example.tesifrigo.models.Extraction
 import com.example.tesifrigo.models.ExtractionCosts
+import com.example.tesifrigo.models.ExtractionField
 import com.example.tesifrigo.models.ExtractionTable
 import com.example.tesifrigo.models.Review
+import com.example.tesifrigo.ui.template.BooleanFieldWithLabel
+import com.example.tesifrigo.ui.theme.vale
 import com.example.tesifrigo.utils.FileCard
+import com.example.tesifrigo.utils.HelpIconButton
 import com.example.tesifrigo.utils.MyImageArea
-import com.example.tesifrigo.utils.TableCell
+import com.example.tesifrigo.utils.ExtractionTableCell
 import com.example.tesifrigo.viewmodels.ExtractionViewModel
 import com.guru.fontawesomecomposelib.FaIcon
 import com.guru.fontawesomecomposelib.FaIcons
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -165,7 +185,10 @@ fun SingleExtractionScreen(
                             item {
                                 Text(
                                     text = "Extracted Tables",
-                                    style = MaterialTheme.typography.titleLarge
+                                    style = MaterialTheme.typography.titleLarge,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.Black,
+                                    modifier = Modifier.padding(8.dp)
                     ***REMOVED***
                             ***REMOVED***
                             items(tables) { table ->
@@ -176,15 +199,36 @@ fun SingleExtractionScreen(
 
                     // Extracted Fields Section
                     if (extraction.extractedFields.isNotEmpty()) {
-                        item {
+                        item { // Wrap the entire section (title and fields) in a single item
                             Text(
                                 text = "Extracted Fields",
-                                style = MaterialTheme.typography.titleLarge
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(8.dp) // Add some bottom padding
                 ***REMOVED***
-                        ***REMOVED***
-                        itemsIndexed(extraction.extractedFields) { index, _ ->
-                            ExtractionFieldComposable(extraction, index, extractionViewModel)
+                            Card(
+                                modifier = Modifier.fillMaxWidth(),
+                                elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = vale,
+                                    contentColor = Color.Black
+                    ***REMOVED***,
+                                shape = RoundedCornerShape(8.dp)
 
+                ***REMOVED*** {
+                                Column(modifier = Modifier.padding(16.dp))
+                                {
+                                    // Iterate over fields and display them within the Card
+                                    for (field in extraction.extractedFields) {
+                                        ExtractionFieldComposable(
+                                            field = field,
+                                            viewModel = extractionViewModel
+                            ***REMOVED***
+                                        HorizontalDivider()
+                                    ***REMOVED***
+
+                                ***REMOVED***
+                            ***REMOVED***
                         ***REMOVED***
 
                     ***REMOVED***
@@ -193,13 +237,20 @@ fun SingleExtractionScreen(
                     item {
                         Card(
                             modifier = Modifier.fillMaxWidth(),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                            elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = vale,
+                                contentColor = Color.Black
+                ***REMOVED***,
+                            shape = RoundedCornerShape(8.dp)
             ***REMOVED*** {
                             Column(modifier = Modifier.padding(16.dp)) {
                                 // Extraction Tags Section
                                 TagsSection(extraction, extractionViewModel)
+                                Spacer(modifier = Modifier.height(16.dp))
 
                                 ExtractionCostsComposable(extraction.extractionCosts)
+                                Spacer(modifier = Modifier.height(8.dp))
 
                                 ExtractionExceptions(extraction.exceptionsOccurred)
 
@@ -289,11 +340,15 @@ fun ExtractionExceptions(exceptionsOccurred: List<ExceptionOccurred>) {
         Text(
             "No exceptions occurred.", style = MaterialTheme.typography.bodyMedium
         )
+        Spacer(modifier = Modifier.height(8.dp))
     ***REMOVED*** else {
         Column {
             for (exception in exceptionsOccurred) {
                 HorizontalDivider()
-                Row {
+                Row(
+                    modifier = Modifier
+                        .padding(8.dp)
+    ***REMOVED*** {
                     Text(
                         text = exception.error,
                         style = MaterialTheme.typography.bodyMedium,
@@ -309,7 +364,8 @@ fun ExtractionExceptions(exceptionsOccurred: List<ExceptionOccurred>) {
                     text = exception.errorDescription,
                     style = MaterialTheme.typography.bodyMedium,
                     maxLines = 5,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(8.dp)
     ***REMOVED***
 
             ***REMOVED***
@@ -484,7 +540,11 @@ fun TemplateInfo(
     ***REMOVED***
     Card(
         modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = vale,
+            contentColor = Color.Black
+        )
     ) {
         Column(
             modifier = Modifier
@@ -498,7 +558,7 @@ fun TemplateInfo(
                 .clickable {
                     val templateId = extraction.template?.id
                     if (templateId != null) {
-                        navController.navigate(Screen.EditTemplate.routeWithOptionalArgs("templateId" to templateId.toString()))
+                        navController.navigate(Screen.EditTemplate.withArgs("templateId" to templateId.toString()))
                     ***REMOVED*** else {
                         Toast
                             .makeText(
@@ -507,13 +567,16 @@ fun TemplateInfo(
                             .show()
                     ***REMOVED***
                 ***REMOVED***
-                .padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                FaIcon(faIcon = FaIcons.File, size = 24.dp)
+                .padding(8.dp), verticalAlignment = Alignment.CenterVertically
+***REMOVED***
+            {
+                FaIcon(faIcon = FaIcons.Table, size = 24.dp)
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = extraction.template?.title ?: "No title",
+                    text = extraction.title ,
                     style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.primary
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold
     ***REMOVED***
             ***REMOVED***
             Spacer(modifier = Modifier.height(20.dp))
@@ -522,20 +585,26 @@ fun TemplateInfo(
             if (extraction.image.isNotEmpty()) {
                 MyImageArea(
                     imageUris = extraction.image.map { Uri.parse(it) ***REMOVED***,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    onDelete = null
 
     ***REMOVED***
             ***REMOVED***
-            Spacer(modifier = Modifier.height(20.dp))
-            Text(
-                text = "Added Images:", style = MaterialTheme.typography.titleMedium
-***REMOVED***
-            Spacer(modifier = Modifier.height(20.dp))
 
             if (extraction.extraImages.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(
+                    text = "Added Images:",
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold
+    ***REMOVED***
+                Spacer(modifier = Modifier.height(30.dp))
                 MyImageArea(
                     imageUris = extraction.extraImages.map { Uri.parse(it) ***REMOVED***,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    onDelete = { viewModel.removeExtraImage(extraction, it) ***REMOVED***
     ***REMOVED***
             ***REMOVED***
             Row(
@@ -547,8 +616,10 @@ fun TemplateInfo(
                 Button(onClick = {
                     onPhotoGalleryClick()
                 ***REMOVED***) {
-                    Text("Add Images")
+                    Text("Add an extra image")
                 ***REMOVED***
+
+                HelpIconButton(title="Extra Images",helpText = "Add an extra image to the extraction, these are separate from the extraction and are only for your commodity, use these for logos or other images that you want attached to the extraction.")
 
             ***REMOVED***
         ***REMOVED***
@@ -639,13 +710,24 @@ fun ExtractionTableDisplay(extractionTable: ExtractionTable, viewModel: Extracti
 
     Card(
         modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
+        shape = RoundedCornerShape(8.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = vale,
+            contentColor = Color.Black
+        )
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(2.dp)
         ) {
+            Text(
+                text = extractionTable.title ?: "Table",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+***REMOVED***
             // Header Row
             if (columnHeaders != null) {
                 Row(
@@ -654,23 +736,38 @@ fun ExtractionTableDisplay(extractionTable: ExtractionTable, viewModel: Extracti
                         .padding(8.dp)
     ***REMOVED*** {
                     // Add an empty cell for the row index header
-                    TableCell(text = "",
+                    ExtractionTableCell(
+                        text = "",
                         modifier = Modifier.weight(1f),
-                        isHeader = true,
-                        onTextChange = {***REMOVED***)
+                        onValueChange = {***REMOVED***,
+                        onDelete = {***REMOVED***,
+                        invisible = true
+        ***REMOVED***
 
                     for (header in columnHeaders) {
-                        TableCell(text = header,
+                        ExtractionTableCell(
+                            text = header,
                             modifier = Modifier.weight(1f),
                             isHeader = true,
-                            onTextChange = {***REMOVED***)
+                            onDelete = {viewModel.removeColumn(extractionTable, header) ***REMOVED***,
+
+
+                ***REMOVED***
                     ***REMOVED***
+
+                    ExtractionTableCell(
+                        text = "",
+                        modifier = Modifier.weight(1f),
+                        buttonClick = {
+                            viewModel.addColumn(extractionTable, it)
+                        ***REMOVED***,
+                        isButton = true,
+        ***REMOVED***
                 ***REMOVED***
             ***REMOVED***
 
             // Data Rows
-            for ((rowIndex, row) in extractionTable.fields.withIndex()) {
-                HorizontalDivider(color = Color.LightGray)
+            for (row in extractionTable.fields) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -685,19 +782,55 @@ fun ExtractionTableDisplay(extractionTable: ExtractionTable, viewModel: Extracti
 
                         contentAlignment = Alignment.CenterStart // Center the content vertically within the Box
         ***REMOVED*** {
-                        TableCell(text = (rowIndex + 1).toString(),
+                        ExtractionTableCell(
+                            text = row.rowName,
                             modifier = Modifier.align(Alignment.CenterStart),
                             isHeader = true,
-                            onTextChange = {***REMOVED***)
+                            onDelete = { viewModel.removeRow(extractionTable, row) ***REMOVED***)
                     ***REMOVED***
                     for (field in row.fields) {
-                        TableCell(text = field.value,
+                        ExtractionTableCell(
+                            text = field.value,
                             modifier = Modifier.weight(1f),
-                            onTextChange = { viewModel.updateField(field, it) ***REMOVED***)
+                            onValueChange = { newValue ->
+                                viewModel.updateField(field, newValue)
+                            ***REMOVED***)
+
                     ***REMOVED***
+                    ExtractionTableCell(
+                        text = "",
+                        modifier = Modifier.weight(1f),
+                        invisible = true,
+        ***REMOVED***
                 ***REMOVED***
             ***REMOVED***
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp)
+***REMOVED*** {
+            ExtractionTableCell(
+                text = "",
+                modifier = Modifier.weight(1f),
+                buttonClick = {
+                    viewModel.addRow(extractionTable, it)
+                ***REMOVED***,
+                isButton = true,
+***REMOVED***
+                for (field in extractionTable.fields[0].fields) {
+                    ExtractionTableCell(
+                        text = "",
+                        modifier = Modifier.weight(1f),
+                        invisible = true,)
+
+                ***REMOVED***
+                ExtractionTableCell(
+                    text = "",
+                    modifier = Modifier.weight(1f),
+                    invisible = true,
+    ***REMOVED***
         ***REMOVED***
+            ***REMOVED***
     ***REMOVED***
 ***REMOVED***
 
@@ -706,11 +839,12 @@ fun ExtractionTableDisplay(extractionTable: ExtractionTable, viewModel: Extracti
 @Composable
 fun FormatSection(extraction: Extraction, viewModel: ExtractionViewModel) {
 
-    Text("Extraction Format", style = MaterialTheme.typography.titleMedium)
+    Text("Extraction Format", style = MaterialTheme.typography.titleMedium,
+        modifier = Modifier.padding(8.dp))
 
     var expanded by remember { mutableStateOf(false) ***REMOVED***
     var selectedFormat by remember { mutableStateOf(extraction.format) ***REMOVED***
-    val formatOptions = listOf("json", "csv", "txt") // Add more formats if needed
+    val formatOptions = listOf("json", "csv", "txt", "xml") // Add more formats if needed
     val context = LocalContext.current
 
     ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded ***REMOVED***) {
@@ -723,12 +857,18 @@ fun FormatSection(extraction: Extraction, viewModel: ExtractionViewModel) {
                     expanded = expanded
     ***REMOVED***
             ***REMOVED***,
-            colors = ExposedDropdownMenuDefaults.textFieldColors(),
+            colors = ExposedDropdownMenuDefaults.textFieldColors(
+                focusedLabelColor = Color.Black,
+                unfocusedLabelColor = Color.Black,
+                unfocusedContainerColor = Color.White,
+                focusedContainerColor = Color.White,
+***REMOVED***,
             modifier = Modifier.menuAnchor()
 
         )
 
-        ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false ***REMOVED***) {
+        ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false ***REMOVED***,
+            modifier = Modifier.background(Color.White)) {
             formatOptions.forEach { format ->
                 DropdownMenuItem(text = { Text(format) ***REMOVED***, onClick = {
                     selectedFormat = format
@@ -752,36 +892,131 @@ fun FormatSection(extraction: Extraction, viewModel: ExtractionViewModel) {
 
 @Composable
 fun ExtractionFieldComposable(
-    extraction: Extraction,
-    index: Int,
+    field: ExtractionField,
     viewModel: ExtractionViewModel,
     modifier: Modifier = Modifier
 ) {
-    var value by remember { mutableStateOf(extraction.extractedFields[index].value) ***REMOVED***
-    extraction.extractedFields[index].templateField?.let { templateField ->
+    val value by remember { mutableStateOf(field.value) ***REMOVED***
+    field.templateField?.let { templateField ->
         Column(
             modifier = modifier
                 .fillMaxWidth()
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text(
-                text = templateField.title, style = MaterialTheme.typography.titleMedium
-***REMOVED***
-            OutlinedTextField(value = value,
-                onValueChange = { newText ->
-                    value = newText
-                    viewModel.updateField(extraction.extractedFields[index], newText)
-                ***REMOVED***,
-                label = { Text(text = "Value") ***REMOVED***,
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(8.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = MaterialTheme.colorScheme.primary,
-                    unfocusedBorderColor = MaterialTheme.colorScheme.outline
+            val elements = if (templateField.list) value.split("|") else listOf(value)
+            Text(text = templateField.title, style = MaterialTheme.typography.titleMedium)
 
+            var editableElements by remember { mutableStateOf(elements) ***REMOVED*** // Use a separate state for editing
+
+            for ((index, element) in editableElements.withIndex()) {
+                Picker(
+                    type = templateField.type,
+                    text = element,
+                    changeText = { newText ->
+                        editableElements = editableElements.toMutableList().also { it[index] = newText ***REMOVED***
+                        val updatedValue = if (templateField.list) editableElements.joinToString("|") else newText
+                        viewModel.updateField(field, updatedValue)
+                    ***REMOVED***
     ***REMOVED***
-***REMOVED***
+            ***REMOVED***
+
         ***REMOVED***
     ***REMOVED***
 ***REMOVED***
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun Picker(
+    type: String,
+    text:String,
+    changeText: (String) -> Unit,
+){
+    var editableText by remember { mutableStateOf(text) ***REMOVED***
+    when (type) {
+        "Text", "Any" -> {
+            OutlinedTextField(value = editableText,
+                onValueChange = { newText ->
+                    editableText = newText
+                    changeText(newText)
+                ***REMOVED***,
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedBorderColor = Color.Black,
+                    unfocusedLabelColor = Color.Black,
+
+        ***REMOVED***,
+                label = { Text("Field Value") ***REMOVED***)
+        ***REMOVED***
+
+        "Number" -> {
+            OutlinedTextField(value = text,
+                onValueChange = { newText ->
+                    editableText = newText
+                    changeText(newText)
+                ***REMOVED***,
+                label = { Text("Field Default (Number)") ***REMOVED***,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+
+***REMOVED***
+        ***REMOVED***
+
+        "Date" -> {
+                val datePickerState =
+                    rememberDatePickerState(initialSelectedDateMillis = text?.let {
+                        try {
+                            SimpleDateFormat(
+                                "yyyy-MM-dd", Locale.getDefault()
+                ***REMOVED***.apply {
+                                timeZone = TimeZone.getTimeZone("UTC")
+                            ***REMOVED***.parse(it)?.time
+                        ***REMOVED*** catch (e: ParseException) {
+                            null
+                        ***REMOVED***
+                    ***REMOVED***) // State for DatePicker
+                Spacer(modifier = Modifier.height(8.dp))
+                Box(
+                    modifier = Modifier
+                        .border(1.dp, Color.Gray, shape = RoundedCornerShape(4.dp))
+                        .padding(5.dp)
+    ***REMOVED*** {
+                    Text(
+                        text = "Date",
+                        modifier = Modifier
+                            .padding(6.dp)
+                            .align(Alignment.TopStart),
+                        color = Color.Black
+        ***REMOVED***
+                    DatePicker( // Use DatePicker for "Date" type
+                        state = datePickerState
+        ***REMOVED***
+                ***REMOVED***
+
+            ***REMOVED***
+
+
+        "Boolean" -> {
+            BooleanFieldWithLabel(
+                label = "Field Default",
+                value = text.toBoolean(),
+                onValueChange = { newText:Boolean ->
+                    editableText = newText.toString()
+                    changeText(newText.toString())
+                ***REMOVED***,
+***REMOVED***
+        ***REMOVED***
+
+        "Float" -> {
+            OutlinedTextField(
+                value = text,
+                onValueChange = { newText: String ->
+                    editableText = newText
+                    changeText(newText)
+                ***REMOVED***,
+                label = { Text("Field Value (Float)") ***REMOVED***,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+
+***REMOVED***
+
+        ***REMOVED***
+    ***REMOVED***
+    ***REMOVED***

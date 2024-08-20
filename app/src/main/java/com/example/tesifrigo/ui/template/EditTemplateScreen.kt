@@ -233,7 +233,13 @@ fun TemplateKeyWordsSection(
 ) {
     val context = LocalContext.current
     Column {
-        Text("Table Keywords", style = MaterialTheme.typography.titleMedium)
+        Row {
+            Text("Table Keywords", style = MaterialTheme.typography.titleMedium)
+            Spacer(modifier = Modifier.width(8.dp))
+            HelpIconButton(helpText = "These are the keywords that the LLM will look for in the text to extract the table.",
+                title = "Table Keywords")
+            Spacer(modifier = Modifier.weight(1f))
+        ***REMOVED***
         FlowRow(
             modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)
 
@@ -473,7 +479,12 @@ fun TemplateFieldComposable(
                                 viewModel.updateTemplateItem(
                                     template, "list" to newValue, index
                     ***REMOVED***
-                            ***REMOVED***,
+                                default=""
+                                viewModel.updateTemplateItem(
+                                    template, "default" to "", index
+                    ***REMOVED***
+
+                                ***REMOVED***,
             ***REMOVED***
                     ***REMOVED***
 
@@ -625,13 +636,6 @@ fun DefaultPicker(
                                 .align(Alignment.TopEnd)
                                 .padding(6.dp)
             ***REMOVED***
-                        Text(
-                            text = "Default date",
-                            modifier = Modifier
-                                .padding(6.dp)
-                                .align(Alignment.TopStart),
-                            color = Color.Black
-            ***REMOVED***
                         DatePicker( // Use DatePicker for "Date" type
                             state = datePickerState
             ***REMOVED***
@@ -676,10 +680,19 @@ fun DefaultPicker(
                     OutlinedTextField(value = it,
                         onValueChange = { newValue ->
                             changeDefault(newValue)
-                            viewModel.updateTemplateItem(
-                                template, "default" to newValue, index
-                ***REMOVED***
+                            if(newValue=="") {
+                                viewModel.updateTemplateItem(
+                                    template, "default" to "", index
+                    ***REMOVED***
+                            ***REMOVED***
+                            newValue.toFloatOrNull()?.let {
+                                viewModel.updateTemplateItem(
+                                    template, "default" to newValue, index
+                    ***REMOVED***
+                            ***REMOVED***
+
                         ***REMOVED***,
+                        enabled = !isList,
                         label = { Text("Field Default (Float)") ***REMOVED***,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         modifier = Modifier.weight(1f),
@@ -1062,6 +1075,62 @@ fun AlertTable(
                         this.required = selectedRequired
                     ***REMOVED***
                     onValueChange(newField) // Pass the edited text
+                    // You'll likely want to pass the selectedType to your ViewModel as well
+                    changeShowDialog(false)
+                ***REMOVED***) {
+                    Text("OK")
+                ***REMOVED***
+
+            ***REMOVED***
+
+        ***REMOVED***)
+***REMOVED***
+
+
+@Composable
+fun AlertTableExtraction(
+    text: String,
+    onValueChange: (String) -> Unit,
+    changeShowDialog: (Boolean) -> Unit,
+    onDelete: (() -> Unit)? = null
+) {
+    var editableText by remember { mutableStateOf(text) ***REMOVED***
+    AlertDialog(containerColor = Color.White,
+        onDismissRequest = { changeShowDialog(false) ***REMOVED***,
+        title = { Text("Edit Value") ***REMOVED***,
+        text = {
+            Column {
+                OutlinedTextField(value = editableText,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedBorderColor = Color.Black,
+                        unfocusedLabelColor = Color.Black,
+        ***REMOVED***,
+                    onValueChange = { editableText = it ***REMOVED***,
+                    label = { Text("Enter Value", color = Color.Black) ***REMOVED***)
+            ***REMOVED***
+        ***REMOVED***,
+        confirmButton = {
+            Row {
+                if(onDelete != null) {
+                    TextButton(
+                        onClick = {
+                            onDelete()
+                            changeShowDialog(false)
+                        ***REMOVED***, modifier = Modifier.padding(end = 8.dp)
+        ***REMOVED*** {
+                        Text("Delete", color = dark_red)
+                    ***REMOVED***
+                    Spacer(modifier = Modifier.weight(1f))
+                ***REMOVED***
+                else{
+                    Spacer(modifier = Modifier.weight(1f))
+                ***REMOVED***
+                TextButton(onClick = { changeShowDialog(false) ***REMOVED***) {
+                    Text("Cancel")
+                ***REMOVED***
+                Spacer(modifier = Modifier.width(4.dp))
+                TextButton(onClick = {
+                    onValueChange(editableText) // Pass the edited text
                     // You'll likely want to pass the selectedType to your ViewModel as well
                     changeShowDialog(false)
                 ***REMOVED***) {

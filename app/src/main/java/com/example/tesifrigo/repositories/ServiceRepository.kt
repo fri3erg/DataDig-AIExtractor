@@ -5,6 +5,8 @@ import android.content.Context
 import com.example.tesifrigo.MyApp
 import com.example.tesifrigo.fileCreator.CsvCreator
 import com.example.tesifrigo.fileCreator.JsonCreator
+import com.example.tesifrigo.fileCreator.TextCreator
+import com.example.tesifrigo.fileCreator.XmlCreator
 import com.example.tesifrigo.models.Extraction
 import com.example.tesifrigo.models.Options
 import com.example.tesifrigo.models.Template
@@ -93,6 +95,13 @@ class ServiceRepository @Inject constructor(
                             CsvCreator().convertToCsvFile(newResult, context).toString()
 
                     ***REMOVED***
+                    "text" -> {
+                        newResult.fileUri = TextCreator().convertToTextFile(newResult, context).toString()
+                    ***REMOVED***
+                    "xml" -> {
+                        newResult.fileUri = XmlCreator().convertToXmlFile(newResult, context).toString()
+                    ***REMOVED***
+
                 ***REMOVED***
                 copyToRealm(newResult, UpdatePolicy.ALL)
                 _result.value = newResult.id.toHexString()

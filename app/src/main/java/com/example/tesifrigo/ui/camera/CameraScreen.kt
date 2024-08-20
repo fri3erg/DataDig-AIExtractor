@@ -31,6 +31,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -39,8 +40,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -49,7 +52,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -74,6 +76,7 @@ import com.example.tesifrigo.services.ExtractionService
 import com.example.tesifrigo.ui.theme.cyan_custom
 import com.example.tesifrigo.ui.theme.light_gray
 import com.example.tesifrigo.ui.theme.vale
+import com.example.tesifrigo.ui.theme.white_trasparent
 import com.example.tesifrigo.utils.DropDownGeneral
 import com.example.tesifrigo.utils.FileCard
 import com.example.tesifrigo.utils.HelpIconButton
@@ -126,79 +129,85 @@ fun CameraScreen(
         template?.let { serviceViewModel.setTemplate(it) ***REMOVED***
     ***REMOVED***
 
-
-    Column(modifier = Modifier.fillMaxSize()) {
-        if (activePhoto) {
-            Column(modifier = Modifier.fillMaxSize()) {
-                CameraPreview(modifier = Modifier.fillMaxSize(),
-                    onSetUri = { newUri ->
-                        serviceViewModel.addImageUri(newUri)
-                        Log.d("CameraScreen", "Image URIs: $imageUris")
-                    ***REMOVED***,
-                    nPhotos = imageUris.size,
-                    changeActivePhoto = { serviceViewModel.setActivePhoto(false) ***REMOVED***)
-
-            ***REMOVED***
+    Scaffold{ innerPadding ->
 
 
-        ***REMOVED*** else if (template == null) {
-            ChooseTemplate(navController, templateViewModel)
+        Column(
+            modifier = Modifier.fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            if (activePhoto) {
+                Column(modifier = Modifier.fillMaxSize()) {
+                    CameraPreview(modifier = Modifier.fillMaxSize(),
+                        onSetUri = { newUri ->
+                            serviceViewModel.addImageUri(newUri)
+                            Log.d("CameraScreen", "Image URIs: $imageUris")
+                        ***REMOVED***,
+                        nPhotos = imageUris.size,
+                        changeActivePhoto = { serviceViewModel.setActivePhoto(false) ***REMOVED***)
 
-        ***REMOVED*** else {
-            ExtractionDetails(
-                template!!.title,
-                modifier = Modifier,
-                navController,
-                imageUris,
-                activeExtraction,
-                onExtractionClick = {
-                    when {
-                        // If GPT keys are missing, show the GPT keys dialog
-                        !serviceViewModel.gptKeysExist() -> {
-                            openGptKeysDialog = true
-                        ***REMOVED***
+                ***REMOVED***
 
-                        // If Azure keys are missing and the conditions for Azure OCR are met, show the Azure keys dialog
-                        !serviceViewModel.azureKeysExist() -> {
-                            when {
-                                // If there are tables, set the reason for tables and show the dialog
-                                template?.tables?.isNotEmpty() == true -> {
-                                    openAzureKeysDialog = true
-                                    reasonTable = true
-                                ***REMOVED***
-                                // If the Azure OCR option is enabled, show the dialog without table reasons
-                                options?.azureOcr == true -> {
-                                    openAzureKeysDialog = true
-                                    reasonTable = false
-                                ***REMOVED***
-                                // If neither tables nor Azure OCR are required, proceed with extraction
-                                else -> {
-                                    startExtraction(context, serviceViewModel, imageUris)
+
+            ***REMOVED*** else if (template == null) {
+                ChooseTemplate(navController, templateViewModel)
+
+            ***REMOVED*** else {
+                ExtractionDetails(
+                    template!!.title,
+                    modifier = Modifier,
+                    navController,
+                    imageUris,
+                    activeExtraction,
+                    onExtractionClick = {
+                        when {
+                            // If GPT keys are missing, show the GPT keys dialog
+                            !serviceViewModel.gptKeysExist() -> {
+                                openGptKeysDialog = true
+                            ***REMOVED***
+
+                            // If Azure keys are missing and the conditions for Azure OCR are met, show the Azure keys dialog
+                            !serviceViewModel.azureKeysExist() -> {
+                                when {
+                                    // If there are tables, set the reason for tables and show the dialog
+                                    template?.tables?.isNotEmpty() == true -> {
+                                        openAzureKeysDialog = true
+                                        reasonTable = true
+                                    ***REMOVED***
+                                    // If the Azure OCR option is enabled, show the dialog without table reasons
+                                    options?.azureOcr == true -> {
+                                        openAzureKeysDialog = true
+                                        reasonTable = false
+                                    ***REMOVED***
+                                    // If neither tables nor Azure OCR are required, proceed with extraction
+                                    else -> {
+                                        startExtraction(context, serviceViewModel, imageUris)
+                                    ***REMOVED***
                                 ***REMOVED***
                             ***REMOVED***
-                        ***REMOVED***
 
-                        // If all necessary keys exist, proceed with extraction
-                        else -> {
-                            startExtraction(context, serviceViewModel, imageUris)
+                            // If all necessary keys exist, proceed with extraction
+                            else -> {
+                                startExtraction(context, serviceViewModel, imageUris)
+                            ***REMOVED***
                         ***REMOVED***
-                    ***REMOVED***
-                ***REMOVED***,
-                serviceViewModel,
-                extractionViewModel,
-                templateViewModel,
-                sharedPrefs
-***REMOVED***
+                    ***REMOVED***,
+                    serviceViewModel,
+                    extractionViewModel,
+                    templateViewModel,
+                    sharedPrefs
+    ***REMOVED***
 
+            ***REMOVED***
         ***REMOVED***
-    ***REMOVED***
-    if (openAzureKeysDialog) {
-        AzureKeysDialog({ openAzureKeysDialog = false ***REMOVED***, navController, reasonTable)
-    ***REMOVED***
-    if (openGptKeysDialog) {
-        GptKeysDialog({ openGptKeysDialog = false ***REMOVED***, navController)
-    ***REMOVED***
+        if (openAzureKeysDialog) {
+            AzureKeysDialog({ openAzureKeysDialog = false ***REMOVED***, navController, reasonTable)
+        ***REMOVED***
+        if (openGptKeysDialog) {
+            GptKeysDialog({ openGptKeysDialog = false ***REMOVED***, navController)
+        ***REMOVED***
 
+    ***REMOVED***
 ***REMOVED***
 
 @Composable
@@ -446,18 +455,20 @@ fun ExtractionDetails(
         serviceViewModel.setOptions(defaultOptions) // Set the options in the ViewModel
     ***REMOVED***
     Text(
-        "Template: $templateTitle",
+        "Template: \n $templateTitle",
         modifier = modifier.padding(16.dp),
         fontSize = 28.sp,
         fontWeight = FontWeight.Bold,
         color = Color.Black,
     )
-    Spacer(modifier = Modifier.height(30.dp))
+    Spacer(modifier = Modifier.height(2.dp))
     MyImageArea(
         imageUris = imageUris,
+        onDelete = { uri ->
+            serviceViewModel.removeImageUri(uri)
+        ***REMOVED***
     )
     if (!activeExtraction) {
-        HorizontalDivider()
         ButtonBar(serviceViewModel, sharedPrefs, templateViewModel)
         HorizontalDivider()
 
@@ -617,12 +628,14 @@ fun ButtonBar(
                 ***REMOVED***
                 checked = change
             ***REMOVED***)
-
+            Spacer(modifier = Modifier.width(8.dp))
             HelpIconButton("Use Azure OCR for the extraction")
         ***REMOVED***
+        Spacer(modifier = Modifier.width(8.dp))
 
     ***REMOVED***
     HorizontalDivider()
+    Spacer(modifier = Modifier.height(8.dp))
     Row {
         options?.let {
             val modelList =
@@ -641,7 +654,7 @@ fun ButtonBar(
                 ***REMOVED***, modifier = Modifier.weight(1f), defaultSelectedItemIndex = defaultIndex
 ***REMOVED***
             HelpIconButton("Select the model to use for the extraction")
-            val formatList = listOf("json", "csv", "xml")
+            val formatList = listOf("json", "csv","txt", "xml")
             DropDownGeneral(
                 items = formatList,
                 onItemSelected = { selectedItem ->
@@ -897,11 +910,14 @@ fun CameraPreview(
         Button(
             modifier = Modifier
                 .padding(bottom = 20.dp, start = 24.dp)
-                .align(Alignment.BottomStart),
+                .align(Alignment.BottomStart)
+                .height(50.dp),
 
             shape = RoundedCornerShape(8.dp),
-            colors = ButtonDefaults.buttonColors(Color.White),
-            onClick = onPhotoGalleryClick
+            colors = ButtonDefaults.buttonColors(
+                white_trasparent),
+            onClick = onPhotoGalleryClick,
+            elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
         ) {
             FaIcon(
                 faIcon = FaIcons.Images, // Using the gallery icon
@@ -913,10 +929,12 @@ fun CameraPreview(
         // Capture Button
         Button(modifier = Modifier
             .padding(bottom = 20.dp)
-            .size(90.dp) // Adjust the size as needed
+            .size(80.dp) // Adjust the size as needed
             .clip(CircleShape) // Clip the button to be a circle
-            .align(Alignment.BottomCenter), colors = ButtonDefaults.buttonColors(Color.White),
-
+            .align(Alignment.BottomCenter),
+            colors = ButtonDefaults.buttonColors(Color.Transparent),
+            border = BorderStroke(5.dp, Color.White),
+            elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp),
             onClick = {
                 takePhoto(
                     imageCapture = imageCapture,
@@ -929,9 +947,7 @@ fun CameraPreview(
                     context = context
     ***REMOVED***
                 showFlash = true
-            ***REMOVED***) {
-            Text("Capture")
-        ***REMOVED***
+            ***REMOVED***){***REMOVED***
 
         // Gallery Button
         if (nPhotos > 0) {
@@ -939,13 +955,15 @@ fun CameraPreview(
                 modifier = Modifier
                     .padding(bottom = 20.dp, end = 20.dp)
                     .align(Alignment.BottomEnd)
-                    .size(65.dp),
+                    .size(60.dp),
                 shape = CircleShape,
-                colors = ButtonDefaults.buttonColors(Color.White),
+                elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp),
+                colors = ButtonDefaults.buttonColors(white_trasparent),
                 onClick = changeActivePhoto
 ***REMOVED*** {
                 FaIcon(
                     faIcon = FaIcons.Check,
+                    modifier = Modifier.padding(end = 4.dp),
                     tint = Color.Black,
                     size = 24.dp,
     ***REMOVED***
@@ -957,7 +975,7 @@ fun CameraPreview(
                 .padding(20.dp)
                 .size(70.dp, 35.dp)
                 .background(
-                    Color.White,
+                    white_trasparent,
                     shape = RoundedCornerShape(10.dp) // Apply RoundedCornerShape to background
     ***REMOVED***
                 .align(Alignment.TopStart),

@@ -102,6 +102,12 @@ class ServiceViewModel @Inject constructor(
         return keyManager.getApiKey(Keys.API_KEY_2) != null && keyManager.getApiKey(Keys.API_KEY_3) != null
     ***REMOVED***
 
+    fun removeImageUri(index: Int) {
+        val list = _imageUris.value.toMutableList()
+        list.removeAt(index)
+        _imageUris.value = list
+    ***REMOVED***
+
 
 ***REMOVED***
 

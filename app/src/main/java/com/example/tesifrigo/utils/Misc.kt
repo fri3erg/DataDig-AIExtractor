@@ -10,6 +10,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,9 +18,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -37,6 +40,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -50,6 +54,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -58,19 +63,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.FileProvider
 import coil.compose.AsyncImage
 import com.example.tesifrigo.models.Extraction
+import com.example.tesifrigo.ui.template.AlertTableExtraction
 import com.example.tesifrigo.ui.theme.cyan_custom
+import com.example.tesifrigo.ui.theme.dark_blue
 import com.example.tesifrigo.ui.theme.dark_red
 import com.example.tesifrigo.ui.theme.light_gray
+import com.example.tesifrigo.ui.theme.vale
+import com.example.tesifrigo.ui.theme.white_trasparent
 import com.guru.fontawesomecomposelib.FaIcon
 import com.guru.fontawesomecomposelib.FaIcons
 import java.io.File
@@ -121,44 +132,97 @@ fun DeleteButton(
         ***REMOVED***)
 ***REMOVED***
 
-
 @Composable
-fun TableCell(
-    text: String,
+fun ExtractionTableCell(
     modifier: Modifier = Modifier,
+    text: String = "",
     isHeader: Boolean = false,
-    onTextChange: (String) -> Unit
+    onValueChange: (String) -> Unit = {***REMOVED***,
+    invisible: Boolean = false,
+    isButton: Boolean = false,
+    buttonClick: (String) -> Unit = {***REMOVED***,
+    onDelete: (() -> Unit)? = null
 ) {
-    val modifierPadded = modifier.padding(4.dp)
+    var showDialog by remember { mutableStateOf(false) ***REMOVED***
+    var modifierPadded = modifier
+        .padding(1.dp)
+        .defaultMinSize(minWidth = 24.dp, minHeight = 24.dp) // Ensure a minimum width for cells
+    var boxSize by remember { mutableStateOf(IntSize.Zero) ***REMOVED***
+    val editedText by remember { mutableStateOf(text) ***REMOVED***
+
+    if (!invisible) {
+        modifierPadded = modifierPadded.border(1.dp, Color.Gray)
+    ***REMOVED***
+    if (isHeader) {
+        modifierPadded = modifierPadded.background(Color.LightGray)
+    ***REMOVED***
+    if (isButton) {//pls round the button
+        modifierPadded = modifierPadded
+            .background(dark_blue)
+            .clip(shape = RoundedCornerShape(4.dp))
+    ***REMOVED***
+    var showX by remember { mutableStateOf(false) ***REMOVED***
     Box(
-        modifier = modifierPadded, contentAlignment = Alignment.Center
+        modifier = modifierPadded.onSizeChanged { size ->
+            boxSize = size
+        ***REMOVED***, contentAlignment = Alignment.Center
+
     ) {
         if (isHeader) {
-            Text(
-                text = text,
-                fontSize = 14.sp,
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Bold,
-                overflow = TextOverflow.Ellipsis,
-***REMOVED***
-        ***REMOVED*** else {
-            OutlinedTextField(modifier = modifier.align(Alignment.Center),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Color.Blue,
-                    unfocusedBorderColor = Color.LightGray,
-                    cursorColor = Color.Gray,
-                    unfocusedContainerColor = Color.White,
-                    focusedContainerColor = Color.White,
+            if (showX) {
+                FaIcon(faIcon = FaIcons.Times,
+                    tint = dark_red,
+                    size = 20.dp,
+                    modifier = Modifier
+                        .clickable {
+                            if (onDelete != null) {
+                                onDelete()
+                            ***REMOVED***
+                            showX = false
+                        ***REMOVED***)
 
-        ***REMOVED***,
-                value = text,
-                onValueChange = {
-                    onTextChange(it)
-                ***REMOVED***,
-                maxLines = 4,
-                label = { Text("Edit") ***REMOVED*** // Optional label
-***REMOVED***
+            ***REMOVED*** else {
+                Text(text = text,
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Bold,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1, // Limit to a single line
+                    modifier = Modifier
+                        .clickable {
+                            showX = true
+                        ***REMOVED***
+                        .fillMaxWidth())
+            ***REMOVED***
+
+        ***REMOVED*** else if (isButton) {
+                FaIcon(faIcon = FaIcons.Plus,
+                    tint = Color.White,
+                    size = 20.dp,
+                    modifier = Modifier
+                        .clickable {
+                            showDialog = true
+                        ***REMOVED***
+                        .align(Alignment.Center)
+    ***REMOVED***
         ***REMOVED***
+        else{
+            Text(text = text,
+                textAlign = TextAlign.Center,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1, // Limit to a single line
+                modifier = Modifier
+                    .clickable {
+                        showDialog = true
+                    ***REMOVED***
+                    .fillMaxWidth())
+        ***REMOVED***
+    ***REMOVED***
+    if(showDialog){
+        AlertTableExtraction(
+            text = editedText, onValueChange =if(isButton) buttonClick else onValueChange, changeShowDialog = {
+        showDialog = false
+        ***REMOVED***,
+            onDelete =onDelete)
     ***REMOVED***
 ***REMOVED***
 
@@ -327,13 +391,21 @@ fun DropDownGeneral(
         TextButton(
             onClick = { expanded = true ***REMOVED***, modifier = Modifier.fillMaxWidth()
         ) {
-            Text(selectedItem)
+            Row {
+                Text(selectedItem)
+                Spacer(modifier = Modifier.weight(1f))
+                FaIcon(faIcon = if (expanded) FaIcons.ChevronUp else FaIcons.ChevronDown,
+                    tint = cyan_custom,
+                    size = 20.dp)
+            ***REMOVED***
         ***REMOVED***
 
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false ***REMOVED***,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.White)
         ) {
             items.forEach { item ->
                 DropdownMenuItem(text = { Text(item) ***REMOVED***, onClick = {
@@ -341,6 +413,7 @@ fun DropDownGeneral(
                     onItemSelected(item)
                     expanded = false
                 ***REMOVED***)
+                HorizontalDivider()
             ***REMOVED***
         ***REMOVED***
     ***REMOVED***
@@ -349,34 +422,66 @@ fun DropDownGeneral(
 
 @Composable
 fun MyImageArea(
-    imageUris: List<Uri>,
-    modifier: Modifier = Modifier,
+    imageUris: List<Uri>, modifier: Modifier = Modifier, onDelete: ((Int) -> Unit)? = null
 ) {
     val pagerState = rememberPagerState(pageCount = { imageUris.size ***REMOVED***)
-
+    val showDialog = remember { mutableStateOf(false) ***REMOVED***
+    var deletedPage by remember { mutableIntStateOf(0) ***REMOVED***
     Column(
         modifier = modifier.fillMaxWidth()
     ) {
         HorizontalPager(
-            state = pagerState,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp)
-                .padding(horizontal = 16.dp),
+            state = pagerState, modifier = Modifier.fillMaxWidth()
         ) { page ->
-            Card(
+            Box(
+                // Wrap the Card in a Box for positioning the icon
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(1f)
-                    .clip(RoundedCornerShape(16.dp)),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                    .background(Color.Transparent),
 ***REMOVED*** {
-                AsyncImage(
-                    model = imageUris[page],
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
-    ***REMOVED***
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(1f),
+                    shape = RoundedCornerShape(32.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = vale, contentColor = Color.Black
+        ***REMOVED***,
+                    border = CardDefaults.outlinedCardBorder(), // Add a border
+    ***REMOVED*** {
+                    // Apply clip to the entire Card content
+                    AsyncImage(
+                        model = imageUris[page],
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(MaterialTheme.shapes.medium), // Clip to the Card's shape
+
+                        contentScale = ContentScale.Crop,
+        ***REMOVED***
+
+                ***REMOVED***
+                if (onDelete != null) {
+                    IconButton(
+                        onClick = {
+                            showDialog.value = true
+                            deletedPage = page
+                        ***REMOVED***,
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .offset(x = 4.dp, y = -(4).dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(white_trasparent)
+        ***REMOVED*** {
+                        FaIcon(
+                            modifier = Modifier
+                            .offset(x = -(4).dp, y = 4.dp),
+                            faIcon = FaIcons.Trash, tint = Color.Black, // Or any color you prefer
+                            size = 24.dp // Adjust size as needed
+            ***REMOVED***
+                    ***REMOVED***
+                ***REMOVED***
             ***REMOVED***
         ***REMOVED***
 
@@ -384,7 +489,7 @@ fun MyImageArea(
         Row(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .padding(16.dp),
+                .padding(top=8.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             repeat(pagerState.pageCount) { page ->
@@ -392,12 +497,29 @@ fun MyImageArea(
                     modifier = Modifier
                         .size(if (pagerState.currentPage == page) 10.dp else 6.dp)
                         .clip(CircleShape)
-                        .background(if (pagerState.currentPage == page) Color.DarkGray else Color.LightGray)
+                        .background(if (pagerState.currentPage == page) Color.Black else Color.LightGray)
     ***REMOVED***
             ***REMOVED***
         ***REMOVED***
 
-        Spacer(modifier = Modifier.height(16.dp))
+    ***REMOVED***
+    if (showDialog.value && onDelete != null) {
+        AlertDialog(onDismissRequest = { showDialog.value = false ***REMOVED***,
+            title = { Text("Confirm Delete") ***REMOVED***,
+            text = { Text("Are you sure you want to delete this image?") ***REMOVED***,
+            confirmButton = {
+                Button(onClick = {
+                    onDelete(deletedPage)
+                    showDialog.value = false
+                ***REMOVED***) {
+                    Text("Delete")
+                ***REMOVED***
+            ***REMOVED***,
+            dismissButton = {
+                Button(onClick = { showDialog.value = false ***REMOVED***) {
+                    Text("Cancel")
+                ***REMOVED***
+            ***REMOVED***)
     ***REMOVED***
 ***REMOVED***
 
@@ -580,10 +702,10 @@ fun FileCard(
     ***REMOVED*** {
                     // Make the icons clickable
                     Box(modifier = Modifier.clickable {
-                            if (extraction.fileUri != null) {
-                                downloadFileExtra(Uri.parse(extraction.fileUri))
-                            ***REMOVED***
-                        ***REMOVED***) {
+                        if (extraction.fileUri != null) {
+                            downloadFileExtra(Uri.parse(extraction.fileUri))
+                        ***REMOVED***
+                    ***REMOVED***) {
                         FaIcon(
                             faIcon = FaIcons.Download, tint = Color.Gray, size = 20.dp
             ***REMOVED***
@@ -592,10 +714,10 @@ fun FileCard(
                     Spacer(modifier = Modifier.width(8.dp))
 
                     Box(modifier = Modifier.clickable {
-                            if (extraction.fileUri != null) {
-                                shareFile(Uri.parse(extraction.fileUri))
-                            ***REMOVED***
-                        ***REMOVED***) {
+                        if (extraction.fileUri != null) {
+                            shareFile(Uri.parse(extraction.fileUri))
+                        ***REMOVED***
+                    ***REMOVED***) {
                         FaIcon(
                             faIcon = FaIcons.Share, tint = Color.Gray, size = 20.dp
             ***REMOVED***

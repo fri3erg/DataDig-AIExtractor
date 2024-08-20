@@ -45,10 +45,10 @@ class TemplateViewModel : ViewModel() {
 
 
     val templates = realm.query<Template>().asFlow().map {
-            it.list.toList()
-        ***REMOVED***.stateIn(
-            viewModelScope, SharingStarted.WhileSubscribed(), emptyList()
-        )
+        it.list.toList()
+    ***REMOVED***.stateIn(
+        viewModelScope, SharingStarted.WhileSubscribed(), emptyList()
+    )
 
     val sortedTemplates: StateFlow<List<Template>> = combine(
         templates, sortOrder, ascending, searchText
@@ -522,6 +522,8 @@ class TemplateViewModel : ViewModel() {
 
     ***REMOVED***
 ***REMOVED***
+
+
 
 enum class SortOrder {
     BY_TITLE, BY_DATE,

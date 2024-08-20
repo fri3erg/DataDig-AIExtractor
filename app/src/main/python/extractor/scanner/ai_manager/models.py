@@ -14,7 +14,7 @@ import openai
 import threading
 from langchain.chains import LLMChain
 from langchain.llms.base import LLM
-from pydantic_core import ValidationError
+#from pydantic_core import ValidationError
 from langchain_community.llms import OpenAI as LangChainOpenAI
 from langchain.chat_models import ChatOpenAI # use ChatOpenAI from the core library
 from langchain.llms.base import LLM

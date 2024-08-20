@@ -9,7 +9,8 @@ class ExtractedField:
         self.value: Any = value
 
 class ExtractedTable:
-    def __init__(self, template_table: TemplateTable, fields: Optional[Dict[str,Dict[str,ExtractedField]]] = None,dataframe:Optional[str] = ""):
+    def __init__(self,title:str, template_table: TemplateTable, fields: Optional[Dict[str,Dict[str,ExtractedField]]] = None,dataframe:Optional[str] = ""):
+        self.title=title
         self.template_table: TemplateTable = template_table
         self.fields: Dict[str,Dict[str,ExtractedField]] = fields or {***REMOVED***  # List of TemplateField objects
         self.dataframe = dataframe

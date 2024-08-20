@@ -63,6 +63,9 @@ class ExtractionTable : RealmObject {
     var id: ObjectId = ObjectId()
 
     @Expose
+    var title: String? = null
+
+    @Expose
     @SerializedName("template_table_title")  // Rename in JSON
     var templateTable: TemplateTable? = null
 
