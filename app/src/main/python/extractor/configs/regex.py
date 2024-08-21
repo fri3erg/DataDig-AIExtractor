@@ -8,18 +8,14 @@ ANYTHING_WITH_NUMBERS = ".*\d+.*"  # example dsjsd1000dsds
 
 
 regex_cleaning = {
-    "it": {
-    ***REMOVED***,
+    "it": {***REMOVED***,
     "en": {***REMOVED***,
 ***REMOVED***
 regex_search = {
-    "it": {
-    ***REMOVED***,
+    "it": {***REMOVED***,
     "en": {***REMOVED***,
 ***REMOVED***
 strips_cleaning = {
-    "it": {
-    ***REMOVED***,
-    "en": {
-    ***REMOVED***,
+    "it": {***REMOVED***,
+    "en": {***REMOVED***,
 ***REMOVED***

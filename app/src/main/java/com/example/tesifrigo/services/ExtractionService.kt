@@ -184,7 +184,8 @@ class ExtractionService : Service() {
                 PyObject.fromJava(options?.language),
                 PyObject.fromJava(options?.azureOcr),
                 PyObject.fromJava(getApiKey),
-                PyObject.fromJava(options?.format)
+                PyObject.fromJava(options?.format),
+                PyObject.fromJava(options?.resize)
 ***REMOVED***
 
             progressCallback(0.2f)
@@ -206,7 +207,7 @@ class ExtractionService : Service() {
                 if (currentProgress != null) {
                     progressCallback(currentProgress)
                 ***REMOVED***
-                delay(10)
+                delay(100)
             ***REMOVED***
 
             // Python call is complete, handle results
@@ -400,7 +401,8 @@ private fun getTemplate(
                 keywords,
                 PyObject.fromJava(realmTable.description),
                 pyTableRows,
-                pyTableColumns
+                pyTableColumns,
+                PyObject.fromJava(realmTable.all)
 ***REMOVED***
         )  // Add Base64 image to the Python list
     ***REMOVED***

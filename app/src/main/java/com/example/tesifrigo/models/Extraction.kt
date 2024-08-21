@@ -122,10 +122,11 @@ data class Options(
     var language: String,
     var azureOcr: Boolean,
     var getApiKey: (String) -> String?,
-    var format: String
+    var format: String,
+    var resize : Boolean
 
 ) {
-    constructor() : this("", "", false, { "" ***REMOVED***, "")
+    constructor() : this("", "", false, { "" ***REMOVED***, "", true)
 ***REMOVED***
 
 

@@ -12,7 +12,7 @@ from ...scanner.extractors.utils import format_pages_num
 
 
 def analyze_general_documents(
-    image:bytes, specific_pages=None, language="it", api_version="2023-07-31", query_list=None
+    image: bytes, specific_pages=None, language="it", api_version="2023-07-31", query_list=None
 ) -> AnalyzeResult:
     """Analyze a document with the Azure Form Recognizer API.
 
@@ -32,10 +32,11 @@ def analyze_general_documents(
     language_locale = language_locale_config[language]
 
     # Get variables form environment
-    endpoint = os.environ.get("AZURE_FORM_RECOGNIZER_ENPOINT") or ""
+    endpoint = os.environ.get("AZURE_FORM_RECOGNIZER_ENDPOINT") or ""
     key = os.environ.get("AZURE_FORM_RECOGNIZER_KEY") or ""
 
     # create your `DocumentIntelligenceClient` instance and `AzureKeyCredential` variable
+    
     document_analysis_client = DocumentAnalysisClient(
         endpoint=endpoint, credential=AzureKeyCredential(key), api_version=api_version
     )
@@ -43,7 +44,7 @@ def analyze_general_documents(
     if query_list is not None:
         features_chosen.append("queryFields")
 
-    #specific_pages = format_pages_num(specific_pages)
+    # specific_pages = format_pages_num(specific_pages)
 
     try:
 
@@ -53,19 +54,18 @@ def analyze_general_documents(
             model_id="prebuilt-layout",
             locale=language_locale,
             features=features_chosen,
-            #pages=specific_pages,
+            # pages=specific_pages,
         )
         result: AnalyzeResult = poller.result()
     except ClientAuthenticationError as auth_err:
         raise ValueError("Invalid Azure credentials (endpoint or key).")
     except ServiceRequestError as req_err:
-        raise ValueError(f"Error communicating with Azure Form Recognizer: {req_err***REMOVED***")
+        raise ValueError(f"Invalid Azure credentials (endpoint or key). {req_err***REMOVED***")
     return result
 
 
-
 def get_tables_from_doc(
-    image:bytes, specific_pages:str|None =None, language="it", api_version="2023-07-31", query_list=None
+    image: bytes, specific_pages: str | None = None, language="it", api_version="2023-07-31", query_list=None
 ):
     """Get tables from a document, can be used generally to save, or directly for query_list, in that case, return query_list also
 
@@ -82,14 +82,14 @@ def get_tables_from_doc(
     result = analyze_general_documents(
         image, specific_pages=specific_pages, language=language, api_version=api_version, query_list=query_list
     )
-# Get tables
+    # Get tables
     df_tables = []
     for table in getattr(result, "tables", []):
         df_tab = table_json_to_df_v2(table)
         df_tables.append(df_tab)
 
     if query_list:
-        return df_tables, getattr(next(getattr(result, "documents", [])[0],None),"fields")
+        return df_tables, getattr(next(getattr(result, "documents", [])[0], None), "fields")
 
     return df_tables, result
 

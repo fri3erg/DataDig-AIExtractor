@@ -71,16 +71,6 @@ class ServiceViewModel @Inject constructor(
     ***REMOVED***
 
 
-    fun getApiKey(key: Keys): String? {
-        return when (key) {
-            Keys.API_KEY_1 -> keyManager.getApiKey(Keys.API_KEY_1)
-            Keys.API_KEY_2 -> keyManager.getApiKey(Keys.API_KEY_2)
-            Keys.API_KEY_3 -> keyManager.getApiKey(Keys.API_KEY_3)
-
-        ***REMOVED***
-    ***REMOVED***
-
-
     fun keyExists(key: Keys): Boolean {
         return when (key) {
             Keys.API_KEY_1 -> keyManager.getApiKey(Keys.API_KEY_1) != null

@@ -163,6 +163,7 @@ dependencies {
     implementation(libs.android.image.cropper) // or later version
     implementation (libs.androidx.ui.v133)
     implementation (libs.androidx.material3.v100)
+    implementation(libs.androidx.core.splashscreen) // Or the latest version
     implementation (libs.ui.tooling.preview)
     implementation (libs.androidx.activity.compose.v161)
     kapt(libs.hilt.android)

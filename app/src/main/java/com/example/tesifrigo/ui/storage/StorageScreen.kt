@@ -32,10 +32,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.tesifrigo.R
 import com.example.tesifrigo.Screen
 import com.example.tesifrigo.models.Extraction
 import com.example.tesifrigo.ui.theme.cyan_custom
@@ -165,7 +167,7 @@ fun ExtractionItem(
                         showDeleteDialog = true
                     ***REMOVED***, modifier = Modifier
                         .align(Alignment.CenterVertically)
-                        .padding(top=4.dp, end = 4.dp)
+                        .padding(top = 4.dp, end = 4.dp)
     ***REMOVED*** {
                     FaIcon(faIcon = FaIcons.Trash, tint = Color.Black)
                 ***REMOVED***
@@ -192,19 +194,19 @@ fun ExtractionItem(
 // Confirmation Dialog
         if (showDeleteDialog) {
             AlertDialog(onDismissRequest = { showDeleteDialog = false ***REMOVED***,
-                title = { Text("Confirm Delete") ***REMOVED***, // Confirm the action
-                text = { Text("Are you sure you want to delete this extraction?") ***REMOVED***,
+                title = { Text(stringResource(R.string.confirm_delete)) ***REMOVED***, // Confirm the action
+                text = { Text(stringResource(R.string.are_you_sure_you_want_to_delete_this_extraction)) ***REMOVED***,
                 confirmButton = {
                     Button(onClick = {
                         viewModel.deleteExtraction(extraction.id.toHexString()) // Delete the template
                         showDeleteDialog = false // Close dialog
                     ***REMOVED***) {
-                        Text("Delete")
+                        Text(stringResource(R.string.delete))
                     ***REMOVED***
                 ***REMOVED***,
                 dismissButton = {
                     Button(onClick = { showDeleteDialog = false ***REMOVED***) {
-                        Text("Cancel")
+                        Text(stringResource(R.string.cancel))
                     ***REMOVED***
                 ***REMOVED***)
         ***REMOVED***

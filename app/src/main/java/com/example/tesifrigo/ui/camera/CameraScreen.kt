@@ -694,7 +694,7 @@ fun ProgressBar() {
     val progress by serviceViewModel.progress.collectAsState()
     val result by serviceViewModel.result.collectAsState()
     Row {
-        Text("Progress: ${progress * 100***REMOVED***%", modifier = Modifier.padding(start = 12.dp))
+        Text("Progress: ${(progress * 100).toInt()***REMOVED***%", modifier = Modifier.padding(start = 12.dp))
         Spacer(modifier = Modifier.width(16.dp))
         Spinner(isActive = result == null)
         Spacer(modifier = Modifier.width(16.dp))
@@ -916,12 +916,12 @@ fun CameraPreview(
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(
                 white_trasparent),
-            onClick = onPhotoGalleryClick,
-            elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
+            onClick = onPhotoGalleryClick
         ) {
             FaIcon(
                 faIcon = FaIcons.Images, // Using the gallery icon
                 tint = Color.Black, // Set icon color
+                modifier = Modifier.background(Color.Transparent), // Add padding to the icon
                 size = 24.dp // Set icon size
 ***REMOVED***
         ***REMOVED***
@@ -934,7 +934,6 @@ fun CameraPreview(
             .align(Alignment.BottomCenter),
             colors = ButtonDefaults.buttonColors(Color.Transparent),
             border = BorderStroke(5.dp, Color.White),
-            elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp),
             onClick = {
                 takePhoto(
                     imageCapture = imageCapture,
@@ -955,15 +954,14 @@ fun CameraPreview(
                 modifier = Modifier
                     .padding(bottom = 20.dp, end = 20.dp)
                     .align(Alignment.BottomEnd)
-                    .size(60.dp),
+                    .size(65.dp),
                 shape = CircleShape,
-                elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp),
                 colors = ButtonDefaults.buttonColors(white_trasparent),
                 onClick = changeActivePhoto
 ***REMOVED*** {
                 FaIcon(
                     faIcon = FaIcons.Check,
-                    modifier = Modifier.padding(end = 4.dp),
+                    modifier = Modifier.padding(end = 8.dp).background(Color.Transparent),
                     tint = Color.Black,
                     size = 24.dp,
     ***REMOVED***
@@ -974,18 +972,19 @@ fun CameraPreview(
             modifier = Modifier
                 .padding(20.dp)
                 .size(70.dp, 35.dp)
+                .align(Alignment.TopStart)
                 .background(
-                    white_trasparent,
-                    shape = RoundedCornerShape(10.dp) // Apply RoundedCornerShape to background
-    ***REMOVED***
-                .align(Alignment.TopStart),
+                    shape = RoundedCornerShape(10.dp), // Apply RoundedCornerShape to background
+                    color = white_trasparent
+    ***REMOVED***,
             contentAlignment = Alignment.Center,
         ) {
             Text(
                 text = "$nPhotos taken",
                 color = Color.Black,
                 textAlign = TextAlign.Center,
-                fontSize = 14.sp
+                fontSize = 14.sp,
+                modifier = Modifier.background(Color.Transparent)
 ***REMOVED***
         ***REMOVED***
         // Flash effect

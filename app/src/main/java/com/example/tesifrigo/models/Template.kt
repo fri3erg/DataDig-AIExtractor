@@ -27,6 +27,7 @@ class TemplateTable : RealmObject {
     var description: String = ""
     var rows: RealmList<TemplateField> = realmListOf()
     var columns: RealmList<TemplateField> = realmListOf()
+    var all : Boolean = false
 ***REMOVED***
 
 class TemplateField : RealmObject {

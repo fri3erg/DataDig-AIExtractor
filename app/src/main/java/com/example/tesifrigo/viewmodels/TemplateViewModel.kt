@@ -384,7 +384,7 @@ class TemplateViewModel : ViewModel() {
 
     ***REMOVED***
 
-    fun updateTableItem(template: Template, pair: Pair<String, String>, tableIndex: Int) {
+    fun updateTableItem(template: Template, pair: Pair<String, Any>, tableIndex: Int) {
         viewModelScope.launch {
             realm.writeBlocking {
                 val latestTemplate = findLatest(template) ?: return@writeBlocking
@@ -392,15 +392,18 @@ class TemplateViewModel : ViewModel() {
                 pair.let { (field, newText) ->
                     when (field) {
                         "title" -> {
-                            table.title = newText
+                            table.title = newText.toString()
                         ***REMOVED***
 
                         "description" -> {
-                            table.description = newText
+                            table.description = newText.toString()
                         ***REMOVED***
 
                         "keywords" -> {
-                            table.keywords.add(newText)
+                            table.keywords.add(newText.toString())
+                        ***REMOVED***
+                        "all" -> {
+                            table.all = newText.toString().toBoolean()
                         ***REMOVED***
 
                         else -> {

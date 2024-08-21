@@ -1,12 +1,10 @@
-from calendar import c
 from collections import defaultdict
 from datetime import date
-from email.policy import default
 import os
 import re
 from tempfile import NamedTemporaryFile
 from langchain_community.document_loaders import PyPDFLoader
-from pydantic import  Field, create_model
+from pydantic import Field, create_model
 from typing import Any, Dict, List, Optional, get_origin
 from PIL import Image
 from io import BytesIO
@@ -15,6 +13,7 @@ from ...classes.Template import Template, TemplateTable, TemplateField
 import pytesseract
 from pdf2image import convert_from_bytes
 import pandas as pd
+from ...configs.basic_tags import ExtractedTable
 
 
 def select_desired_page(text, words_repr):
@@ -39,7 +38,7 @@ def select_desired_page(text, words_repr):
 
     # Page with most occurrences
     if len(counter) == 0:
-        return 0,0 
+        return 0, 0
     pg_number = max(counter, key=lambda i: counter[i])
 
     return pg_number, counter[pg_number]
@@ -69,16 +68,10 @@ def select_desired_table(tables, words_repr):
     # Find the index with the highest count
     tb_number = max(counter.items(), key=lambda item: item[1])[0]
 
-
     return tb_number
 
 
-
-
-
-
-
-def num_tokens_from_string(string: str|List[str], encoding_name: str = "gpt-4") -> int:
+def num_tokens_from_string(string: str | List[str], encoding_name: str = "gpt-4") -> int:
     """
     Returns the number of tokens in a given string using the specified encoding.
 
@@ -89,12 +82,12 @@ def num_tokens_from_string(string: str|List[str], encoding_name: str = "gpt-4") 
     Returns:
         int: The number of tokens in the input string.
     """
-    #encoding = tiktoken.get_encoding(encoding_name)
-    #num_tokens = len(encoding.encode(string))
-    #return num_tokens
+    # encoding = tiktoken.get_encoding(encoding_name)
+    # num_tokens = len(encoding.encode(string))
+    # return num_tokens
     average_token_length = 4
     # Add a small buffer to account for potential special characters or word endings
-    buffer = 0.1  
+    buffer = 0.1
     if isinstance(string, list):
         tokens = [int(len(s) * (1 + buffer) / average_token_length) for s in string]
         return sum(tokens)
@@ -120,8 +113,7 @@ def is_more_number(text):
         return False
 
 
-
-def get_document_text(images: list[bytes],language:str|None) -> List[str]:
+def get_document_text(images: list[bytes], language: str | None) -> List[str]:
     """Extracts text from a list of PIL Image objects or bytes (base64 images).
 
     Args:
@@ -130,36 +122,30 @@ def get_document_text(images: list[bytes],language:str|None) -> List[str]:
     Returns:
         str: Concatenated text extracted from all images.
     """
-    is_chaquopy=False
+    is_chaquopy = False
     all_text = []
     try:
         import chaquopy  # Try importing Chaquopy
-        print("here chaquopy")
-        tess_exe_path =  os.environ.get("TESSDATA_PREFIX") or ""
+
+        tess_exe_path = os.environ.get("TESSDATA_PREFIX") or ""
         pytesseract.pytesseract.tesseract_cmd = tess_exe_path
-        print(tess_exe_path)
-        is_chaquopy=True
+        is_chaquopy = True
     except ImportError:
         # Not running in Chaquopy (e.g., standalone script)
         tess_exe_path = None  # Use the default Tesseract data path
-        pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
-    tessdata_dir_config = f'--tessdata-dir "{tess_exe_path***REMOVED***/tessdata"' if tess_exe_path else ''
+        pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+    tessdata_dir_config = f'--tessdata-dir "{tess_exe_path***REMOVED***/tessdata"' if tess_exe_path else ""
 
     if not is_chaquopy:
         for image in images:
             try:
                 # Handle different image input types
                 if isinstance(image, bytes):  # Directly handle bytes
-                    print(image)
                     image = Image.open(BytesIO(image))
-                    print("not here")
-                    print(f"image format {image.format***REMOVED***")
-                    if image.format != 'PNG':  # Example: converting to PNG
-                        image = image.convert('PNG')
+                    if image.format != "PNG":  # Example: converting to PNG
+                        image = image.convert("PNG")
                 elif not isinstance(image, Image.Image):
-                    raise TypeError(
-                        "Unsupported image type. Expected PIL Image or bytes (base64 image)."
-        ***REMOVED***
+                    raise TypeError("Unsupported image type. Expected PIL Image or bytes (base64 image).")
 
                 # ... (Your image preprocessing logic here) ...
                 # (e.g., grayscale conversion, thresholding, etc.)
@@ -172,21 +158,18 @@ def get_document_text(images: list[bytes],language:str|None) -> List[str]:
                 all_text.append("")  # Add empty string if an error occurs
     else:
         for image_bytes in images:
-            print("here")
             with NamedTemporaryFile(suffix=".png") as temp:  # Assuming PNG format
                 temp.write(image_bytes)
                 temp.flush()
-                print("here")
                 text = pytesseract.image_to_string(temp.name, lang=language, config=tessdata_dir_config)
                 all_text.append(text)
 
     return all_text
 
 
-
 def get_document_text_pdf(file_path: str) -> List[str]:
-    images:list[bytes] = PyPDFLoader(file_path).load()
-    return get_document_text(images,"it")
+    images: list[bytes] = PyPDFLoader(file_path).load()
+    return get_document_text(images, "it")
 
 
 def is_in_text(pattern, text) -> bool:
@@ -385,7 +368,6 @@ def search_reg(search, text):
     return match is not None
 
 
-
 # TO REVIEW
 def clean_response_regex(cleaner: dict, response, to_add=""):
     """cleans a response using a regex
@@ -442,7 +424,10 @@ def clean_response_strips(strips, response):
     response = response.replace('"', r"\"")
     return response
 
-exc_multiple_lines=[]
+
+exc_multiple_lines = []
+
+
 def regex_extract(searches: dict, table):
     """extract via regex from the table
 
@@ -513,78 +498,120 @@ def create_pydantic_class(template: Template):
 
     fields = {***REMOVED***
     for template_field in template.fields:
-        pydantic_type=get_pydantic_type(template_field.type)
+        pydantic_type = get_pydantic_type(template_field.type)
 
         description = template_field.extra_description or template_field.description or ""
         if template_field.required:
             description += " (required)"
         if template_field.type == "date":
             description += "this field searches for a date, (format: YYYY-MM-DD)"
-            
-            
-        default= get_typed_default(template_field.default, pydantic_type)
-            
+
+        default = get_typed_default(template_field.default, pydantic_type)
+
         if template_field.list:
             pydantic_type = List[pydantic_type]
-            
 
         # Use Optional for non-required fields
         if not template_field.required:
             pydantic_type = Optional[pydantic_type]
-            
+
         # Create the Pydantic field
         fields[template_field.title] = (pydantic_type, Field(default=default, description=description))
 
-    model = create_model("DynamicModel", **fields) 
+    model = create_model("DynamicModel", **fields)
     return model
+
 
 def create_intelligent_pydantic_class(template: Template):
     """Creates a Pydantic model based on the provided Template object."""
 
     fields = {***REMOVED***
     for template_field in template.fields:
-        field_type:type = get_pydantic_type(template_field.type)
-        description= ""
+        field_type: type = get_pydantic_type(template_field.type)
+        description = ""
         if template_field.required:  # Assuming TemplateField has a 'required' attribute
-            description="(required)"
+            description = "(required)"
         if template_field.type == "date":
             description += " (format: YYYY-MM-DD)"
-        default= get_typed_default(template_field.default, field_type)
+        default = get_typed_default(template_field.default, field_type)
         if template_field.list:
             field_type = List[field_type]
         fields[template_field.title] = (Optional[field_type], Field(description=description, default=default))
 
-
     model = create_model("DynamicModel", **fields)  # Use create_model for dynamic creation
     return model
 
+
 def create_pydantic_table_class(template: TemplateTable):
     """Creates a Pydantic model based on the provided Template object."""
+    if template.all:
+        return ExtractedTable
+    if template.rows == []:
+        return pydantic_table_listed_column(template)
+    if template.columns == []:
+        return pydantic_table_listed_row(template)
 
     fields = {***REMOVED***
-    for  row in template.rows:
+    for row in template.rows:
         for column in template.columns:
-            type_from= row.type or column.type or "str"
-            field_type:type = get_pydantic_type(type_from)
-            required= column.required or row.required
-            description=f"row:{row.title***REMOVED***|column:{column.title***REMOVED***|"
-            default= get_typed_default("N/A", field_type)
+            type_from = row.type or column.type or "str"
+            field_type: type = get_pydantic_type(type_from)
+            required = column.required or row.required
+            description = f"row:{row.title***REMOVED***|column:{column.title***REMOVED***|"
+            default = get_typed_default("N/A", field_type)
             if required:  # Assuming TemplateField has a 'required' attribute
-                description +="(required)"
-            fields[description] = (Optional[field_type]| str, Field(default=default,description=description))
-    title_field= {
+                description += "(required)"
+            fields[description] = (Optional[field_type] | str, Field(default=default, description=description))
+    title_field = {
         "title": (str, Field(description="what the table is about", default="title", required=True)),
     ***REMOVED***
     fields.update(title_field)
 
-
     model = create_model("DynamicModel", **fields)  # Use create_model for dynamic creation
     return model
 
 
+def pydantic_table_listed_row(template: TemplateTable):
+    """Creates a Pydantic model based on the provided Template object. based on only the rows"""
+    fields = {***REMOVED***
+    for row in template.rows:
+        type_from = row.type or "str"
+        field_type: type = get_pydantic_type(type_from)
+        required = row.required
+        description = f"row:{row.title***REMOVED***"
+        if required:  # Assuming TemplateField has a 'required' attribute
+            description += "(required)"
+        fields[description] = (Optional[List[field_type]], Field(default=[], description=description))
+    title_field = {
+        "title": (str, Field(description="what the table is about", default="title", required=True)),
+    ***REMOVED***
+    fields.update(title_field)
+
+    model = create_model("DynamicModelTableRows", **fields)  # Use create_model for dynamic creation
+    return model
 
 
-def get_pydantic_type(type: str|None) -> type:
+def pydantic_table_listed_column(template: TemplateTable):
+    """Creates a Pydantic model based on the provided Template object. based on only the column"""
+    fields = {***REMOVED***
+    for column in template.columns:
+        type_from = column.type or "str"
+        field_type: type = get_pydantic_type(type_from)
+        required = column.required
+        description = f"column:{column.title***REMOVED***"
+        if required:  # Assuming TemplateField has a 'required' attribute
+            description += "(required)"
+        fields[description] = (Optional[List[field_type]], Field(default=[], description=description))
+    title_field = {
+        "title": (str, Field(description="what the table is about", default="title", required=True)),
+    ***REMOVED***
+    fields.update(title_field)
+
+    model = create_model("DynamicModelTableColumns", **fields)  # Use create_model for dynamic creation
+    return model
+
+
+def get_pydantic_type(type: str | None) -> type:
     """Returns the Pydantic type that corresponds to the specified type string.
 
     Args:
@@ -593,21 +620,21 @@ def get_pydantic_type(type: str|None) -> type:
     Returns:
         type: The Pydantic type that corresponds to the specified type string.
     """
-    if type == "str":
+    if type == "Text":
         return str
-    elif type == "int":
+    elif type == "Int":
         return int
-    elif type == "float":
+    elif type == "Float":
         return float
-    elif type == "bool":
+    elif type == "Boolean":
         return bool
-    elif type == "date":
+    elif type == "Date":
         return str
     else:
         return str
-    
-    
-def get_typed_default(default:Optional[str], pydantic_type:type) -> Any:
+
+
+def get_typed_default(default: Optional[str], pydantic_type: type) -> Any:
     """
     Returns a typed default value based on the provided Pydantic type.
 
@@ -628,7 +655,7 @@ def get_typed_default(default:Optional[str], pydantic_type:type) -> Any:
         except ValueError:
             # Handle the conversion error (e.g., log it or return a specific default)
             print(f"Warning: Failed to convert '{default***REMOVED***' to int. Using 0 as default.")
-            return -1  
+            return -1
 
     elif pydantic_type == float:
         try:
@@ -636,24 +663,23 @@ def get_typed_default(default:Optional[str], pydantic_type:type) -> Any:
         except ValueError:
             # Handle the conversion error
             print(f"Warning: Failed to convert '{default***REMOVED***' to float. Using -1.0 as default.")
-            return -1.0  
+            return -1.0
     elif pydantic_type == bool:
         try:
             return bool(default)
         except ValueError:
             # Handle the conversion error
             print(f"Warning: Failed to convert '{default***REMOVED***' to bool. Using False as default.")
-            return False  
+            return False
     elif pydantic_type == date:
         return default
     elif get_origin(pydantic_type) is list:
         return []
     else:
         return default
-        
 
 
-def extracted_from_pydantic(template:Template, tagged) -> List[ExtractedField]:
+def extracted_from_pydantic(template: Template, tagged) -> List[ExtractedField]:
     """Extracts the fields from a tagged object.
 
     Args:
@@ -664,16 +690,14 @@ def extracted_from_pydantic(template:Template, tagged) -> List[ExtractedField]:
     """
     extracted = []
     for field in tagged.__fields__:
-        value = getattr(tagged, field,"N/A")
+        value = getattr(tagged, field, "N/A")
         if isinstance(value, list):
-            
-            value= [str(v).replace("|", "\\") for v in value]
+
+            value = [str(v).replace("|", "\\") for v in value]
             value = "| ".join(value)
         else:
             value = str(value).replace("|", "\\")
-        matching_template_field:TemplateField | None = next(
-            (tf for tf in template.fields if tf.title == field), None
-        )  
+        matching_template_field: TemplateField | None = next((tf for tf in template.fields if tf.title == field), None)
         if matching_template_field:
             extracted.append(ExtractedField(value=value, template_field=matching_template_field))
         else:
@@ -681,30 +705,39 @@ def extracted_from_pydantic(template:Template, tagged) -> List[ExtractedField]:
     return extracted
 
 
-def extracted_from_pydantic_table(self,tagged_data, template: TemplateTable) ->tuple[ Dict[str, Dict[str, ExtractedField]],str]:
+def extracted_from_pydantic_table(
+    tagged_data, template: TemplateTable
+) -> tuple[Dict[str, Dict[str, ExtractedField]], str]:
     """Extracts structured data from a tagged Pydantic model into a matrix."""
 
     result_matrix: Dict[str, Dict[str, ExtractedField]] = {***REMOVED***
-    
+
     title = getattr(tagged_data, "title", "title")
-    if getattr(tagged_data, 'title', None) is not None:
+    if getattr(tagged_data, "title", None) is not None:
         del tagged_data.title
     # Initialize empty dicts for each row
+    if template.all:
+        return extracted_from_all(tagged_data), title
+
+    if getattr(getattr(tagged_data, "__class__", None), "__name__", None) == "DynamicModelTableRows":
+        return extracted_from_rows(tagged_data, template), title
+    if getattr(getattr(tagged_data, "__class__", None), "__name__", None) == "DynamicModelTableColumns":
+        return extracted_from_columns(tagged_data, template), title
+
     for row in template.rows:
         result_matrix[row.title] = {***REMOVED***
 
     # Parse field names and create ExtractedField instances
-    for field_name, value in tagged_data.__fields__.items():  
+    for field_name, value in tagged_data.__dict__.items():
         # Extract row and column names from field name
-        row_name, col_name, _ = field_name.split("|") 
+        row_name, col_name, _ = field_name.split("|")
         row_name = row_name[4:]
         col_name = col_name[7:]
-
 
         # Find matching row and column in template
         matching_row = next((r for r in template.rows if r.title in row_name), None)
         matching_col = next((c for c in template.columns if c.title in col_name), None)
-        
+
         if matching_row and matching_col:
             # Create ExtractedField instance
             extracted_field = ExtractedField(
@@ -716,5 +749,91 @@ def extracted_from_pydantic_table(self,tagged_data, template: TemplateTable) ->t
             result_matrix[matching_row.title][matching_col.title] = extracted_field
 
     return result_matrix, title
-    
 
+
+def extracted_from_all(tagged_data: ExtractedTable) -> Dict[str, Dict[str, ExtractedField]]:
+    result_matrix: Dict[str, Dict[str, ExtractedField]] = {***REMOVED***
+
+    # Iterate over rows and columns
+    for row_idx, row in enumerate(tagged_data.table_data):
+        row_name = f"row_{row_idx + 1***REMOVED***"  # Generate row name (e.g., "row_1", "row_2")
+        result_matrix[row_name] = {***REMOVED***
+        for col_idx, value in enumerate(row):
+            col_name = f"col_{col_idx + 1***REMOVED***"  # Generate column name (e.g., "col_1", "col_2")
+            result_matrix[row_name][col_name] = ExtractedField(
+                template_field=None, value=value  # No template matching needed
+***REMOVED***
+
+    return result_matrix
+
+
+def extracted_from_rows(tagged_data, template: TemplateTable) -> Dict[str, Dict[str, ExtractedField]]:
+    result_matrix: Dict[str, Dict[str, ExtractedField]] = {***REMOVED***
+
+    for field_name, value in tagged_data.__dict__.items():
+        # Extract row and column names from field name
+        row_name = field_name[4:]
+        result_matrix[row_name] = {***REMOVED***
+
+        # Find matching row and column in template
+        matching_row = next((r for r in template.rows if r.title in row_name), None)
+        if matching_row:
+            # Create ExtractedField instance
+            for idx, val in enumerate(value):
+                result_matrix[row_name].update(
+                    {
+                        "col_ "
+                        + str(idx + 1): ExtractedField(
+                            template_field=matching_row,  # Use the column as the template field
+                            value=val,
+            ***REMOVED***
+                    ***REMOVED***
+    ***REMOVED***
+    return result_matrix
+
+
+def extracted_from_columns(tagged_data, template: TemplateTable) -> Dict[str, Dict[str, ExtractedField]]:
+
+    result_matrix: Dict[str, Dict[str, ExtractedField]] = {***REMOVED***
+
+    # Initialize rows in the result_matrix
+    first_column_values = next(iter(tagged_data.__dict__.values()))
+    for idx in range(len(first_column_values)):
+        result_matrix["row_" + str(idx + 1)] = {***REMOVED***
+
+    for field_name, value in tagged_data.__dict__.items():
+        col_name = field_name[7:]
+        matching_col = next((c for c in template.columns if c.title in col_name), None)
+        if matching_col:
+            for idx, val in enumerate(value):
+                result_matrix["row_" + str(idx + 1)].update(
+                    {
+                        col_name: ExtractedField(
+                            template_field=matching_col,
+                            value=val,
+            ***REMOVED***
+                    ***REMOVED***
+    ***REMOVED***
+
+    return result_matrix
+
+
+def sanitize_text(text:str):
+    """
+    Sanitizes a given text by replacing dangerous characters with their escaped equivalents.
+    
+    Args:
+        text (str): The text to be sanitized.
+    
+    Returns:
+        str: The sanitized text with all non-word and non-space characters removed.
+    """
+    
+    
+    dangerous_chars = [';', "'", '"', '=', '<', '>', '{', '***REMOVED***', '(', ')', '$', '&', '|']
+
+  # Replace dangerous characters with their escaped equivalents
+    for char in dangerous_chars:
+        text = text.replace(char, '\\' + char) 
+    
+    return re.sub(r'[^\w\s]', '', text)

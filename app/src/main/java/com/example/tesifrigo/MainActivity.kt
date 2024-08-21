@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
 import androidx.navigation.compose.rememberNavController
+
 import com.example.tesifrigo.ui.common.NavBar
 import com.example.tesifrigo.ui.theme.TesiFrigoTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -44,28 +45,30 @@ class MainActivity : ComponentActivity() {
 
 
         setContent {
-            TesiFrigoTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
-    ***REMOVED*** {
-                    MainAppScreen()
+
+                TesiFrigoTheme {
+                    // A surface container using the 'background' color from the theme
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = MaterialTheme.colorScheme.background
+        ***REMOVED*** {
+                        MainAppScreen()
+                    ***REMOVED***
                 ***REMOVED***
             ***REMOVED***
+
         ***REMOVED***
 
+
+    @Composable
+    fun MainAppScreen() {
+
+        val navController = rememberNavController()
+
+        Scaffold(bottomBar = { NavBar(navController) ***REMOVED***,
+            modifier = Modifier.fillMaxSize(),
+            content = { innerPadding -> // Important for content overlap
+                AppNavigation(navController, modifier = Modifier.padding(innerPadding))
+            ***REMOVED***)
     ***REMOVED***
 ***REMOVED***
-
-@Composable
-fun MainAppScreen() {
-
-    val navController = rememberNavController()
-
-    Scaffold(bottomBar = { NavBar(navController) ***REMOVED***,
-        modifier = Modifier.fillMaxSize(),
-        content = { innerPadding -> // Important for content overlap
-            AppNavigation(navController, modifier = Modifier.padding(innerPadding))
-        ***REMOVED***)
-***REMOVED***
-

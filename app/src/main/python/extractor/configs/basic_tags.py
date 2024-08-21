@@ -3,4 +3,9 @@ from pydantic import BaseModel, Field
 
 
 class DocLanguage(BaseModel):
-    language: Literal["it", "en", "fr", "de", "es"] = Field( description="language of the document", default="it")
+    language: Literal["it", "en", "fr", "de", "es"] = Field(description="language of the document", default="it")
+
+
+class ExtractedTable(BaseModel):
+    table_data: list[list[str]] = Field(default_factory=list)
+    title: str = Field(description="what the table is about", default="title", required=True)

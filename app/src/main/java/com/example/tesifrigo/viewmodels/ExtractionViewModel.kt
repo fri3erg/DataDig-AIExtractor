@@ -23,7 +23,6 @@ import com.example.tesifrigo.models.TemplateField
 import com.example.tesifrigo.models.TemplateTable
 import com.example.tesifrigo.utils.calculateCloseness
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.gotrue.Auth
@@ -40,16 +39,11 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.mongodb.kbson.ObjectId
-import java.io.File
-import java.io.FileInputStream
 import java.io.IOException
-import java.util.Properties
 import javax.inject.Inject
 
 @HiltViewModel
-class ExtractionViewModel @Inject constructor(
-    @ApplicationContext private val context: Context,
-) : ViewModel() {
+class ExtractionViewModel @Inject constructor() : ViewModel() {
     private val realm = MyApp.realm
 
     private val _sortOrder = MutableStateFlow(SortOrder.BY_TITLE)
@@ -67,7 +61,7 @@ class ExtractionViewModel @Inject constructor(
     init {
 
         //Log.d("ExtractionViewModel", "init")
-        createSampleExtraction()
+        //createSampleExtraction()
         try {
             supabaseClient = createSupabaseClient(
                 supabaseUrl = BuildConfig.EXPO_PUBLIC_SUPABASE_URL,
@@ -398,8 +392,9 @@ class ExtractionViewModel @Inject constructor(
             "text" -> {
                 newFile = TextCreator().convertToTextFile(extraction, context).toString()
             ***REMOVED***
+
             "xml" -> {
-                newFile= XmlCreator().convertToXmlFile(extraction, context).toString()
+                newFile = XmlCreator().convertToXmlFile(extraction, context).toString()
             ***REMOVED***
         ***REMOVED***
         viewModelScope.launch {
@@ -468,9 +463,9 @@ class ExtractionViewModel @Inject constructor(
             realm.writeBlocking {
                 val latestTable = findLatest(extractionTable) ?: return@writeBlocking
                 for (field in latestTable.fields) {
-                        field.fields.removeIf { it.templateField?.title == header***REMOVED***
-                        ***REMOVED***
-                    ***REMOVED***
+                    field.fields.removeIf { it.templateField?.title == header ***REMOVED***
+                ***REMOVED***
+            ***REMOVED***
 
 
         ***REMOVED***
@@ -500,7 +495,7 @@ class ExtractionViewModel @Inject constructor(
                 ***REMOVED***
                 val newRow = ExtractionTableRow().apply {
                     rowName = it
-                    fields= newFields
+                    fields = newFields
                 ***REMOVED***
                 latestTable.fields.add(newRow)
             ***REMOVED***

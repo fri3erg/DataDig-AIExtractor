@@ -128,6 +128,9 @@ class ServiceRepository @Inject constructor(
                 "azureOcr" -> {
                     _options.value?.azureOcr = value as Boolean
                 ***REMOVED***
+                "resize" -> {
+                    _options.value?.resize = value as Boolean
+                ***REMOVED***
 
             ***REMOVED***
 

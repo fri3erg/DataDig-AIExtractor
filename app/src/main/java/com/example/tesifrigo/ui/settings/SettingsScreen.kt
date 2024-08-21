@@ -18,11 +18,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import com.example.tesifrigo.R
+import com.example.tesifrigo.ui.template.BooleanFieldWithLabel
 import com.example.tesifrigo.utils.HelpIconButton
 import com.example.tesifrigo.viewmodels.Keys
 import com.example.tesifrigo.viewmodels.ServiceViewModel
@@ -31,6 +34,7 @@ import com.guru.fontawesomecomposelib.FaIcons
 
 @Composable
 fun SettingsScreen(serviceViewModel: ServiceViewModel) {
+    var resize by remember { mutableStateOf(serviceViewModel.options.value?.resize ?: true) ***REMOVED***
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -59,7 +63,10 @@ fun SettingsScreen(serviceViewModel: ServiceViewModel) {
                 textDecoration = TextDecoration.Underline
 ***REMOVED***
             Spacer(modifier = Modifier.width(8.dp))
-            HelpIconButton(helpText = "OpenAI API Key")
+            HelpIconButton(helpText = stringResource(R.string.openai_api_key_the_key_you_created_in_the_openai_platform), title = stringResource(
+                R.string.openai_api_key
+***REMOVED***
+***REMOVED***
         ***REMOVED***
         ApiKeyInput(
             key = Keys.API_KEY_1, viewModel = serviceViewModel, keyName = "OpenAI API Key"
@@ -79,15 +86,35 @@ fun SettingsScreen(serviceViewModel: ServiceViewModel) {
                 fontStyle = FontStyle.Normal,
                 textDecoration = TextDecoration.Underline
 ***REMOVED***
-            Spacer(modifier = Modifier.width(8.dp))
-            HelpIconButton(helpText = "Azure Form Recognizer API Key")
+
         ***REMOVED***
-        ApiKeyInput(
-            key = Keys.API_KEY_2, viewModel = serviceViewModel, keyName = "AZURE API Key"
-        )
+        Row {
+            ApiKeyInput(
+                key = Keys.API_KEY_2, viewModel = serviceViewModel, keyName = "AZURE API Key"
+***REMOVED***
+            Spacer(modifier = Modifier.width(8.dp))
+            HelpIconButton(helpText = stringResource(R.string.azure_form_recognizer_api_key_the_key_connected_to_the_instance_of_the_document_intelligence_resource_you_created), title = stringResource(
+                R.string.azure_api_key
+***REMOVED***
+***REMOVED***
+        ***REMOVED***
+Row {
+
         ApiKeyInput(
             key = Keys.API_KEY_3, viewModel = serviceViewModel, keyName = "AZURE ENDPOINT"
         )
+        Spacer(modifier = Modifier.width(8.dp))
+        HelpIconButton(helpText = stringResource(R.string.the_endpoint_associated_to_your_document_intelligence_resource), title = stringResource(
+            R.string.azure_endpoint
+        )
+        )
+    ***REMOVED***
+            BooleanFieldWithLabel(label = stringResource(R.string.resize_the_image), value = resize, onValueChange = { resize = it
+                serviceViewModel.changeOptions("resize", it)***REMOVED***,
+                help = stringResource(R.string.allows_the_extractor_to_resize_the_image_down_to_4mb_the_limit_for_the_free_version_of_azure_document_intelligence_only_disable_this_if_you_are_using_the_pro_version), title = stringResource(
+                R.string.resize)
+***REMOVED***
+
 
     ***REMOVED***
 ***REMOVED***
@@ -129,7 +156,7 @@ fun ApiKeyInput(
             Column(modifier = Modifier.fillMaxWidth()) {
                 OutlinedTextField(value = newKey,
                     onValueChange = { newKey = it ***REMOVED***,
-                    label = { Text("Enter $keyName") ***REMOVED***,
+                    label = { Text(stringResource(R.string.enter, keyName)) ***REMOVED***,
                     trailingIcon = {
                         FaIcon(
                             modifier = Modifier

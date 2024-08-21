@@ -24,4 +24,3 @@ available_costs = [
     "gpt-3.5-turbo",
     "azure",
 ]
-

@@ -72,6 +72,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -80,6 +81,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.tesifrigo.R
 import com.example.tesifrigo.models.Template
 import com.example.tesifrigo.models.TemplateField
 import com.example.tesifrigo.models.TemplateTable
@@ -279,20 +281,22 @@ fun TemplateKeyWordsSection(
                 unfocusedLabelColor = Color.Black,
 ***REMOVED***,
             onValueChange = { newKey = it ***REMOVED***,
-            label = { Text("Add Keyword", color = Color.Black) ***REMOVED***,
+            label = { Text(stringResource(R.string.add_keyword), color = Color.Black) ***REMOVED***,
             maxLines = 1,
             modifier = Modifier.fillMaxWidth(),
             trailingIcon = {
                 FaIcon(faIcon = FaIcons.Plus, tint = Color.Black, modifier = Modifier.clickable {
                     when {
                         newKey.isBlank() -> {
-                            Toast.makeText(context, "Keyword cannot be empty", Toast.LENGTH_SHORT)
+                            Toast.makeText(context,
+                                context.getString(R.string.keyword_cannot_be_empty), Toast.LENGTH_SHORT)
                                 .show()
                         ***REMOVED***
 
                         template.tags.size >= 10 -> {
                             Toast.makeText(
-                                context, "Max number of keywords is 10", Toast.LENGTH_SHORT
+                                context,
+                                context.getString(R.string.max_number_of_keywords_is_10), Toast.LENGTH_SHORT
                 ***REMOVED***.show()
                         ***REMOVED***
 
@@ -319,7 +323,7 @@ fun TemplateFieldComposable(
     ) {
 
     val focusRequester = remember { FocusRequester() ***REMOVED*** // Create FocusRequester for field
-    val typeOptions = listOf("Any", "Text", "Date", "Number", "Boolean", "Float")
+    val typeOptions = listOf( "Text", "Date", "Number", "Boolean", "Float")
     var expanded by remember { mutableStateOf(false) ***REMOVED***
     val foundField by remember { mutableStateOf(template?.fields?.get(index)) ***REMOVED***
     var title by remember { mutableStateOf(foundField?.title) ***REMOVED***
@@ -362,10 +366,12 @@ fun TemplateFieldComposable(
                                         template, "title" to newText, index
                         ***REMOVED***
                                 ***REMOVED***,
-                                label = { Text("Field Title") ***REMOVED***,
+                                label = { Text(stringResource(R.string.field_title)) ***REMOVED***,
                                 modifier = Modifier.weight(1f), // Occupy remaining space
                                 trailingIcon = {
-                                    HelpIconButton(helpText = "This is the title of the field.")
+                                    HelpIconButton(helpText = stringResource(R.string.this_is_the_title_of_the_field_the_most_important_part_of_the_field_this_will_be_used_to_extract_the_data_of_the_corresponding_field_this_field_cannot_be_left_empty),
+                                        title = stringResource(R.string.field_title)
+                        ***REMOVED***
                                 ***REMOVED***)
 
                         ***REMOVED***
@@ -383,10 +389,10 @@ fun TemplateFieldComposable(
                                         template, "description" to newText, index
                         ***REMOVED***
                                 ***REMOVED***,
-                                label = { Text("Field Description") ***REMOVED***,
+                                label = { Text(stringResource(R.string.field_description)) ***REMOVED***,
                                 modifier = Modifier.weight(1f),
                                 trailingIcon = {
-                                    HelpIconButton(helpText = "This is the description of the field.")
+                                    HelpIconButton(helpText = stringResource(R.string.this_is_the_description_of_the_field_this_will_also_be_used_to_extract_the_data_but_you_dont_need_to_be_super_specific_this_field_can_be_left_empty_if_the_title_is_descriptive_enough))
                                 ***REMOVED***)
                         ***REMOVED***
                     ***REMOVED***
@@ -403,7 +409,7 @@ fun TemplateFieldComposable(
                                 TextField(value = it,
                                     onValueChange = {***REMOVED***,
                                     readOnly = true,
-                                    label = { Text("Type") ***REMOVED***,
+                                    label = { Text(stringResource(id = R.string.type) ***REMOVED***,
                                     trailingIcon = {
                                         ExposedDropdownMenuDefaults.TrailingIcon(
                                             expanded = expanded
@@ -443,11 +449,6 @@ fun TemplateFieldComposable(
                                                     "yyyy-MM-dd", Locale.getDefault()
                                     ***REMOVED***.format(Date())
                                             ***REMOVED***
-
-                                            "Any" -> {
-                                                default = ""
-                                            ***REMOVED***
-
                                             "Float" -> {
                                                 default = "-1.0"
                                             ***REMOVED***
@@ -466,14 +467,14 @@ fun TemplateFieldComposable(
                             ***REMOVED***
                         ***REMOVED***
                         Spacer(modifier = Modifier.width(4.dp)) // Reduced spacing
-                        HelpIconButton(helpText = "Specify the type of data expected for this field (e.g., 'string', 'number', 'date').")
+                        HelpIconButton(helpText = stringResource(R.string.specify_the_type_of_data_expected_for_this_field_e_g_text_number_date_this_will_affect_the_type_of_the_extracted_data_the_default_value_must_be_set_accordingly))
                     ***REMOVED***
                     Spacer(modifier = Modifier.height(8.dp))
                     list?.let {
                         BooleanFieldWithLabel(
                             label = "List",
                             value = it,
-                            help = "if the value is a list of the type submitted",
+                            help = stringResource(R.string.if_the_value_is_a_list_of_the_type_submitted),
                             onValueChange = { newValue ->
                                 list = newValue
                                 viewModel.updateTemplateItem(
@@ -495,7 +496,7 @@ fun TemplateFieldComposable(
                             default = newDefault
                         ***REMOVED***,
                         isList = list ?: true,
-                        type = type ?: "Any",
+                        type = type ?: "Text",
                         viewModel = viewModel,
                         template = template,
                         index = index
@@ -513,7 +514,7 @@ fun TemplateFieldComposable(
                         BooleanFieldWithLabel(
                             label = "Required",
                             value = it,
-                            help = "if the field is required",
+                            help = stringResource(R.string.if_the_field_is_required),
                             onValueChange = { newValue ->
                                 required = newValue
                                 viewModel.updateTemplateItem(
@@ -525,9 +526,9 @@ fun TemplateFieldComposable(
                     Spacer(modifier = Modifier.height(8.dp))
                     intelligentExtraction?.let {
                         BooleanFieldWithLabel(
-                            label = "Interpretative",
+                            label = stringResource(R.string.interpretative),
                             value = it,
-                            help = "the LLM will try to interpret the instruction given and return a more loose response, recommended if you want some processed information from the text instead of extracted information that is in the text",
+                            help = stringResource(R.string.the_llm_will_try_to_interpret_the_instruction_given_and_return_a_more_loose_response_recommended_if_you_want_some_processed_information_from_the_text_instead_of_extracted_information_that_is_in_the_text),
                             onValueChange = { newValue ->
                                 intelligentExtraction = newValue
                                 viewModel.updateTemplateItem(
@@ -540,7 +541,7 @@ fun TemplateFieldComposable(
                     ***REMOVED***
                     Spacer(modifier = Modifier.height(12.dp))
                     DeleteButton(
-                        text = "Field",
+                        text = stringResource(R.string.field),
                         onClick = { viewModel.deleteField(template, index) ***REMOVED***)
                 ***REMOVED***
             ***REMOVED***
@@ -562,7 +563,7 @@ fun DefaultPicker(
     Row(verticalAlignment = Alignment.CenterVertically) {
 
         when (type) {
-            "Text", "Any" -> {
+            "Text" -> {
                 default?.let {
                     OutlinedTextField(value = it,
                         enabled = !isList,
@@ -577,10 +578,13 @@ fun DefaultPicker(
                             unfocusedLabelColor = Color.Black,
 
                 ***REMOVED***,
-                        label = { Text("Field Default") ***REMOVED***,
+                        label = { Text(stringResource(R.string.field_default)) ***REMOVED***,
                         modifier = Modifier.weight(1f),
                         trailingIcon = {
-                            HelpIconButton(helpText = " This is the default value for the field.")
+                            HelpIconButton(helpText = stringResource(R.string.this_is_the_default_value_for_the_field_if_the_extraction_does_not_find_anything_or_something_goes_wrong_this_will_be_the_value_returned_default_values_are_not_avaiable_for_lists), title = stringResource(
+                                R.string.field_default
+                ***REMOVED***
+                ***REMOVED***
                         ***REMOVED***)
                 ***REMOVED***
             ***REMOVED***
@@ -596,12 +600,13 @@ fun DefaultPicker(
                 ***REMOVED***
                         ***REMOVED***,
                         enabled = !isList,
-                        label = { Text("Field Default (Number)") ***REMOVED***,
+                        label = { Text(stringResource(R.string.field_default_number)) ***REMOVED***,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         modifier = Modifier.weight(1f),
                         trailingIcon = {
-                            HelpIconButton(helpText = " This is the default value for the field.")
-                        ***REMOVED***
+                            HelpIconButton(helpText = stringResource(R.string.this_is_the_default_value_for_the_field_if_the_extraction_does_not_find_anything_or_something_goes_wrong_this_will_be_the_value_returned_default_values_are_not_avaiable_for_lists), title = stringResource(
+                                R.string.field_default
+                ***REMOVED***)                        ***REMOVED***
 
         ***REMOVED***
 
@@ -631,7 +636,9 @@ fun DefaultPicker(
         ***REMOVED*** {
 
                         HelpIconButton(
-                            helpText = " This is the default value for the field.",
+                            helpText = stringResource(R.string.this_is_the_default_value_for_the_field_if_the_extraction_does_not_find_anything_or_something_goes_wrong_this_will_be_the_value_returned_default_values_are_not_avaiable_for_lists), title = stringResource(
+                                R.string.field_default
+                ***REMOVED***,
                             modifier = Modifier
                                 .align(Alignment.TopEnd)
                                 .padding(6.dp)
@@ -660,7 +667,7 @@ fun DefaultPicker(
             "Boolean" -> {
                 default?.let {
                     BooleanFieldWithLabel(
-                        label = "Field Default",
+                        label = stringResource(R.string.field_default_boolean),
                         value = it.toBoolean(),
                         onValueChange = { newValue ->
                             changeDefault(newValue.toString())
@@ -668,7 +675,7 @@ fun DefaultPicker(
                                 template, "default" to newValue.toString(), index
                 ***REMOVED***
                         ***REMOVED***,
-                        help = " This is the default value for the field.",
+                        help = stringResource(R.string.this_is_the_default_value_for_the_field),
                         enabled = !isList,
                         modifier = Modifier.weight(1f)
         ***REMOVED***
@@ -693,11 +700,11 @@ fun DefaultPicker(
 
                         ***REMOVED***,
                         enabled = !isList,
-                        label = { Text("Field Default (Float)") ***REMOVED***,
+                        label = { Text(stringResource(R.string.field_default_float)) ***REMOVED***,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         modifier = Modifier.weight(1f),
                         trailingIcon = {
-                            HelpIconButton(helpText = " This is the default value for the field.")
+                            HelpIconButton(helpText = stringResource(R.string.this_is_the_default_value_for_the_field))
                         ***REMOVED***
 
         ***REMOVED***
@@ -721,7 +728,7 @@ fun TemplateTableCard(
     val focusRequester = remember { FocusRequester() ***REMOVED***
     var tableTitle by remember { mutableStateOf(table.title) ***REMOVED***
     var tableDescription by remember { mutableStateOf(table.description) ***REMOVED***
-
+    var all by remember { mutableStateOf(table.all) ***REMOVED***
     LaunchedEffect(key1 = focusRequesterIndex) {
         if (focusRequesterIndex == tableIndex + template.fields.size - 1) {
             focusRequester.requestFocus()
@@ -745,14 +752,17 @@ fun TemplateTableCard(
                     viewModel.updateTableItem(template, "title" to newText, tableIndex)
                     tableTitle = newText
                 ***REMOVED***,
-                label = { Text("Table Title") ***REMOVED***,
+                label = { Text(stringResource(R.string.table_title)) ***REMOVED***,
                 modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
                     unfocusedBorderColor = Color.Black,
                     unfocusedLabelColor = Color.Black,
     ***REMOVED***,
                 trailingIcon = {
-                    HelpIconButton(helpText = "This is the title of the table.")
+                    HelpIconButton(helpText = stringResource(R.string.this_is_the_title_of_the_table_totally_irrelevant_for_the_extraction_just_for_your_own_reference_will_be_invented_by_the_llm_if_left_empty), title = stringResource(
+                        R.string.table_title
+        ***REMOVED***
+        ***REMOVED***
                 ***REMOVED***)
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -762,13 +772,16 @@ fun TemplateTableCard(
                 unfocusedLabelColor = Color.Black,
 
     ***REMOVED***, trailingIcon = {
-                HelpIconButton(helpText = "This is the description of the table.")
+                HelpIconButton(helpText = stringResource(R.string.this_is_the_description_of_the_table_irrelevant_for_the_extraction_just_for_your_own_reference), title = stringResource(
+                    R.string.table_description
+    ***REMOVED***
+    ***REMOVED***
             ***REMOVED***, onValueChange = { newText ->
                 viewModel.updateTableItem(template, "description" to newText, tableIndex)
                 tableDescription = newText
             ***REMOVED***, label = {
                 Text(
-                    "Table Description",
+                    stringResource(R.string.table_description),
                     color = Color.Black,
     ***REMOVED***
             ***REMOVED***, modifier = Modifier.fillMaxWidth()
@@ -780,13 +793,27 @@ fun TemplateTableCard(
 
             Spacer(modifier = Modifier.height(16.dp))
 
+
+                BooleanFieldWithLabel(label = stringResource(R.string.everything_you_find), value = all, onValueChange = {
+                    all=it
+                    viewModel.updateTableItem(template, "all" to it, tableIndex)
+                ***REMOVED***,
+                    help = stringResource(R.string.if_you_want_to_extract_all_the_information_we_can_find_this_does_not_return_column_and_rows_name_and_can_be_inaccurate), title = stringResource(
+                        R.string.extract_everything
+        ***REMOVED***)
+
+
+            Spacer(modifier = Modifier.height(16.dp))
+
             // Table Grid
-            TableGrid(viewModel, tableIndex, template)
+            if(!all) {
+                TableGrid(viewModel, tableIndex, template)
+            ***REMOVED***
 
             Spacer(modifier = Modifier.height(16.dp))
 
             // Delete Table Button
-            DeleteButton(text = "Table", onClick = { viewModel.deleteTable(template, tableIndex) ***REMOVED***)
+            DeleteButton(text = stringResource(R.string.table), onClick = { viewModel.deleteTable(template, tableIndex) ***REMOVED***)
         ***REMOVED***
     ***REMOVED***
 ***REMOVED***
@@ -870,7 +897,8 @@ fun TableGrid(viewModel: TemplateViewModel, tableIndex: Int, template: Template)
         ***REMOVED***
         val context = LocalContext.current
         if (nMax > 15) {
-            Toast.makeText(context, "Max number of rows and columns is 15", Toast.LENGTH_SHORT)
+            Toast.makeText(context,
+                stringResource(R.string.max_number_of_rows_and_columns_is_15), Toast.LENGTH_SHORT)
                 .show()
             showDialog = false
         ***REMOVED*** else {
@@ -988,11 +1016,11 @@ fun AlertTable(
 ) {
     val focusRequester = remember { FocusRequester() ***REMOVED***
     var title by remember { mutableStateOf(field?.title ?: "") ***REMOVED***
-    var selectedType by remember { mutableStateOf(field?.type ?: "Any") ***REMOVED*** // Default type
+    var selectedType by remember { mutableStateOf(field?.type ?: "Text") ***REMOVED*** // Default type
     var selectedRequired by remember { mutableStateOf(field?.required ?: false) ***REMOVED***
     AlertDialog(containerColor = Color.White,
         onDismissRequest = { changeShowDialog(false) ***REMOVED***,
-        title = { Text("Edit Header") ***REMOVED***,
+        title = { Text(stringResource(R.string.edit_header)) ***REMOVED***,
         text = {
             Column {
                 OutlinedTextField(value = title,
@@ -1007,7 +1035,7 @@ fun AlertTable(
 
                 // Type Dropdown
                 var expanded by remember { mutableStateOf(false) ***REMOVED***
-                val typeOptions = listOf("Any", "String", "Date", "Number")
+                val typeOptions = listOf("Text", "Date", "Number", "Boolean","Float")
 
                 ExposedDropdownMenuBox(
                     expanded = expanded,
@@ -1016,7 +1044,7 @@ fun AlertTable(
                         value = selectedType,
                         onValueChange = { selectedType = it ***REMOVED***,
                         readOnly = true,
-                        label = { Text("Type") ***REMOVED***,
+                        label = { Text(stringResource(R.string.type)) ***REMOVED***,
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) ***REMOVED***,
                         colors = ExposedDropdownMenuDefaults.textFieldColors(
                             focusedLabelColor = Color.Black,
@@ -1046,10 +1074,10 @@ fun AlertTable(
                 Spacer(modifier = Modifier.height(8.dp))
                 // Required Checkbox
                 BooleanFieldWithLabel(
-                    label = "Required",
+                    label = stringResource(R.string.required),
                     value = selectedRequired,
                     onValueChange = { newValue -> selectedRequired = newValue ***REMOVED***,
-                    help = "if the field is required"
+                    help = stringResource(R.string.if_the_field_is_required_setting_this_to_false_could_mean_the_field_will_not_be_present_in_the_extraction_if_true_it_will_always_be_present_but_please_select_a_default_value),
     ***REMOVED***
             ***REMOVED***
         ***REMOVED***,
@@ -1150,6 +1178,7 @@ fun BooleanFieldWithLabel(
     onValueChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     help: String = "",
+    title: String = label,
     enabled: Boolean = true
 ) {
     Row(
@@ -1159,7 +1188,7 @@ fun BooleanFieldWithLabel(
         Text(text = label, fontSize = 16.sp, fontWeight = FontWeight.Bold)
         if (help.isNotEmpty()) {
             Spacer(modifier = Modifier.width(4.dp))
-            HelpIconButton(helpText = help)
+            HelpIconButton(helpText = help, title = title)
         ***REMOVED***
         Spacer(modifier = Modifier.weight(1f))
         Switch(

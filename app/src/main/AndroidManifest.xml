@@ -17,15 +17,16 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name=".MyApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/logo_vale"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/logo_vale_big"
         android:supportsRtl="true"
         android:theme="@style/Theme.TesiFrigo"
         tools:targetApi="31"
@@ -51,6 +52,10 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        <meta-data
+            android:name="android.app.SplashScreen"
+
+        android:resource="@mipmap/logo_vale_big" />
         </activity>
         <activity
             android:name="com.canhub.cropper.CropImageActivity"

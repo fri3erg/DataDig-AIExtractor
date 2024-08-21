@@ -83,6 +83,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -92,6 +93,7 @@ import com.canhub.cropper.CropImage
 import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
+import com.example.tesifrigo.R
 import com.example.tesifrigo.Screen
 import com.example.tesifrigo.models.ExceptionOccurred
 import com.example.tesifrigo.models.Extraction
@@ -945,19 +947,20 @@ fun Picker(
                     unfocusedLabelColor = Color.Black,
 
         ***REMOVED***,
-                label = { Text("Field Value") ***REMOVED***)
+                label = { Text(stringResource(R.string.field_value)) ***REMOVED***)
         ***REMOVED***
 
         "Number" -> {
-            OutlinedTextField(value = text,
+            OutlinedTextField(
+                value = text,
                 onValueChange = { newText ->
                     editableText = newText
                     changeText(newText)
                 ***REMOVED***,
-                label = { Text("Field Default (Number)") ***REMOVED***,
+                label = { Text(stringResource(R.string.field_value_number)) ***REMOVED***,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
 
-***REMOVED***
+    ***REMOVED***
         ***REMOVED***
 
         "Date" -> {
@@ -980,7 +983,7 @@ fun Picker(
                         .padding(5.dp)
     ***REMOVED*** {
                     Text(
-                        text = "Date",
+                        text = stringResource(R.string.date),
                         modifier = Modifier
                             .padding(6.dp)
                             .align(Alignment.TopStart),
@@ -996,7 +999,7 @@ fun Picker(
 
         "Boolean" -> {
             BooleanFieldWithLabel(
-                label = "Field Default",
+                label = stringResource(R.string.field_value_boolean),
                 value = text.toBoolean(),
                 onValueChange = { newText:Boolean ->
                     editableText = newText.toString()
@@ -1012,7 +1015,7 @@ fun Picker(
                     editableText = newText
                     changeText(newText)
                 ***REMOVED***,
-                label = { Text("Field Value (Float)") ***REMOVED***,
+                label = { Text(stringResource(R.string.field_value_float)) ***REMOVED***,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
 
 ***REMOVED***
