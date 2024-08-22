@@ -7,8 +7,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.tesifrigo.R
 import com.example.tesifrigo.Screen
 import com.example.tesifrigo.ui.theme.cyan_custom
 import com.guru.fontawesomecomposelib.FaIcon
@@ -23,19 +25,23 @@ fun NavBar(navController: NavHostController) {
     NavigationBar(
         containerColor = cyan_custom
     ) {
-        val templateSelected = currentDestination.startsWith(Screen.EditTemplate.route) || currentDestination.startsWith(
-            Screen.Templates.route
-        )
+        val templateSelected =
+            currentDestination.startsWith(Screen.EditTemplate.route) || currentDestination.startsWith(
+                Screen.Templates.route
+***REMOVED***
         NavigationBarItem(colors = NavigationBarItemDefaults.colors(
             selectedIconColor = Color.Black,
             selectedTextColor = Color.White,
             unselectedIconColor = Color.White,
             unselectedTextColor = Color.Black
         ),
-            icon = { FaIcon(faIcon = FaIcons.Table,
-                //tint = if(templateSelected) Color.Black else Color.White
-***REMOVED******REMOVED***,
-            label = { Text("Templates") ***REMOVED***,
+            icon = {
+                FaIcon(
+                    faIcon = FaIcons.Table,
+                    //tint = if(templateSelected) Color.Black else Color.White
+    ***REMOVED***
+            ***REMOVED***,
+            label = { Text(stringResource(R.string.templates)) ***REMOVED***,
             selected = templateSelected,
             onClick = {
                 navController.navigate(Screen.Templates.route)
@@ -47,27 +53,34 @@ fun NavBar(navController: NavHostController) {
             unselectedIconColor = Color.White,
             unselectedTextColor = Color.Black
         ),
-            icon = { FaIcon(faIcon = FaIcons.Camera,
-                //tint = if(cameraSelected) Color.Black else Color.White
-    ***REMOVED*** ***REMOVED***,
-            label = { Text("Camera") ***REMOVED***,
+            icon = {
+                FaIcon(
+                    faIcon = FaIcons.Camera,
+                    //tint = if(cameraSelected) Color.Black else Color.White
+    ***REMOVED***
+            ***REMOVED***,
+            label = { Text(stringResource(R.string.camera)) ***REMOVED***,
             selected = cameraSelected,
             onClick = {
                 navController.navigate(Screen.Camera.route)
             ***REMOVED***)
-        val storageSelected = currentDestination.startsWith(Screen.Storage.route) || currentDestination.startsWith(
-            Screen.SingleExtraction.route
-        )
+        val storageSelected =
+            currentDestination.startsWith(Screen.Storage.route) || currentDestination.startsWith(
+                Screen.SingleExtraction.route
+***REMOVED***
         NavigationBarItem(colors = NavigationBarItemDefaults.colors(
             selectedIconColor = Color.Black,
             selectedTextColor = Color.White,
             unselectedIconColor = Color.White,
             unselectedTextColor = Color.Black
         ),
-            icon = { FaIcon(faIcon = FaIcons.CloudDownloadAlt,
-                //tint =  if(storageSelected) Color.Black else Color.White
-***REMOVED*** ***REMOVED***,
-            label = { Text("Storage") ***REMOVED***,
+            icon = {
+                FaIcon(
+                    faIcon = FaIcons.CloudDownloadAlt,
+                    //tint =  if(storageSelected) Color.Black else Color.White
+    ***REMOVED***
+            ***REMOVED***,
+            label = { Text(stringResource(R.string.storage)) ***REMOVED***,
             selected = storageSelected,
             onClick = {
                 navController.navigate(Screen.Storage.route)
@@ -79,10 +92,13 @@ fun NavBar(navController: NavHostController) {
             unselectedIconColor = Color.White,
             unselectedTextColor = Color.Black
         ),
-            icon = { FaIcon(faIcon = FaIcons.Cog,
-                //tint = if(settingsSelected) Color.Black else Color.White
-    ***REMOVED*** ***REMOVED***,
-            label = { Text("Settings") ***REMOVED***,
+            icon = {
+                FaIcon(
+                    faIcon = FaIcons.Cog,
+                    //tint = if(settingsSelected) Color.Black else Color.White
+    ***REMOVED***
+            ***REMOVED***,
+            label = { Text(stringResource(R.string.settings)) ***REMOVED***,
             selected = settingsSelected,
             onClick = {
                 navController.navigate(Screen.Settings.route)

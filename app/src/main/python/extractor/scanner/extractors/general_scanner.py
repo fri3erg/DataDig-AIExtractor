@@ -220,7 +220,7 @@ class GeneralScanner:
                     create_pydantic_table_class(template),
                     self.file_id,
                     self.options,
-                    add_text=template.description,
+                    add_text=template.description or "",
     ***REMOVED***
                 if errors_occurred:
                     self.add_exceptions(

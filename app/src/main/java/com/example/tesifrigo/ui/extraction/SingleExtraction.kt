@@ -29,7 +29,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
@@ -76,13 +75,10 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MenuDefaults
-import androidx.compose.material3.MenuItemColors
 import androidx.compose.material3.Slider
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -112,7 +108,6 @@ import com.guru.fontawesomecomposelib.FaIcon
 import com.guru.fontawesomecomposelib.FaIcons
 import java.text.ParseException
 import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
@@ -155,19 +150,22 @@ fun SingleExtractionScreen(
     ***REMOVED***
 
     Scaffold(topBar = {
-        TopAppBar(title = { Text(text = extraction?.template?.title ?: "Extraction Details") ***REMOVED***,
-            navigationIcon = {
-                IconButton(onClick = {
-                    val lastDestination = navController.previousBackStackEntry?.destination?.route
-                        ?: Screen.Storage.route
-                    navController.navigate(lastDestination)
-                ***REMOVED***) {
-                    FaIcon(faIcon = FaIcons.ArrowLeft)
-                ***REMOVED***
-            ***REMOVED***)
+        TopAppBar(title = {
+            Text(
+                text = extraction?.template?.title ?: stringResource(R.string.extraction_details)
+***REMOVED***
+        ***REMOVED***, navigationIcon = {
+            IconButton(onClick = {
+                val lastDestination = navController.previousBackStackEntry?.destination?.route
+                    ?: Screen.Storage.route
+                navController.navigate(lastDestination)
+            ***REMOVED***) {
+                FaIcon(faIcon = FaIcons.ArrowLeft)
+            ***REMOVED***
+        ***REMOVED***)
     ***REMOVED***) { innerPadding ->
         if (extraction == null) {
-            Text(text = "No extraction found") // Handle null case
+            Text(text = stringResource(R.string.no_extraction_found)) // Handle null case
         ***REMOVED*** else {
             extraction?.let { extraction ->
                 LazyColumn( // Use extraction directly without null assertion
@@ -186,7 +184,7 @@ fun SingleExtractionScreen(
                         if (tables.isNotEmpty()) {
                             item {
                                 Text(
-                                    text = "Extracted Tables",
+                                    text = stringResource(R.string.extracted_tables),
                                     style = MaterialTheme.typography.titleLarge,
                                     fontWeight = FontWeight.Bold,
                                     color = Color.Black,
@@ -203,7 +201,7 @@ fun SingleExtractionScreen(
                     if (extraction.extractedFields.isNotEmpty()) {
                         item { // Wrap the entire section (title and fields) in a single item
                             Text(
-                                text = "Extracted Fields",
+                                text = stringResource(R.string.extracted_fields),
                                 style = MaterialTheme.typography.titleLarge,
                                 fontWeight = FontWeight.Bold,
                                 modifier = Modifier.padding(8.dp) // Add some bottom padding
@@ -212,19 +210,16 @@ fun SingleExtractionScreen(
                                 modifier = Modifier.fillMaxWidth(),
                                 elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
                                 colors = CardDefaults.cardColors(
-                                    containerColor = vale,
-                                    contentColor = Color.Black
+                                    containerColor = vale, contentColor = Color.Black
                     ***REMOVED***,
                                 shape = RoundedCornerShape(8.dp)
 
                 ***REMOVED*** {
-                                Column(modifier = Modifier.padding(16.dp))
-                                {
+                                Column(modifier = Modifier.padding(16.dp)) {
                                     // Iterate over fields and display them within the Card
                                     for (field in extraction.extractedFields) {
                                         ExtractionFieldComposable(
-                                            field = field,
-                                            viewModel = extractionViewModel
+                                            field = field, viewModel = extractionViewModel
                             ***REMOVED***
                                         HorizontalDivider()
                                     ***REMOVED***
@@ -241,8 +236,7 @@ fun SingleExtractionScreen(
                             modifier = Modifier.fillMaxWidth(),
                             elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
                             colors = CardDefaults.cardColors(
-                                containerColor = vale,
-                                contentColor = Color.Black
+                                containerColor = vale, contentColor = Color.Black
                 ***REMOVED***,
                             shape = RoundedCornerShape(8.dp)
             ***REMOVED*** {
@@ -285,50 +279,57 @@ fun SingleExtractionScreen(
 
 @Composable
 fun RatingModal(onDismiss: () -> Unit, viewModel: ExtractionViewModel, extraction: Extraction) {
-    var review by remember { mutableStateOf(Review(5, "")) ***REMOVED***
-    AlertDialog(onDismissRequest = onDismiss, title = { Text("Rate the Extraction") ***REMOVED***, text = {
-        Column {
-            // Satisfaction Slider
-            Text("Satisfaction Rating:")
-            Row {
-                Text("0")
-                Slider(
-                    value = review.rating.toFloat(), onValueChange = { newRating ->
-                        review = review.copy(rating = newRating.toInt()) // Update using copy
-                    ***REMOVED***, valueRange = 0f..10f, steps = 10
-    ***REMOVED***
-                Text("10")
-            ***REMOVED***
-            Spacer(modifier = Modifier.height(16.dp))
+    var review by remember { mutableStateOf(Review(10, "")) ***REMOVED***
+    AlertDialog(onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.rate_the_extraction)) ***REMOVED***,
+        text = {
+            Column {
+                // Satisfaction Slider
+                Text(stringResource(R.string.satisfaction_rating))
+                Row {
+                    Text("0")
+                    Slider(
+                        value = review.rating.toFloat(), onValueChange = { newRating ->
+                            review = review.copy(rating = newRating.toInt()) // Update using copy
+                        ***REMOVED***, valueRange = 0f..10f, steps = 10
+        ***REMOVED***
+                    Text("10")
+                ***REMOVED***
+                Spacer(modifier = Modifier.height(16.dp))
 
-            // Optional Comment Textbox
-            OutlinedTextField(value = review.comment, onValueChange = { newComment ->
-                review = review.copy(comment = newComment) // Update using copy
-            ***REMOVED***, label = { Text("Optional Comments") ***REMOVED***, modifier = Modifier.fillMaxWidth()
-***REMOVED***
-        ***REMOVED***
-    ***REMOVED***, confirmButton = {
-        TextButton(
-            onClick = {
-                // Handle rating submission logic here (pass satisfactionRating and comment)
-                viewModel.changeReview(extraction)
-                viewModel.saveReview(review)
-                onDismiss()
-            ***REMOVED***, colors = ButtonDefaults.textButtonColors(
-                containerColor = Color.Green, contentColor = Color.Black
-***REMOVED***
-        ) {
-            Text("Send")
-        ***REMOVED***
-    ***REMOVED***, dismissButton = {
-        TextButton(
-            onClick = onDismiss, colors = ButtonDefaults.textButtonColors(
-                containerColor = Color.LightGray, contentColor = Color.Gray
-***REMOVED***
-        ) {
-            Text("Skip")
-        ***REMOVED***
-    ***REMOVED***)
+                // Optional Comment Textbox
+                OutlinedTextField(value = review.comment,
+                    onValueChange = { newComment ->
+                        review = review.copy(comment = newComment) // Update using copy
+                    ***REMOVED***,
+                    label = { Text(stringResource(R.string.optional_comments)) ***REMOVED***,
+                    modifier = Modifier.fillMaxWidth()
+    ***REMOVED***
+            ***REMOVED***
+        ***REMOVED***,
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    // Handle rating submission logic here (pass satisfactionRating and comment)
+                    viewModel.changeReview(extraction)
+                    viewModel.saveReview(review)
+                    onDismiss()
+                ***REMOVED***, colors = ButtonDefaults.textButtonColors(
+                    containerColor = Color.Green, contentColor = Color.Black
+    ***REMOVED***
+***REMOVED*** {
+                Text(stringResource(R.string.send))
+            ***REMOVED***
+        ***REMOVED***,
+        dismissButton = {
+            TextButton(
+                onClick = onDismiss, colors = ButtonDefaults.textButtonColors(
+                    containerColor = Color.LightGray, contentColor = Color.Gray
+    ***REMOVED***
+***REMOVED*** {
+                Text(stringResource(R.string.skip))
+            ***REMOVED***
+        ***REMOVED***)
 ***REMOVED***
 
 @Composable
@@ -336,11 +337,12 @@ fun ExtractionExceptions(exceptionsOccurred: List<ExceptionOccurred>) {
 
 
     Text(
-        "Exceptions Occurred", style = MaterialTheme.typography.titleMedium
+        stringResource(R.string.exceptions_occurred), style = MaterialTheme.typography.titleMedium
     )
     if (exceptionsOccurred.isEmpty()) {
         Text(
-            "No exceptions occurred.", style = MaterialTheme.typography.bodyMedium
+            stringResource(R.string.no_exceptions_occurred),
+            style = MaterialTheme.typography.bodyMedium
         )
         Spacer(modifier = Modifier.height(8.dp))
     ***REMOVED*** else {
@@ -348,8 +350,7 @@ fun ExtractionExceptions(exceptionsOccurred: List<ExceptionOccurred>) {
             for (exception in exceptionsOccurred) {
                 HorizontalDivider()
                 Row(
-                    modifier = Modifier
-                        .padding(8.dp)
+                    modifier = Modifier.padding(8.dp)
     ***REMOVED*** {
                     Text(
                         text = exception.error,
@@ -383,7 +384,7 @@ fun ExtractionExceptions(exceptionsOccurred: List<ExceptionOccurred>) {
 @Composable
 fun ExtractionCostsComposable(extractionCosts: List<ExtractionCosts>) {
 
-    Text("Extraction Costs", style = MaterialTheme.typography.titleMedium)
+    Text(stringResource(R.string.extraction_costs), style = MaterialTheme.typography.titleMedium)
     Column(
         modifier = Modifier.fillMaxWidth(),
     ) {
@@ -440,17 +441,17 @@ fun TemplateInfo(
 
 
     // Launcher for cropping the image
-    val cropImageLauncher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult(),
-            onResult = { result ->
-                if (result.resultCode == Activity.RESULT_OK) {
-                    val resultUri =
-                        result.data?.getParcelableExtra<CropImage.ActivityResult>(CropImage.CROP_IMAGE_EXTRA_RESULT)?.uriContent
-                    if (resultUri != null) {
-                        viewModel.addExtraImage(extraction, resultUri)
-                    ***REMOVED***
+    val cropImageLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult(),
+        onResult = { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val resultUri =
+                    result.data?.getParcelableExtra<CropImage.ActivityResult>(CropImage.CROP_IMAGE_EXTRA_RESULT)?.uriContent
+                if (resultUri != null) {
+                    viewModel.addExtraImage(extraction, resultUri)
                 ***REMOVED***
-            ***REMOVED***)
+            ***REMOVED***
+        ***REMOVED***)
 
     // Function to create the crop intent using CropImageContract
     fun createCropIntent(imageUri: Uri, context: Context): Intent {
@@ -460,15 +461,15 @@ fun TemplateInfo(
     ***REMOVED***
 
 
-    val pickImageLauncher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia(),
-            onResult = { uri ->
-                if (uri != null) {
-                    cropImageLauncher.launch(createCropIntent(uri, context))
-                ***REMOVED*** else {
-                    Log.d("PhotoPicker", "No media selected")
-                ***REMOVED***
-            ***REMOVED***)
+    val pickImageLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = { uri ->
+            if (uri != null) {
+                cropImageLauncher.launch(createCropIntent(uri, context))
+            ***REMOVED*** else {
+                Log.d("PhotoPicker", "No media selected")
+            ***REMOVED***
+        ***REMOVED***)
 
     val imagePickerLauncherLegacy = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
@@ -481,37 +482,41 @@ fun TemplateInfo(
 
 
     // Permission request launcher
-    val requestPermissionLauncher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission(),
-            onResult = { isGranted: Boolean ->
-                if (isGranted) {
+    val requestPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted: Boolean ->
+            if (isGranted) {
 
-                    pickImageLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                pickImageLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
 
-                ***REMOVED*** else {
-                    // Permission is denied, handle accordingly (e.g., show a message to the user)
-                    Toast.makeText(
-                        context, "Permission denied. Cannot access images.", Toast.LENGTH_SHORT
-        ***REMOVED***.show()
+            ***REMOVED*** else {
+                // Permission is denied, handle accordingly (e.g., show a message to the user)
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.permission_denied_cannot_access_images),
+                    Toast.LENGTH_SHORT
+    ***REMOVED***.show()
+            ***REMOVED***
+        ***REMOVED***)
+
+    val requestPermissionLauncherLegacy = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted: Boolean ->
+            if (isGranted) {
+                // Launch the image picker using the legacy intent
+                val pickIntent = Intent(Intent.ACTION_PICK).apply {
+                    setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
                 ***REMOVED***
-            ***REMOVED***)
-
-    val requestPermissionLauncherLegacy =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission(),
-            onResult = { isGranted: Boolean ->
-                if (isGranted) {
-                    // Launch the image picker using the legacy intent
-                    val pickIntent = Intent(Intent.ACTION_PICK).apply {
-                        setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
-                    ***REMOVED***
-                    imagePickerLauncherLegacy.launch(pickIntent)
-                ***REMOVED*** else {
-                    // Permission is denied, handle accordingly
-                    Toast.makeText(
-                        context, "Permission denied. Cannot access images.", Toast.LENGTH_SHORT
-        ***REMOVED***.show()
-                ***REMOVED***
-            ***REMOVED***)
+                imagePickerLauncherLegacy.launch(pickIntent)
+            ***REMOVED*** else {
+                // Permission is denied, handle accordingly
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.permission_denied_cannot_access_images),
+                    Toast.LENGTH_SHORT
+    ***REMOVED***.show()
+            ***REMOVED***
+        ***REMOVED***)
 
     val onPhotoGalleryClick = {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13+
@@ -544,8 +549,7 @@ fun TemplateInfo(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
         colors = CardDefaults.cardColors(
-            containerColor = vale,
-            contentColor = Color.Black
+            containerColor = vale, contentColor = Color.Black
         )
     ) {
         Column(
@@ -564,18 +568,18 @@ fun TemplateInfo(
                     ***REMOVED*** else {
                         Toast
                             .makeText(
-                                context, "No connected template found", Toast.LENGTH_SHORT
+                                context,
+                                context.getString(R.string.no_connected_template_found),
+                                Toast.LENGTH_SHORT
                 ***REMOVED***
                             .show()
                     ***REMOVED***
                 ***REMOVED***
-                .padding(8.dp), verticalAlignment = Alignment.CenterVertically
-***REMOVED***
-            {
+                .padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
                 FaIcon(faIcon = FaIcons.Table, size = 24.dp)
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = extraction.title ,
+                    text = extraction.title,
                     style = MaterialTheme.typography.titleMedium,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold
@@ -596,18 +600,16 @@ fun TemplateInfo(
             if (extraction.extraImages.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(20.dp))
                 Text(
-                    text = "Added Images:",
+                    text = stringResource(R.string.added_images),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.titleMedium,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold
     ***REMOVED***
                 Spacer(modifier = Modifier.height(30.dp))
-                MyImageArea(
-                    imageUris = extraction.extraImages.map { Uri.parse(it) ***REMOVED***,
+                MyImageArea(imageUris = extraction.extraImages.map { Uri.parse(it) ***REMOVED***,
                     modifier = Modifier.fillMaxWidth(),
-                    onDelete = { viewModel.removeExtraImage(extraction, it) ***REMOVED***
-    ***REMOVED***
+                    onDelete = { viewModel.removeExtraImage(extraction, it) ***REMOVED***)
             ***REMOVED***
             Row(
                 modifier = Modifier
@@ -618,10 +620,14 @@ fun TemplateInfo(
                 Button(onClick = {
                     onPhotoGalleryClick()
                 ***REMOVED***) {
-                    Text("Add an extra image")
+                    Text(stringResource(R.string.add_an_extra_image))
                 ***REMOVED***
 
-                HelpIconButton(title="Extra Images",helpText = "Add an extra image to the extraction, these are separate from the extraction and are only for your commodity, use these for logos or other images that you want attached to the extraction.")
+                HelpIconButton(
+                    title = stringResource(R.string.extra_images), helpText = stringResource(
+                        R.string.add_an_extra_image_to_the_extraction_these_are_separate_from_the_extraction_and_are_only_for_your_commodity_use_these_for_logos_or_other_images_that_you_want_attached_to_the_extraction
+        ***REMOVED***
+    ***REMOVED***
 
             ***REMOVED***
         ***REMOVED***
@@ -636,7 +642,7 @@ fun TagsSection(
 ) {
     val context = LocalContext.current
     Column {
-        Text("Extraction Tags", style = MaterialTheme.typography.titleMedium)
+        Text(stringResource(R.string.extraction_tags), style = MaterialTheme.typography.titleMedium)
         FlowRow(
             modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)
 
@@ -654,7 +660,7 @@ fun TagsSection(
             ***REMOVED*** {
                             Icon(Icons.Filled.Close,
                                 tint = Color.Black,
-                                contentDescription = "Remove Keyword",
+                                contentDescription = stringResource(id = R.string.remove_keyword),
                                 modifier = Modifier.clickable {
                                     viewModel.removeTag(extraction, tag)
                                 ***REMOVED***)
@@ -676,20 +682,25 @@ fun TagsSection(
                 unfocusedLabelColor = Color.Black,
 ***REMOVED***,
             onValueChange = { newKey = it ***REMOVED***,
-            label = { Text("Add Tag", color = Color.Black) ***REMOVED***,
+            label = { Text(stringResource(R.string.add_tag), color = Color.Black) ***REMOVED***,
             maxLines = 1,
             modifier = Modifier.fillMaxWidth(),
             trailingIcon = {
                 FaIcon(faIcon = FaIcons.Plus, tint = Color.Black, modifier = Modifier.clickable {
                     when {
                         newKey.isBlank() -> {
-                            Toast.makeText(context, "tag cannot be empty", Toast.LENGTH_SHORT)
-                                .show()
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.tag_cannot_be_empty),
+                                Toast.LENGTH_SHORT
+                ***REMOVED***.show()
                         ***REMOVED***
 
                         extraction.tags.size >= 10 -> {
                             Toast.makeText(
-                                context, "Max number of keywords is 10", Toast.LENGTH_SHORT
+                                context,
+                                context.getString(R.string.max_number_of_keywords_is_10),
+                                Toast.LENGTH_SHORT
                 ***REMOVED***.show()
                         ***REMOVED***
 
@@ -715,8 +726,7 @@ fun ExtractionTableDisplay(extractionTable: ExtractionTable, viewModel: Extracti
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = vale,
-            contentColor = Color.Black
+            containerColor = vale, contentColor = Color.Black
         )
     ) {
         Column(
@@ -725,7 +735,7 @@ fun ExtractionTableDisplay(extractionTable: ExtractionTable, viewModel: Extracti
                 .padding(2.dp)
         ) {
             Text(
-                text = extractionTable.title ?: "Table",
+                text = extractionTable.title ?: stringResource(id = R.string.table),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black
@@ -738,8 +748,7 @@ fun ExtractionTableDisplay(extractionTable: ExtractionTable, viewModel: Extracti
                         .padding(8.dp)
     ***REMOVED*** {
                     // Add an empty cell for the row index header
-                    ExtractionTableCell(
-                        text = "",
+                    ExtractionTableCell(text = "",
                         modifier = Modifier.weight(1f),
                         onValueChange = {***REMOVED***,
                         onDelete = {***REMOVED***,
@@ -751,7 +760,7 @@ fun ExtractionTableDisplay(extractionTable: ExtractionTable, viewModel: Extracti
                             text = header,
                             modifier = Modifier.weight(1f),
                             isHeader = true,
-                            onDelete = {viewModel.removeColumn(extractionTable, header) ***REMOVED***,
+                            onDelete = { viewModel.removeColumn(extractionTable, header) ***REMOVED***,
 
 
                 ***REMOVED***
@@ -784,15 +793,13 @@ fun ExtractionTableDisplay(extractionTable: ExtractionTable, viewModel: Extracti
 
                         contentAlignment = Alignment.CenterStart // Center the content vertically within the Box
         ***REMOVED*** {
-                        ExtractionTableCell(
-                            text = row.rowName,
+                        ExtractionTableCell(text = row.rowName,
                             modifier = Modifier.align(Alignment.CenterStart),
                             isHeader = true,
                             onDelete = { viewModel.removeRow(extractionTable, row) ***REMOVED***)
                     ***REMOVED***
                     for (field in row.fields) {
-                        ExtractionTableCell(
-                            text = field.value,
+                        ExtractionTableCell(text = field.value,
                             modifier = Modifier.weight(1f),
                             onValueChange = { newValue ->
                                 viewModel.updateField(field, newValue)
@@ -811,19 +818,20 @@ fun ExtractionTableDisplay(extractionTable: ExtractionTable, viewModel: Extracti
                     .fillMaxWidth()
                     .padding(vertical = 4.dp)
 ***REMOVED*** {
-            ExtractionTableCell(
-                text = "",
-                modifier = Modifier.weight(1f),
-                buttonClick = {
-                    viewModel.addRow(extractionTable, it)
-                ***REMOVED***,
-                isButton = true,
-***REMOVED***
+                ExtractionTableCell(
+                    text = "",
+                    modifier = Modifier.weight(1f),
+                    buttonClick = {
+                        viewModel.addRow(extractionTable, it)
+                    ***REMOVED***,
+                    isButton = true,
+    ***REMOVED***
                 for (field in extractionTable.fields[0].fields) {
                     ExtractionTableCell(
                         text = "",
                         modifier = Modifier.weight(1f),
-                        invisible = true,)
+                        invisible = true,
+        ***REMOVED***
 
                 ***REMOVED***
                 ExtractionTableCell(
@@ -831,8 +839,8 @@ fun ExtractionTableDisplay(extractionTable: ExtractionTable, viewModel: Extracti
                     modifier = Modifier.weight(1f),
                     invisible = true,
     ***REMOVED***
-        ***REMOVED***
             ***REMOVED***
+        ***REMOVED***
     ***REMOVED***
 ***REMOVED***
 
@@ -841,8 +849,11 @@ fun ExtractionTableDisplay(extractionTable: ExtractionTable, viewModel: Extracti
 @Composable
 fun FormatSection(extraction: Extraction, viewModel: ExtractionViewModel) {
 
-    Text("Extraction Format", style = MaterialTheme.typography.titleMedium,
-        modifier = Modifier.padding(8.dp))
+    Text(
+        stringResource(R.string.extraction_format),
+        style = MaterialTheme.typography.titleMedium,
+        modifier = Modifier.padding(8.dp)
+    )
 
     var expanded by remember { mutableStateOf(false) ***REMOVED***
     var selectedFormat by remember { mutableStateOf(extraction.format) ***REMOVED***
@@ -869,8 +880,11 @@ fun FormatSection(extraction: Extraction, viewModel: ExtractionViewModel) {
 
         )
 
-        ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false ***REMOVED***,
-            modifier = Modifier.background(Color.White)) {
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false ***REMOVED***,
+            modifier = Modifier.background(Color.White)
+        ) {
             formatOptions.forEach { format ->
                 DropdownMenuItem(text = { Text(format) ***REMOVED***, onClick = {
                     selectedFormat = format
@@ -894,9 +908,7 @@ fun FormatSection(extraction: Extraction, viewModel: ExtractionViewModel) {
 
 @Composable
 fun ExtractionFieldComposable(
-    field: ExtractionField,
-    viewModel: ExtractionViewModel,
-    modifier: Modifier = Modifier
+    field: ExtractionField, viewModel: ExtractionViewModel, modifier: Modifier = Modifier
 ) {
     val value by remember { mutableStateOf(field.value) ***REMOVED***
     field.templateField?.let { templateField ->
@@ -912,15 +924,12 @@ fun ExtractionFieldComposable(
             var editableElements by remember { mutableStateOf(elements) ***REMOVED*** // Use a separate state for editing
 
             for ((index, element) in editableElements.withIndex()) {
-                Picker(
-                    type = templateField.type,
-                    text = element,
-                    changeText = { newText ->
-                        editableElements = editableElements.toMutableList().also { it[index] = newText ***REMOVED***
-                        val updatedValue = if (templateField.list) editableElements.joinToString("|") else newText
-                        viewModel.updateField(field, updatedValue)
-                    ***REMOVED***
-    ***REMOVED***
+                Picker(type = templateField.type, text = element, changeText = { newText ->
+                    editableElements = editableElements.toMutableList().also { it[index] = newText ***REMOVED***
+                    val updatedValue =
+                        if (templateField.list) editableElements.joinToString("|") else newText
+                    viewModel.updateField(field, updatedValue)
+                ***REMOVED***)
             ***REMOVED***
 
         ***REMOVED***
@@ -931,23 +940,20 @@ fun ExtractionFieldComposable(
 @Composable
 fun Picker(
     type: String,
-    text:String,
+    text: String,
     changeText: (String) -> Unit,
-){
+) {
     var editableText by remember { mutableStateOf(text) ***REMOVED***
     when (type) {
-        "Text", "Any" -> {
-            OutlinedTextField(value = editableText,
-                onValueChange = { newText ->
-                    editableText = newText
-                    changeText(newText)
-                ***REMOVED***,
-                colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = Color.Black,
-                    unfocusedLabelColor = Color.Black,
+        "Text" -> {
+            OutlinedTextField(value = editableText, onValueChange = { newText ->
+                editableText = newText
+                changeText(newText)
+            ***REMOVED***, colors = OutlinedTextFieldDefaults.colors(
+                unfocusedBorderColor = Color.Black,
+                unfocusedLabelColor = Color.Black,
 
-        ***REMOVED***,
-                label = { Text(stringResource(R.string.field_value)) ***REMOVED***)
+    ***REMOVED***, label = { Text(stringResource(R.string.field_value)) ***REMOVED***)
         ***REMOVED***
 
         "Number" -> {
@@ -964,44 +970,43 @@ fun Picker(
         ***REMOVED***
 
         "Date" -> {
-                val datePickerState =
-                    rememberDatePickerState(initialSelectedDateMillis = text?.let {
-                        try {
-                            SimpleDateFormat(
-                                "yyyy-MM-dd", Locale.getDefault()
-                ***REMOVED***.apply {
-                                timeZone = TimeZone.getTimeZone("UTC")
-                            ***REMOVED***.parse(it)?.time
-                        ***REMOVED*** catch (e: ParseException) {
-                            null
-                        ***REMOVED***
-                    ***REMOVED***) // State for DatePicker
-                Spacer(modifier = Modifier.height(8.dp))
-                Box(
-                    modifier = Modifier
-                        .border(1.dp, Color.Gray, shape = RoundedCornerShape(4.dp))
-                        .padding(5.dp)
-    ***REMOVED*** {
-                    Text(
-                        text = stringResource(R.string.date),
-                        modifier = Modifier
-                            .padding(6.dp)
-                            .align(Alignment.TopStart),
-                        color = Color.Black
-        ***REMOVED***
-                    DatePicker( // Use DatePicker for "Date" type
-                        state = datePickerState
-        ***REMOVED***
+            val datePickerState = rememberDatePickerState(initialSelectedDateMillis = text.let {
+                try {
+                    SimpleDateFormat(
+                        "yyyy-MM-dd", Locale.getDefault()
+        ***REMOVED***.apply {
+                        timeZone = TimeZone.getTimeZone("UTC")
+                    ***REMOVED***.parse(it)?.time
+                ***REMOVED*** catch (e: ParseException) {
+                    null
                 ***REMOVED***
-
+            ***REMOVED***) // State for DatePicker
+            Spacer(modifier = Modifier.height(8.dp))
+            Box(
+                modifier = Modifier
+                    .border(1.dp, Color.Gray, shape = RoundedCornerShape(4.dp))
+                    .padding(5.dp)
+***REMOVED*** {
+                Text(
+                    text = stringResource(R.string.date),
+                    modifier = Modifier
+                        .padding(6.dp)
+                        .align(Alignment.TopStart),
+                    color = Color.Black
+    ***REMOVED***
+                DatePicker( // Use DatePicker for "Date" type
+                    state = datePickerState
+    ***REMOVED***
             ***REMOVED***
+
+        ***REMOVED***
 
 
         "Boolean" -> {
             BooleanFieldWithLabel(
                 label = stringResource(R.string.field_value_boolean),
                 value = text.toBoolean(),
-                onValueChange = { newText:Boolean ->
+                onValueChange = { newText: Boolean ->
                     editableText = newText.toString()
                     changeText(newText.toString())
                 ***REMOVED***,
@@ -1009,8 +1014,7 @@ fun Picker(
         ***REMOVED***
 
         "Float" -> {
-            OutlinedTextField(
-                value = text,
+            OutlinedTextField(value = text,
                 onValueChange = { newText: String ->
                     editableText = newText
                     changeText(newText)
@@ -1022,4 +1026,4 @@ fun Picker(
 
         ***REMOVED***
     ***REMOVED***
-    ***REMOVED***
+***REMOVED***

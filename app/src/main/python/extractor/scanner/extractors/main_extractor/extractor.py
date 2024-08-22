@@ -31,6 +31,8 @@ class MainExtractor(GeneralScanner):
 
             if self.tables_present:
                 self.tables: dict[TemplateTable, Any] = self.get_tables() or {***REMOVED***
+                for key , value in self.tables.items():
+                    print(value)
 
             intelligent_template, basic_template = self.template.split_template()
 

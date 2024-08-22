@@ -5,19 +5,15 @@ from ...configs.cost_config import cost_per_token
 from openai import OpenAI, AuthenticationError
 from typing import List, Optional, Any, Dict
 from ...classes.Extracted import ExtractionCosts
-from openai.types.chat import ChatCompletionMessageParam
 from langchain.prompts import PromptTemplate
 import os
 import asyncio
-import openai
 
 # import instructor
-import threading
 from langchain.chains import LLMChain
 from langchain.llms.base import LLM
 
 # from pydantic_core import ValidationError
-from langchain_community.llms import OpenAI as LangChainOpenAI
 from langchain.chat_models import ChatOpenAI  # use ChatOpenAI from the core library
 from langchain.llms.base import LLM
 from langchain.output_parsers import PydanticOutputParser
@@ -103,7 +99,7 @@ class Models(LLM):
         cls, prompt: PromptTemplate, schema, file_id: str, model: str = "gpt-4", temperature: float = 0.0
     ) -> tuple[Any, Optional[Exception]]:
 
-        if model == "Smart-Mix":
+        if model == "smart-mix":
             model = "gpt-4"
         llm: ChatOpenAI = cls(model, temperature)._models[model][temperature]
 
@@ -134,7 +130,7 @@ class Models(LLM):
         try:
             chain = LLMChain(llm=llm, prompt=prompt, output_parser=output_parser)
             output = chain.run(schema=schema.schema_json())
-        except openai.AuthenticationError as auth_err:
+        except AuthenticationError as auth_err:
             print("Authentication Error (Invalid API key?):", auth_err)
             error_occurred = auth_err
             output = schema()  # Create an empty instance on other errors"""
@@ -149,7 +145,7 @@ class Models(LLM):
     # Updated extract() method
     @classmethod
     def extract(cls, file_id, model, prompt: PromptTemplate, pages, template, temperature=0) -> str:
-        if model == "Smart-Mix":
+        if model == "smart-mix":
             model = "gpt-3.5-turbo"
         llm: ChatOpenAI = cls(model, temperature)._models[model][temperature]  # Get the singleton instance
         try:

@@ -28,6 +28,9 @@ def analyze_general_documents(
     language_locale_config = {
         "it": "it-IT",
         "en": "en-US",
+        "es": "es-ES",
+        "fr": "fr-FR",
+        "de": "de-DE",
     ***REMOVED***
     language_locale = language_locale_config[language]
 

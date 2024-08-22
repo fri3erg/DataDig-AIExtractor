@@ -8,10 +8,10 @@ from ...classes.Extracted import ExceptionsExtracted
 from ...scanner.extractors.utils import num_tokens_from_string
 from langchain.prompts import PromptTemplate
 from ..ai_manager.models import Models
-from ...configs.configs import table_prompt
 from ...configs.basic_tags import DocLanguage
 from ...configs.configs import desc_tabella
 from ...configs.configs import create_language_tag_messages
+from .utils import sanitize_text
 
 
 def get_doc_language(text, file_id, options: Options):
@@ -60,8 +60,9 @@ def general_table_inspection(
 
         # First normal extraction, then tagging
         add_text = f"{desc_tabella[options.language or 'en']***REMOVED*** {add_text***REMOVED*** " if add_text else ""
-        table = f"{add_text***REMOVED*** TABLE-> {table***REMOVED***"
+        table = sanitize_text(f"{add_text***REMOVED*** TABLE-> {table.to_string()***REMOVED***")
         prompt = create_language_tag_messages(text=table, language=options.language or "it", is_table=True)
+        print(prompt.template)
         extraction_adapted, errors_occurred = Models.tag(prompt, pydantic_class, file_id, options.model)
 
     except Exception as error:

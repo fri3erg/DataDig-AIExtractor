@@ -5,6 +5,12 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.ProcessLifecycleOwner
 import com.example.tesifrigo.models.ExceptionOccurred
 import com.example.tesifrigo.models.Extraction
 import com.example.tesifrigo.models.ExtractionCosts
@@ -18,9 +24,25 @@ import dagger.hilt.android.HiltAndroidApp
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
 
+class AppLifecycleObserver(private val context: Context) : LifecycleEventObserver {
+    var isInForeground = false
+        private set
 
+    override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+        when (event) {
+            Lifecycle.Event.ON_START -> {
+                isInForeground = true
+            ***REMOVED***
+            Lifecycle.Event.ON_STOP -> {
+                isInForeground = false
+            ***REMOVED***
+            else -> {***REMOVED***
+        ***REMOVED***
+    ***REMOVED***
+***REMOVED***
 @HiltAndroidApp
 class MyApp : Application() {
+    lateinit var lifecycleObserver: AppLifecycleObserver
     companion object {
         lateinit var realm: Realm
     ***REMOVED***
@@ -28,7 +50,8 @@ class MyApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-
+        lifecycleObserver = AppLifecycleObserver(this)
+        ProcessLifecycleOwner.get().lifecycle.addObserver(lifecycleObserver)
 
         val configuration = RealmConfiguration.Builder(
             schema = setOf(

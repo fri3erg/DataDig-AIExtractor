@@ -173,7 +173,7 @@ def reduce_image_size(base64_str, target_size_mb=4, initial_quality=85, min_qual
     template, option = create_test()
     text = ["this is a long text that will be extracted"]
     base64_image = []
-    with open("extractor\\test\\frigo.jpg", "rb") as image_file:  # Open in binary mode
+    with open("extractor\\test\\table.jpg", "rb") as image_file:  # Open in binary mode
         image_data = image_file.read()
         base64_image = [base64.b64encode(image_data).decode("utf-8")]
         

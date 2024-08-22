@@ -493,7 +493,8 @@ class TemplateViewModel : ViewModel() {
     fun removeKeyword(table: TemplateTable, indexOf: Int) {
         viewModelScope.launch {
             realm.writeBlocking {
-                table.keywords.removeAt(indexOf)
+                val latest = findLatest(table) ?: return@writeBlocking
+                latest.keywords.removeAt(indexOf)
             ***REMOVED***
         ***REMOVED***
     ***REMOVED***
@@ -501,7 +502,8 @@ class TemplateViewModel : ViewModel() {
     fun addKeyword(table: TemplateTable, newKey: String) {
         viewModelScope.launch {
             realm.writeBlocking {
-                table.keywords.add(newKey)
+                val latest = findLatest(table) ?: return@writeBlocking
+                latest.keywords.add(newKey)
             ***REMOVED***
         ***REMOVED***
 
@@ -510,7 +512,8 @@ class TemplateViewModel : ViewModel() {
     fun deleteRowFromTable(table: TemplateTable, rowIndex: Int) {
         viewModelScope.launch {
             realm.writeBlocking {
-                table.rows.removeAt(rowIndex)
+                val latest = findLatest(table) ?: return@writeBlocking
+                latest.rows.removeAt(rowIndex)
             ***REMOVED***
         ***REMOVED***
 
@@ -519,7 +522,8 @@ class TemplateViewModel : ViewModel() {
     fun deleteColumnFromTable(table: TemplateTable, columnIndex: Int) {
         viewModelScope.launch {
             realm.writeBlocking {
-                table.columns.removeAt(columnIndex)
+                val latest = findLatest(table) ?: return@writeBlocking
+                latest.columns.removeAt(columnIndex)
             ***REMOVED***
         ***REMOVED***
 

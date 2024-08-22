@@ -389,7 +389,7 @@ class ExtractionViewModel @Inject constructor() : ViewModel() {
                 newFile = CsvCreator().convertToCsvFile(extraction, context).toString()
             ***REMOVED***
 
-            "text" -> {
+            "txt" -> {
                 newFile = TextCreator().convertToTextFile(extraction, context).toString()
             ***REMOVED***
 

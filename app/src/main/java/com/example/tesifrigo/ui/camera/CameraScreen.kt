@@ -60,6 +60,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -69,6 +70,7 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavHostController
+import com.example.tesifrigo.R
 import com.example.tesifrigo.Screen
 import com.example.tesifrigo.models.Extraction
 import com.example.tesifrigo.models.Options
@@ -129,12 +131,15 @@ fun CameraScreen(
         template?.let { serviceViewModel.setTemplate(it) ***REMOVED***
     ***REMOVED***
 
-    Scaffold{ innerPadding ->
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+    ) { innerPadding ->
 
 
         Column(
-            modifier = Modifier.fillMaxSize()
-                .padding(innerPadding)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
         ) {
             if (activePhoto) {
                 Column(modifier = Modifier.fillMaxSize()) {
@@ -213,7 +218,7 @@ fun CameraScreen(
 @Composable
 fun ExceptionsDialog(closeDialog: () -> Unit, extraction: Extraction) {
     AlertDialog(onDismissRequest = { closeDialog() ***REMOVED***, title = {
-        Text("Errors occurred while fetching the extraction.")
+        Text(stringResource(R.string.errors_occurred_while_fetching_the_extraction))
     ***REMOVED***, text = {
         LazyColumn {
             items(extraction.exceptionsOccurred) { error ->
@@ -228,7 +233,7 @@ fun ExceptionsDialog(closeDialog: () -> Unit, extraction: Extraction) {
         ***REMOVED***
     ***REMOVED***, confirmButton = {
         Button(onClick = { closeDialog() ***REMOVED***) {
-            Text("Ok")
+            Text(stringResource(id = R.string.ok))
         ***REMOVED***
     ***REMOVED***)
 
@@ -249,44 +254,52 @@ fun startExtraction(context: Context, serviceViewModel: ServiceViewModel, imageU
 fun AzureKeysDialog(changeOpen: () -> Unit, navController: NavHostController, reason1: Boolean) {
 
     var text = if (reason1) {
-        "Your template contains table, Azure is required for table extraction"
+        stringResource(R.string.your_template_contains_table_azure_is_required_for_table_extraction)
     ***REMOVED*** else {
-        "You cannot use Azure OCR without keys"
+        stringResource(R.string.you_cannot_use_azure_ocr_without_keys)
     ***REMOVED***
-    text += "Please enter your Azure keys in the settings"
-    AlertDialog(onDismissRequest = { changeOpen() ***REMOVED***, title = { Text("Azure Keys") ***REMOVED***, text = {
-        Text(text)
-    ***REMOVED***, confirmButton = {
-        Button(onClick = {
-            changeOpen()
-            navController.navigate(Screen.Settings.route)
-        ***REMOVED***) {
-            Text("Go to settings")
-        ***REMOVED***
-    ***REMOVED***, dismissButton = {
-        Button(onClick = { changeOpen() ***REMOVED***) {
-            Text("Ok")
-        ***REMOVED***
-    ***REMOVED***)
+    text += stringResource(R.string.please_enter_your_azure_keys_in_the_settings)
+    AlertDialog(onDismissRequest = { changeOpen() ***REMOVED***,
+        title = { Text(stringResource(R.string.azure_keys)) ***REMOVED***,
+        text = {
+            Text(text)
+        ***REMOVED***,
+        confirmButton = {
+            Button(onClick = {
+                changeOpen()
+                navController.navigate(Screen.Settings.route)
+            ***REMOVED***) {
+                Text(stringResource(id = R.string.go_to_settings))
+            ***REMOVED***
+        ***REMOVED***,
+        dismissButton = {
+            Button(onClick = { changeOpen() ***REMOVED***) {
+                Text(stringResource(id = R.string.ok))
+            ***REMOVED***
+        ***REMOVED***)
 ***REMOVED***
 
 
 @Composable
 fun GptKeysDialog(function: () -> Unit, navController: NavHostController) {
-    AlertDialog(onDismissRequest = { function() ***REMOVED***, title = { Text("OpenAi Keys") ***REMOVED***, text = {
-        Text("You cannot extract without keys. Please enter your OpenAi keys in the settings")
-    ***REMOVED***, confirmButton = {
-        Button(onClick = {
-            function()
-            navController.navigate(Screen.Settings.route)
-        ***REMOVED***) {
-            Text("Go to settings")
-        ***REMOVED***
-    ***REMOVED***, dismissButton = {
-        Button(onClick = { function() ***REMOVED***) {
-            Text("Ok")
-        ***REMOVED***
-    ***REMOVED***)
+    AlertDialog(onDismissRequest = { function() ***REMOVED***,
+        title = { Text(stringResource(R.string.openai_keys)) ***REMOVED***,
+        text = {
+            Text(stringResource(R.string.you_cannot_extract_without_keys_please_enter_your_openai_keys_in_the_settings))
+        ***REMOVED***,
+        confirmButton = {
+            Button(onClick = {
+                function()
+                navController.navigate(Screen.Settings.route)
+            ***REMOVED***) {
+                Text(stringResource(R.string.go_to_settings))
+            ***REMOVED***
+        ***REMOVED***,
+        dismissButton = {
+            Button(onClick = { function() ***REMOVED***) {
+                Text(stringResource(R.string.ok))
+            ***REMOVED***
+        ***REMOVED***)
 
 ***REMOVED***
 
@@ -358,7 +371,7 @@ fun ChooseTemplate(navController: NavHostController, templateViewModel: Template
         LazyColumn(modifier = Modifier.padding(innerPadding)) {
             item {
                 Text(
-                    text = "Choose a template to start extracting",
+                    text = stringResource(R.string.choose_a_template_to_start_extracting),
                     modifier = Modifier.padding(16.dp),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
@@ -372,10 +385,10 @@ fun ChooseTemplate(navController: NavHostController, templateViewModel: Template
                         .clickable {
                             templateViewModel.setActiveTemplate(template)
                         ***REMOVED***
-                        .padding(8.dp), border = CardDefaults.outlinedCardBorder(), // Add a border
+                        .padding(8.dp),
+                    border = CardDefaults.outlinedCardBorder(), // Add a border
                     colors = CardDefaults.cardColors(
-                        containerColor = vale,
-                        contentColor = Color.Black
+                        containerColor = vale, contentColor = Color.Black
         ***REMOVED***,
                     elevation = CardDefaults.cardElevation(defaultElevation = 5.dp) // Add elevation for better visuals
 
@@ -455,19 +468,19 @@ fun ExtractionDetails(
         serviceViewModel.setOptions(defaultOptions) // Set the options in the ViewModel
     ***REMOVED***
     Text(
-        "Template: \n $templateTitle",
+        stringResource(R.string.template, templateTitle.toString()),
         modifier = modifier.padding(16.dp),
         fontSize = 28.sp,
         fontWeight = FontWeight.Bold,
         color = Color.Black,
     )
     Spacer(modifier = Modifier.height(2.dp))
-    MyImageArea(
-        imageUris = imageUris,
-        onDelete = { uri ->
-            serviceViewModel.removeImageUri(uri)
+    MyImageArea(imageUris = imageUris, onDelete = { uri ->
+        serviceViewModel.removeImageUri(uri)
+        if (imageUris.isEmpty()) {
+            serviceViewModel.setActivePhoto(true)
         ***REMOVED***
-    )
+    ***REMOVED***)
     if (!activeExtraction) {
         ButtonBar(serviceViewModel, sharedPrefs, templateViewModel)
         HorizontalDivider()
@@ -480,17 +493,14 @@ fun ExtractionDetails(
             colors = ButtonDefaults.buttonColors(Color.Green),
             onClick = onExtractionClick
         ) {
-            Text(text = "Extract!", color = Color.Black)
+            Text(text = stringResource(R.string.extract), color = Color.Black)
         ***REMOVED***
     ***REMOVED*** else {
         ExtractedBar(serviceViewModel, templateViewModel)
 
         HorizontalDivider()
 
-        Spacer(modifier = Modifier.height(16.dp))
         ProgressBar()
-        Spacer(modifier = Modifier.height(16.dp))
-        HorizontalDivider()
         ShownExtraction(
             navController = navController,
             serviceViewModel = serviceViewModel,
@@ -526,7 +536,8 @@ fun ExtractedBar(serviceViewModel: ServiceViewModel, templateViewModel: Template
 ***REMOVED***
             Spacer(modifier = Modifier.height(4.dp)) // Space between icon and text
             Text(
-                text = "New Extraction", fontSize = 12.sp, // Smaller font size
+                text = stringResource(R.string.new_extraction),
+                fontSize = 12.sp, // Smaller font size
                 textAlign = TextAlign.Center // Center align text
 ***REMOVED***
         ***REMOVED***
@@ -548,7 +559,8 @@ fun ExtractedBar(serviceViewModel: ServiceViewModel, templateViewModel: Template
 ***REMOVED***
             Spacer(modifier = Modifier.height(4.dp)) // Space between icon and text
             Text(
-                text = "Use New Photos", fontSize = 12.sp, // Smaller font size
+                text = stringResource(R.string.use_new_photos),
+                fontSize = 12.sp, // Smaller font size
                 textAlign = TextAlign.Center // Center align text
 ***REMOVED***
         ***REMOVED***
@@ -569,13 +581,14 @@ fun ExtractedBar(serviceViewModel: ServiceViewModel, templateViewModel: Template
 ***REMOVED***
             Spacer(modifier = Modifier.height(4.dp)) // Space between icon and text
             Text(
-                text = "Change Template", fontSize = 12.sp, // Smaller font size
+                text = stringResource(R.string.change_template),
+                fontSize = 12.sp, // Smaller font size
                 textAlign = TextAlign.Center // Center align text
 ***REMOVED***
         ***REMOVED***
 
     ***REMOVED***
-    Spacer(modifier = Modifier.height(16.dp))
+    Spacer(modifier = Modifier.height(8.dp))
 ***REMOVED***
 
 @Composable
@@ -620,7 +633,9 @@ fun ButtonBar(
         options?.let {
 
             var checked by remember { mutableStateOf(it.azureOcr) ***REMOVED***
-            LabeledSwitch(label = "Azure OCR", checked = checked, onCheckedChange = { change ->
+            LabeledSwitch(label = stringResource(
+                R.string.azure_ocr
+***REMOVED***, checked = checked, onCheckedChange = { change ->
                 serviceViewModel.changeOptions("azureOcr", change)
                 with(sharedPrefs.edit()) {
                     putBoolean("azureOcr", change)
@@ -629,7 +644,11 @@ fun ButtonBar(
                 checked = change
             ***REMOVED***)
             Spacer(modifier = Modifier.width(8.dp))
-            HelpIconButton("Use Azure OCR for the extraction")
+            HelpIconButton(
+                stringResource(R.string.use_azure_ocr_for_the_extraction), title = stringResource(
+                    R.string.azure_ocr
+    ***REMOVED***
+***REMOVED***
         ***REMOVED***
         Spacer(modifier = Modifier.width(8.dp))
 
@@ -653,8 +672,8 @@ fun ButtonBar(
                     ***REMOVED***
                 ***REMOVED***, modifier = Modifier.weight(1f), defaultSelectedItemIndex = defaultIndex
 ***REMOVED***
-            HelpIconButton("Select the model to use for the extraction")
-            val formatList = listOf("json", "csv","txt", "xml")
+            HelpIconButton(stringResource(R.string.select_the_model_to_use_for_the_extraction))
+            val formatList = listOf("json", "csv", "txt", "xml")
             DropDownGeneral(
                 items = formatList,
                 onItemSelected = { selectedItem ->
@@ -667,7 +686,7 @@ fun ButtonBar(
                 modifier = Modifier.weight(1f),
                 defaultSelectedItemIndex = formatList.indexOf(it.format)
 ***REMOVED***
-            HelpIconButton("Select the format to export the extraction")
+            HelpIconButton(stringResource(R.string.select_the_format_to_export_the_extraction))
             val languageList = listOf("auto-detect", "en", "it", "es", "fr", "de")
             DropDownGeneral(
                 items = languageList,
@@ -682,7 +701,12 @@ fun ButtonBar(
                 defaultSelectedItemIndex = languageList.indexOf(it.language)
 ***REMOVED***
 
-            HelpIconButton("Select the language to use for the extraction")
+            HelpIconButton(
+                stringResource(R.string.select_the_language_to_use_for_the_extraction),
+                title = stringResource(
+                    R.string.language
+    ***REMOVED***
+***REMOVED***
         ***REMOVED***
     ***REMOVED***
 ***REMOVED***
@@ -693,19 +717,35 @@ fun ProgressBar() {
     val serviceViewModel = hiltViewModel<ServiceViewModel>()
     val progress by serviceViewModel.progress.collectAsState()
     val result by serviceViewModel.result.collectAsState()
-    Row {
-        Text("Progress: ${(progress * 100).toInt()***REMOVED***%", modifier = Modifier.padding(start = 12.dp))
-        Spacer(modifier = Modifier.width(16.dp))
-        Spinner(isActive = result == null)
-        Spacer(modifier = Modifier.width(16.dp))
-        LinearProgressIndicator(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 10.dp, end = 16.dp),
-            progress = { progress ***REMOVED***,
-            color = Color.Blue
-        )
+    var visible by remember { mutableStateOf(true) ***REMOVED***
+    LaunchedEffect(progress == 1f) {
+        if (progress == 1f) {
+            serviceViewModel.setProgress(0f)
+            delay(200)
+            visible = false
+        ***REMOVED***
+    ***REMOVED***
+    if (visible) {
+        Row {
+            Text(
+                stringResource(R.string.progress, (progress * 100).toInt()),
+                modifier = Modifier.padding(start = 12.dp)
+***REMOVED***
+            Spacer(modifier = Modifier.width(16.dp))
+            Spinner(isActive = result == null)
+            Spacer(modifier = Modifier.width(16.dp))
+            LinearProgressIndicator(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp, end = 16.dp),
+                progress = { progress ***REMOVED***,
+                color = Color.Blue
+***REMOVED***
 
+        ***REMOVED***
+
+        Spacer(modifier = Modifier.height(16.dp))
+        HorizontalDivider()
     ***REMOVED***
 
 ***REMOVED***
@@ -734,10 +774,10 @@ fun ShownExtraction(
             extractionViewModel.queryExtraction(it).collect { fetchedExtraction ->
                 extraction = fetchedExtraction
                 isLoading = false // Hide loading indicator
+                if (extraction?.exceptionsOccurred?.isNotEmpty() == true) {
+                    errorOccurred = true
+                ***REMOVED***
             ***REMOVED***
-        ***REMOVED*** ?: run {
-            errorOccurred = true
-            isLoading = false
         ***REMOVED***
     ***REMOVED***
     if (isLoading) {
@@ -754,7 +794,7 @@ fun ShownExtraction(
                     verticalAlignment = Alignment.CenterVertically
     ***REMOVED*** {
                     Text(
-                        "Extraction Result:",
+                        stringResource(R.string.extraction_result),
                         modifier = Modifier.padding(16.dp),
                         fontSize = 20.sp,
                         color = Color.Black,
@@ -772,7 +812,7 @@ fun ShownExtraction(
                                 navController.navigate(Screen.SingleExtraction.withArgs("extractionId" to extractionId.toHexString()))
                             ***REMOVED***
                         ***REMOVED***) {
-                        Text("Go to Extraction")
+                        Text(stringResource(R.string.go_to_extraction))
                     ***REMOVED***
                 ***REMOVED***
                 HorizontalDivider()
@@ -807,30 +847,56 @@ fun CameraPreview(
                 ***REMOVED***
                 changeActivePhoto()
             ***REMOVED***)
-    val imagePickerLauncherLegacy =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.GetMultipleContents(),
-            onResult = { uris: List<Uri>? ->
-                uris?.forEach { uri ->
-                    onSetUri(uri)
+    val imagePickerLauncherLegacy = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetMultipleContents(),
+        onResult = { uris: List<Uri>? ->
+            uris?.forEach { uri ->
+                onSetUri(uri)
+            ***REMOVED***
+            changeActivePhoto()
+        ***REMOVED***)
+    val requestPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted: Boolean ->
+            if (isGranted) {
+                // Launch the image picker
+                imagePickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            ***REMOVED***
+        ***REMOVED***)
+
+    val filePickerLauncher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult(),
+            onResult = { result ->
+                val data: Intent? = result.data
+                val clipData = data?.clipData
+                if (clipData != null) {
+                    for (i in 0 until clipData.itemCount) {
+                        val uri: Uri = clipData.getItemAt(i).uri
+                        onSetUri(uri)
+                    ***REMOVED***
+                ***REMOVED*** else {
+                    data?.data?.let { uri ->
+                        onSetUri(uri)
+                    ***REMOVED***
                 ***REMOVED***
                 changeActivePhoto()
             ***REMOVED***)
-    val requestPermissionLauncher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission(),
-            onResult = { isGranted: Boolean ->
-                if (isGranted) {
-                    // Launch the image picker
-                    imagePickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-                ***REMOVED***
-            ***REMOVED***)
-    val requestPermissionLauncherLegacy =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission(),
-            onResult = { isGranted: Boolean ->
-                if (isGranted) {
-                    // Launch the image picker
-                    imagePickerLauncherLegacy.launch("image/*")
-                ***REMOVED***
-            ***REMOVED***)
+    val onFilePickerClick = {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            type = "*/*"
+            putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/*", "application/pdf"))
+            putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+        ***REMOVED***
+        filePickerLauncher.launch(intent)
+    ***REMOVED***
+    val requestPermissionLauncherLegacy = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted: Boolean ->
+            if (isGranted) {
+                // Launch the image picker
+                imagePickerLauncherLegacy.launch("image/*")
+            ***REMOVED***
+        ***REMOVED***)
     val onPhotoGalleryClick = {
         // Check if we're on Android 13+ (API level 33 or higher)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -881,7 +947,7 @@ fun CameraPreview(
                 lifecycleOwner, cameraSelector, preview, imageCapture
 ***REMOVED***
         ***REMOVED*** catch (exc: Exception) {
-            Log.e("CameraX", "Use case binding failed", exc)
+            Log.e("CameraX", context.getString(R.string.use_case_binding_failed), exc)
         ***REMOVED***
     ***REMOVED***
 
@@ -907,25 +973,45 @@ fun CameraPreview(
         ***REMOVED***, update = { previewView ->
             previewView.scaleType = scaleType
         ***REMOVED***)
-        Button(
-            modifier = Modifier
-                .padding(bottom = 20.dp, start = 24.dp)
-                .align(Alignment.BottomStart)
-                .height(50.dp),
-
-            shape = RoundedCornerShape(8.dp),
-            colors = ButtonDefaults.buttonColors(
-                white_trasparent),
-            onClick = onPhotoGalleryClick
+        Column(
+            modifier = Modifier.align(Alignment.BottomStart)
         ) {
-            FaIcon(
-                faIcon = FaIcons.Images, // Using the gallery icon
-                tint = Color.Black, // Set icon color
-                modifier = Modifier.background(Color.Transparent), // Add padding to the icon
-                size = 24.dp // Set icon size
-***REMOVED***
-        ***REMOVED***
 
+            Button(
+                modifier = Modifier
+                    .padding(bottom = 20.dp, start = 24.dp)
+                    .height(50.dp).width(75.dp),
+
+                shape = RoundedCornerShape(8.dp), colors = ButtonDefaults.buttonColors(
+                    white_trasparent
+    ***REMOVED***, onClick = onFilePickerClick
+***REMOVED*** {
+                FaIcon(
+                    faIcon = FaIcons.FilePdf, // Using the gallery icon
+                    tint = Color.Black, // Set icon color
+                    modifier = Modifier.background(Color.Transparent), // Add padding to the icon
+                    size = 24.dp // Set icon size
+    ***REMOVED***
+            ***REMOVED***
+            Button(
+                modifier = Modifier
+                    .padding(bottom = 20.dp, start = 24.dp)
+                    .height(50.dp).width(75.dp),
+
+                shape = RoundedCornerShape(8.dp), colors = ButtonDefaults.buttonColors(
+                    white_trasparent
+    ***REMOVED***, onClick = onPhotoGalleryClick
+***REMOVED*** {
+                FaIcon(
+                    faIcon = FaIcons.Images, // Using the gallery icon
+                    tint = Color.Black, // Set icon color
+                    modifier = Modifier.background(Color.Transparent), // Add padding to the icon
+                    size = 24.dp // Set icon size
+    ***REMOVED***
+            ***REMOVED***
+
+
+        ***REMOVED***
         // Capture Button
         Button(modifier = Modifier
             .padding(bottom = 20.dp)
@@ -941,12 +1027,15 @@ fun CameraPreview(
                     executor = ContextCompat.getMainExecutor(context),
                     onImageCaptured = onSetUri,
                     onError = { error ->
-                        Log.e("CameraX", "Image capture failed: ${error.message***REMOVED***")
+                        Log.e(
+                            "CameraX",
+                            context.getString(R.string.image_capture_failed, error.message)
+            ***REMOVED***
                     ***REMOVED***,
                     context = context
     ***REMOVED***
                 showFlash = true
-            ***REMOVED***){***REMOVED***
+            ***REMOVED***) {***REMOVED***
 
         // Gallery Button
         if (nPhotos > 0) {
@@ -961,7 +1050,9 @@ fun CameraPreview(
 ***REMOVED*** {
                 FaIcon(
                     faIcon = FaIcons.Check,
-                    modifier = Modifier.padding(end = 8.dp).background(Color.Transparent),
+                    modifier = Modifier
+                        .padding(end = 8.dp)
+                        .background(Color.Transparent),
                     tint = Color.Black,
                     size = 24.dp,
     ***REMOVED***
@@ -980,7 +1071,7 @@ fun CameraPreview(
             contentAlignment = Alignment.Center,
         ) {
             Text(
-                text = "$nPhotos taken",
+                text = stringResource(R.string.taken, nPhotos),
                 color = Color.Black,
                 textAlign = TextAlign.Center,
                 fontSize = 14.sp,
@@ -1023,14 +1114,14 @@ private fun takePhoto(
 
         override fun onError(exc: ImageCaptureException) {
             Log.e(
-                "CameraX", "Photo capture failed: ${exc.message***REMOVED***", exc
+                "CameraX", context.getString(R.string.photo_capture_failed, exc.message), exc
 ***REMOVED***
             // Provide more specific error messages based on exc.imageCaptureError
             val errorMessage = when (exc.imageCaptureError) {
-                ImageCapture.ERROR_FILE_IO -> "Error saving image."
-                ImageCapture.ERROR_CAMERA_CLOSED -> "Camera closed unexpectedly."
+                ImageCapture.ERROR_FILE_IO -> context.getString(R.string.error_saving_image)
+                ImageCapture.ERROR_CAMERA_CLOSED -> context.getString(R.string.camera_closed_unexpectedly)
                 // ... handle other error cases
-                else -> "An error occurred while capturing the photo."
+                else -> context.getString(R.string.an_error_occurred_while_capturing_the_photo)
             ***REMOVED***
             onError(exc)
             Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()

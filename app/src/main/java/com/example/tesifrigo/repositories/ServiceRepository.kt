@@ -2,6 +2,7 @@ package com.example.tesifrigo.repositories
 
 
 import android.content.Context
+import android.net.Uri
 import com.example.tesifrigo.MyApp
 import com.example.tesifrigo.fileCreator.CsvCreator
 import com.example.tesifrigo.fileCreator.JsonCreator
@@ -42,6 +43,17 @@ class ServiceRepository @Inject constructor(
 
     private val _options = MutableStateFlow<Options?>(null)
     val options: StateFlow<Options?> = _options.asStateFlow()
+
+    private val _imageUris = MutableStateFlow(emptyList<Uri>())
+    val imageUris: StateFlow<List<Uri>> = _imageUris.asStateFlow()
+
+    private val _activePhoto = MutableStateFlow(true)
+    val activePhoto: StateFlow<Boolean> = _activePhoto.asStateFlow()
+
+    private val _activeExtraction = MutableStateFlow(false)
+    val activeExtraction: StateFlow<Boolean> = _activeExtraction.asStateFlow()
+
+
 
     private val realm = MyApp.realm
 
@@ -135,6 +147,34 @@ class ServiceRepository @Inject constructor(
             ***REMOVED***
 
         ***REMOVED***
+
+    ***REMOVED***
+
+    fun setActiveExtraction(active: Boolean) {
+        _activeExtraction.value = active
+
+    ***REMOVED***
+
+    fun setActivePhoto(active: Boolean) {
+        _activePhoto.value = active
+    ***REMOVED***
+
+    fun addImageUri(uri: Uri) {
+        _imageUris.value += uri
+
+    ***REMOVED***
+
+    fun clearImageUris() {
+        _imageUris.value = emptyList()
+    ***REMOVED***
+
+    fun removeImageUri(index: Int) {
+        _imageUris.value = _imageUris.value.toMutableList().apply { removeAt(index) ***REMOVED***
+
+    ***REMOVED***
+
+    fun setProgress(fl: Float) {
+        _progress.value = fl
 
     ***REMOVED***
 

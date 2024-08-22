@@ -7,9 +7,7 @@ import com.example.tesifrigo.models.Template
 import com.example.tesifrigo.repositories.KeyManager
 import com.example.tesifrigo.repositories.ServiceRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,27 +19,18 @@ class ServiceViewModel @Inject constructor(
     val result: StateFlow<String?> = progressRepository.result
     val template: StateFlow<Template?> = progressRepository.template
     val options: StateFlow<Options?> = progressRepository.options
+    val imageUris : StateFlow<List<Uri>> = progressRepository.imageUris
+    val activePhoto : StateFlow<Boolean> = progressRepository.activePhoto
+    val activeExtraction : StateFlow<Boolean> = progressRepository.activeExtraction
 
 
-    private val _imageUris = MutableStateFlow(emptyList<Uri>())
-    val imageUris: StateFlow<List<Uri>> = _imageUris.asStateFlow()
-
-    private val _activePhoto = MutableStateFlow(true)
-    val activePhoto: StateFlow<Boolean> = _activePhoto.asStateFlow()
-
-    private val _activeExtraction = MutableStateFlow(false)
-    val activeExtraction: StateFlow<Boolean> = _activeExtraction.asStateFlow()
-
-    init {
-        //progressRepository.deleteOptions()
-    ***REMOVED***
 
     fun setActiveExtraction(active: Boolean) {
-        _activeExtraction.value = active
+        progressRepository.setActiveExtraction(active)
     ***REMOVED***
 
     fun setActivePhoto(active: Boolean) {
-        _activePhoto.value = active
+        progressRepository.setActivePhoto(active)
     ***REMOVED***
 
     fun setTemplate(template: Template) {
@@ -50,7 +39,7 @@ class ServiceViewModel @Inject constructor(
     ***REMOVED***
 
     fun addImageUri(uri: Uri) {
-        _imageUris.value += uri
+        progressRepository.addImageUri(uri)
     ***REMOVED***
 
     fun setOptions(options: Options) {
@@ -80,7 +69,7 @@ class ServiceViewModel @Inject constructor(
     ***REMOVED***
 
     fun clearImageUris() {
-        _imageUris.value = emptyList()
+        progressRepository.clearImageUris()
     ***REMOVED***
 
     fun gptKeysExist(): Boolean {
@@ -93,9 +82,12 @@ class ServiceViewModel @Inject constructor(
     ***REMOVED***
 
     fun removeImageUri(index: Int) {
-        val list = _imageUris.value.toMutableList()
-        list.removeAt(index)
-        _imageUris.value = list
+        progressRepository.removeImageUri(index)
+    ***REMOVED***
+
+    fun setProgress(fl: Float) {
+        progressRepository.setProgress(fl)
+
     ***REMOVED***
 
 
