@@ -11,14 +11,16 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.ImageDecoder
 import android.graphics.pdf.PdfRenderer
 import android.net.Uri
 import android.os.Build
+import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import android.os.ParcelFileDescriptor
 import android.util.Base64
 import android.util.Log
+import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
@@ -142,6 +144,12 @@ class ExtractionService : Service() {
             ***REMOVED***
         ***REMOVED***
 
+        val sendError :() -> Unit= {
+            serviceRepository.setActiveExtraction(false)
+            serviceRepository.setProgress(0f)
+
+        ***REMOVED***
+
         serviceScope.launch {
             try {
                 Log.d("TestService", "Processing image: $imageUris")
@@ -157,24 +165,23 @@ class ExtractionService : Service() {
                 ***REMOVED***
                 val py = Python.getInstance()
                 val module = py.getModule("main")
-                val builtinsModule = py.getModule("builtins")
+                val builtinModule = py.getModule("builtins")
+                val pyListImages = builtinModule.callAttr("list") // Create an empty Python list
+                val bitmapList = mutableListOf<Bitmap>()
 
-                val pyListImages = builtinsModule.callAttr("list") // Create an empty Python list
-                imageUris.map { imageUri ->
-                    processUri(localContext.contentResolver, imageUri, pyListImages)
+                imageUris.forEach { imageUri ->
+                    val bitmaps = processUri(localContext.contentResolver, imageUri, pyListImages)
+                    bitmapList.addAll(bitmaps)
                 ***REMOVED***
+
                 progressCallback(0.15f)
                 val imageUriOcr = ImageOCR()
-                val pyListText = builtinsModule.callAttr("list") // Create an empty Python list
-                imageUris.map { imageUri ->
-                    val source = ImageDecoder.createSource(localContext.contentResolver, imageUri)
-                    val bitmap = ImageDecoder.decodeBitmap(source) { decoder, _, _ ->
-                        decoder.allocator = ImageDecoder.ALLOCATOR_SOFTWARE // Choose an allocator
-                        decoder.isMutableRequired = true // Set if the image needs to be mutable
-                    ***REMOVED***
+                val pyListText = builtinModule.callAttr("list") // Create an empty Python list
+
+                bitmapList.forEach { bitmap ->
                     pyListText.callAttr(
                         "append", imageUriOcr.extractTextFromBitmap(bitmap)
-        ***REMOVED***  // Add Base64 image to the Python list
+        ***REMOVED***
                 ***REMOVED***
 
 
@@ -204,7 +211,7 @@ class ExtractionService : Service() {
 
                 val classesModule = py.getModule("extractor.classes.Template") // Get the module
 
-                val pythonTemplate = getTemplate(classesModule, builtinsModule, template)
+                val pythonTemplate = getTemplate(classesModule, builtinModule, template)
 
 
                 val deferredPyResult = async(Dispatchers.Default) { // Use async for Python call
@@ -231,19 +238,31 @@ class ExtractionService : Service() {
                 ***REMOVED***
             ***REMOVED*** catch (e: IllegalArgumentException) {
                 Log.e("TestService", "Unsupported file format", e)
-                Toast.makeText(localContext, "Unsupported file format", Toast.LENGTH_SHORT).show()
+                Handler(Looper.getMainLooper()).post { // Post to the main thread
+                    Toast.makeText(localContext, "Unsupported file format", Toast.LENGTH_SHORT).show()
+                ***REMOVED***
+                sendError()
                 stopSelf()
             ***REMOVED*** catch (e: FileNotFoundException) {
                 Log.e("TestService", "File not found", e)
-                Toast.makeText(localContext, "File not found", Toast.LENGTH_SHORT).show()
+                Handler(Looper.getMainLooper()).post {
+                    Toast.makeText(localContext, "File not found", Toast.LENGTH_SHORT).show()
+                ***REMOVED***
+                sendError()
                 stopSelf()
             ***REMOVED*** catch (e: IOException) {
                 Log.e("TestService", "Error processing image", e)
-                Toast.makeText(localContext, "Error processing image", Toast.LENGTH_SHORT).show()
+                Handler(Looper.getMainLooper()).post {
+                    Toast.makeText(localContext, "Error processing image", Toast.LENGTH_SHORT).show()
+                ***REMOVED***
+                sendError()
                 stopSelf()
             ***REMOVED*** catch (e: Exception) {
                 Log.e("TestService", "Error processing image", e)
-                Toast.makeText(localContext, "Error processing image", Toast.LENGTH_SHORT).show()
+                Handler(Looper.getMainLooper()).post {
+                    Toast.makeText(localContext, "Error processing image", Toast.LENGTH_SHORT).show()
+                ***REMOVED***
+                sendError()
                 stopSelf()
 
 
@@ -499,13 +518,16 @@ fun sendNotification(context: Context, title: String, content: String) {
     ***REMOVED***
 ***REMOVED***
 
+fun processUri(contentResolver: ContentResolver, uri: Uri, pyListImages: PyObject): List<Bitmap> {
+    val bitmaps = mutableListOf<Bitmap>()
 
-fun processUri(contentResolver: ContentResolver, uri: Uri, pyListImages: PyObject) {
-    when (val mimeType = contentResolver.getType(uri)) {
+    when (val mimeType = getMimeType(uri, contentResolver)) {
         "application/pdf" -> {
             val base64Images = pdfToBase64Images(contentResolver, uri)
             base64Images.forEach { base64Image ->
                 pyListImages.callAttr("append", base64Image)
+                val bitmap = base64ToBitmap(base64Image)
+                bitmaps.add(bitmap)
             ***REMOVED***
         ***REMOVED***
 
@@ -523,13 +545,27 @@ fun processUri(contentResolver: ContentResolver, uri: Uri, pyListImages: PyObjec
             ***REMOVED***
             if (base64Image != null) {
                 pyListImages.callAttr("append", base64Image)
+                bitmap.let { bitmaps.add(it) ***REMOVED***
             ***REMOVED***
         ***REMOVED***
 
         else -> throw IllegalArgumentException("Unsupported file format: $mimeType")
     ***REMOVED***
+
+    return bitmaps
 ***REMOVED***
 
+fun getMimeType(uri: Uri, contentResolver: ContentResolver): String? {
+    var mimeType: String? = contentResolver.getType(uri)
+
+    if (mimeType == null) {
+        val extension = MimeTypeMap.getFileExtensionFromUrl(uri.toString())
+        if (extension != null) {
+            mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension.lowercase())
+        ***REMOVED***
+    ***REMOVED***
+    return mimeType
+***REMOVED***
 
 fun pdfToBase64Images(contentResolver: ContentResolver, uri: Uri): List<String> {
     val base64Images = mutableListOf<String>()
@@ -567,4 +603,9 @@ fun pdfToBase64Images(contentResolver: ContentResolver, uri: Uri): List<String> 
     ***REMOVED***
 
     return base64Images
+***REMOVED***
+
+fun base64ToBitmap(base64Str: String): Bitmap {
+    val decodedBytes = Base64.decode(base64Str, Base64.DEFAULT)
+    return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
 ***REMOVED***

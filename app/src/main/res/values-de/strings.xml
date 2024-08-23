@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+<string name="allows_the_extractor_to_resize_the_image_down_to_4mb_the_limit_for_the_free_version_of_azure_document_intelligence_only_disable_this_if_you_are_using_the_pro_version">
+        Ermöglicht dem Extraktor, das Bild auf 4 MB zu verkleinern, das Limit für die kostenlose Version von Azure Document Intelligence.\n
+        Deaktivieren Sie dies nur, wenn Sie die Pro-Version verwenden.
+    </string>
+    <string name="resize">Größe ändern</string>
+    <string name="resize_the_image">Größe ändern erlauben</string>
+    <string name="azure_form_recognizer_api_key_the_key_connected_to_the_instance_of_the_document_intelligence_resource_you_created">
+        Azure Form Recognizer API-Schlüssel.\n
+        Der Schlüssel, der mit der von Ihnen erstellten Instanz der Document Intelligence-Ressource verbunden ist.
+    </string>
+    <string name="azure_api_key">Azure API-Schlüssel</string>
+    <string name="openai_api_key_the_key_you_created_in_the_openai_platform">
+        OpenAI API-Schlüssel.\n
+        Der Schlüssel, den Sie auf der OpenAI-Plattform erstellt haben.
+    </string>
+    <string name="openai_api_key">OpenAI API-Schlüssel</string>
+    <string name="azure_endpoint">Azure-Endpunkt</string>
+    <string name="the_endpoint_associated_to_your_document_intelligence_resource">
+        Der mit Ihrer Document Intelligence-Ressource verknüpfte Endpunkt.
+    </string>
+    <string name="keys_disclaimer">
+        Dieser Extraktor verwendet externe Schlüssel, um die Kosten minimal zu halten und transparent zu sein. \n
+        Bitte besuchen Sie die verlinkte Seite, um die für die Extraktion verwendeten Schlüssel zu erstellen.
+        \n\nWir verwenden OpenAI für die Textextraktion und Azure für die Tabellenextraktion. \n
+        Sie können den Azure-Schlüssel leer lassen, wenn Sie keine Tabellen verwenden, aber der OpenAI-Schlüssel ist erforderlich. \n
+        Die Kosten werden von uns geschätzt, aber Sie können die Kosten auf den jeweiligen Plattformen überprüfen. \n
+        Wir versuchen, die Kosten minimal und die Extraktion so genau wie möglich zu halten, und wir sind bestrebt, sie gemeinnützig und die Kosten transparent zu halten.
+    </string>
+    <string name="keys">Schlüssel</string>
+
+    <string name="enter">%1$s eingeben</string>
+    <string name="confirm_delete">Löschen bestätigen</string>
+    <string name="are_you_sure_you_want_to_delete_this_extraction">Möchten Sie diese Extraktion wirklich löschen?</string>
+    <string name="delete">Löschen</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="field_default">Feldstandardwert</string>
+    <string name="this_is_the_default_value_for_the_field_if_the_extraction_does_not_find_anything_or_something_goes_wrong_this_will_be_the_value_returned_default_values_are_not_available_for_lists">
+        Dies ist der Standardwert für das Feld. Wenn bei der Extraktion nichts gefunden wird oder etwas schief geht,
+        wird dieser Wert zurückgegeben. \n
+        Standardwerte sind für Listen nicht verfügbar.
+    </string>
+    <string name="field_default_number">Feldstandardwert (Zahl)</string>
+    <string name="field_default_boolean">Feldstandardwert (Boolean)</string>
+    <string name="field_default_float">Feldstandardwert (Gleitkommazahl)</string>
+    <string name="table_title">Tabellenüberschrift (optional)</string>
+    <string name="this_is_the_title_of_the_table_totally_irrelevant_for_the_extraction_just_for_your_own_reference_will_be_invented_by_the_llm_if_left_empty">
+        Dies ist der Titel der Tabelle. Er ist für die Extraktion völlig irrelevant und dient nur Ihrer eigenen Referenz. \n
+        Er wird vom LLM erfunden, wenn er leer gelassen wird.
+    </string>
+    <string name="table_description">Tabellenbeschreibung (optional)</string>
+    <string name="this_is_the_description_of_the_table_irrelevant_for_the_extraction_just_for_your_own_reference">
+        Dies ist die Beschreibung der Tabelle. Sie wird an die LLM-Nachricht angehängt. \n
+        Verwenden Sie sie, wenn es einen wichtigen Kontext für die Informationen gibt oder um anzugeben, was ignoriert oder gesucht werden soll. Sie ist jedoch sehr optional.
+    </string>
+    <string name="everything_you_find">Alles, was Sie finden</string>
+    <string name="if_you_want_to_extract_all_the_information_we_can_find_this_does_not_return_column_and_rows_name_and_can_be_inaccurate">
+        Wenn Sie alle Informationen extrahieren möchten, die wir finden können, wählen Sie diese Option. \n
+        Dies gibt keine Spalten- und Zeilennamen zurück und kann ungenau sein.
+    </string>
+    <string name="extract_everything">Alles extrahieren</string>
+    <string name="table">Tabelle</string>
+    <string name="max_number_of_rows_and_columns_is_15">
+        Die maximale Anzahl von Zeilen und Spalten für die Tabelle beträgt 15. \n
+        Bitte verwenden Sie bei Bedarf mehrere Tabellen.
+    </string>
+    <string name="edit_header">Überschrift bearbeiten</string>
+    <string name="type">Typ</string>
+    <string name="required">Erforderlich</string>
+    <string name="field_value">Feldwert</string>
+    <string name="field_value_number">Feldwert (Zahl)</string>
+    <string name="date">Datum</string>
+    <string name="field_value_boolean">Feldwert (Boolean)</string>
+    <string name="field_value_float">Feldwert (Gleitkommazahl)</string>
+    <string name="field">Feld</string>
+    <string name="if_the_field_is_required_setting_this_to_false_could_mean_the_field_will_not_be_present_in_the_extraction_if_true_it_will_always_be_present_but_please_select_a_default_value">
+        Wenn das Feld erforderlich ist, kann die Einstellung auf "false" dazu führen, dass das Feld in der Extraktion nicht vorhanden ist. \n
+        Wenn "true", wird es immer vorhanden sein, aber bitte wählen Sie einen Standardwert aus.
+    </string>
+    <string name="this_is_the_default_value_for_the_field">Dies ist der Standardwert für das Feld.</string>
+
+        <string name="interpretative">Interpretativ</string>
+        <string name="the_llm_will_try_to_interpret_the_instruction_given_and_return_a_more_loose_response_recommended_if_you_want_some_processed_information_from_the_text_instead_of_extracted_information_that_is_in_the_text">
+        Das LLM wird versuchen, die gegebene Anweisung zu interpretieren und eine flexiblere Antwort zurückzugeben. Dies wird empfohlen, wenn Sie einige verarbeitete Informationen aus dem Text anstelle von extrahierten Informationen wünschen, die sich direkt im Text befinden.
+    </string>
+        <string name="if_the_field_is_required">Wenn das Feld erforderlich ist</string>
+        <string name="if_the_value_is_a_list_of_the_type_submitted">
+        Wenn der Wert eine Liste des übermittelten Typs ist, werden mehrere Werte zurückgegeben.
+    </string>
+        <string name="specify_the_type_of_data_expected_for_this_field_e_g_text_number_date_this_will_affect_the_type_of_the_extracted_data_the_default_value_must_be_set_accordingly">
+        Geben Sie den Datentyp an, der für dieses Feld erwartet wird (z. B. \'Text\', \'Zahl\', \'Datum\').
+        Dies wirkt sich auf den Typ der extrahierten Daten aus. Der Standardwert muss entsprechend festgelegt werden.
+    </string>
+        <string name="this_is_the_description_of_the_field_this_will_also_be_used_to_extract_the_data_but_you_dont_need_to_be_super_specific_this_field_can_be_left_empty_if_the_title_is_descriptive_enough">
+        Dies ist die Beschreibung des Feldes. Diese wird auch zum Extrahieren der Daten verwendet.
+        Sie müssen jedoch nicht sehr spezifisch sein. Dieses Feld kann leer gelassen werden, wenn der Titel aussagekräftig genug ist.
+    </string>
+        <string name="field_description">Feldbeschreibung (optional)</string>
+        <string name="field_title">Feldtitel</string>
+        <string name="this_is_the_title_of_the_field_the_most_important_part_of_the_field_this_will_be_used_to_extract_the_data_of_the_corresponding_field_this_field_cannot_be_left_empty">
+        Dies ist der Titel des Feldes. Der wichtigste Teil des Feldes.
+        Dies wird verwendet, um die Daten des entsprechenden Feldes zu extrahieren.
+        Wenn Sie dies leer lassen, wird wahrscheinlich der Standardwert zurückgegeben.
+    </string>
+        <string name="keyword_cannot_be_empty">Schlüsselwort darf nicht leer sein</string>
+        <string name="add_keyword">Schlüsselwort hinzufügen</string>
+        <string name="ok">OK</string>
+        <string name="enter_value">Wert eingeben</string>
+        <string name="edit_value">Wert bearbeiten</string>
+        <string name="enter_header">Header eingeben</string>
+        <string name="list">Liste</string>
+        <string name="remove_keyword">Schlüsselwort entfernen</string>
+        <string name="these_are_the_keywords_that_the_llm_will_look_for_in_the_text_to_extract_the_table_preferably_you_should_insert_words_that_will_be_in_this_specific_table_and_not_the_other_ones_as_to_distinguish_between_them">
+        "Dies sind die Schlüsselwörter, nach denen das LLM im Text sucht, um die Tabelle zu extrahieren.
+        Vorzugsweise sollten Sie Wörter einfügen, die in dieser bestimmten Tabelle und nicht in den anderen vorkommen,
+        um zwischen ihnen zu unterscheiden."
+    </string>
+        <string name="table_keywords">Tabellenschlüsselwörter</string>
+        <string name="back">Zurück</string>
+        <string name="template_not_found">Vorlage nicht gefunden</string>
+        <string name="template_tables">Tabellenvorlagen</string>
+        <string name="template_fields">Vorlagenfelder</string>
+        <string name="extraction_format">Extraktionsformat</string>
+        <string name="max_number_of_keywords_is_10">Maximale Anzahl an Schlüsselwörtern beträgt 10</string>
+        <string name="tag_cannot_be_empty">Tag darf nicht leer sein</string>
+        <string name="add_tag">Tag hinzufügen</string>
+        <string name="extraction_tags">Extraktions-Tags</string>
+        <string name="extra_images">Zusätzliche Bilder</string>
+        <string name="add_an_extra_image">Ein zusätzliches Bild hinzufügen</string>
+        <string name="add_an_extra_image_to_the_extraction_these_are_separate_from_the_extraction_and_are_only_for_your_commodity_use_these_for_logos_or_other_images_that_you_want_attached_to_the_extraction">
+        Fügen Sie der Extraktion ein zusätzliches Bild hinzu. Diese sind von der Extraktion getrennt und dienen nur Ihrer Bequemlichkeit.
+        Verwenden Sie diese für Logos oder andere Bilder, die Sie der Extraktion beifügen möchten.
+    </string>
+        <string name="added_images">Hinzugefügte Bilder:</string>
+        <string name="no_connected_template_found">Keine verknüpfte Vorlage gefunden</string>
+        <string name="permission_denied_cannot_access_images">Berechtigung verweigert. Auf Bilder kann nicht zugegriffen werden.</string>
+        <string name="extraction_costs">Extraktionskosten</string>
+        <string name="no_exceptions_occurred">Keine Ausnahmen aufgetreten.</string>
+        <string name="exceptions_occurred">Ausnahmen aufgetreten</string>
+        <string name="send">Senden</string>
+        <string name="skip">Überspringen</string>
+
+            <string name="optional_comments">Optionale Kommentare</string>
+            <string name="satisfaction_rating">Zufriedenheitsbewertung:</string>
+            <string name="rate_the_extraction">Bewerten Sie die Extraktion</string>
+            <string name="extracted_fields">Extrahierte Felder</string>
+            <string name="extracted_tables">Extrahierte Tabellen</string>
+            <string name="no_extraction_found">Keine Extraktion gefunden</string>
+            <string name="extraction_details">Extraktionsdetails</string>
+            <string name="storage">Speicher</string>
+            <string name="camera">Kamera</string>
+            <string name="settings">Einstellungen</string>
+            <string name="templates">Vorlagen</string>
+            <string name="taken">%1$s aufgenommen</string>
+
+            <string name="an_error_occurred_while_capturing_the_photo">Beim Aufnehmen des Fotos ist ein Fehler aufgetreten.</string>
+            <string name="camera_closed_unexpectedly">Kamera unerwartet geschlossen.</string>
+            <string name="error_saving_image">Fehler beim Speichern des Bildes.</string>
+            <string name="photo_capture_failed">Fehler bei der Fotoaufnahme: %1$s</string>
+            <string name="image_capture_failed">Fehler bei der Bilderfassung: %1$s</string>
+            <string name="use_case_binding_failed">Use-Case-Bindung fehlgeschlagen</string>
+            <string name="go_to_extraction">Zur Extraktion gehen</string>
+            <string name="extraction_result">Extraktionsergebnis:</string>
+            <string name="progress">Fortschritt: %1$d%%</string>
+            <string name="select_the_language_to_use_for_the_extraction">
+        Wählen Sie die Sprache für die Extraktion aus. Sie sollte der Sprache des Dokuments entsprechen.\n
+        Sie können die Sprache auch automatisch vom System erkennen lassen. \n
+        Die Extraktion unterstützt derzeit standardmäßig keine anderen Sprachen, aber Sie können in den Beschreibungen Unterstützung anfordern.
+    </string>
+            <string name="language">Sprache</string>
+            <string name="select_the_format_to_export_the_extraction">Wählen Sie das Format für den Export der Extraktion aus.</string>
+            <string name="select_the_model_to_use_for_the_extraction">Wählen Sie das Modell für die Extraktion aus.</string>
+            <string name="use_azure_ocr_for_the_extraction">
+        Azure OCR ist besser als die Standardversion und liefert bessere Ergebnisse, verursacht jedoch höhere Kosten,
+        da jede Seite gescannt wird, anstatt nur die Seiten mit Tabellen.
+    </string>
+            <string name="azure_ocr">Azure OCR</string>
+            <string name="change_template">Vorlage ändern</string>
+            <string name="use_new_photos">Neue Fotos verwenden</string>
+            <string name="new_extraction">Neue Extraktion</string>
+            <string name="extract">Extrahieren!</string>
+            <string name="template">Vorlage: \n %1$s</string>
+            <string name="choose_a_template_to_start_extracting">Wählen Sie eine Vorlage aus, um mit der Extraktion zu beginnen.</string>
+            <string name="go_to_settings">Zu den Einstellungen gehen</string>
+            <string name="you_cannot_extract_without_keys_please_enter_your_openai_keys_in_the_settings">
+        Sie können ohne Schlüssel nicht extrahieren. Bitte geben Sie Ihre OpenAI-Schlüssel in den Einstellungen ein.
+    </string>
+            <string name="openai_keys">OpenAI-Schlüssel</string>
+            <string name="you_cannot_use_azure_ocr_without_keys">Sie können Azure OCR nicht ohne Azure-Schlüssel verwenden.</string>
+            <string name="your_template_contains_table_azure_is_required_for_table_extraction">
+        Ihre Vorlage enthält eine Tabelle. Azure ist für die Tabellenextraktion erforderlich.
+    </string>
+            <string name="please_enter_your_azure_keys_in_the_settings">Bitte geben Sie Ihre Azure-Schlüssel in den Einstellungen ein.</string>
+            <string name="azure_keys">Azure-Schlüssel</string>
+            <string name="errors_occurred_while_fetching_the_extraction">Fehler beim Abrufen der Extraktion.</string>
+            <string name="extraction_complete">Extraktion abgeschlossen</string>
+            <string name="your_extraction_has_finished_processing">Ihre Extraktion wurde verarbeitet.</string>
+
+
+</resources>

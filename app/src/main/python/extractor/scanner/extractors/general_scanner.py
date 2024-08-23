@@ -1,28 +1,27 @@
 from abc import abstractmethod
-import os
-from typing import Any, Dict, List
+from typing import Any, List
 
-import dotenv
 from pandas import DataFrame
 from ...classes.Extracted import Extracted, ExtractedField, ExtractedTable, ExtractionCosts
 from ...classes.Options import ExceptionsExtracted, Options
-from ..ai_manager.models import Models
+from ..ai_manager.ai_models import Models
 from ...configs.cost_config import cost_per_token
-from .utils import (
+from .extractor_utils import (
     create_intelligent_pydantic_class,
     create_pydantic_class,
     create_pydantic_table_class,
     extracted_from_pydantic,
     extracted_from_pydantic_table,
-    sanitize_text
+    sanitize_text,
+    select_desired_page, 
+    select_desired_table
 )
 from .llm_functions import get_doc_language, llm_extraction_and_tag
 from ...scanner.ai_manager.document_intelligence import get_tables_from_doc
-from .utils import select_desired_page, select_desired_table
 from ...scanner.extractors.llm_functions import general_table_inspection
 import threading
 from ...classes.Template import Template, TemplateTable
-from ...configs.configs import prompts, prompts_intelligent
+from ...configs.configs_dict import prompts, prompts_intelligent
 
 
 class ThreadFunction(threading.Thread):

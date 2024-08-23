@@ -5,13 +5,11 @@ from typing import Any, Optional
 from ...classes.Options import Options
 from ...classes.Template import Template
 from ...classes.Extracted import ExceptionsExtracted
-from ...scanner.extractors.utils import num_tokens_from_string
+from ...scanner.extractors.extractor_utils import num_tokens_from_string, sanitize_text
 from langchain.prompts import PromptTemplate
-from ..ai_manager.models import Models
+from ..ai_manager.ai_models import Models
 from ...configs.basic_tags import DocLanguage
-from ...configs.configs import desc_tabella
-from ...configs.configs import create_language_tag_messages
-from .utils import sanitize_text
+from ...configs.configs_dict import desc_tabella, create_language_tag_messages
 
 
 def get_doc_language(text, file_id, options: Options):

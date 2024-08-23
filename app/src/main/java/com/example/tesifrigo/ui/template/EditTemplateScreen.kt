@@ -531,7 +531,7 @@ fun TemplateFieldComposable(
                         BooleanFieldWithLabel(
                             label = stringResource(id = R.string.required),
                             value = it,
-                            help = stringResource(R.string.if_the_field_is_required),
+                            help = stringResource(R.string.if_the_field_is_required_setting_this_to_false_could_mean_the_field_will_not_be_present_in_the_extraction_if_true_it_will_always_be_present_but_please_select_a_default_value),
                             onValueChange = { newValue ->
                                 required = newValue
                                 viewModel.updateTemplateItem(
@@ -598,7 +598,7 @@ fun DefaultPicker(
                         modifier = Modifier.weight(1f),
                         trailingIcon = {
                             HelpIconButton(
-                                helpText = stringResource(R.string.this_is_the_default_value_for_the_field_if_the_extraction_does_not_find_anything_or_something_goes_wrong_this_will_be_the_value_returned_default_values_are_not_avaiable_for_lists),
+                                helpText = stringResource(R.string.this_is_the_default_value_for_the_field_if_the_extraction_does_not_find_anything_or_something_goes_wrong_this_will_be_the_value_returned_default_values_are_not_available_for_lists),
                                 title = stringResource(
                                     R.string.field_default
                     ***REMOVED***
@@ -623,7 +623,7 @@ fun DefaultPicker(
                         modifier = Modifier.weight(1f),
                         trailingIcon = {
                             HelpIconButton(
-                                helpText = stringResource(R.string.this_is_the_default_value_for_the_field_if_the_extraction_does_not_find_anything_or_something_goes_wrong_this_will_be_the_value_returned_default_values_are_not_avaiable_for_lists),
+                                helpText = stringResource(R.string.this_is_the_default_value_for_the_field_if_the_extraction_does_not_find_anything_or_something_goes_wrong_this_will_be_the_value_returned_default_values_are_not_available_for_lists),
                                 title = stringResource(
                                     R.string.field_default
                     ***REMOVED***
@@ -658,7 +658,7 @@ fun DefaultPicker(
         ***REMOVED*** {
 
                         HelpIconButton(
-                            helpText = stringResource(R.string.this_is_the_default_value_for_the_field_if_the_extraction_does_not_find_anything_or_something_goes_wrong_this_will_be_the_value_returned_default_values_are_not_avaiable_for_lists),
+                            helpText = stringResource(R.string.this_is_the_default_value_for_the_field_if_the_extraction_does_not_find_anything_or_something_goes_wrong_this_will_be_the_value_returned_default_values_are_not_available_for_lists),
                             title = stringResource(
                                 R.string.field_default
                 ***REMOVED***,

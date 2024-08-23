@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -61,6 +60,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
@@ -81,7 +81,6 @@ import com.example.tesifrigo.ui.theme.dark_blue
 import com.example.tesifrigo.ui.theme.dark_red
 import com.example.tesifrigo.ui.theme.light_gray
 import com.example.tesifrigo.ui.theme.vale
-import com.example.tesifrigo.ui.theme.white_trasparent
 import com.guru.fontawesomecomposelib.FaIcon
 import com.guru.fontawesomecomposelib.FaIcons
 import java.io.File
@@ -419,22 +418,21 @@ fun DropDownGeneral(
     ***REMOVED***
 ***REMOVED***
 
-
 @Composable
 fun MyImageArea(
     imageUris: List<Uri>, modifier: Modifier = Modifier, onDelete: ((Int) -> Unit)? = null
 ) {
+    val contentResolver = LocalContext.current.contentResolver
     val pagerState = rememberPagerState(pageCount = { imageUris.size ***REMOVED***)
     val showDialog = remember { mutableStateOf(false) ***REMOVED***
     var deletedPage by remember { mutableIntStateOf(0) ***REMOVED***
-    Column(
-        modifier = modifier.fillMaxWidth()
-    ) {
-        HorizontalPager(
-            state = pagerState, modifier = Modifier.fillMaxWidth()
-        ) { page ->
+
+    Column(modifier = modifier.fillMaxWidth()) {
+        HorizontalPager(state = pagerState, modifier = Modifier.fillMaxWidth()) { page ->
+
+            val uri = imageUris[page]
+            val mimeType = remember { contentResolver.getType(uri) ***REMOVED***
             Box(
-                // Wrap the Card in a Box for positioning the icon
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(Color.Transparent),
@@ -442,54 +440,90 @@ fun MyImageArea(
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .aspectRatio(1f),
+                        .height(200.dp),
+
                     shape = RoundedCornerShape(32.dp),
                     elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = vale, contentColor = Color.Black
+                        containerColor = Color.LightGray, contentColor = Color.Black
         ***REMOVED***,
-                    border = CardDefaults.outlinedCardBorder(), // Add a border
+                    border = CardDefaults.outlinedCardBorder(),
     ***REMOVED*** {
-                    // Apply clip to the entire Card content
-                    AsyncImage(
-                        model = imageUris[page],
-                        contentDescription = null,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(MaterialTheme.shapes.medium), // Clip to the Card's shape
 
-                        contentScale = ContentScale.Crop,
-        ***REMOVED***
 
-                ***REMOVED***
+
+                    if (mimeType == "application/pdf") {
+                        // PDF Thumbnail with Filename
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(Color.Gray)
+                                .padding(16.dp),
+                            contentAlignment = Alignment.Center
+            ***REMOVED*** {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                FaIcon(faIcon = FaIcons.FilePdf, tint = Color.White)
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = uri.pathSegments.lastOrNull() ?: "PDF Document",
+                                    color = Color.White,
+                                    textAlign = TextAlign.Center
+                    ***REMOVED***
+                            ***REMOVED***
+                        ***REMOVED***
+                    ***REMOVED*** else {
+                        // Image Preview (cropped or reduced)
+                        AsyncImage(
+                            model = uri,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp) // Reduce height to scale down image display
+                                .clip(RoundedCornerShape(16.dp))
+                                .padding(16.dp),
+                            contentScale = ContentScale.Crop // Crop the image to fit
+            ***REMOVED***
+                    ***REMOVED***
+
+
+            ***REMOVED***
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter)
+                    .clip(RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp))
+                    .shadow(10.dp)
+                    .background(vale)
+                    .padding(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+***REMOVED*** {
+
+                Text(
+                    text = uri.toString() ?: "File Name",
+                    color = Color.Black,
+                    modifier = Modifier.weight(1f)
+    ***REMOVED***
                 if (onDelete != null) {
                     IconButton(
                         onClick = {
                             showDialog.value = true
                             deletedPage = page
-                        ***REMOVED***,
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .offset(x = 4.dp, y = -(4).dp)
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(white_trasparent)
+                        ***REMOVED***
         ***REMOVED*** {
-                        FaIcon(
-                            modifier = Modifier
-                            .offset(x = -(4).dp, y = 4.dp),
-                            faIcon = FaIcons.Trash, tint = Color.Black, // Or any color you prefer
-                            size = 24.dp // Adjust size as needed
-            ***REMOVED***
+                        FaIcon(faIcon = FaIcons.Trash, tint = Color.Black)
                     ***REMOVED***
                 ***REMOVED***
             ***REMOVED***
+        ***REMOVED***
+        // Delete button
         ***REMOVED***
 
         // Custom Indicator
         Row(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .padding(top=8.dp),
+                .padding(top = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             repeat(pagerState.pageCount) { page ->
@@ -501,8 +535,9 @@ fun MyImageArea(
     ***REMOVED***
             ***REMOVED***
         ***REMOVED***
-
     ***REMOVED***
+
+    // Confirmation dialog for deletion
     if (showDialog.value && onDelete != null) {
         AlertDialog(onDismissRequest = { showDialog.value = false ***REMOVED***,
             title = { Text("Confirm Delete") ***REMOVED***,

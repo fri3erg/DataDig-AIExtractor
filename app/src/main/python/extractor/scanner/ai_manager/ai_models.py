@@ -1,5 +1,5 @@
 # import instructor.exceptions
-from ...scanner.extractors.utils import num_tokens_from_string
+from ...scanner.extractors.extractor_utils import num_tokens_from_string
 import threading
 from ...configs.cost_config import cost_per_token
 from openai import OpenAI, AuthenticationError
@@ -99,7 +99,7 @@ class Models(LLM):
         cls, prompt: PromptTemplate, schema, file_id: str, model: str = "gpt-4", temperature: float = 0.0
     ) -> tuple[Any, Optional[Exception]]:
 
-        if model == "smart-mix":
+        if model == "smart_mix":
             model = "gpt-4"
         llm: ChatOpenAI = cls(model, temperature)._models[model][temperature]
 
@@ -145,7 +145,7 @@ class Models(LLM):
     # Updated extract() method
     @classmethod
     def extract(cls, file_id, model, prompt: PromptTemplate, pages, template, temperature=0) -> str:
-        if model == "smart-mix":
+        if model == "smart_mix":
             model = "gpt-3.5-turbo"
         llm: ChatOpenAI = cls(model, temperature)._models[model][temperature]  # Get the singleton instance
         try:

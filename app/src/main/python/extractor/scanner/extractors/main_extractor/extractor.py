@@ -1,6 +1,6 @@
 from ....classes.Extracted import Extracted
 from ....classes.Options import ExceptionsExtracted, Options
-from ....scanner.ai_manager.models import Models
+from ....scanner.ai_manager.ai_models import Models
 from ....classes.Template import Template, TemplateTable
 from typing import Any
 

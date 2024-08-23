@@ -25,6 +25,8 @@ class ServiceViewModel @Inject constructor(
 
 
 
+
+
     fun setActiveExtraction(active: Boolean) {
         progressRepository.setActiveExtraction(active)
     ***REMOVED***
@@ -89,6 +91,7 @@ class ServiceViewModel @Inject constructor(
         progressRepository.setProgress(fl)
 
     ***REMOVED***
+
 
 
 ***REMOVED***

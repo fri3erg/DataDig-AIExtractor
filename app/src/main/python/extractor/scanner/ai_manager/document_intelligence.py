@@ -5,7 +5,7 @@ from azure.ai.formrecognizer._models import AnalyzeResult
 from azure.ai.formrecognizer import DocumentAnalysisClient
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError
-from ...scanner.extractors.utils import format_pages_num
+from ...scanner.extractors.extractor_utils import format_pages_num
 
 # Will need authentication for prod app
 # https://medium.com/@tophamcherie/using-python-to-programmatically-authenticate-to-azure-use-resources-6997ff326fb6

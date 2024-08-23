@@ -1,7 +1,5 @@
-from io import BytesIO
 import io
 import os
-from threading import Thread
 from extractor.classes.Extracted import Extracted
 from extractor.classes.Options import ExceptionsExtracted, Options
 import logging
@@ -9,7 +7,7 @@ import base64
 from typing import List
 from extractor.classes.Template import Template, TemplateField, TemplateTable
 from extractor.scanner.extractors.main_extractor.extractor import MainExtractor
-from extractor.configs.configs import keys_config
+from extractor.configs.configs_dict import keys_config
 from PIL import Image
 
 
@@ -133,26 +131,56 @@ def main_kotlin(base64_images: list, text: list[str], template: Template, option
 
     return main(base64_images, text, template, options)
 
+def reduce_image_size(base64_str, target_size_mb=4, initial_quality=85, min_quality=10, max_width=4200, max_height=4200):
+    """
+    Reduces the size of an image to fit within a target size in megabytes.
 
-def reduce_image_size(base64_str, target_size_mb=4, initial_quality=85, min_quality=10):
+    Args:
+        base64_str (str): The base64 encoded string of the image.
+        target_size_mb (float, optional): The target size in megabytes. Defaults to 4.
+        initial_quality (int, optional): The initial quality of the image. Defaults to 85.
+        min_quality (int, optional): The minimum quality of the image. Defaults to 10.
+        max_width (int, optional): The maximum width of the image. Defaults to 4200.
+        max_height (int, optional): The maximum height of the image. Defaults to 4200.
+
+    Returns:
+        str: The base64 encoded string of the resized image.
+
+    Raises:
+        None.
+
+    """
     # Decode base64 string to bytes
     image_data = base64.b64decode(base64_str)
     image = Image.open(io.BytesIO(image_data))
     image_format = image.format
-    # Calculate the current size of the image in MB
+    width, height = image.size
+    print(f"Original image dimensions: {width***REMOVED***x{height***REMOVED***")
+
+    # Check if image exceeds Azure's maximum dimensions
+    if width > max_width or height > max_height:
+        scaling_factor = min(max_width / width, max_height / height)
+        new_width = int(width * scaling_factor)
+        new_height = int(height * scaling_factor)
+        image = image.resize((new_width, new_height), Image.Resampling.LANCZOS)
+        print(f"Resized image to conform to dimension limits: {new_width***REMOVED***x{new_height***REMOVED***")
+
+    # Recalculate the size of the image in MB after resizing for dimensions
+    buffer = io.BytesIO()
+    image.save(buffer, format=image_format, quality=initial_quality)
+    image_data = buffer.getvalue()
     current_size_mb = len(image_data) / (1024 * 1024)
 
-    # If already below target size, return original image
+    # If already below target size, return the resized image
     if current_size_mb <= target_size_mb:
-        print(f"Image is already below {target_size_mb***REMOVED*** MB")
-        return base64_str
+        print(f"Image is below {target_size_mb***REMOVED*** MB after resizing for dimensions")
+        return base64.b64encode(image_data).decode()
 
-    # Reduce quality and/or dimensions
+    # Further reduce quality and dimensions if still too large
     for quality in range(initial_quality, min_quality - 1, -5):
-        # Resize if still too large, by reducing the size by 10% at each iteration
         while current_size_mb > target_size_mb:
             width, height = image.size
-            image = image.resize((int(width * 0.9), int(height * 0.9)), Image.Resampling.LANCZOS )
+            image = image.resize((int(width * 0.9), int(height * 0.9)), Image.Resampling.LANCZOS)
             
             # Convert image to bytes with the new quality
             buffer = io.BytesIO()
@@ -161,7 +189,6 @@ def reduce_image_size(base64_str, target_size_mb=4, initial_quality=85, min_qual
             current_size_mb = len(image_data) / (1024 * 1024)
             print(f"Reducing size with quality={quality***REMOVED*** and dimensions=({width*0.9***REMOVED***, {height*0.9***REMOVED***), size={current_size_mb***REMOVED*** MB")
 
-        # Stop if image is now below target size
         if current_size_mb <= target_size_mb:
             break
 

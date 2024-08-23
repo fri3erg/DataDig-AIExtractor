@@ -289,6 +289,7 @@ fun RatingModal(onDismiss: () -> Unit, viewModel: ExtractionViewModel, extractio
                 Row {
                     Text("0")
                     Slider(
+                        modifier = Modifier.weight(1f),
                         value = review.rating.toFloat(), onValueChange = { newRating ->
                             review = review.copy(rating = newRating.toInt()) // Update using copy
                         ***REMOVED***, valueRange = 0f..10f, steps = 10

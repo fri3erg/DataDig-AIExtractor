@@ -498,9 +498,6 @@ fun ExtractionDetails(
     ***REMOVED*** else {
         ExtractedBar(serviceViewModel, templateViewModel)
 
-        HorizontalDivider()
-
-        ProgressBar()
         ShownExtraction(
             navController = navController,
             serviceViewModel = serviceViewModel,
@@ -717,22 +714,17 @@ fun ProgressBar() {
     val serviceViewModel = hiltViewModel<ServiceViewModel>()
     val progress by serviceViewModel.progress.collectAsState()
     val result by serviceViewModel.result.collectAsState()
-    var visible by remember { mutableStateOf(true) ***REMOVED***
     LaunchedEffect(progress == 1f) {
         if (progress == 1f) {
             serviceViewModel.setProgress(0f)
-            delay(200)
-            visible = false
         ***REMOVED***
     ***REMOVED***
-    if (visible) {
+        Spacer(modifier =  Modifier.height(16.dp))
         Row {
             Text(
                 stringResource(R.string.progress, (progress * 100).toInt()),
                 modifier = Modifier.padding(start = 12.dp)
 ***REMOVED***
-            Spacer(modifier = Modifier.width(16.dp))
-            Spinner(isActive = result == null)
             Spacer(modifier = Modifier.width(16.dp))
             LinearProgressIndicator(
                 modifier = Modifier
@@ -741,12 +733,13 @@ fun ProgressBar() {
                 progress = { progress ***REMOVED***,
                 color = Color.Blue
 ***REMOVED***
+            Spacer(modifier = Modifier.width(16.dp))
+            Spinner(isActive = result == null)
 
         ***REMOVED***
 
         Spacer(modifier = Modifier.height(16.dp))
         HorizontalDivider()
-    ***REMOVED***
 
 ***REMOVED***
 
@@ -766,24 +759,19 @@ fun ShownExtraction(
 ) {
     val result by serviceViewModel.result.collectAsState()
     var extraction by remember { mutableStateOf<Extraction?>(null) ***REMOVED***
-    var isLoading by remember { mutableStateOf(false) ***REMOVED***
     var errorOccurred by remember { mutableStateOf(false) ***REMOVED***
     LaunchedEffect(key1 = result) {
-        isLoading = true // Show loading indicator
         result?.let {
             extractionViewModel.queryExtraction(it).collect { fetchedExtraction ->
                 extraction = fetchedExtraction
-                isLoading = false // Hide loading indicator
                 if (extraction?.exceptionsOccurred?.isNotEmpty() == true) {
                     errorOccurred = true
                 ***REMOVED***
             ***REMOVED***
         ***REMOVED***
     ***REMOVED***
-    if (isLoading) {
-        CircularProgressIndicator() // Show loading indicator
-    ***REMOVED*** else {
         extraction?.let {
+
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -815,7 +803,6 @@ fun ShownExtraction(
                         Text(stringResource(R.string.go_to_extraction))
                     ***REMOVED***
                 ***REMOVED***
-                HorizontalDivider()
                 if (it.fileUri != null) {
                     FileCard(it)
                 ***REMOVED***
@@ -823,8 +810,13 @@ fun ShownExtraction(
                     ExceptionsDialog({ errorOccurred = false ***REMOVED***, it)
                 ***REMOVED***
             ***REMOVED***
+        ***REMOVED*** ?: run {
+
+            HorizontalDivider()
+
+            ProgressBar()
         ***REMOVED***
-    ***REMOVED***
+
 ***REMOVED***
 
 
@@ -980,7 +972,8 @@ fun CameraPreview(
             Button(
                 modifier = Modifier
                     .padding(bottom = 20.dp, start = 24.dp)
-                    .height(50.dp).width(75.dp),
+                    .height(50.dp)
+                    .width(75.dp),
 
                 shape = RoundedCornerShape(8.dp), colors = ButtonDefaults.buttonColors(
                     white_trasparent
@@ -996,7 +989,8 @@ fun CameraPreview(
             Button(
                 modifier = Modifier
                     .padding(bottom = 20.dp, start = 24.dp)
-                    .height(50.dp).width(75.dp),
+                    .height(50.dp)
+                    .width(75.dp),
 
                 shape = RoundedCornerShape(8.dp), colors = ButtonDefaults.buttonColors(
                     white_trasparent

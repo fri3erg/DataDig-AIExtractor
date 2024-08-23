@@ -11,7 +11,6 @@ from io import BytesIO
 from ...classes.Extracted import ExtractedField
 from ...classes.Template import Template, TemplateTable, TemplateField
 import pytesseract
-from pdf2image import convert_from_bytes
 import pandas as pd
 from ...configs.basic_tags import ExtractedTable
 
