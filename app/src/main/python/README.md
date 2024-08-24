@@ -76,7 +76,7 @@ Feel free to reach out to me via:
 
 - **Email:** [elia.fri3erg@gmail.com](mailto:elia.fri3erg@gmail.com)
 - **LinkedIn:** [elia.friberg](https://www.linkedin.com/in/elia-friberg-021a90295/)
-- **Whatsapp:** [@elia.friberg](+39 3924123304)
+- **Whatsapp:** [@elia.friberg](+393924123304)
 
 ## DEVS
 

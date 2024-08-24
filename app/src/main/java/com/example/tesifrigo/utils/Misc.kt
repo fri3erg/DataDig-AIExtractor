@@ -1,12 +1,15 @@
 package com.example.tesifrigo.utils
 
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -21,7 +24,6 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -72,9 +74,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.core.content.FileProvider
 import coil.compose.AsyncImage
 import com.example.tesifrigo.models.Extraction
+import com.example.tesifrigo.ui.settings.ClickableWebLink
 import com.example.tesifrigo.ui.template.AlertTableExtraction
 import com.example.tesifrigo.ui.theme.cyan_custom
 import com.example.tesifrigo.ui.theme.dark_blue
@@ -258,7 +262,7 @@ fun SearchBar(
 
 
 @Composable
-fun HelpIconButton(helpText: String, modifier: Modifier = Modifier, title: String = "Help") {
+fun HelpIconButton(helpText: String, modifier: Modifier = Modifier, title: String = "Help", link:String="") {
     var showDialog by remember { mutableStateOf(false) ***REMOVED***
 
     IconButton(
@@ -280,7 +284,13 @@ fun HelpIconButton(helpText: String, modifier: Modifier = Modifier, title: Strin
     if (showDialog) {
         AlertDialog(onDismissRequest = { showDialog = false ***REMOVED***,
             title = { Text(title) ***REMOVED***,
-            text = { Text(helpText) ***REMOVED***,
+            text = { Column {
+                Text(helpText)
+                if(link.isNotEmpty()){
+                    ClickableWebLink(text = link, url = link)
+                ***REMOVED***
+            ***REMOVED***
+                   ***REMOVED***,
             confirmButton = {
                 TextButton(onClick = { showDialog = false ***REMOVED***) {
                     Text("OK")
@@ -426,117 +436,168 @@ fun MyImageArea(
     val pagerState = rememberPagerState(pageCount = { imageUris.size ***REMOVED***)
     val showDialog = remember { mutableStateOf(false) ***REMOVED***
     var deletedPage by remember { mutableIntStateOf(0) ***REMOVED***
+    val context = LocalContext.current
+    var showImage by remember { mutableStateOf(false) ***REMOVED***
+    var selectedImageUri by remember { mutableStateOf(Uri.EMPTY) ***REMOVED***
+    val openFileLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) {***REMOVED***
+    fun openFile(uri: Uri) {
+        uri.path?.let {
 
-    Column(modifier = modifier.fillMaxWidth()) {
-        HorizontalPager(state = pagerState, modifier = Modifier.fillMaxWidth()) { page ->
-
-            val uri = imageUris[page]
-            val mimeType = remember { contentResolver.getType(uri) ***REMOVED***
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.Transparent),
-***REMOVED*** {
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp),
-
-                    shape = RoundedCornerShape(32.dp),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = Color.LightGray, contentColor = Color.Black
-        ***REMOVED***,
-                    border = CardDefaults.outlinedCardBorder(),
-    ***REMOVED*** {
-
-
-
-                    if (mimeType == "application/pdf") {
-                        // PDF Thumbnail with Filename
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(Color.Gray)
-                                .padding(16.dp),
-                            contentAlignment = Alignment.Center
-            ***REMOVED*** {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                FaIcon(faIcon = FaIcons.FilePdf, tint = Color.White)
-                                Spacer(modifier = Modifier.height(8.dp))
-                                Text(
-                                    text = uri.pathSegments.lastOrNull() ?: "PDF Document",
-                                    color = Color.White,
-                                    textAlign = TextAlign.Center
-                    ***REMOVED***
-                            ***REMOVED***
-                        ***REMOVED***
-                    ***REMOVED*** else {
-                        // Image Preview (cropped or reduced)
-                        AsyncImage(
-                            model = uri,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(200.dp) // Reduce height to scale down image display
-                                .clip(RoundedCornerShape(16.dp))
-                                .padding(16.dp),
-                            contentScale = ContentScale.Crop // Crop the image to fit
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                setDataAndType(uri, context.contentResolver.getType(uri))
+                flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
             ***REMOVED***
-                    ***REMOVED***
 
+            val packageManager = context.packageManager
+            val activities =
+                packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
 
+            if (activities.isNotEmpty()) {
+                openFileLauncher.launch(intent)
+            ***REMOVED*** else {
+                Toast.makeText(context, "No app found to open the file", Toast.LENGTH_SHORT).show()
             ***REMOVED***
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.BottomCenter)
-                    .clip(RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp))
-                    .shadow(10.dp)
-                    .background(vale)
-                    .padding(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-***REMOVED*** {
-
-                Text(
-                    text = uri.toString() ?: "File Name",
-                    color = Color.Black,
-                    modifier = Modifier.weight(1f)
+        ***REMOVED***
     ***REMOVED***
-                if (onDelete != null) {
-                    IconButton(
-                        onClick = {
-                            showDialog.value = true
-                            deletedPage = page
-                        ***REMOVED***
-        ***REMOVED*** {
-                        FaIcon(faIcon = FaIcons.Trash, tint = Color.Black)
-                    ***REMOVED***
-                ***REMOVED***
-            ***REMOVED***
-        ***REMOVED***
-        // Delete button
-        ***REMOVED***
+    Box(modifier = modifier
+        .fillMaxWidth()
+        .padding(top = 8.dp, bottom = 8.dp)
+        .clip(RoundedCornerShape(16.dp))
+        .background(vale)) {
+        Column {
+            HorizontalPager(
+                state = pagerState, modifier = Modifier
+                    .fillMaxWidth()
+***REMOVED*** { page ->
 
-        // Custom Indicator
-        Row(
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(top = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            repeat(pagerState.pageCount) { page ->
+                val uri = imageUris[page]
+                val mimeType = remember { contentResolver.getType(uri) ***REMOVED***
                 Box(
                     modifier = Modifier
-                        .size(if (pagerState.currentPage == page) 10.dp else 6.dp)
-                        .clip(CircleShape)
-                        .background(if (pagerState.currentPage == page) Color.Black else Color.LightGray)
-    ***REMOVED***
+                        .fillMaxWidth()
+                        .background(Color.Transparent),
+    ***REMOVED*** {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp)
+                            .clickable {
+                                if (mimeType == "application/pdf") {
+                                    openFile(uri)
+                                ***REMOVED*** else {
+                                    selectedImageUri = uri // Set the selected image URI
+                                    showImage = true
+                                ***REMOVED***
+                            ***REMOVED***,
+
+                        shape = RoundedCornerShape(32.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = vale, contentColor = Color.Black
+            ***REMOVED***
+        ***REMOVED*** {
+
+
+                        if (mimeType == "application/pdf") {
+                            // PDF Thumbnail with Filename
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(16.dp)
+                                    .clip(RoundedCornerShape(16.dp))
+                                    .background(Color.Gray),
+                                contentAlignment = Alignment.Center
+                ***REMOVED*** {
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    FaIcon(faIcon = FaIcons.FilePdf, tint = Color.White)
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    Text(
+                                        text = getPdfFileName(context, uri) ?: "Pdf File",
+                                        color = Color.White,
+                                        textAlign = TextAlign.Center
+                        ***REMOVED***
+                                ***REMOVED***
+                            ***REMOVED***
+                        ***REMOVED*** else {
+                            // Image Preview (cropped or reduced)
+                            AsyncImage(
+                                model = uri,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(200.dp) // Reduce height to scale down image display
+                                    .padding(16.dp)
+                                    .clip(RoundedCornerShape(16.dp)),
+                                contentScale = ContentScale.Crop // Crop the image to fit
+                ***REMOVED***
+                        ***REMOVED***
+
+
+                    ***REMOVED***
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .align(Alignment.BottomCenter)
+                            .padding(
+                                start = 16.dp,
+                                end = 16.dp,
+                                top = 8.dp
+                ***REMOVED***  // Padding applied first
+                            .shadow(20.dp)                        // Then the shadow, outside the padding
+                            .clip(
+                                RoundedCornerShape(
+                                    bottomStart = 16.dp,
+                                    bottomEnd = 16.dp
+                    ***REMOVED***
+                ***REMOVED*** // Clipping next
+                            .background(Color.White),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+        ***REMOVED*** {
+
+                        Text(
+                            text = if (mimeType == "application/pdf") getPdfFileName(context, uri)
+                                ?: "Pdf File" else "Image " + (imageUris.indexOf(uri) + 1).toString(),
+                            color = Color.Black,
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(start = 8.dp)
+            ***REMOVED***
+                        if (onDelete != null) {
+                            IconButton(
+                                onClick = {
+                                    showDialog.value = true
+                                    deletedPage = page
+                                ***REMOVED***
+                ***REMOVED*** {
+                                FaIcon(faIcon = FaIcons.Trash, tint = Color.Black)
+                            ***REMOVED***
+                        ***REMOVED***
+                    ***REMOVED***
+                ***REMOVED***
+                // Delete button
+            ***REMOVED***
+
+            // Custom Indicator
+            Row(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 8.dp, bottom = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+***REMOVED*** {
+                repeat(pagerState.pageCount) { page ->
+                    Box(
+                        modifier = Modifier
+                            .size(if (pagerState.currentPage == page) 10.dp else 6.dp)
+                            .clip(CircleShape)
+                            .background(if (pagerState.currentPage == page) Color.Black else Color.LightGray)
+        ***REMOVED***
+                ***REMOVED***
+                Spacer(modifier = Modifier.height(8.dp))
             ***REMOVED***
         ***REMOVED***
     ***REMOVED***
-
     // Confirmation dialog for deletion
     if (showDialog.value && onDelete != null) {
         AlertDialog(onDismissRequest = { showDialog.value = false ***REMOVED***,
@@ -555,6 +616,21 @@ fun MyImageArea(
                     Text("Cancel")
                 ***REMOVED***
             ***REMOVED***)
+    ***REMOVED***
+    if (showImage && selectedImageUri != null) {
+        Dialog(onDismissRequest = { showImage = false ***REMOVED***) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp)
+***REMOVED*** {
+                AsyncImage(
+                    model = selectedImageUri,
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxWidth(),
+                    contentScale = ContentScale.Fit // Adjust contentScale as needed
+    ***REMOVED***
+            ***REMOVED***
+        ***REMOVED***
     ***REMOVED***
 ***REMOVED***
 
@@ -699,7 +775,7 @@ fun FileCard(
     ***REMOVED***
 
     Surface(
-        modifier = modifier.padding(8.dp), shape = RoundedCornerShape(8.dp), color = Color.White
+        modifier = modifier.padding(8.dp), shape = RoundedCornerShape(8.dp), color = Color.LightGray
     ) {
         Row(
             modifier = Modifier
@@ -798,3 +874,17 @@ fun calculateCloseness(text1: String, text2: String): Int {//simple Levenshtein 
     return d[m][n]
 ***REMOVED***
 
+fun getPdfFileName(context: Context, uri: Uri): String? {
+    val projection = arrayOf(MediaStore.MediaColumns.DISPLAY_NAME)
+
+    return context.contentResolver.query(uri, projection, null,
+    null, null)?.use { cursor
+        ->
+        if (cursor.moveToFirst()) {
+            val nameIndex = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME)
+            cursor.getString(nameIndex)
+        ***REMOVED*** else {
+            null
+        ***REMOVED***
+    ***REMOVED***
+***REMOVED***

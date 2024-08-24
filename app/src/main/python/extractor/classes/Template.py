@@ -18,7 +18,7 @@ class TemplateField:
         self.title = title
         self.description = description
         self.extra_description = extra_description
-        self.type = type or "String"
+        self.type = type or "text"
         self.list = list or False
         self.required = required
         self.intelligent_extraction = (
@@ -72,8 +72,8 @@ class Template:
         output_str += "Fields:\n  "
         for field in self.fields:
             required_str = "Required" if field.required else "Optional"
-            output_str += f"- {field.title***REMOVED*** ({getattr(field.type, '__name__','type unknown')***REMOVED***): {field.description***REMOVED*** ({required_str***REMOVED***)(Default: {field.default***REMOVED***)\n  "
-
+            output_str += f"- {field.title***REMOVED*** ({field.type***REMOVED***): {field.description***REMOVED*** ({required_str***REMOVED***)(Default: {field.default***REMOVED***)\n  "
+        print(output_str)
         return output_str
 
     def split_template(self):

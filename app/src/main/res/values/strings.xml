@@ -213,6 +213,12 @@
     <string name="errors_occurred_while_fetching_the_extraction">Errors occurred while fetching the extraction.</string>
     <string name="extraction_complete">Extraction Complete</string>
     <string name="your_extraction_has_finished_processing">Your extraction has finished processing.</string>
+    <string name="api_keys" translatable="false">Api Keys</string>
+    <string name="keys_connected_to_your_azure_document_intelligence_resource_which_you_can_create_in_the_azure_portal_at_the_link">" Keys connected to your Azure Document Intelligence resource, which you can create in the Azure portal at the link: "</string>
+    <string name="keys_you_created_on_the_openai_platform_which_you_can_find_at_the_link">"Keys you created on the OpenAI platform,which you can find at the link: "</string>
+    <string name="https_platform_openai_com_api_keys" translatable="false">https://platform.openai.com/api-keys</string>
+    <string name="https_portal_azure_com_create_microsoft_cognitiveservicesformrecognizer" translatable="false">https://portal.azure.com/#create/Microsoft.CognitiveServicesFormRecognizer</string>
+    <string name="this_is_the_title_of_the_template_this_is_irrelevant_for_the_extraction_just_for_your_own_reference">This is the title of the template. This is irrelevant for the extraction, just for your own reference.</string>
 
 
 </resources>

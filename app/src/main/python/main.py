@@ -78,9 +78,76 @@ def create_test() -> tuple[Template, Options]:
     """Creates a test instance of the Template class with sample data."""
 
     # Create sample TemplateField objects
-    field1 = TemplateField("1", "a", "", "", "float", False, False)
-    field2 = TemplateField("2", "b", "", "", "str", False, True, True)
-    field3 = TemplateField("3", "c", "", "", "date", True, True)
+    field1 = TemplateField(
+        id="1",
+        title="title",
+        description="",
+        type="Text",
+        list= False,
+        default="N/A",
+        required=True,
+        intelligent_extraction=False,
+    )
+    field2 = TemplateField(
+        id="1",
+        title="year of the setting",
+        description="",
+        type="Number",
+        list= False,
+        default="-1",
+        required=True,
+        intelligent_extraction=False,
+    )
+    field3 = TemplateField(
+        id="1",
+        title="probability of the uprising",
+        description="",
+        type="Float",
+        list= False,
+        default="30",
+        required=True,
+        intelligent_extraction=False,
+    )
+    field4 = TemplateField(
+        id="1",
+        title="date( precise) of the revealing of AGI 1",
+        description="full date",
+        type="Date",
+        list= False,
+        default="08/12/2024",
+        required=True,
+        intelligent_extraction=False,
+    )
+    field5 = TemplateField(
+        id="1",
+        title="if there is potential for the uprising",
+        description="",
+        type="Boolean",
+        list= False,
+        default="False",
+        required=True,
+        intelligent_extraction=False,
+    )
+    field6 = TemplateField(
+        id="1",
+        title="book suggestion",
+        description="",
+        type="Text",
+        list= True,
+        default="[]",
+        required=True,
+        intelligent_extraction=False,
+    )
+    field7 = TemplateField(
+        id="7",
+        title="possible",
+        description="is the uprising possible?",
+        type="Text",
+        list= False,
+        default="N/A",
+        required=True,
+        intelligent_extraction=True,
+    )
 
     # Create sample TemplateTable objects
     table1 = TemplateTable(
@@ -91,16 +158,15 @@ def create_test() -> tuple[Template, Options]:
     # Create the Template instance
     template = Template(
         "1",
-        "Basic Information Template",
-        "Collects essential personal details",
-        [field1, field2, field3],  # Fields directly associated with the template
-        [table1, table2],  # Tables within the template
+        "Ai uprising",
+        "text about the ai uprising",
+        [field1, field2, field3, field4, field5, field6, field7],  # Fields directly associated with the template
     )
 
     def fake_keys(progress):
         return progress
 
-    option = Options(model="gpt-4", language="auto-detect", azure_ocr=True, get_api_key=fake_keys)
+    option = Options(model="smart_mix", language="auto-detect", azure_ocr=True, get_api_key=fake_keys)
 
     return template, option
 
@@ -130,7 +196,6 @@ def main_kotlin(base64_images: list, text: list[str], template: Template, option
         base64_images= [reduce_image_size(image) for image in base64_images]
 
     return main(base64_images, text, template, options)
-
 def reduce_image_size(base64_str, target_size_mb=4, initial_quality=85, min_quality=10, max_width=4200, max_height=4200):
     """
     Reduces the size of an image to fit within a target size in megabytes.
@@ -145,10 +210,6 @@ def reduce_image_size(base64_str, target_size_mb=4, initial_quality=85, min_qual
 
     Returns:
         str: The base64 encoded string of the resized image.
-
-    Raises:
-        None.
-
     """
     # Decode base64 string to bytes
     image_data = base64.b64decode(base64_str)
@@ -157,7 +218,7 @@ def reduce_image_size(base64_str, target_size_mb=4, initial_quality=85, min_qual
     width, height = image.size
     print(f"Original image dimensions: {width***REMOVED***x{height***REMOVED***")
 
-    # Check if image exceeds Azure's maximum dimensions
+    # Check if image exceeds maximum dimensions
     if width > max_width or height > max_height:
         scaling_factor = min(max_width / width, max_height / height)
         new_width = int(width * scaling_factor)
@@ -165,44 +226,58 @@ def reduce_image_size(base64_str, target_size_mb=4, initial_quality=85, min_qual
         image = image.resize((new_width, new_height), Image.Resampling.LANCZOS)
         print(f"Resized image to conform to dimension limits: {new_width***REMOVED***x{new_height***REMOVED***")
 
-    # Recalculate the size of the image in MB after resizing for dimensions
+    # Calculate the size of the image in MB after resizing
     buffer = io.BytesIO()
     image.save(buffer, format=image_format, quality=initial_quality)
     image_data = buffer.getvalue()
     current_size_mb = len(image_data) / (1024 * 1024)
 
-    # If already below target size, return the resized image
+    # If the image is already below the target size, return it
     if current_size_mb <= target_size_mb:
         print(f"Image is below {target_size_mb***REMOVED*** MB after resizing for dimensions")
         return base64.b64encode(image_data).decode()
 
-    # Further reduce quality and dimensions if still too large
-    for quality in range(initial_quality, min_quality - 1, -5):
-        while current_size_mb > target_size_mb:
-            width, height = image.size
-            image = image.resize((int(width * 0.9), int(height * 0.9)), Image.Resampling.LANCZOS)
-            
-            # Convert image to bytes with the new quality
-            buffer = io.BytesIO()
-            image.save(buffer, format=image_format, quality=quality)
-            image_data = buffer.getvalue()
-            current_size_mb = len(image_data) / (1024 * 1024)
-            print(f"Reducing size with quality={quality***REMOVED*** and dimensions=({width*0.9***REMOVED***, {height*0.9***REMOVED***), size={current_size_mb***REMOVED*** MB")
+    # Estimate the required quality reduction
+    quality = initial_quality
+    reduction_factor = (target_size_mb / current_size_mb) ** 0.5  # Estimate by the square root
+    estimated_quality = int(quality * reduction_factor)
 
-        if current_size_mb <= target_size_mb:
-            break
+    # Clamp the quality to be within the allowed range
+    quality = max(min_quality, min(initial_quality, estimated_quality))
+    print(f"Estimated quality to reach target size: {quality***REMOVED***")
+
+    # Try reducing the quality directly to the estimated value
+    buffer = io.BytesIO()
+    image.save(buffer, format=image_format, quality=quality)
+    image_data = buffer.getvalue()
+    current_size_mb = len(image_data) / (1024 * 1024)
+    print(f"Size after applying estimated quality: {current_size_mb***REMOVED*** MB")
+
+    # Further reduction if necessary
+    while current_size_mb > target_size_mb and quality > min_quality:
+        quality -= 5
+        buffer = io.BytesIO()
+        image.save(buffer, format=image_format, quality=quality)
+        image_data = buffer.getvalue()
+        current_size_mb = len(image_data) / (1024 * 1024)
+        print(f"Reducing size with quality={quality***REMOVED***, size={current_size_mb***REMOVED*** MB")
 
     # Encode image back to base64
     return base64.b64encode(image_data).decode()
-
 ***REMOVED***
 
     template, option = create_test()
     text = ["this is a long text that will be extracted"]
     base64_image = []
-    with open("extractor\\test\\table.jpg", "rb") as image_file:  # Open in binary mode
+    with open("extractor\\test\\111.jpg", "rb") as image_file:  # Open in binary mode
         image_data = image_file.read()
         base64_image = [base64.b64encode(image_data).decode("utf-8")]
+    with open("extractor\\test\\222.jpg", "rb") as image_file:  # Open in binary mode
+        image_data = image_file.read()
+        base64_image += [base64.b64encode(image_data).decode("utf-8")]    
+    with open("extractor\\test\\333.jpg", "rb") as image_file:  # Open in binary mode
+        image_data = image_file.read()
+        base64_image +=[base64.b64encode(image_data).decode("utf-8")]
         
     base64_image= [reduce_image_size(image) for image in base64_image]
 

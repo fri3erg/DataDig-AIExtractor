@@ -119,7 +119,7 @@ class TemplateViewModel : ViewModel() {
                 val tablesToDelete = query<TemplateTable>().find()
                 delete(tablesToDelete)
 
-
+/*
                 val templateField1 = TemplateField().apply {
                     title = "Field 1"
                     description = "This is a sample field"
@@ -191,7 +191,7 @@ class TemplateViewModel : ViewModel() {
                 copyToRealm(template1)
                 copyToRealm(template2)
                 copyToRealm(template3)
-
+*/
             ***REMOVED***
         ***REMOVED***
 
@@ -280,8 +280,13 @@ class TemplateViewModel : ViewModel() {
 
     fun addField(template: Template) {
         val newField = TemplateField().apply {
-            title = "New Field"
-            description = "This is a new field"
+            title = ""
+            description = ""
+            type = "text"
+            list = false
+            required = false
+            intelligentExtraction = false
+            default = "N/A"
         ***REMOVED***
         viewModelScope.launch {
             realm.write {
@@ -320,53 +325,33 @@ class TemplateViewModel : ViewModel() {
     ***REMOVED***
 
 
-    fun removeTag(template: Template, tag: String) {
-        viewModelScope.launch {
-            realm.writeBlocking {
-                val latestTemplate = findLatest(template) ?: return@writeBlocking
-                latestTemplate.tags.remove(tag)
-            ***REMOVED***
-
-        ***REMOVED***
-
-
-    ***REMOVED***
-
-    fun changeTags(template: Template, newTag: String) {
-        viewModelScope.launch {
-            realm.writeBlocking {
-                val latestTemplate = findLatest(template) ?: return@writeBlocking
-                latestTemplate.tags.add(newTag)
-            ***REMOVED***
-        ***REMOVED***
-
-    ***REMOVED***
 
     fun addTable(template: Template) {
         val newField = TemplateField().apply {
             title = ""
-            type = "Any"
+            type = "text"
             required = false
+
         ***REMOVED***
         val newField2 = TemplateField().apply {
             title = ""
-            type = "Any"
+            type = "text"
             required = false
         ***REMOVED***
         val newField3 = TemplateField().apply {
             title = ""
-            type = "Any"
+            type = "text"
             required = false
         ***REMOVED***
         val newField4 = TemplateField().apply {
             title = ""
-            type = "Any"
+            type = "text"
             required = false
         ***REMOVED***
         val newTable = TemplateTable().apply {
-            title = "New Table"
-            description = "This is a new table"
-            keywords = realmListOf("tag1 ")
+            title = ""
+            description = ""
+            keywords = realmListOf()
             rows = realmListOf(newField, newField2)
             columns = realmListOf(newField3, newField4)
         ***REMOVED***

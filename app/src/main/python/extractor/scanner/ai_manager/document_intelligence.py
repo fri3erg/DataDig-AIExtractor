@@ -63,7 +63,7 @@ def analyze_general_documents(
     except ClientAuthenticationError as auth_err:
         raise ValueError("Invalid Azure credentials (endpoint or key).")
     except ServiceRequestError as req_err:
-        raise ValueError(f"Invalid Azure credentials (endpoint or key). {req_err***REMOVED***")
+        raise ValueError(f"Check Internet Connection. {req_err***REMOVED***")
     return result
 
 

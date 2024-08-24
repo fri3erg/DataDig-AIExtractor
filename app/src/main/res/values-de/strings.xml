@@ -199,4 +199,6 @@
             <string name="your_extraction_has_finished_processing">Ihre Extraktion wurde verarbeitet.</string>
 
 
+    <string name="keys_connected_to_your_azure_document_intelligence_resource_which_you_can_create_in_the_azure_portal_at_the_link">"Schlüssel, die mit Ihrer Azure Document Intelligence-Ressource verbunden sind. Sie können diese im Azure-Portal unter folgendem Link erstellen:"</string>
+    <string name="keys_you_created_on_the_openai_platform_which_you_can_find_at_the_link">"Schlüssel, die Sie auf der OpenAI-Plattform erstellt haben. Sie finden diese unter folgendem Link: "</string>
 </resources>

@@ -32,8 +32,6 @@ def get_doc_language(text, file_id, options: Options):
     # Check if language is mapped
     # NOTE: need to add more languages
     doc_language = getattr(language, "language", "it")
-    if doc_language not in ["it", "en", "fr", "de", "es"]:
-        doc_language = "it"
 
     return doc_language
 
@@ -89,6 +87,7 @@ def llm_extraction_and_tag(page, template: Template, file_id, pydantic_class, op
     optional_error: Optional[ExceptionsExtracted] = None
     input_variables: list[str] = ["template", "context"]
     prompt = PromptTemplate(input_variables=input_variables, template=initial_prompt)
+    print("prompt",prompt, "text",page )
     # Select model size based on context
     if options.model == "gpt-3.5-turbo":
         total_token = num_tokens_from_string(str(page) + template_readable)

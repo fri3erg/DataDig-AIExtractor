@@ -31,7 +31,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -40,10 +39,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -468,7 +465,7 @@ fun ExtractionDetails(
         serviceViewModel.setOptions(defaultOptions) // Set the options in the ViewModel
     ***REMOVED***
     Text(
-        stringResource(R.string.template, templateTitle.toString()),
+        templateTitle.toString(),
         modifier = modifier.padding(16.dp),
         fontSize = 28.sp,
         fontWeight = FontWeight.Bold,
@@ -523,6 +520,7 @@ fun ExtractedBar(serviceViewModel: ServiceViewModel, templateViewModel: Template
                 serviceViewModel.setActiveExtraction(false)
                 serviceViewModel.setActivePhoto(true)
                 templateViewModel.setActiveTemplate(null)
+                serviceViewModel.clearResult()
             ***REMOVED***
             .padding(8.dp), // Optional padding
             horizontalAlignment = Alignment.CenterHorizontally) {
@@ -728,13 +726,14 @@ fun ProgressBar() {
             Spacer(modifier = Modifier.width(16.dp))
             LinearProgressIndicator(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .weight(1f)
                     .padding(top = 10.dp, end = 16.dp),
                 progress = { progress ***REMOVED***,
                 color = Color.Blue
 ***REMOVED***
             Spacer(modifier = Modifier.width(16.dp))
             Spinner(isActive = result == null)
+            Spacer(modifier = Modifier.width(16.dp))
 
         ***REMOVED***
 
@@ -823,7 +822,6 @@ fun ShownExtraction(
 @Composable
 fun CameraPreview(
     modifier: Modifier = Modifier,
-    scaleType: PreviewView.ScaleType = PreviewView.ScaleType.FILL_CENTER,
     onSetUri: (Uri) -> Unit = { ***REMOVED***,
     nPhotos: Int = 0,
     changeActivePhoto: () -> Unit = { ***REMOVED***
@@ -926,45 +924,54 @@ fun CameraPreview(
             showFlash = false
         ***REMOVED***
     ***REMOVED***
+    val cameraSelector = remember { CameraSelector.Builder().requireLensFacing(lensFacing).build() ***REMOVED***
 
     val preview = remember { Preview.Builder().build() ***REMOVED***
     val imageCapture = remember { ImageCapture.Builder().build() ***REMOVED***
-    val cameraSelector = remember { CameraSelector.Builder().requireLensFacing(lensFacing).build() ***REMOVED***
+    val cameraProviderFuture = remember { ProcessCameraProvider.getInstance(context) ***REMOVED***
 
-    // Function to bind camera use cases
-    fun bindCameraUseCases(cameraProvider: ProcessCameraProvider) {
-        try {
-            cameraProvider.unbindAll()
-            cameraProvider.bindToLifecycle(
-                lifecycleOwner, cameraSelector, preview, imageCapture
-***REMOVED***
-        ***REMOVED*** catch (exc: Exception) {
-            Log.e("CameraX", context.getString(R.string.use_case_binding_failed), exc)
-        ***REMOVED***
-    ***REMOVED***
+    // Track if the surface provider has been set
+    var isSurfaceProviderSet by remember { mutableStateOf(false) ***REMOVED***
 
-// Initialize and bind the camera use cases once
-    DisposableEffect(context) {
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
+    LaunchedEffect(lifecycleOwner) {
+        Log.d("CameraX", "DisposableEffect called")
+        val cameraProvider = cameraProviderFuture.get()
+
         cameraProviderFuture.addListener({
-            val cameraProvider = cameraProviderFuture.get()
-            bindCameraUseCases(cameraProvider)
-        ***REMOVED***, ContextCompat.getMainExecutor(context))
-        onDispose {
-            cameraProviderFuture.get().unbindAll()
-        ***REMOVED***
+            try {
+                cameraProvider.unbindAll()
+                cameraProvider.bindToLifecycle(
+                    lifecycleOwner, cameraSelector, preview, imageCapture
     ***REMOVED***
+                Log.d("CameraX", "Use case binding succeeded")
+            ***REMOVED*** catch (exc: Exception) {
+                Log.e("CameraX", "Use case binding failed", exc)
+            ***REMOVED***
+        ***REMOVED***, ContextCompat.getMainExecutor(context))
+
+    ***REMOVED***
+
 
     Box(modifier = modifier) {
-        AndroidView(modifier = Modifier.fillMaxSize(), factory = { factoryContext ->
-            PreviewView(factoryContext).apply {
-                this.scaleType = scaleType
-                this.implementationMode = PreviewView.ImplementationMode.COMPATIBLE
-                preview.setSurfaceProvider(this.surfaceProvider)
+        AndroidView(
+
+            modifier = modifier.fillMaxSize(),
+            factory = { factoryContext ->
+                Log.d("CameraPreview", "Creating PreviewView")
+                PreviewView(factoryContext).apply {
+                    scaleType = PreviewView.ScaleType.FILL_CENTER
+                ***REMOVED***
+            ***REMOVED***,
+            update = { previewView ->
+                if (!isSurfaceProviderSet) {
+                    Log.d("CameraPreview", "Setting SurfaceProvider")
+                    previewView.post {
+                        preview.setSurfaceProvider(previewView.surfaceProvider)
+                    ***REMOVED***
+                    isSurfaceProviderSet = true
+                ***REMOVED***
             ***REMOVED***
-        ***REMOVED***, update = { previewView ->
-            previewView.scaleType = scaleType
-        ***REMOVED***)
+        )
         Column(
             modifier = Modifier.align(Alignment.BottomStart)
         ) {

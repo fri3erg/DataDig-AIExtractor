@@ -1,4 +1,3 @@
-import com.android.build.api.dsl.Packaging
 import java.util.Properties
 
 plugins {
@@ -145,7 +144,6 @@ android {
 dependencies {
     implementation(libs.androidx.ui.v1610)
     implementation(libs.composetheme)
-    implementation(libs.material3) // Or the latest version
     implementation(libs.vision.common)
     implementation(libs.play.services.mlkit.text.recognition.common)
     implementation(libs.play.services.mlkit.text.recognition)
@@ -159,13 +157,10 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     implementation(libs.tess.two) // Or latest version
     kapt(libs.hilt.android.compiler)
-    implementation(libs.androidx.activity.compose.v180) // Or the latest version
     implementation(libs.android.image.cropper) // or later version
-    implementation (libs.androidx.ui.v133)
     implementation (libs.androidx.material3.v100)
     implementation(libs.androidx.core.splashscreen) // Or the latest version
     implementation (libs.ui.tooling.preview)
-    implementation (libs.androidx.activity.compose.v161)
     kapt(libs.hilt.android)
     implementation(libs.androidx.hilt.work)
     implementation(libs.androidx.hilt.navigation.compose)
@@ -173,7 +168,6 @@ dependencies {
     implementation(libs.androidx.work.runtime.ktx.v281)
     implementation(libs.kotlinx.metadata.jvm) // Use the latest version
     implementation (libs.accompanist.pager.v0312alpha) // Replace with the latest version
-    implementation(libs.google.accompanist.pager)
     implementation(libs.androidx.foundation) // Or the latest version
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -182,20 +176,15 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.core.ktx.v1131) // Or the latest version
     implementation(libs.accompanist.permissions) // Replace with your desired version
-    implementation(libs.camera.camera2.v133) // Or latest stable version
     implementation(libs.androidx.camera.core)
-    implementation(libs.ui) // Or a more recent version
     implementation(libs.androidx.runtime.livedata) // Or same version
     implementation(libs.androidx.security.crypto) // Or the latest version
     implementation(libs.androidx.localbroadcastmanager)
     implementation (libs.fontawesomecompose)
     implementation(libs.coil.compose)
-    implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.cronet.embedded)
     implementation(libs.androidx.camera.lifecycle)
-    implementation(libs.androidx.camera.view)
     implementation(libs.androidx.room.common)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -204,9 +193,7 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    implementation (libs.androidx.camera.core.v130alpha06)
     implementation (libs.camera.camera2)
-    implementation (libs.androidx.camera.lifecycle.v130alpha06)
     implementation (libs.androidx.camera.view.v130alpha06)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.library.base)

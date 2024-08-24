@@ -1,7 +1,6 @@
 package com.example.tesifrigo.ui.template
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.border
 import  androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,7 +30,6 @@ import androidx.navigation.NavHostController
 import com.example.tesifrigo.Screen
 import com.example.tesifrigo.models.Template
 import com.example.tesifrigo.ui.theme.cyan_custom
-import com.example.tesifrigo.ui.theme.dark_blue
 import com.example.tesifrigo.ui.theme.light_gray
 import com.example.tesifrigo.ui.theme.vale
 import com.example.tesifrigo.utils.DropdownWithNavigation

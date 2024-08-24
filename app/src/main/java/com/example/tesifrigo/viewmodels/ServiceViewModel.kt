@@ -92,6 +92,9 @@ class ServiceViewModel @Inject constructor(
 
     ***REMOVED***
 
+    fun clearResult() {
+        progressRepository.clearResult()
+    ***REMOVED***
 
 
 ***REMOVED***

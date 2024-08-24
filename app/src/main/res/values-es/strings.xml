@@ -204,6 +204,8 @@
     <string name="extraction_complete">Extracción completa</string>
     <string name="your_extraction_has_finished_processing">Tu extracción ha finalizado el procesamiento.</string>
 
+    <string name="keys_connected_to_your_azure_document_intelligence_resource_which_you_can_create_in_the_azure_portal_at_the_link">" Claves conectadas a su recurso de Azure Document Intelligence, que puede crear en el portal de Azure en el siguiente enlace:"</string>
+    <string name="keys_you_created_on_the_openai_platform_which_you_can_find_at_the_link">"Claves que creó en la plataforma OpenAI, que puede encontrar en el siguiente enlace: "</string>
 
 
 

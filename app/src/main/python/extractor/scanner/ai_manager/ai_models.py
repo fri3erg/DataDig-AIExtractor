@@ -1,13 +1,17 @@
 # import instructor.exceptions
+
+import re
 from ...scanner.extractors.extractor_utils import num_tokens_from_string
 import threading
 from ...configs.cost_config import cost_per_token
 from openai import OpenAI, AuthenticationError
-from typing import List, Optional, Any, Dict
+from typing import List, Optional, Any, Dict, Type, TypeVar
 from ...classes.Extracted import ExtractionCosts
 from langchain.prompts import PromptTemplate
 import os
 import asyncio
+
+from langchain.output_parsers import PydanticOutputParser
 
 # import instructor
 from langchain.chains import LLMChain
@@ -16,7 +20,6 @@ from langchain.llms.base import LLM
 # from pydantic_core import ValidationError
 from langchain.chat_models import ChatOpenAI  # use ChatOpenAI from the core library
 from langchain.llms.base import LLM
-from langchain.output_parsers import PydanticOutputParser
 
 # from langchain_openai.chat_models.base import ChatOpenAI # use ChatOpenAI from the core library
 from langchain.schema import BaseMessage
@@ -149,7 +152,7 @@ class Models(LLM):
             model = "gpt-3.5-turbo"
         llm: ChatOpenAI = cls(model, temperature)._models[model][temperature]  # Get the singleton instance
         try:
-            chain = prompt | llm
+            chain = LLMChain(llm=llm, prompt=prompt)
         except AuthenticationError as auth_err:
             print("Authentication Error (Invalid API key?):", auth_err)
             raise ValueError("invalid OpenAI key")
@@ -157,8 +160,7 @@ class Models(LLM):
             print("Error in extract:", e)
             raise e
 
-        response: BaseMessage = asyncio.run(chain.ainvoke({"context": pages, "template": template***REMOVED***))
-        output = response.content if isinstance(response.content, str) else response.content[0][0]
+        output = chain.run(context= pages, template=template)
         cls.calc_costs(file_id, model, inputs=[pages, str(prompt)], outputs=[output])
         return output
 
@@ -207,3 +209,36 @@ class Models(LLM):
             del cls._file_locks[file_id]
         if file_id in cls._costs:
             del cls._costs[file_id]
+
+from langchain_core.output_parsers import BaseOutputParser
+import json
+from pydantic import BaseModel, ValidationError
+from langchain_core.exceptions import OutputParserException
+
+T = TypeVar("T", bound=BaseModel)
+
+class MyJSONOutputParser(BaseOutputParser[T]):
+
+    pydantic_object: Type[T]
+    """The pydantic model to parse."""
+
+    def parse(self, text: str) -> T:
+        try:
+            # Greedy search for 1st json candidate.
+            match = re.search(
+                r"\{.*\***REMOVED***", text.strip(), re.MULTILINE | re.IGNORECASE | re.DOTALL
+***REMOVED***
+            json_str = ""
+            if match:
+                json_str = match.group()
+            json_object = json.loads(json_str, strict=False)
+            return self.pydantic_object.parse_obj(json_object)
+
+        except (json.JSONDecodeError, ValidationError) as e:
+            name = self.pydantic_object.__name__
+            msg = f"Failed to parse {name***REMOVED*** from completion {text***REMOVED***. Got: {e***REMOVED***"
+            raise OutputParserException(msg, llm_output=text)
+
+    def get_format_instructions(self) -> str:
+
+        return "Output a JSON object that strictly adheres to the provided schema."

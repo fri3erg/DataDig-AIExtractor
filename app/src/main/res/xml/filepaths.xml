@@ -5,5 +5,7 @@
     <cache-path
         name="temp_images"
         path="images/" />
+    <external-path
+    name="external_files" path="/" />
 </paths>
 

@@ -197,4 +197,7 @@
     <string name="errors_occurred_while_fetching_the_extraction">Des erreurs se sont produites lors de la récupération de l\'extraction.</string>
     <string name="extraction_complete">Extraction terminée</string>
     <string name="your_extraction_has_finished_processing">Votre extraction est terminée.</string>
+
+    <string name="keys_connected_to_your_azure_document_intelligence_resource_which_you_can_create_in_the_azure_portal_at_the_link">"Clés connectées à votre ressource Azure Document Intelligence, que vous pouvez créer dans le portail Azure à l\'adresse suivante :"</string>
+    <string name="keys_you_created_on_the_openai_platform_which_you_can_find_at_the_link">"Clés que vous avez créées sur la plateforme OpenAI, que vous pouvez trouver à l\'adresse suivante : "</string>
 </resources>

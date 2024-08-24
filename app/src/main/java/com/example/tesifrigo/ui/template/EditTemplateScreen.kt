@@ -165,7 +165,7 @@ fun EditTemplateScreen(
                             label = { Text("Template Title", color = Color.Black) ***REMOVED***,
                             modifier = Modifier.fillMaxWidth(),
                             trailingIcon = {
-                                HelpIconButton(helpText = "This is the title of the template. This is irrelevant for the extraction, just for your own reference.")
+                                HelpIconButton(helpText = stringResource(R.string.this_is_the_title_of_the_template_this_is_irrelevant_for_the_extraction_just_for_your_own_reference))
                             ***REMOVED***)
                     ***REMOVED***
                 ***REMOVED***
@@ -497,7 +497,7 @@ fun TemplateFieldComposable(
                                 viewModel.updateTemplateItem(
                                     template, "list" to newValue, index
                     ***REMOVED***
-                                default = ""
+                                default = "[]"
                                 viewModel.updateTemplateItem(
                                     template, "default" to "", index
                     ***REMOVED***

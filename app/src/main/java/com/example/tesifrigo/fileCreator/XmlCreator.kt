@@ -4,7 +4,6 @@ import android.content.Context
 import android.net.Uri
 import android.util.Xml
 import com.example.tesifrigo.models.Extraction
-import org.xmlpull.v1.XmlSerializer
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException

@@ -324,15 +324,18 @@ class GeneralScanner:
                     "args": {"image": image, "language": self.options.language or "it"***REMOVED***,
                 ***REMOVED***
         result = self.threader(function_parameters)
-        for key, value in result.items():
-            tables, raw_data = value
-            self.di_tables_pages[key] = tables
-            self.raw_data_pages[key] = raw_data
-            for i, document in enumerate(getattr(raw_data, "pages", [])):
-                all_text = ""
-                for line in getattr(document, "lines"):
-                    all_text += line.content + "\n"
-                self.text[int(i)] = all_text
+        self.text = [""] * len(self.images)
+        for i, image in enumerate(self.images):
+                value= result[f"{i***REMOVED***"]
+                tables, raw_data = value
+                self.di_tables_pages[f"{i***REMOVED***"] = tables
+                self.raw_data_pages[f"{i***REMOVED***"] = raw_data
+                for document in getattr(raw_data, "pages", []):
+                    all_text = ""
+                    for line in getattr(document, "lines"):
+                        all_text += line.content + "\n"
+                    print("all_text", all_text)
+                    self.text[i] = all_text
 
     def _process_costs(self) -> List[ExtractionCosts]:
         """processes the cost of the calls given local config and prepares them for the output

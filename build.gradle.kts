@@ -16,7 +16,7 @@ buildscript {
     ***REMOVED***
     dependencies {
         // ... other dependencies
-        classpath("com.google.dagger:hilt-android-gradle-plugin:2.51")
+        classpath(libs.hilt.android.gradle.plugin)
 
     ***REMOVED***
 ***REMOVED***

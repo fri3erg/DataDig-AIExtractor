@@ -178,4 +178,8 @@ class ServiceRepository @Inject constructor(
 
     ***REMOVED***
 
+    fun clearResult() {
+        _result.value = null
+    ***REMOVED***
+
 ***REMOVED***
