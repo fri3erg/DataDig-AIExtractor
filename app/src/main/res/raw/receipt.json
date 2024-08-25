@@ -1,10 +1,8 @@
 {
-  "id": 1,
   "title": "Standard Receipt",
   "description": "Template for a standard retail or service receipt",
   "fields": [
     {
-      "id": 1600,
       "title": "Transaction/Order Number",
       "description": "Unique identifier for the transaction or order",
       "extraDescription": "",
@@ -15,7 +13,6 @@
       "list": false
     ***REMOVED***,
     {
-      "id": 17000,
       "title": "Customer Information",
       "description": "Name, address, or other identifying information about the customer",
       "extraDescription": "",
@@ -26,7 +23,6 @@
       "list": false
     ***REMOVED***,
     {
-      "id": 2,
       "title": "Store Name",
       "description": "Name of the store issuing the receipt",
       "extraDescription": "",
@@ -37,7 +33,6 @@
       "list": false
     ***REMOVED***,
     {
-      "id": 3,
       "title": "Store Address",
       "description": "Address of the store",
       "extraDescription": "",
@@ -48,7 +43,6 @@
       "list": false
     ***REMOVED***,
     {
-      "id": 4,
       "title": "Phone Number",
       "description": "Store contact number",
       "extraDescription": "",
@@ -59,7 +53,6 @@
       "list": false
     ***REMOVED***,
     {
-      "id": 5,
       "title": "Website",
       "description": "Store website",
       "extraDescription": "",
@@ -70,7 +63,6 @@
       "list": false
     ***REMOVED***,
     {
-      "id": 15,
       "title": "Issue Date",
       "description": "Date when the bill was issued",
       "extraDescription": "",
@@ -83,14 +75,12 @@
   ],
   "tables": [
     {
-      "id": 6,
       "title": "Purchased Items",
       "description": "Details of purchased items",
       "keywords": ["Item Name", "Quantity", "Price"],
       "all": false,
       "rows": [
         {
-          "id": 7,
           "title": "Item Name/Description",
           "description": "Name or description of the item",
           "extraDescription": "",
@@ -103,7 +93,6 @@
       ],
       "columns": [
         {
-          "id": 8,
           "title": "Quantity",
           "description": "Number of items",
           "extraDescription": "",
@@ -114,7 +103,6 @@
           "list": false
         ***REMOVED***,
         {
-          "id": 9,
           "title": "Unit Price",
           "description": "Price per item",
           "extraDescription": "",
@@ -125,7 +113,6 @@
           "list": false
         ***REMOVED***,
         {
-          "id": 10,
           "title": "Total Price",
           "description": "Total price for the items",
           "extraDescription": "",

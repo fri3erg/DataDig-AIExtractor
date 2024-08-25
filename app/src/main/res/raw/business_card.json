@@ -1,10 +1,8 @@
 {
-  "id": 22,
   "title": "Business Card",
   "description": "Template for a standard business card",
   "fields": [
     {
-      "id": 23,
       "title": "Full Name",
       "description": "Name of the individual",
       "extraDescription": "",
@@ -15,7 +13,6 @@
       "list": false
     ***REMOVED***,
     {
-      "id": 24,
       "title": "Job Title",
       "description": "Job position or title of the individual",
       "extraDescription": "",
@@ -26,7 +23,6 @@
       "list": false
     ***REMOVED***,
     {
-      "id": 25,
       "title": "Company Name",
       "description": "Name of the company",
       "extraDescription": "",
@@ -37,7 +33,6 @@
       "list": false
     ***REMOVED***,
     {
-      "id": 26,
       "title": "Phone Number",
       "description": "Contact phone number",
       "extraDescription": "",
@@ -48,7 +43,6 @@
       "list": false
     ***REMOVED***,
     {
-      "id": 27,
       "title": "Email Address",
       "description": "Contact email address",
       "extraDescription": "",
@@ -59,7 +53,6 @@
       "list": false
     ***REMOVED***,
     {
-      "id": 28,
       "title": "Website",
       "description": "Company or personal website",
       "extraDescription": "",
@@ -70,7 +63,6 @@
       "list": false
     ***REMOVED***,
     {
-      "id": 29,
       "title": "Address",
       "description": "Physical address of the company",
       "extraDescription": "",

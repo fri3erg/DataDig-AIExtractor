@@ -2,6 +2,7 @@ package com.example.tesifrigo.utils
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Environment
@@ -913,4 +914,9 @@ fun getPdfFileName(context: Context, uri: Uri): String? {
             null
         ***REMOVED***
     ***REMOVED***
+***REMOVED***
+
+fun isFirstTimeVisit(context: Context, key: String): Boolean {
+    val sharedPreferences: SharedPreferences = context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+    return sharedPreferences.getBoolean(key, true)
 ***REMOVED***

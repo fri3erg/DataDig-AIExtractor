@@ -1,0 +1,74 @@
+{
+  "id": 70,
+  "title": "Resume/CV",
+  "description": "Template for a standard resume or curriculum vitae (CV)",
+  "fields": [
+    {
+      "id": 71,
+      "title": "Personal Information",
+      "description": "Basic information about the individual, Includes the individual's full name, contact information, and other identifying details",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "id": 72,
+      "title": "Objective Statement",
+      "description": "A brief statement summarizing the individual's career goals",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "id": 73,
+      "title": "Work Experience",
+      "description": "Details about the individual's past work experiences, Includes job title, company name, duration, responsibilities, and achievements",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": true
+    ***REMOVED***,
+    {
+      "id": 74,
+      "title": "Education",
+      "description": "Details about the individual's educational background, Includes degree, institution, years attended, and field of study",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": true
+    ***REMOVED***,
+    {
+      "id": 75,
+      "title": "Skills",
+      "description": "List of key skills the individual possesses,Includes both technical and soft skills",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": true
+    ***REMOVED***,
+    {
+      "id": 76,
+      "title": "Strengths and Weaknesses",
+      "description": "An assessment of the individual's key strengths and weaknesses, Includes characteristics, competencies, and areas for improvement",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": true,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***
+  ],
+  "tags": ["Resume", "CV", "Career", "Job"]
+***REMOVED***

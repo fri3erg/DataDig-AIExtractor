@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tesifrigo.MyApp
 import com.example.tesifrigo.R
+import com.example.tesifrigo.fileCreator.JsonCreator
 import com.example.tesifrigo.models.TemplateField
 import com.example.tesifrigo.models.Template
 import com.example.tesifrigo.models.TemplateTable
@@ -20,9 +21,73 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import com.example.tesifrigo.utils.calculateCloseness
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonArray
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
+import com.google.gson.JsonSerializationContext
+import com.google.gson.JsonSerializer
 import com.google.gson.reflect.TypeToken
+import io.realm.kotlin.types.RealmList
 import org.mongodb.kbson.ObjectId
+import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
+
+
+class RealmListAdapterLocal : JsonSerializer<RealmList<*>>, JsonDeserializer<RealmList<*>> {
+    override fun serialize(
+        src: RealmList<*>,
+        typeOfSrc: Type,
+        context: JsonSerializationContext
+    ): JsonElement {
+        return context.serialize(src.toList())
+    ***REMOVED***
+
+    override fun deserialize(
+        json: JsonElement,
+        typeOfT: Type,
+        context: JsonDeserializationContext
+    ): RealmList<*> {
+        val parameterizedType = typeOfT as? ParameterizedType
+        val itemType = parameterizedType?.actualTypeArguments?.get(0) ?: Any::class.java
+        val list = context.deserialize<List<*>>(json, itemType)
+        return realmListOf(*list.toTypedArray())
+    ***REMOVED***
+***REMOVED***
+
+class RealmListStringAdapter : JsonSerializer<RealmList<String>>, JsonDeserializer<RealmList<String>> {
+
+    override fun serialize(
+        src: RealmList<String>,
+        typeOfSrc: Type,
+        context: JsonSerializationContext
+    ): JsonElement {
+        val jsonArray = JsonArray()
+        for (item in src) {
+            jsonArray.add(item)
+        ***REMOVED***
+        return jsonArray
+    ***REMOVED***
+
+    override fun deserialize(
+        json: JsonElement,
+        typeOfT: Type,
+        context: JsonDeserializationContext
+    ): RealmList<String> {
+        val jsonArray = json.asJsonArray
+        val realmList = realmListOf<String>()
+        for (item in jsonArray) {
+            if (item.isJsonPrimitive && item.asJsonPrimitive.isString) {
+                realmList.add(item.asString)
+            ***REMOVED*** else {
+                // Handle other JSON element types if needed
+                println("Unexpected JSON element type: ${item.javaClass***REMOVED***")
+            ***REMOVED***
+        ***REMOVED***
+        return realmList
+    ***REMOVED***
+***REMOVED***
 
 class TemplateViewModel : ViewModel() {
 
@@ -43,10 +108,6 @@ class TemplateViewModel : ViewModel() {
     private val _template = MutableStateFlow<Template?>(null) // Initialize with your template data
     val template: StateFlow<Template?> = _template.asStateFlow()
 
-
-    // ... other StateFlows (sortOrder, ascending) ...
-
-    // Function to update search text
 
 
     val templates = realm.query<Template>().asFlow().map {
@@ -111,23 +172,33 @@ class TemplateViewModel : ViewModel() {
     ***REMOVED***
 
     // Function to load JSON from res/raw
-    private fun loadTemplateFromJson(context: Context, resource: Int): Template? {
+    fun loadTemplateFromJson(context: Context, resource: Int): Template? {
         val jsonString = context.resources.openRawResource(resource)
             .bufferedReader().use { it.readText() ***REMOVED***
 
-        val gson = Gson()
+        val gson = GsonBuilder()
+            .registerTypeAdapter(RealmList::class.java, RealmListAdapterLocal())
+            .registerTypeAdapter(RealmList::class.java, RealmListStringAdapter()) // Register the new adapter
+            .create()
+
         return gson.fromJson(jsonString, Template::class.java)
     ***REMOVED***
 
-    private fun createSampleTemplates(context: Context) {
+    fun createSampleTemplates(context: Context) {
 
+        val article = loadTemplateFromJson(context, R.raw.article)
+        val business_card = loadTemplateFromJson(context, R.raw.business_card)
+        val id_passport = loadTemplateFromJson(context, R.raw.id_passport)
+        val prescription = loadTemplateFromJson(context, R.raw.prescription)
         val receipt= loadTemplateFromJson(context, R.raw.receipt)
+        val resume_cv = loadTemplateFromJson(context, R.raw.resume_cv)
+        val terms_conditions = loadTemplateFromJson(context, R.raw.terms_conditions)
+        val utility_bill = loadTemplateFromJson(context, R.raw.utility_bill)
 
 
         viewModelScope.launch {
             realm.write {
-
-
+/*
                 val templateToDelete = query<Template>().find()
                 delete(templateToDelete)
 
@@ -136,82 +207,33 @@ class TemplateViewModel : ViewModel() {
 
                 val tablesToDelete = query<TemplateTable>().find()
                 delete(tablesToDelete)
+                */
+
                 if (receipt != null) {
                     copyToRealm(receipt)
                 ***REMOVED***
-/*
-                val templateField1 = TemplateField().apply {
-                    title = "Field 1"
-                    description = "This is a sample field"
-                    extraDescription = "This is an extra description"
-                    type = "Text"
-                    required = true
-                    intelligentExtraction = false
-                    default = "aaa"
+                if (article != null) {
+                    copyToRealm(article)
                 ***REMOVED***
-                val templateField2 = TemplateField().apply {
-                    title = "Field 2"
-                    description = "This is a sample field 2"
-                    extraDescription = "This is an extra description 2"
-                    type = "Text"
-                    required = true
-                    intelligentExtraction = true
-                    default = "default"
+                if (business_card != null) {
+                    copyToRealm(business_card)
                 ***REMOVED***
-                val templateField3 = TemplateField().apply {
-                    title = "Field 3"
-                    description = "This is a sample field 3"
-                    extraDescription = "This is an extra description 3"
-                    type = "Text"
-                    required = true
-                    intelligentExtraction = false
-                    default = "N/F"
+                if (id_passport != null) {
+                    copyToRealm(id_passport)
+                ***REMOVED***
+                if (prescription != null) {
+                    copyToRealm(prescription)
+                ***REMOVED***
+                if (resume_cv != null) {
+                    copyToRealm(resume_cv)
+                ***REMOVED***
+                if (terms_conditions != null) {
+                    copyToRealm(terms_conditions)
+                ***REMOVED***
+                if (utility_bill != null) {
+                    copyToRealm(utility_bill)
                 ***REMOVED***
 
-                val templateTable1 = TemplateTable().apply {
-                    title = "Table 1"
-                    description = "This is a sample table"
-                    keywords = realmListOf("freezer")
-                    rows = realmListOf(templateField1, templateField2)
-                    columns = realmListOf(templateField2)
-                ***REMOVED***
-
-                val template1 = Template().apply {
-                    title = "Sample Template"
-                    description = "This is a sample template"
-                    fields = realmListOf(
-                        templateField1,
-        ***REMOVED***
-                    tables = realmListOf(templateTable1)
-                    tags = realmListOf("freezer")
-                    tables = realmListOf()
-                ***REMOVED***
-                val template2 = Template().apply {
-                    title = "Sample Template 2"
-                    description = "This is a sample template 2"
-                    fields = realmListOf(
-                        templateField2,
-        ***REMOVED***
-                    tables = realmListOf()
-                    tags = realmListOf("freezer", "fridge")
-                    tables = realmListOf()
-
-                ***REMOVED***
-                val template3 = Template().apply {
-                    title = "Sample Template 3"
-                    description = "This is a sample template 3"
-                    fields = realmListOf(
-                        templateField3
-        ***REMOVED***
-                    tables = realmListOf()
-
-                    tags = realmListOf("freezer", "fridge")
-                    tables = realmListOf()
-                ***REMOVED***
-                copyToRealm(template1)
-                copyToRealm(template2)
-                copyToRealm(template3)
-*/
             ***REMOVED***
         ***REMOVED***
 

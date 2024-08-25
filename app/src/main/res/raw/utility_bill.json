@@ -1,10 +1,8 @@
 {
-  "id": 11,
   "title": "Utility Bill",
   "description": "Template for a standard utility bill (e.g., electricity, water, gas)",
   "fields": [
     {
-      "id": 12,
       "title": "Customer Information",
       "description": "Details of the customer receiving the bill",
       "extraDescription": "",
@@ -15,7 +13,6 @@
       "list": false
     ***REMOVED***,
     {
-      "id": 13,
       "title": "Account Number",
       "description": "Customer's account number or code with the utility provider",
       "extraDescription": "",
@@ -26,7 +23,6 @@
       "list": false
     ***REMOVED***,
     {
-      "id": 14,
       "title": "Billing Period",
       "description": "Time period for which the utility usage is being billed",
       "extraDescription": "",
@@ -37,7 +33,6 @@
       "list": false
     ***REMOVED***,
     {
-      "id": 15,
       "title": "Issue Date",
       "description": "Date when the bill was issued",
       "extraDescription": "",
@@ -48,7 +43,6 @@
       "list": false
     ***REMOVED***,
     {
-      "id": 16,
       "title": "Due Date",
       "description": "Date by which payment should be made",
       "extraDescription": "",
@@ -61,14 +55,12 @@
   ],
   "tables": [
     {
-      "id": 17,
       "title": "Usage Details",
       "description": "Details of utility usage during the billing period",
       "keywords": ["Utility Type", "Usage", "Rate", "Total"],
       "all": false,
       "rows": [
         {
-          "id": 18,
           "title": "Utility Type",
           "description": "Type of utility (e.g., electricity, water, gas)",
           "extraDescription": "",
@@ -81,7 +73,6 @@
       ],
       "columns": [
         {
-          "id": 19,
           "title": "Usage",
           "description": "Amount of utility used (e.g., kWh, cubic meters)",
           "extraDescription": "",
@@ -92,7 +83,6 @@
           "list": false
         ***REMOVED***,
         {
-          "id": 20,
           "title": "Rate",
           "description": "Rate per unit of utility",
           "extraDescription": "",
@@ -103,7 +93,6 @@
           "list": false
         ***REMOVED***,
         {
-          "id": 21,
           "title": "Total",
           "description": "Total cost for the utility usage",
           "extraDescription": "",

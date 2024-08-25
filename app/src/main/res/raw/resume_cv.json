@@ -1,0 +1,67 @@
+{
+  "title": "Resume/CV",
+  "description": "Template for a standard resume or curriculum vitae (CV)",
+  "fields": [
+    {
+      "title": "Personal Information",
+      "description": "Basic information about the individual, Includes the individual's full name, contact information, and other identifying details",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Objective Statement",
+      "description": "A brief statement summarizing the individual's career goals",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Work Experience",
+      "description": "Details about the individual's past work experiences, Includes job title, company name, duration, responsibilities, and achievements",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": true
+    ***REMOVED***,
+    {
+      "title": "Education",
+      "description": "Details about the individual's educational background, Includes degree, institution, years attended, and field of study",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": true
+    ***REMOVED***,
+    {
+      "title": "Skills",
+      "description": "List of key skills the individual possesses,Includes both technical and soft skills",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": true
+    ***REMOVED***,
+    {
+      "default": "N/A",
+      "description": "An assessment of the individual's key strengths and weaknesses, Includes characteristics, competencies, and areas for improvement",
+      "extraDescription": "",
+      "intelligentExtraction": true,
+      "list": false,
+      "required": true,
+      "title": "Strengths and Weaknesses",
+      "type": "Text"
+    ***REMOVED***
+  ],
+  "tags": ["Resume", "CV", "Career", "Job"]
+***REMOVED***

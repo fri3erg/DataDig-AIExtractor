@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
@@ -31,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -43,6 +45,7 @@ import com.example.tesifrigo.ui.theme.cyan_custom
 import com.example.tesifrigo.ui.theme.light_gray
 import com.example.tesifrigo.ui.theme.vale
 import com.example.tesifrigo.utils.SearchBar
+import com.example.tesifrigo.utils.isFirstTimeVisit
 import com.example.tesifrigo.viewmodels.ExtractionViewModel
 import com.example.tesifrigo.viewmodels.SortOrder
 import com.guru.fontawesomecomposelib.FaIcon
@@ -56,6 +59,13 @@ fun StorageScreen(navController: NavHostController, extractionViewModel: Extract
     val ascending by extractionViewModel.ascending.collectAsState()
 
     val extractions by extractionViewModel.sortedExtractions.collectAsState()
+
+    val context = LocalContext.current
+    var firstTimeModal by remember { mutableStateOf(false) ***REMOVED***
+    val composableKey = "StorageScreen"
+    if (isFirstTimeVisit(context, composableKey)) {
+        firstTimeModal = true
+    ***REMOVED***
     Scaffold(topBar = {
         Column(
             modifier = Modifier
@@ -125,6 +135,22 @@ fun StorageScreen(navController: NavHostController, extractionViewModel: Extract
                     navController = navController
     ***REMOVED***
             ***REMOVED***
+        ***REMOVED***
+        if(firstTimeModal){
+            AlertDialog(
+                title={
+                    Text("Welcome to SmartXtractor!")
+                ***REMOVED***,
+                text = {
+                    Text("You can create your own templates or use the sample templates to extract data from images.")
+                ***REMOVED***,
+                shape = RoundedCornerShape(8.dp),
+                onDismissRequest = { firstTimeModal=false ***REMOVED***,
+                confirmButton = {
+                    Button(onClick = { firstTimeModal = false ***REMOVED***) {
+                        Text("OK")
+                    ***REMOVED***
+                ***REMOVED***)
         ***REMOVED***
     ***REMOVED***
 ***REMOVED***

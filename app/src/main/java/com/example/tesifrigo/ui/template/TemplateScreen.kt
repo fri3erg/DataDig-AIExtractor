@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -22,9 +24,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.tesifrigo.Screen
@@ -34,6 +40,7 @@ import com.example.tesifrigo.ui.theme.light_gray
 import com.example.tesifrigo.ui.theme.vale
 import com.example.tesifrigo.utils.DropdownWithNavigation
 import com.example.tesifrigo.utils.SearchBar
+import com.example.tesifrigo.utils.isFirstTimeVisit
 import com.example.tesifrigo.viewmodels.SortOrder
 import com.example.tesifrigo.viewmodels.TemplateViewModel
 import com.guru.fontawesomecomposelib.FaIcon
@@ -48,6 +55,13 @@ fun TemplateScreen(
     val searchText by templateViewModel.searchText.collectAsState()
     val ascending by templateViewModel.ascending.collectAsState()
     val templates by templateViewModel.sortedTemplates.collectAsState()
+    val context = LocalContext.current
+    var firstTimeModal by remember { mutableStateOf(false) ***REMOVED***
+    val composableKey = "TemplateScreen"
+    if (isFirstTimeVisit(context, composableKey)) {
+        templateViewModel.createSampleTemplates(context)
+        firstTimeModal = true
+    ***REMOVED***
 
     Scaffold(
         topBar = {
@@ -133,6 +147,22 @@ fun TemplateScreen(
                 ***REMOVED***
             ***REMOVED***
 
+        ***REMOVED***
+        if(firstTimeModal){
+            AlertDialog(
+                title={
+                    Text("Welcome to SmartXtractor!")
+                ***REMOVED***,
+                text = {
+                    Text("You can create your own templates or use the sample templates to extract data from images.")
+                ***REMOVED***,
+                shape = RoundedCornerShape(8.dp),
+                onDismissRequest = { firstTimeModal=false ***REMOVED***,
+                confirmButton = {
+                Button(onClick = { firstTimeModal = false ***REMOVED***) {
+                    Text("OK")
+                ***REMOVED***
+            ***REMOVED***)
         ***REMOVED***
     ***REMOVED***
 
