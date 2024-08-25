@@ -67,6 +67,15 @@ def main(encoded_images: list, text: list[str], template: Template, options: Opt
         else:
             extraction = Extracted(template, exceptions=exceptions_occurred)
         print(extraction)
+        
+        for table in extraction.extracted_tables:
+            for key, value in table.fields.items():
+                print("row: ", key)
+                for key1, value1 in value.items():
+                    print("column: ", key1)
+                    print("value:", value1.value)
+                
+            
         return extraction
 
     except Exception as error:
@@ -196,9 +205,11 @@ def main_kotlin(base64_images: list, text: list[str], template: Template, option
         base64_images= [reduce_image_size(image) for image in base64_images]
 
     return main(base64_images, text, template, options)
-def reduce_image_size(base64_str, target_size_mb=4, initial_quality=85, min_quality=10, max_width=4200, max_height=4200):
+
+def reduce_image_size(base64_str, target_size_mb=4, initial_quality=100, min_quality=20, max_width=4200, max_height=4200):
     """
     Reduces the size of an image to fit within a target size in megabytes.
+    Dynamically calculates scaling factor and quality at each step.
 
     Args:
         base64_str (str): The base64 encoded string of the image.
@@ -211,14 +222,14 @@ def reduce_image_size(base64_str, target_size_mb=4, initial_quality=85, min_qual
     Returns:
         str: The base64 encoded string of the resized image.
     """
-    # Decode base64 string to bytes
+
     image_data = base64.b64decode(base64_str)
     image = Image.open(io.BytesIO(image_data))
     image_format = image.format
     width, height = image.size
     print(f"Original image dimensions: {width***REMOVED***x{height***REMOVED***")
 
-    # Check if image exceeds maximum dimensions
+    # Check if image exceeds Azure's maximum dimensions
     if width > max_width or height > max_height:
         scaling_factor = min(max_width / width, max_height / height)
         new_width = int(width * scaling_factor)
@@ -226,44 +237,34 @@ def reduce_image_size(base64_str, target_size_mb=4, initial_quality=85, min_qual
         image = image.resize((new_width, new_height), Image.Resampling.LANCZOS)
         print(f"Resized image to conform to dimension limits: {new_width***REMOVED***x{new_height***REMOVED***")
 
-    # Calculate the size of the image in MB after resizing
+    # Recalculate the size of the image in MB after resizing for dimensions
     buffer = io.BytesIO()
     image.save(buffer, format=image_format, quality=initial_quality)
     image_data = buffer.getvalue()
     current_size_mb = len(image_data) / (1024 * 1024)
 
-    # If the image is already below the target size, return it
-    if current_size_mb <= target_size_mb:
-        print(f"Image is below {target_size_mb***REMOVED*** MB after resizing for dimensions")
-        return base64.b64encode(image_data).decode()
 
-    # Estimate the required quality reduction
-    quality = initial_quality
-    reduction_factor = (target_size_mb / current_size_mb) ** 0.5  # Estimate by the square root
-    estimated_quality = int(quality * reduction_factor)
+    while current_size_mb > target_size_mb:
+        # Estimate the required quality to reach the target size (conservative)
+        estimated_quality = min(0.9,max(min_quality, int(initial_quality * (target_size_mb / current_size_mb) * 0.9)))  # 0.9 factor for conservatism
 
-    # Clamp the quality to be within the allowed range
-    quality = max(min_quality, min(initial_quality, estimated_quality))
-    print(f"Estimated quality to reach target size: {quality***REMOVED***")
+        # Calculate scaling factor to further reduce size if needed
+        scaling_factor = min(0.9,max(0.5, (target_size_mb / current_size_mb) ** 0.5))  # Square root for area-based scaling
 
-    # Try reducing the quality directly to the estimated value
-    buffer = io.BytesIO()
-    image.save(buffer, format=image_format, quality=quality)
-    image_data = buffer.getvalue()
-    current_size_mb = len(image_data) / (1024 * 1024)
-    print(f"Size after applying estimated quality: {current_size_mb***REMOVED*** MB")
+        width, height = image.size
+        new_width = int(width * scaling_factor)
+        new_height = int(height * scaling_factor)
+        image = image.resize((new_width, new_height), Image.Resampling.LANCZOS)
 
-    # Further reduction if necessary
-    while current_size_mb > target_size_mb and quality > min_quality:
-        quality -= 5
         buffer = io.BytesIO()
-        image.save(buffer, format=image_format, quality=quality)
+        image.save(buffer, format=image_format, quality=estimated_quality)
         image_data = buffer.getvalue()
         current_size_mb = len(image_data) / (1024 * 1024)
-        print(f"Reducing size with quality={quality***REMOVED***, size={current_size_mb***REMOVED*** MB")
+        print(f"Reducing size with quality={estimated_quality***REMOVED*** and dimensions=({new_width***REMOVED***, {new_height***REMOVED***), size={current_size_mb***REMOVED*** MB")
 
-    # Encode image back to base64
     return base64.b64encode(image_data).decode()
+
+
 ***REMOVED***
 
     template, option = create_test()

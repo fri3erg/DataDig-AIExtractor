@@ -35,6 +35,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DatePicker
@@ -44,6 +45,7 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -82,11 +84,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.tesifrigo.R
+import com.example.tesifrigo.Screen
 import com.example.tesifrigo.models.Template
 import com.example.tesifrigo.models.TemplateField
 import com.example.tesifrigo.models.TemplateTable
 import com.example.tesifrigo.ui.theme.dark_blue
 import com.example.tesifrigo.ui.theme.dark_red
+import com.example.tesifrigo.ui.theme.light_gray
 import com.example.tesifrigo.ui.theme.vale
 import com.example.tesifrigo.utils.AddButton
 import com.example.tesifrigo.utils.DeleteButton
@@ -114,10 +118,12 @@ fun EditTemplateScreen(
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
     var title by remember { mutableStateOf(template?.title) ***REMOVED***
+    var description by remember { mutableStateOf(template?.description) ***REMOVED***
 
     LaunchedEffect(template) {
         if (template != null && title == null) {
             title = template!!.title
+            description = template!!.description
 
         ***REMOVED***
     ***REMOVED***
@@ -126,19 +132,45 @@ fun EditTemplateScreen(
 
     Scaffold(topBar = {
         TopAppBar(title = {
-            title?.let {
-                Text(
-                    text = it,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(start = 16.dp)
-    ***REMOVED***
+            Row {
+                title?.let {
+                    Text(
+                        text = it,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .align(Alignment.CenterVertically)
+        ***REMOVED***
+                ***REMOVED***
+                Spacer(modifier = Modifier.weight(1f))
+                template?.let {
+                Button(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .align(Alignment.CenterVertically),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = light_gray),
+                    onClick = {
+                        navController.navigate(Screen.Camera.routeWithOptionalArgs("templateId" to it.id.toHexString()))
+
+                    ***REMOVED***) {
+                    Text(text = stringResource(id = R.string.use),
+                        color = Color.Black,
+            ***REMOVED***
+
+                ***REMOVED***
+            ***REMOVED***
             ***REMOVED***
         ***REMOVED***, navigationIcon = {
-            FaIcon(faIcon = FaIcons.ArrowLeft, modifier = Modifier.clickable {
-                navController.navigateUp()
-            ***REMOVED***)
+            IconButton(onClick = {
+                val lastDestination = navController.previousBackStackEntry?.destination?.route
+                    ?: Screen.Storage.route
+                navController.navigate(lastDestination)
+            ***REMOVED***) {
+                FaIcon(faIcon = FaIcons.ArrowLeft)
+            ***REMOVED***
         ***REMOVED***)
     ***REMOVED***) { innerPadding ->
         LazyColumn(
@@ -166,6 +198,27 @@ fun EditTemplateScreen(
                             modifier = Modifier.fillMaxWidth(),
                             trailingIcon = {
                                 HelpIconButton(helpText = stringResource(R.string.this_is_the_title_of_the_template_this_is_irrelevant_for_the_extraction_just_for_your_own_reference))
+                            ***REMOVED***)
+                    ***REMOVED***
+                ***REMOVED***
+                item {
+                    description?.let {
+                        OutlinedTextField(value = it,
+                            colors = OutlinedTextFieldDefaults.colors(
+                                unfocusedBorderColor = Color.Black,
+                                unfocusedLabelColor = Color.Black,
+                ***REMOVED***,
+                            onValueChange = { newValue ->
+                                templateViewModel.updateTemplateDescription(template!!, newValue)
+                                description = newValue
+                            ***REMOVED***,
+                            label = { Text("Template Description", color = Color.Black) ***REMOVED***,
+                            modifier = Modifier.fillMaxWidth(),
+                            trailingIcon = {
+                                HelpIconButton(helpText = stringResource(R.string.this_is_the_description_of_the_template_this_will_be_used_for_the_extraction_but_it_is_highly_optional_and_can_be_left_empty_use_it_if_you_need_to_pass_more_context), title = stringResource(
+                                    R.string.template_description
+                    ***REMOVED***
+                    ***REMOVED***
                             ***REMOVED***)
                     ***REMOVED***
                 ***REMOVED***
@@ -1052,7 +1105,7 @@ fun AlertTable(
     val focusRequester = remember { FocusRequester() ***REMOVED***
     var title by remember { mutableStateOf(field?.title ?: "") ***REMOVED***
     var selectedType by remember { mutableStateOf(field?.type ?: "Text") ***REMOVED*** // Default type
-    var selectedRequired by remember { mutableStateOf(field?.required ?: false) ***REMOVED***
+    var selectedRequired by remember { mutableStateOf(field?.required ?: true) ***REMOVED***
     AlertDialog(containerColor = Color.White,
         onDismissRequest = { changeShowDialog(false) ***REMOVED***,
         title = { Text(stringResource(R.string.edit_header)) ***REMOVED***,

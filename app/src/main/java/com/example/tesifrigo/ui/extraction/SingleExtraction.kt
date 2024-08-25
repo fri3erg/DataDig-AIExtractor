@@ -607,7 +607,6 @@ fun TemplateInfo(
                     color = Color.Black,
                     fontWeight = FontWeight.Bold
     ***REMOVED***
-                Spacer(modifier = Modifier.height(30.dp))
                 MyImageArea(imageUris = extraction.extraImages.map { Uri.parse(it) ***REMOVED***,
                     modifier = Modifier.fillMaxWidth(),
                     onDelete = { viewModel.removeExtraImage(extraction, it) ***REMOVED***)

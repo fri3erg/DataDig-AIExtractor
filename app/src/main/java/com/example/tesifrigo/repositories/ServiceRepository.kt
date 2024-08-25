@@ -12,6 +12,7 @@ import com.example.tesifrigo.models.Extraction
 import com.example.tesifrigo.models.Options
 import com.example.tesifrigo.models.Template
 import io.realm.kotlin.UpdatePolicy
+import io.realm.kotlin.ext.isManaged
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -89,9 +90,16 @@ class ServiceRepository @Inject constructor(
                     table.templateTable = table.templateTable?.let { findLatest(it) ***REMOVED***
                     for (row in table.fields) {
                         for (field in row.fields) {
-                            field.templateField = field.templateField?.let { findLatest(it) ***REMOVED***
+                            // Check if the field is already managed by Realm
+                            if (field.isManaged()) {
+                                field.templateField = field.templateField?.let { findLatest(it) ***REMOVED***
+                            ***REMOVED*** else {
+                                // If the field is unmanaged, add it to Realm first
+                                copyToRealm(field)
+
+                            ***REMOVED***
                         ***REMOVED***
-                    ***REMOVED***
+                        ***REMOVED***
                 ***REMOVED***
                 for (field in newResult.extractedFields) {
                     field.templateField = field.templateField?.let { findLatest(it) ***REMOVED***

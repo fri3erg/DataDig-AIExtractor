@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -67,6 +68,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -77,6 +80,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.core.content.FileProvider
 import coil.compose.AsyncImage
+import com.example.tesifrigo.R
 import com.example.tesifrigo.models.Extraction
 import com.example.tesifrigo.ui.settings.ClickableWebLink
 import com.example.tesifrigo.ui.template.AlertTableExtraction
@@ -118,19 +122,23 @@ fun DeleteButton(
         )
     ***REMOVED***
     if (showAlert) AlertDialog(onDismissRequest = { showAlert = false ***REMOVED***,
-        title = { Text("Delete $text?") ***REMOVED***,
-        text = { Text("Are you sure you want to delete this ${text.lowercase()***REMOVED***?") ***REMOVED***,
+        title = { Text(stringResource(R.string.delete_text, text)) ***REMOVED***,
+        text = { Text(
+            stringResource(
+                R.string.are_you_sure_you_want_to_delete_this,
+                text.lowercase()
+***REMOVED***) ***REMOVED***,
         confirmButton = {
             TextButton(onClick = {
                 onClick()
                 showAlert = false
             ***REMOVED***) {
-                Text("OK")
+                Text(stringResource(R.string.ok))
             ***REMOVED***
         ***REMOVED***,
         dismissButton = {
             TextButton(onClick = { showAlert = false ***REMOVED***) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             ***REMOVED***
         ***REMOVED***)
 ***REMOVED***
@@ -182,7 +190,9 @@ fun ExtractionTableCell(
                                 onDelete()
                             ***REMOVED***
                             showX = false
-                        ***REMOVED***)
+                        ***REMOVED***
+                        .fillMaxWidth()
+                        .align(Alignment.Center))
 
             ***REMOVED*** else {
                 Text(text = text,
@@ -248,14 +258,14 @@ fun SearchBar(
             onTextChange(it) // Update the ViewModel's searchText state
             onSearch(it) // Trigger the search function (optional)
         ***REMOVED***,
-        label = { Text("Search") ***REMOVED***,
+        label = { Text(stringResource(R.string.search)) ***REMOVED***,
         modifier = modifier
             .padding(start = 16.dp, top = 16.dp, end = 16.dp)
             .fillMaxWidth(),
         singleLine = true, // Ensure single-line input
         leadingIcon = {
             Icon(
-                imageVector = Icons.Default.Search, contentDescription = "Search Icon"
+                imageVector = Icons.Default.Search, contentDescription = stringResource(R.string.search_icon)
 ***REMOVED***
         ***REMOVED***)
 ***REMOVED***
@@ -274,7 +284,7 @@ fun HelpIconButton(helpText: String, modifier: Modifier = Modifier, title: Strin
 
         Icon(
             imageVector = Icons.Default.Info,
-            contentDescription = "Help Icon",
+            contentDescription = stringResource(R.string.help_icon),
             tint = Color.White,
             //modifier = Modifier.border(1.dp, Color.Black, RoundedCornerShape(10.dp))
         ) // Use the Info icon from Material Design
@@ -323,15 +333,15 @@ fun DropdownWithNavigation(onUse: () -> Unit, onEdit: () -> Unit, onDelete: () -
                 .align(Alignment.TopEnd)
                 .background(Color.White)
         ) {
-            DropdownMenuItem(text = { Text("Use") ***REMOVED***, onClick = {
+            DropdownMenuItem(text = { Text(stringResource(R.string.use)) ***REMOVED***, onClick = {
                 onUse()
                 expanded = false
             ***REMOVED***)
-            DropdownMenuItem(text = { Text("Edit") ***REMOVED***, onClick = {
+            DropdownMenuItem(text = { Text(stringResource(R.string.edit)) ***REMOVED***, onClick = {
                 onEdit()
                 expanded = false
             ***REMOVED***)
-            DropdownMenuItem(text = { Text("Delete") ***REMOVED***, onClick = {
+            DropdownMenuItem(text = { Text(stringResource(R.string.delete)) ***REMOVED***, onClick = {
                 showDeleteDialog = true
                 expanded = false
             ***REMOVED***)
@@ -341,19 +351,19 @@ fun DropdownWithNavigation(onUse: () -> Unit, onEdit: () -> Unit, onDelete: () -
     // Confirmation Dialog
     if (showDeleteDialog) {
         AlertDialog(onDismissRequest = { showDeleteDialog = false ***REMOVED***,
-            title = { Text("Confirm Delete") ***REMOVED***,
-            text = { Text("Are you sure you want to delete this template?") ***REMOVED***,
+            title = { Text(stringResource(R.string.confirm_delete)) ***REMOVED***,
+            text = { Text(stringResource(R.string.are_you_sure_you_want_to_delete_this_template)) ***REMOVED***,
             confirmButton = {
                 Button(onClick = {
                     onDelete()
                     showDeleteDialog = false
                 ***REMOVED***) {
-                    Text("Delete")
+                    Text(stringResource(R.string.delete))
                 ***REMOVED***
             ***REMOVED***,
             dismissButton = {
                 Button(onClick = { showDeleteDialog = false ***REMOVED***) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 ***REMOVED***
             ***REMOVED***)
     ***REMOVED***
@@ -401,11 +411,19 @@ fun DropDownGeneral(
             onClick = { expanded = true ***REMOVED***, modifier = Modifier.fillMaxWidth()
         ) {
             Row {
-                Text(selectedItem)
+                Text(selectedItem,
+                    modifier=Modifier.padding(start=6.dp),
+                    fontSize = 13.sp,
+                    color = Color.Black
+
+    ***REMOVED***
                 Spacer(modifier = Modifier.weight(1f))
                 FaIcon(faIcon = if (expanded) FaIcons.ChevronUp else FaIcons.ChevronDown,
                     tint = cyan_custom,
-                    size = 20.dp)
+                    size = 16.dp,
+                    modifier=Modifier.offset(y=2.dp)
+    ***REMOVED***
+
             ***REMOVED***
         ***REMOVED***
 
@@ -457,7 +475,8 @@ fun MyImageArea(
             if (activities.isNotEmpty()) {
                 openFileLauncher.launch(intent)
             ***REMOVED*** else {
-                Toast.makeText(context, "No app found to open the file", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context,
+                    context.getString(R.string.no_app_found_to_open_the_file), Toast.LENGTH_SHORT).show()
             ***REMOVED***
         ***REMOVED***
     ***REMOVED***
@@ -529,7 +548,10 @@ fun MyImageArea(
                                     .height(200.dp) // Reduce height to scale down image display
                                     .padding(16.dp)
                                     .clip(RoundedCornerShape(16.dp)),
-                                contentScale = ContentScale.Crop // Crop the image to fit
+                                contentScale = ContentScale.Crop, // Crop the image to fit
+                                placeholder = painterResource(id = R.drawable.placeholder),
+                                error = painterResource(id = R.drawable.error404) // Replace with your error image resource
+
                 ***REMOVED***
                         ***REMOVED***
 
@@ -562,7 +584,7 @@ fun MyImageArea(
                             color = Color.Black,
                             modifier = Modifier
                                 .weight(1f)
-                                .padding(start = 8.dp)
+                                .padding(start = 24.dp)
             ***REMOVED***
                         if (onDelete != null) {
                             IconButton(
@@ -601,19 +623,19 @@ fun MyImageArea(
     // Confirmation dialog for deletion
     if (showDialog.value && onDelete != null) {
         AlertDialog(onDismissRequest = { showDialog.value = false ***REMOVED***,
-            title = { Text("Confirm Delete") ***REMOVED***,
-            text = { Text("Are you sure you want to delete this image?") ***REMOVED***,
+            title = { Text(stringResource(R.string.confirm_delete)) ***REMOVED***,
+            text = { Text(stringResource(R.string.are_you_sure_you_want_to_delete_this_image)) ***REMOVED***,
             confirmButton = {
                 Button(onClick = {
                     onDelete(deletedPage)
                     showDialog.value = false
                 ***REMOVED***) {
-                    Text("Delete")
+                    Text(stringResource(R.string.delete))
                 ***REMOVED***
             ***REMOVED***,
             dismissButton = {
                 Button(onClick = { showDialog.value = false ***REMOVED***) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 ***REMOVED***
             ***REMOVED***)
     ***REMOVED***
@@ -678,19 +700,22 @@ fun FileCard(
             // Show a Toast message indicating success
             if (!failedOpen) {
                 Toast.makeText(
-                    context, "File downloaded to Downloads folder", Toast.LENGTH_SHORT
+                    context,
+                    context.getString(R.string.file_downloaded_to_downloads_folder), Toast.LENGTH_SHORT
     ***REMOVED***.show()
             ***REMOVED***
         ***REMOVED*** catch (e: IOException) {
             // Handle exceptions (e.g., log the error, show an error message to the user)
             if ((e is FileNotFoundException) && (e.message?.contains("EEXIST") == true)) {
 
-                Toast.makeText(context, "File already downloaded", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context,
+                    context.getString(R.string.file_already_downloaded), Toast.LENGTH_SHORT).show()
 
             ***REMOVED*** else {
                 // Handle other IOException cases
                 e.printStackTrace()
-                Toast.makeText(context, "Error downloading file", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context,
+                    context.getString(R.string.error_downloading_file), Toast.LENGTH_SHORT).show()
             ***REMOVED***
         ***REMOVED***
     ***REMOVED***
@@ -724,7 +749,8 @@ fun FileCard(
         ***REMOVED*** else {
             // No suitable app found, so download the file
             Toast.makeText(
-                context, "No app found to open the file, downloading instead", Toast.LENGTH_SHORT
+                context,
+                context.getString(R.string.no_app_found_to_open_the_file_downloading_instead), Toast.LENGTH_SHORT
 ***REMOVED***.show()
             downloadFile(uri, true)
         ***REMOVED***
@@ -775,7 +801,7 @@ fun FileCard(
     ***REMOVED***
 
     Surface(
-        modifier = modifier.padding(8.dp), shape = RoundedCornerShape(8.dp), color = Color.LightGray
+        modifier = modifier.padding(8.dp), shape = RoundedCornerShape(8.dp), color = light_gray, shadowElevation = 6.dp, border = BorderStroke(1.dp, Color.Gray)
     ) {
         Row(
             modifier = Modifier
@@ -792,7 +818,7 @@ fun FileCard(
                 contentAlignment = Alignment.Center
 ***REMOVED*** {
                 FaIcon(
-                    faIcon = FaIcons.File, tint = Color.Gray, size = 24.dp
+                    faIcon = FaIcons.File, tint = Color.Black, size = 24.dp
     ***REMOVED***
             ***REMOVED***
 
@@ -818,7 +844,7 @@ fun FileCard(
                         ***REMOVED***
                     ***REMOVED***) {
                         FaIcon(
-                            faIcon = FaIcons.Download, tint = Color.Gray, size = 20.dp
+                            faIcon = FaIcons.Download, tint = Color.Black, size = 20.dp
             ***REMOVED***
                     ***REMOVED***
 
@@ -830,7 +856,7 @@ fun FileCard(
                         ***REMOVED***
                     ***REMOVED***) {
                         FaIcon(
-                            faIcon = FaIcons.Share, tint = Color.Gray, size = 20.dp
+                            faIcon = FaIcons.Share, tint = Color.Black, size = 20.dp
             ***REMOVED***
                     ***REMOVED***
                 ***REMOVED***

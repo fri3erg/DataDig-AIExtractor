@@ -1,0 +1,53 @@
+{
+  "id": 51,
+  "title": "Terms and Conditions",
+  "description": "Template for a standard Terms and Conditions document",
+  "fields": [
+    {
+      "id": 52,
+      "title": "General Terms",
+      "description": "Standard terms applicable to all users or customers, Basic rules and guidelines for using the service or product",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": true
+    ***REMOVED***,
+    {
+      "id": 53,
+      "title": "Important Conditions",
+      "description": "Key conditions that users must be aware of, Critical terms that have a significant impact on users' rights and responsibilities",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": true
+    ***REMOVED***,
+    {
+      "id": 54,
+      "title": "Unusual or Dangerous Conditions",
+      "description": "Any conditions that are uncommon or pose potential risks, Terms that may involve significant obligations, risks, or limitations, try to understand from the context what i need to be afraid of",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": true,
+      "default": "N/A",
+      "list": true
+    ***REMOVED***,
+    {
+      "id": 56,
+      "title": "Governing Law",
+      "description": "The legal jurisdiction under which the terms and conditions are governed",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***
+  ],
+  "tables": [],
+  "tags": ["Legal", "Terms and Conditions"]
+***REMOVED***

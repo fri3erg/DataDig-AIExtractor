@@ -1,0 +1,120 @@
+{
+  "id": 11,
+  "title": "Utility Bill",
+  "description": "Template for a standard utility bill (e.g., electricity, water, gas)",
+  "fields": [
+    {
+      "id": 12,
+      "title": "Customer Information",
+      "description": "Details of the customer receiving the bill",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "id": 13,
+      "title": "Account Number",
+      "description": "Customer's account number or code with the utility provider",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "id": 14,
+      "title": "Billing Period",
+      "description": "Time period for which the utility usage is being billed",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "id": 15,
+      "title": "Issue Date",
+      "description": "Date when the bill was issued",
+      "extraDescription": "",
+      "type": "Date",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "id": 16,
+      "title": "Due Date",
+      "description": "Date by which payment should be made",
+      "extraDescription": "",
+      "type": "Date",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***
+  ],
+  "tables": [
+    {
+      "id": 17,
+      "title": "Usage Details",
+      "description": "Details of utility usage during the billing period",
+      "keywords": ["Utility Type", "Usage", "Rate", "Total"],
+      "all": false,
+      "rows": [
+        {
+          "id": 18,
+          "title": "Utility Type",
+          "description": "Type of utility (e.g., electricity, water, gas)",
+          "extraDescription": "",
+          "type": "Text",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": "N/A",
+          "list": false
+        ***REMOVED***
+      ],
+      "columns": [
+        {
+          "id": 19,
+          "title": "Usage",
+          "description": "Amount of utility used (e.g., kWh, cubic meters)",
+          "extraDescription": "",
+          "type": "Number",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": -1,
+          "list": false
+        ***REMOVED***,
+        {
+          "id": 20,
+          "title": "Rate",
+          "description": "Rate per unit of utility",
+          "extraDescription": "",
+          "type": "Float",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": -1.0,
+          "list": false
+        ***REMOVED***,
+        {
+          "id": 21,
+          "title": "Total",
+          "description": "Total cost for the utility usage",
+          "extraDescription": "",
+          "type": "Float",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": -1.0,
+          "list": false
+        ***REMOVED***
+      ]
+    ***REMOVED***
+  ],
+  "tags": ["Utility Bill", "Electricity", "Water", "Gas"]
+***REMOVED***

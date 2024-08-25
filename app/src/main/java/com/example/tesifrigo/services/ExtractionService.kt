@@ -39,6 +39,7 @@ import com.example.tesifrigo.models.ExtractionTable
 import com.example.tesifrigo.models.ExtractionTableRow
 import com.example.tesifrigo.models.Options
 import com.example.tesifrigo.models.Template
+import com.example.tesifrigo.models.TemplateField
 import com.example.tesifrigo.repositories.KeyManager
 import com.example.tesifrigo.repositories.ServiceRepository
 import com.example.tesifrigo.viewmodels.Keys
@@ -364,12 +365,15 @@ private fun extractTable(pyExtractedTable: PyObject, template: Template): Extrac
         if (pyFields != null) {
             templateTable?.let { table ->
                 for ((rowIndex, rowData) in pyFields) {
-                    val templateRow = table.rows.first { it.title == rowIndex.toString() ***REMOVED***
+                    val templateRow = table.rows.firstOrNull { it.title == rowIndex.toString() ***REMOVED***
                     val foundFields = mutableListOf<ExtractionField>()
 
                     for ((columnIndex, columnData) in rowData.asMap()) {
-                        val templateColumn =
-                            table.columns.first { it.title == columnIndex.toString() ***REMOVED***
+                        var templateColumn =
+                            table.columns.firstOrNull { it.title == columnIndex.toString() ***REMOVED***
+                        if (templateColumn == null) {
+                            templateColumn= TemplateField().apply { title = columnIndex.toString() ***REMOVED***
+                        ***REMOVED***
                         val foundField = ExtractionField().apply {
                             templateField = templateColumn
                             value = columnData["value"].toString()
@@ -377,7 +381,7 @@ private fun extractTable(pyExtractedTable: PyObject, template: Template): Extrac
                         foundFields.add(foundField)
                     ***REMOVED***
                     val newRow = ExtractionTableRow().apply {
-                        rowName = templateRow.title
+                        rowName = templateRow?.title ?: rowIndex.toString()
                         fields.addAll(foundFields)
                     ***REMOVED***
                     rows.add(newRow)

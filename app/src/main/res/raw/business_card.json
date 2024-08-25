@@ -1,0 +1,86 @@
+{
+  "id": 22,
+  "title": "Business Card",
+  "description": "Template for a standard business card",
+  "fields": [
+    {
+      "id": 23,
+      "title": "Full Name",
+      "description": "Name of the individual",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "id": 24,
+      "title": "Job Title",
+      "description": "Job position or title of the individual",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "id": 25,
+      "title": "Company Name",
+      "description": "Name of the company",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "id": 26,
+      "title": "Phone Number",
+      "description": "Contact phone number",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "id": 27,
+      "title": "Email Address",
+      "description": "Contact email address",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "id": 28,
+      "title": "Website",
+      "description": "Company or personal website",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "id": 29,
+      "title": "Address",
+      "description": "Physical address of the company",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***
+  ],
+  "tables": [],
+  "tags": ["Business Card", "Contact Information", "Professional"]
+***REMOVED***

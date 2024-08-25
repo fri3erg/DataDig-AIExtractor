@@ -65,7 +65,7 @@ fun TemplateScreen(
                     val sortOrder = templateViewModel.sortOrder.collectAsState().value
 
                     Row {
-                        val sortOptions = listOf(SortOrder.BY_TITLE, SortOrder.BY_DATE)
+                        val sortOptions = listOf( SortOrder.BY_DATE,SortOrder.BY_TITLE)
                         Spacer(modifier = Modifier.width(10.dp))
                         sortOptions.forEach { option ->
                             Button(

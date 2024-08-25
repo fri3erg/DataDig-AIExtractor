@@ -553,7 +553,9 @@ def create_pydantic_table_class(template: TemplateTable):
     fields = {***REMOVED***
     for row in template.rows:
         for column in template.columns:
-            type_from = row.type or column.type or "str"
+            type_from = next(
+                (t for t in [row.type, column.type] if t and t != "Text"),
+                "Text")    # Default if both are None or "Text"         
             field_type: type = get_pydantic_type(type_from)
             required = column.required or row.required
             description = f"row:{row.title***REMOVED***|column:{column.title***REMOVED***|"

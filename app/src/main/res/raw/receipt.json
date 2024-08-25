@@ -1,0 +1,142 @@
+{
+  "id": 1,
+  "title": "Standard Receipt",
+  "description": "Template for a standard retail or service receipt",
+  "fields": [
+    {
+      "id": 1600,
+      "title": "Transaction/Order Number",
+      "description": "Unique identifier for the transaction or order",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "id": 17000,
+      "title": "Customer Information",
+      "description": "Name, address, or other identifying information about the customer",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "id": 2,
+      "title": "Store Name",
+      "description": "Name of the store issuing the receipt",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "id": 3,
+      "title": "Store Address",
+      "description": "Address of the store",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "id": 4,
+      "title": "Phone Number",
+      "description": "Store contact number",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "id": 5,
+      "title": "Website",
+      "description": "Store website",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "id": 15,
+      "title": "Issue Date",
+      "description": "Date when the bill was issued",
+      "extraDescription": "",
+      "type": "Date",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***
+  ],
+  "tables": [
+    {
+      "id": 6,
+      "title": "Purchased Items",
+      "description": "Details of purchased items",
+      "keywords": ["Item Name", "Quantity", "Price"],
+      "all": false,
+      "rows": [
+        {
+          "id": 7,
+          "title": "Item Name/Description",
+          "description": "Name or description of the item",
+          "extraDescription": "",
+          "type": "Text",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": "N/A",
+          "list": false
+        ***REMOVED***
+      ],
+      "columns": [
+        {
+          "id": 8,
+          "title": "Quantity",
+          "description": "Number of items",
+          "extraDescription": "",
+          "type": "Number",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": -1,
+          "list": false
+        ***REMOVED***,
+        {
+          "id": 9,
+          "title": "Unit Price",
+          "description": "Price per item",
+          "extraDescription": "",
+          "type": "Float",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": -1.0,
+          "list": false
+        ***REMOVED***,
+        {
+          "id": 10,
+          "title": "Total Price",
+          "description": "Total price for the items",
+          "extraDescription": "",
+          "type": "Float",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": -1.0,
+          "list": false
+        ***REMOVED***
+      ]
+    ***REMOVED***
+  ],
+  "tags": ["Receipt", "Transaction", "Retail"]
+***REMOVED***

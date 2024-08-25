@@ -201,4 +201,21 @@
 
     <string name="keys_connected_to_your_azure_document_intelligence_resource_which_you_can_create_in_the_azure_portal_at_the_link">"Schlüssel, die mit Ihrer Azure Document Intelligence-Ressource verbunden sind. Sie können diese im Azure-Portal unter folgendem Link erstellen:"</string>
     <string name="keys_you_created_on_the_openai_platform_which_you_can_find_at_the_link">"Schlüssel, die Sie auf der OpenAI-Plattform erstellt haben. Sie finden diese unter folgendem Link: "</string>
+    <string name="this_is_the_title_of_the_template_this_is_irrelevant_for_the_extraction_just_for_your_own_reference">Dies ist der Titel der Vorlage. Dies ist für die Extraktion irrelevant, nur für Ihre eigene Referenz.</string>
+    <string name="use">Verwenden</string>
+    <string name="edit">Bearbeiten</string>
+    <string name="are_you_sure_you_want_to_delete_this_template">Sind Sie sicher, dass Sie diese Vorlage löschen möchten?</string>
+    <string name="no_app_found_to_open_the_file">Keine App zum Öffnen der Datei gefunden</string>
+    <string name="are_you_sure_you_want_to_delete_this_image">Sind Sie sicher, dass Sie dieses Bild löschen möchten?</string>
+    <string name="file_downloaded_to_downloads_folder">Datei in den Download-Ordner heruntergeladen</string>
+    <string name="file_already_downloaded">Datei bereits heruntergeladen</string>
+    <string name="error_downloading_file">Fehler beim Herunterladen der Datei</string>
+    <string name="no_app_found_to_open_the_file_downloading_instead">Keine App zum Öffnen der Datei gefunden, stattdessen wird heruntergeladen</string>
+    <string name="delete_text">%1$s löschen?</string>
+    <string name="are_you_sure_you_want_to_delete_this">Sind Sie sicher, dass Sie dieses %1$s löschen möchten?</string>
+    <string name="search">Suche</string>
+    <string name="search_icon">Suchsymbol</string>
+    <string name="help_icon">Hilfesymbol</string>
+    <string name="this_is_the_description_of_the_template_this_will_be_used_for_the_extraction_but_it_is_highly_optional_and_can_be_left_empty_use_it_if_you_need_to_pass_more_context">Dies ist die Beschreibung der Vorlage. Diese wird für die Extraktion verwendet, ist jedoch optional und kann leer gelassen werden. Verwenden Sie sie, wenn Sie mehr Kontext übergeben müssen.</string>
+    <string name="template_description">Vorlagenbeschreibung</string>
 </resources>

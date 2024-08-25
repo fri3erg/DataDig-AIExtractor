@@ -1,8 +1,10 @@
 package com.example.tesifrigo.viewmodels
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tesifrigo.MyApp
+import com.example.tesifrigo.R
 import com.example.tesifrigo.models.TemplateField
 import com.example.tesifrigo.models.Template
 import com.example.tesifrigo.models.TemplateTable
@@ -17,16 +19,19 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import com.example.tesifrigo.utils.calculateCloseness
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import org.mongodb.kbson.ObjectId
+import java.lang.reflect.Type
 
 class TemplateViewModel : ViewModel() {
 
     private val realm = MyApp.realm
 
-    private val _sortOrder = MutableStateFlow(SortOrder.BY_TITLE)
+    private val _sortOrder = MutableStateFlow(SortOrder.BY_DATE)
     val sortOrder: StateFlow<SortOrder> = _sortOrder.asStateFlow()
 
-    private val _ascending = MutableStateFlow(true)
+    private val _ascending = MutableStateFlow(false)
     val ascending: StateFlow<Boolean> = _ascending.asStateFlow()
 
     private val _searchText = MutableStateFlow("")
@@ -105,7 +110,20 @@ class TemplateViewModel : ViewModel() {
 
     ***REMOVED***
 
-    private fun createSampleTemplates() {
+    // Function to load JSON from res/raw
+    private fun loadTemplateFromJson(context: Context, resource: Int): Template? {
+        val jsonString = context.resources.openRawResource(resource)
+            .bufferedReader().use { it.readText() ***REMOVED***
+
+        val gson = Gson()
+        return gson.fromJson(jsonString, Template::class.java)
+    ***REMOVED***
+
+    private fun createSampleTemplates(context: Context) {
+
+        val receipt= loadTemplateFromJson(context, R.raw.receipt)
+
+
         viewModelScope.launch {
             realm.write {
 
@@ -118,7 +136,9 @@ class TemplateViewModel : ViewModel() {
 
                 val tablesToDelete = query<TemplateTable>().find()
                 delete(tablesToDelete)
-
+                if (receipt != null) {
+                    copyToRealm(receipt)
+                ***REMOVED***
 /*
                 val templateField1 = TemplateField().apply {
                     title = "Field 1"
@@ -282,7 +302,7 @@ class TemplateViewModel : ViewModel() {
         val newField = TemplateField().apply {
             title = ""
             description = ""
-            type = "text"
+            type = "Text"
             list = false
             required = false
             intelligentExtraction = false
@@ -329,24 +349,24 @@ class TemplateViewModel : ViewModel() {
     fun addTable(template: Template) {
         val newField = TemplateField().apply {
             title = ""
-            type = "text"
-            required = false
+            type = "Text"
+            required = true
 
         ***REMOVED***
         val newField2 = TemplateField().apply {
             title = ""
-            type = "text"
-            required = false
+            type = "Text"
+            required = true
         ***REMOVED***
         val newField3 = TemplateField().apply {
             title = ""
-            type = "text"
-            required = false
+            type = "Text"
+            required = true
         ***REMOVED***
         val newField4 = TemplateField().apply {
             title = ""
-            type = "text"
-            required = false
+            type = "Text"
+            required = true
         ***REMOVED***
         val newTable = TemplateTable().apply {
             title = ""
@@ -509,6 +529,16 @@ class TemplateViewModel : ViewModel() {
             realm.writeBlocking {
                 val latest = findLatest(table) ?: return@writeBlocking
                 latest.columns.removeAt(columnIndex)
+            ***REMOVED***
+        ***REMOVED***
+
+    ***REMOVED***
+
+    fun updateTemplateDescription(template: Template, newValue: String) {
+        viewModelScope.launch {
+            realm.writeBlocking {
+                val latestTemplate = findLatest(template) ?: return@writeBlocking
+                latestTemplate.description = newValue
             ***REMOVED***
         ***REMOVED***
 

@@ -206,7 +206,23 @@
 
     <string name="keys_connected_to_your_azure_document_intelligence_resource_which_you_can_create_in_the_azure_portal_at_the_link">" Claves conectadas a su recurso de Azure Document Intelligence, que puede crear en el portal de Azure en el siguiente enlace:"</string>
     <string name="keys_you_created_on_the_openai_platform_which_you_can_find_at_the_link">"Claves que creó en la plataforma OpenAI, que puede encontrar en el siguiente enlace: "</string>
-
+    <string name="this_is_the_title_of_the_template_this_is_irrelevant_for_the_extraction_just_for_your_own_reference">Este es el título de la plantilla. Esto es irrelevante para la extracción, solo para su propia referencia.</string>
+    <string name="use">Usar</string>
+    <string name="edit">Editar</string>
+    <string name="are_you_sure_you_want_to_delete_this_template">¿Estás seguro de que quieres eliminar esta plantilla?</string>
+    <string name="no_app_found_to_open_the_file">No se encontró ninguna aplicación para abrir el archivo</string>
+    <string name="are_you_sure_you_want_to_delete_this_image">¿Estás seguro de que quieres eliminar esta imagen?</string>
+    <string name="file_downloaded_to_downloads_folder">Archivo descargado en la carpeta de Descargas</string>
+    <string name="file_already_downloaded">El archivo ya ha sido descargado</string>
+    <string name="error_downloading_file">Error al descargar el archivo</string>
+    <string name="no_app_found_to_open_the_file_downloading_instead">No se encontró ninguna aplicación para abrir el archivo, se descargará en su lugar</string>
+    <string name="delete_text">¿Eliminar %1$s?</string>
+    <string name="are_you_sure_you_want_to_delete_this">¿Estás seguro de que quieres eliminar este %1$s?</string>
+    <string name="search">Buscar</string>
+    <string name="search_icon">Icono de búsqueda</string>
+    <string name="help_icon">Icono de ayuda</string>
+    <string name="this_is_the_description_of_the_template_this_will_be_used_for_the_extraction_but_it_is_highly_optional_and_can_be_left_empty_use_it_if_you_need_to_pass_more_context">Esta es la descripción de la plantilla. Se utilizará para la extracción, pero es altamente opcional y se puede dejar vacía. Úsala si necesitas proporcionar más contexto.</string>
+    <string name="template_description">Descripción de la plantilla</string>
 
 
 </resources>

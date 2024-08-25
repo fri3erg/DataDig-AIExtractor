@@ -51,6 +51,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -74,6 +75,7 @@ import com.example.tesifrigo.models.Options
 import com.example.tesifrigo.services.ExtractionService
 import com.example.tesifrigo.ui.theme.cyan_custom
 import com.example.tesifrigo.ui.theme.light_gray
+import com.example.tesifrigo.ui.theme.see_result
 import com.example.tesifrigo.ui.theme.vale
 import com.example.tesifrigo.ui.theme.white_trasparent
 import com.example.tesifrigo.utils.DropDownGeneral
@@ -152,7 +154,7 @@ fun CameraScreen(
 
 
             ***REMOVED*** else if (template == null) {
-                ChooseTemplate(navController, templateViewModel)
+                ChooseTemplate(navController, templateViewModel, serviceViewModel)
 
             ***REMOVED*** else {
                 ExtractionDetails(
@@ -301,7 +303,7 @@ fun GptKeysDialog(function: () -> Unit, navController: NavHostController) {
 ***REMOVED***
 
 @Composable
-fun ChooseTemplate(navController: NavHostController, templateViewModel: TemplateViewModel) {
+fun ChooseTemplate(navController: NavHostController, templateViewModel: TemplateViewModel, serviceViewModel: ServiceViewModel) {
     val templates by templateViewModel.sortedTemplates.collectAsState()
     val searchText by templateViewModel.searchText.collectAsState()
     val ascending by templateViewModel.ascending.collectAsState()
@@ -321,7 +323,7 @@ fun ChooseTemplate(navController: NavHostController, templateViewModel: Template
                 val sortOrder = templateViewModel.sortOrder.collectAsState().value
 
                 Row {
-                    val sortOptions = listOf(SortOrder.BY_TITLE, SortOrder.BY_DATE)
+                    val sortOptions = listOf(SortOrder.BY_DATE, SortOrder.BY_TITLE)
                     Spacer(modifier = Modifier.width(10.dp))
                     sortOptions.forEach { option ->
                         Button(colors = ButtonDefaults.buttonColors(
@@ -380,6 +382,7 @@ fun ChooseTemplate(navController: NavHostController, templateViewModel: Template
                     modifier = Modifier
                         .fillMaxWidth() // Occupy full width
                         .clickable {
+                            serviceViewModel.setTemplate(template)
                             templateViewModel.setActiveTemplate(template)
                         ***REMOVED***
                         .padding(8.dp),
@@ -464,44 +467,52 @@ fun ExtractionDetails(
         ***REMOVED***
         serviceViewModel.setOptions(defaultOptions) // Set the options in the ViewModel
     ***REMOVED***
-    Text(
-        templateTitle.toString(),
-        modifier = modifier.padding(16.dp),
-        fontSize = 28.sp,
-        fontWeight = FontWeight.Bold,
-        color = Color.Black,
-    )
-    Spacer(modifier = Modifier.height(2.dp))
-    MyImageArea(imageUris = imageUris, onDelete = { uri ->
-        serviceViewModel.removeImageUri(uri)
-        if (imageUris.isEmpty()) {
-            serviceViewModel.setActivePhoto(true)
-        ***REMOVED***
-    ***REMOVED***)
-    if (!activeExtraction) {
-        ButtonBar(serviceViewModel, sharedPrefs, templateViewModel)
-        HorizontalDivider()
-
-        Button(
-            modifier = Modifier
-                .padding(16.dp)
-                .size(100.dp, 50.dp),
-            shape = RoundedCornerShape(8.dp),
-            colors = ButtonDefaults.buttonColors(Color.Green),
-            onClick = onExtractionClick
-        ) {
-            Text(text = stringResource(R.string.extract), color = Color.Black)
-        ***REMOVED***
-    ***REMOVED*** else {
-        ExtractedBar(serviceViewModel, templateViewModel)
-
-        ShownExtraction(
-            navController = navController,
-            serviceViewModel = serviceViewModel,
-            extractionViewModel = extractionViewModel
+    Column {
+        Text(
+            templateTitle.toString(),
+            modifier = modifier.padding(16.dp),
+            fontSize = 28.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.Black,
         )
-    ***REMOVED***
 
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 16.dp),
+        ) {
+            MyImageArea(imageUris = imageUris, onDelete = { uri ->
+                serviceViewModel.removeImageUri(uri)
+                if (imageUris.isEmpty()) {
+                    serviceViewModel.setActivePhoto(true)
+                ***REMOVED***
+            ***REMOVED***)
+        ***REMOVED***
+        if (!activeExtraction) {
+            ButtonBar(serviceViewModel, sharedPrefs, templateViewModel)
+            HorizontalDivider()
+
+            Button(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .size(100.dp, 50.dp)
+                    .align(Alignment.CenterHorizontally),
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonDefaults.buttonColors(Color.Green),
+                onClick = onExtractionClick
+***REMOVED*** {
+                Text(text = stringResource(R.string.extract), color = Color.Black)
+            ***REMOVED***
+        ***REMOVED*** else {
+            ExtractedBar(serviceViewModel, templateViewModel)
+
+            ShownExtraction(
+                navController = navController,
+                serviceViewModel = serviceViewModel,
+                extractionViewModel = extractionViewModel
+***REMOVED***
+        ***REMOVED***
+    ***REMOVED***
 ***REMOVED***
 
 @Composable
@@ -520,6 +531,7 @@ fun ExtractedBar(serviceViewModel: ServiceViewModel, templateViewModel: Template
                 serviceViewModel.setActiveExtraction(false)
                 serviceViewModel.setActivePhoto(true)
                 templateViewModel.setActiveTemplate(null)
+                serviceViewModel.setProgress(0f)
                 serviceViewModel.clearResult()
             ***REMOVED***
             .padding(8.dp), // Optional padding
@@ -609,6 +621,7 @@ fun ButtonBar(
                 size = 24.dp // Set icon size
 ***REMOVED***
         ***REMOVED***
+
         IconButton(onClick = {
             serviceViewModel.clearImageUris()
             serviceViewModel.setActivePhoto(true)
@@ -621,6 +634,8 @@ fun ButtonBar(
         ***REMOVED***
         IconButton(onClick = {
             templateViewModel.setActiveTemplate(null)
+            serviceViewModel.setActiveExtraction(false)
+
         ***REMOVED***) {
             FaIcon(faIcon = FaIcons.Table, tint = Color.Black, size = 24.dp)
         ***REMOVED***
@@ -717,28 +732,28 @@ fun ProgressBar() {
             serviceViewModel.setProgress(0f)
         ***REMOVED***
     ***REMOVED***
-        Spacer(modifier =  Modifier.height(16.dp))
-        Row {
-            Text(
-                stringResource(R.string.progress, (progress * 100).toInt()),
-                modifier = Modifier.padding(start = 12.dp)
-***REMOVED***
-            Spacer(modifier = Modifier.width(16.dp))
-            LinearProgressIndicator(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(top = 10.dp, end = 16.dp),
-                progress = { progress ***REMOVED***,
-                color = Color.Blue
-***REMOVED***
-            Spacer(modifier = Modifier.width(16.dp))
-            Spinner(isActive = result == null)
-            Spacer(modifier = Modifier.width(16.dp))
+    Spacer(modifier = Modifier.height(16.dp))
+    Row {
+        Text(
+            stringResource(R.string.progress, (progress * 100).toInt()),
+            modifier = Modifier.padding(start = 12.dp)
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        LinearProgressIndicator(
+            modifier = Modifier
+                .weight(1f)
+                .padding(top = 10.dp, end = 16.dp),
+            progress = { progress ***REMOVED***,
+            color = Color.Blue
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        Spinner(isActive = result == null)
+        Spacer(modifier = Modifier.width(16.dp))
 
-        ***REMOVED***
+    ***REMOVED***
 
-        Spacer(modifier = Modifier.height(16.dp))
-        HorizontalDivider()
+    Spacer(modifier = Modifier.height(16.dp))
+    HorizontalDivider()
 
 ***REMOVED***
 
@@ -769,52 +784,51 @@ fun ShownExtraction(
             ***REMOVED***
         ***REMOVED***
     ***REMOVED***
-        extraction?.let {
+    extraction?.let {
 
-            Column(
+        Column(
+            modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
 ***REMOVED*** {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-    ***REMOVED*** {
-                    Text(
-                        stringResource(R.string.extraction_result),
-                        modifier = Modifier.padding(16.dp),
-                        fontSize = 20.sp,
-                        color = Color.Black,
-                        fontWeight = FontWeight.Bold
-        ***REMOVED***
-                    Button(modifier = Modifier
-                        .padding(16.dp)
-                        .size(150.dp, 60.dp),
+                Text(
+                    stringResource(R.string.extraction_result),
+                    modifier = Modifier.padding(16.dp),
+                    fontSize = 20.sp,
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold
+    ***REMOVED***
+                Button(modifier = Modifier
+                    .padding(16.dp)
+                    .size(150.dp, 60.dp),
 
-                        shape = RoundedCornerShape(8.dp),
-                        colors = ButtonDefaults.buttonColors(Color.Red),
-                        onClick = {
-                            it.id.let { extractionId ->
+                    shape = RoundedCornerShape(8.dp),
+                    colors = ButtonDefaults.buttonColors(see_result),
+                    onClick = {
+                        it.id.let { extractionId ->
 
-                                navController.navigate(Screen.SingleExtraction.withArgs("extractionId" to extractionId.toHexString()))
-                            ***REMOVED***
-                        ***REMOVED***) {
-                        Text(stringResource(R.string.go_to_extraction))
-                    ***REMOVED***
-                ***REMOVED***
-                if (it.fileUri != null) {
-                    FileCard(it)
-                ***REMOVED***
-                if (errorOccurred) {
-                    ExceptionsDialog({ errorOccurred = false ***REMOVED***, it)
+                            navController.navigate(Screen.SingleExtraction.withArgs("extractionId" to extractionId.toHexString()))
+                        ***REMOVED***
+                    ***REMOVED***) {
+                    Text(stringResource(R.string.go_to_extraction))
                 ***REMOVED***
             ***REMOVED***
-        ***REMOVED*** ?: run {
-
-            HorizontalDivider()
-
-            ProgressBar()
+            if (it.fileUri != null) {
+                FileCard(it)
+            ***REMOVED***
+            if (errorOccurred) {
+                ExceptionsDialog({ errorOccurred = false ***REMOVED***, it)
+            ***REMOVED***
         ***REMOVED***
+    ***REMOVED*** ?: run {
+
+        HorizontalDivider()
+
+        ProgressBar()
+    ***REMOVED***
 
 ***REMOVED***
 
@@ -837,40 +851,40 @@ fun CameraPreview(
                 ***REMOVED***
                 changeActivePhoto()
             ***REMOVED***)
-    val imagePickerLauncherLegacy = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetMultipleContents(),
-        onResult = { uris: List<Uri>? ->
-            uris?.forEach { uri ->
-                onSetUri(uri)
-            ***REMOVED***
-            changeActivePhoto()
-        ***REMOVED***)
-    val requestPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-        onResult = { isGranted: Boolean ->
-            if (isGranted) {
-                // Launch the image picker
-                imagePickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-            ***REMOVED***
-        ***REMOVED***)
-
-    val filePickerLauncher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult(),
-            onResult = { result ->
-                val data: Intent? = result.data
-                val clipData = data?.clipData
-                if (clipData != null) {
-                    for (i in 0 until clipData.itemCount) {
-                        val uri: Uri = clipData.getItemAt(i).uri
-                        onSetUri(uri)
-                    ***REMOVED***
-                ***REMOVED*** else {
-                    data?.data?.let { uri ->
-                        onSetUri(uri)
-                    ***REMOVED***
+    val imagePickerLauncherLegacy =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.GetMultipleContents(),
+            onResult = { uris: List<Uri>? ->
+                uris?.forEach { uri ->
+                    onSetUri(uri)
                 ***REMOVED***
                 changeActivePhoto()
             ***REMOVED***)
+    val requestPermissionLauncher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission(),
+            onResult = { isGranted: Boolean ->
+                if (isGranted) {
+                    // Launch the image picker
+                    imagePickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                ***REMOVED***
+            ***REMOVED***)
+
+    val filePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult(),
+        onResult = { result ->
+            val data: Intent? = result.data
+            val clipData = data?.clipData
+            if (clipData != null) {
+                for (i in 0 until clipData.itemCount) {
+                    val uri: Uri = clipData.getItemAt(i).uri
+                    onSetUri(uri)
+                ***REMOVED***
+            ***REMOVED*** else {
+                data?.data?.let { uri ->
+                    onSetUri(uri)
+                ***REMOVED***
+            ***REMOVED***
+            changeActivePhoto()
+        ***REMOVED***)
     val onFilePickerClick = {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             type = "*/*"
@@ -879,14 +893,14 @@ fun CameraPreview(
         ***REMOVED***
         filePickerLauncher.launch(intent)
     ***REMOVED***
-    val requestPermissionLauncherLegacy = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-        onResult = { isGranted: Boolean ->
-            if (isGranted) {
-                // Launch the image picker
-                imagePickerLauncherLegacy.launch("image/*")
-            ***REMOVED***
-        ***REMOVED***)
+    val requestPermissionLauncherLegacy =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission(),
+            onResult = { isGranted: Boolean ->
+                if (isGranted) {
+                    // Launch the image picker
+                    imagePickerLauncherLegacy.launch("image/*")
+                ***REMOVED***
+            ***REMOVED***)
     val onPhotoGalleryClick = {
         // Check if we're on Android 13+ (API level 33 or higher)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -955,14 +969,12 @@ fun CameraPreview(
     Box(modifier = modifier) {
         AndroidView(
 
-            modifier = modifier.fillMaxSize(),
-            factory = { factoryContext ->
+            modifier = modifier.fillMaxSize(), factory = { factoryContext ->
                 Log.d("CameraPreview", "Creating PreviewView")
                 PreviewView(factoryContext).apply {
                     scaleType = PreviewView.ScaleType.FILL_CENTER
                 ***REMOVED***
-            ***REMOVED***,
-            update = { previewView ->
+            ***REMOVED***, update = { previewView ->
                 if (!isSurfaceProviderSet) {
                     Log.d("CameraPreview", "Setting SurfaceProvider")
                     previewView.post {
@@ -970,8 +982,7 @@ fun CameraPreview(
                     ***REMOVED***
                     isSurfaceProviderSet = true
                 ***REMOVED***
-            ***REMOVED***
-        )
+            ***REMOVED***)
         Column(
             modifier = Modifier.align(Alignment.BottomStart)
         ) {

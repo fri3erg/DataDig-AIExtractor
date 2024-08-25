@@ -1,0 +1,140 @@
+{
+  "id": 39,
+  "title": "General News Article",
+  "description": "Template for a standard news article or general article",
+  "fields": [
+    {
+      "id": 40,
+      "title": "Headline",
+      "description": "The main title of the article",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "id": 41,
+      "title": "Subheadline",
+      "description": "An optional subtitle providing additional context",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "id": 42,
+      "title": "Author",
+      "description": "Name of the person who wrote the article, Full name of the author",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "id": 43,
+      "title": "Publication Date",
+      "description": "Date when the article was published,in DD/MM/YYYY format",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "id": 44,
+      "title": "Introduction",
+      "description": "The opening paragraph or summary of the article, A brief overview of what the article is about",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "id": 45,
+      "title": "Main Content",
+      "description": "The body of the article, Detailed content of the article, including all paragraphs",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": true
+    ***REMOVED***,
+    {
+      "id": 46,
+      "title": "Context",
+      "description": "Background or historical context related to the article,Information that helps understand the situation discussed",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": true,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "id": 47,
+      "title": "Article Position",
+      "description": "The stance or perspective presented in the article,Interpretation of the article's position on the subject matter",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": true,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "id": 48,
+      "title": "Data & Evidence",
+      "description": "Any data or evidence presented in the article (Relevant statistics, studies, or expert opinions",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": true,
+      "default": "N/A",
+      "list": true
+    ***REMOVED***,
+    {
+      "id": 49,
+      "title": "Conclusion",
+      "description": "The final paragraph summarizing the article's main points,Wrap-up or final thoughts on the article's topic",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": true,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "id": 50,
+      "title": "References",
+      "description": "Any sources or references cited in the article,List of external references used to support the article's content",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": true,
+      "default": "N/A",
+      "list": true
+    ***REMOVED***
+  ],
+  "tables": [
+  {
+    "id": 600,
+    "title": "Any table",
+    "description": "Any table present in the article",
+    "keywords": ["Table"],
+    "all": true,
+    "rows": [],
+    "columns": []
+  ***REMOVED***
+],
+  "tags": ["News", "Article", "General"]
+***REMOVED***

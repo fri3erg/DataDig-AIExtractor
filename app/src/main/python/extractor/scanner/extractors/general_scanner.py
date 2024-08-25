@@ -56,6 +56,9 @@ class GeneralScanner:
         self.options = options
         self.text: List[str] = [sanitize_text(text) for text in text]
         #print all values in env
+        all_text = ''.join(self.text)  # Concatenate all strings in the list
+        if len(all_text) <5:
+            raise ValueError("No text was found") 
         if options.language == None or options.language == "auto-detect":
             self.options.language = get_doc_language(self.text, self.file_id, self.options)
         self.template: Template = template

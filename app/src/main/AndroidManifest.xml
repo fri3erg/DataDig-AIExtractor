@@ -56,7 +56,7 @@
         <meta-data
             android:name="android.app.SplashScreen"
 
-        android:resource="@mipmap/logo_vale_big" />
+        android:resource="@mipmap/logo_vale_big_foreground" />
         </activity>
         <activity
             android:name="com.canhub.cropper.CropImageActivity"

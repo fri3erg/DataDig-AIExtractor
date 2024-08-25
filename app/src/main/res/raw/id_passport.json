@@ -1,0 +1,108 @@
+{
+  "id": 30,
+  "title": "ID/Passport",
+  "description": "Template for a standard ID card or passport",
+  "fields": [
+    {
+      "id": 31,
+      "title": "Full Name",
+      "description": "Full legal name of the individual as shown on the ID or passport",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "id": 32,
+      "title": "Date of Birth",
+      "description": "Birthdate of the individual, in DD/MM/YYYY format",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "id": 33,
+      "title": "Nationality",
+      "description": "Country of nationality",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "id": 34,
+      "title": "Document Number",
+      "description": "Unique document number,The identification number or passport number",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "id": 35,
+      "title": "Expiration Date",
+      "description": "Expiration date of the ID or passport, in DD/MM/YYYY format",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "id": 36,
+      "title": "Place of Issue",
+      "description": "Location where the ID or passport was issued,City or country of issue\"",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "id": 37,
+      "title": "Gender",
+      "description": "Gender of the individual,Male, Female, or Other",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "id ": 37000,
+        "title": "Height",
+        "description": "Height of the individual, in centimeters",
+        "extraDescription": "",
+        "type": "Number",
+        "required": false,
+        "intelligentExtraction": false,
+        "default": "-1",
+        "list": false
+    ***REMOVED***,
+    {
+      "id": 38,
+      "title": "Personal Number",
+      "description": "Optional personal identification number",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***
+  ],
+  "tables": [],
+  "tags": ["ID", "Passport", "Identification"]
+***REMOVED***
