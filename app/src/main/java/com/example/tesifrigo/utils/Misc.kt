@@ -918,5 +918,12 @@ fun getPdfFileName(context: Context, uri: Uri): String? {
 
 fun isFirstTimeVisit(context: Context, key: String): Boolean {
     val sharedPreferences: SharedPreferences = context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
-    return sharedPreferences.getBoolean(key, true)
+    val isFirstTime = sharedPreferences.getBoolean(key, true)
+
+    if (isFirstTime) {
+        // Set the value to false so it won't trigger again
+        sharedPreferences.edit().putBoolean(key, false).apply()
+    ***REMOVED***
+
+    return isFirstTime
 ***REMOVED***

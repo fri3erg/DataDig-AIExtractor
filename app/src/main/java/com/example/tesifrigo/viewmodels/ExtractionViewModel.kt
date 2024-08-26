@@ -46,10 +46,10 @@ import javax.inject.Inject
 class ExtractionViewModel @Inject constructor() : ViewModel() {
     private val realm = MyApp.realm
 
-    private val _sortOrder = MutableStateFlow(SortOrder.BY_TITLE)
+    private val _sortOrder = MutableStateFlow(SortOrder.BY_DATE)
     val sortOrder: StateFlow<SortOrder> = _sortOrder.asStateFlow()
 
-    private val _ascending = MutableStateFlow(true)
+    private val _ascending = MutableStateFlow(false)
     val ascending: StateFlow<Boolean> = _ascending.asStateFlow()
 
     private val _searchText = MutableStateFlow("")

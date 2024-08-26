@@ -889,6 +889,8 @@ fun FormatSection(extraction: Extraction, viewModel: ExtractionViewModel) {
                 DropdownMenuItem(text = { Text(format) ***REMOVED***, onClick = {
                     selectedFormat = format
                     viewModel.changeFormat(extraction, format, context)
+                    Toast.makeText(context,
+                        context.getString(R.string.file_recreated_to_fit_format, format), Toast.LENGTH_SHORT).show()
                     expanded = false
                 ***REMOVED***)
             ***REMOVED***
@@ -968,37 +970,70 @@ fun Picker(
 
     ***REMOVED***
         ***REMOVED***
-
         "Date" -> {
-            val datePickerState = rememberDatePickerState(initialSelectedDateMillis = text.let {
-                try {
-                    SimpleDateFormat(
-                        "yyyy-MM-dd", Locale.getDefault()
-        ***REMOVED***.apply {
-                        timeZone = TimeZone.getTimeZone("UTC")
-                    ***REMOVED***.parse(it)?.time
-                ***REMOVED*** catch (e: ParseException) {
-                    null
+            // Try to parse the date from the text
+            val parsedDateMillis = text.let {
+                val possibleDateFormats = listOf(
+                    "yyyy-MM-dd",
+                    "dd/MM/yyyy",
+                    "MM/dd/yyyy",
+                    "yyyyMMdd",
+                    "MMMM d, yyyy",
+                    "d MMMM yyyy"
+                    // Add more formats as needed
+    ***REMOVED***
+
+                for (formatString in possibleDateFormats) {
+                    try {
+                        val dateFormat = SimpleDateFormat(formatString, Locale.getDefault())
+                        dateFormat.timeZone = TimeZone.getTimeZone("UTC")
+                        val parsedDate = dateFormat.parse(it)
+                        if (parsedDate != null) {
+                            return@let parsedDate.time
+                        ***REMOVED***
+                    ***REMOVED*** catch (e: ParseException) {
+                        // Ignore parsing errors and try the next format
+                    ***REMOVED***
                 ***REMOVED***
-            ***REMOVED***) // State for DatePicker
-            Spacer(modifier = Modifier.height(8.dp))
-            Box(
-                modifier = Modifier
-                    .border(1.dp, Color.Gray, shape = RoundedCornerShape(4.dp))
-                    .padding(5.dp)
-***REMOVED*** {
-                Text(
-                    text = stringResource(R.string.date),
-                    modifier = Modifier
-                        .padding(6.dp)
-                        .align(Alignment.TopStart),
-                    color = Color.Black
-    ***REMOVED***
-                DatePicker( // Use DatePicker for "Date" type
-                    state = datePickerState
-    ***REMOVED***
+                return@let null // Return null if no format matches
             ***REMOVED***
 
+            if (parsedDateMillis != null) {
+                val datePickerState = rememberDatePickerState(
+                    initialSelectedDateMillis = parsedDateMillis
+    ***REMOVED***
+                Spacer(modifier = Modifier.height(8.dp))
+                Box(
+                    modifier = Modifier
+                        .border(1.dp, Color.Gray, shape = RoundedCornerShape(4.dp))
+                        .padding(5.dp)
+    ***REMOVED*** {
+                    DatePicker( // Use DatePicker for "Date" type
+                        state = datePickerState,
+                        title = {
+                            Text(
+                                text = stringResource(R.string.date),
+                                color = Color.Black
+                ***REMOVED***
+                        ***REMOVED***
+        ***REMOVED***
+                ***REMOVED***
+            ***REMOVED*** else {
+                // Fallback to an OutlinedTextField if parsing fails
+                OutlinedTextField(
+                    value = text,
+                    onValueChange = { newText ->
+                        editableText = newText
+                        changeText(newText)
+                    ***REMOVED***,
+                    label = { Text(text = stringResource(R.string.enter_date_manually)) ***REMOVED***,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    singleLine = true,
+                    isError = true
+    ***REMOVED***
+            ***REMOVED***
         ***REMOVED***
 
 

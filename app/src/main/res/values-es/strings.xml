@@ -224,5 +224,19 @@
     <string name="this_is_the_description_of_the_template_this_will_be_used_for_the_extraction_but_it_is_highly_optional_and_can_be_left_empty_use_it_if_you_need_to_pass_more_context">Esta es la descripción de la plantilla. Se utilizará para la extracción, pero es altamente opcional y se puede dejar vacía. Úsala si necesitas proporcionar más contexto.</string>
     <string name="template_description">Descripción de la plantilla</string>
 
-
+    <string name="you_can_create_your_own_templates_or_use_the_sample_templates_to_extract_data_from_images_and_pdfs_click_on_the_camera_icon_to_take_a_photo_of_or_select_your_document_then_choose_the_desired_template_your_options_and_start_the_extraction_you_can_then_open_download_or_send_a_file_containing_the_extracted_values_and_use_them_however_you_want_but_one_thing_before_all_of_this_we_are_transparent_about_ai_usage_costs_and_our_app_must_use_external_keys_to_operate_please_head_to_the_settings_to_insert_your_own_openai_key_to_use_for_the_extraction">
+    Puedes crear tus propias plantillas o utilizar las plantillas de ejemplo para extraer datos de imágenes y archivos PDF.
+    ¡Haz clic en el icono de la cámara para tomar una foto o selecciona tu documento, luego elige la plantilla deseada, tus opciones y comienza la extracción!
+    Luego puedes abrir, descargar o enviar un archivo que contiene los valores extraídos y usarlos como desees.
+    Pero una cosa antes de todo esto:
+    Somos transparentes sobre los costos de uso de la IA y nuestra aplicación debe usar claves externas para funcionar,
+    por favor, dirígete a la configuración para insertar tu propia clave de OpenAI para usar en la extracción.
+</string>
+    <string name="welcome_to_smartxtractor">¡Bienvenido a SmartXtractor!</string>
+    <string name="here_you_can_manage_your_extractions_change_whatever_you_like_and_manage_the_extracted_files">Aquí puedes gestionar tus extracciones, cambiar lo que quieras y gestionar los archivos extraídos.</string>
+    <string name="extractions">Extracciones</string>
+    <string name="file_recreated_to_fit_format">Archivo recreado para adaptarse al formato: %1$s</string>
+    <string name="model">Modelo</string>
+    <string name="format">Formato\n</string>
+    <string name="enter_date_manually">El análisis falló, por favor, introduce una fecha en un formato válido\n</string>
 </resources>

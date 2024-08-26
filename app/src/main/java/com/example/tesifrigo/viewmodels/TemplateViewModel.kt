@@ -5,10 +5,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tesifrigo.MyApp
 import com.example.tesifrigo.R
-import com.example.tesifrigo.fileCreator.JsonCreator
 import com.example.tesifrigo.models.TemplateField
 import com.example.tesifrigo.models.Template
 import com.example.tesifrigo.models.TemplateTable
+import com.example.tesifrigo.utils.RealmListStringAdapter
+import com.example.tesifrigo.utils.TemplateFieldListAdapter
+import com.example.tesifrigo.utils.TemplateTableListAdapter
 import io.realm.kotlin.ext.query
 import io.realm.kotlin.ext.realmListOf
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,74 +22,11 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import com.example.tesifrigo.utils.calculateCloseness
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.google.gson.JsonArray
-import com.google.gson.JsonDeserializationContext
-import com.google.gson.JsonDeserializer
-import com.google.gson.JsonElement
-import com.google.gson.JsonSerializationContext
-import com.google.gson.JsonSerializer
 import com.google.gson.reflect.TypeToken
 import io.realm.kotlin.types.RealmList
 import org.mongodb.kbson.ObjectId
-import java.lang.reflect.ParameterizedType
-import java.lang.reflect.Type
 
-
-class RealmListAdapterLocal : JsonSerializer<RealmList<*>>, JsonDeserializer<RealmList<*>> {
-    override fun serialize(
-        src: RealmList<*>,
-        typeOfSrc: Type,
-        context: JsonSerializationContext
-    ): JsonElement {
-        return context.serialize(src.toList())
-    ***REMOVED***
-
-    override fun deserialize(
-        json: JsonElement,
-        typeOfT: Type,
-        context: JsonDeserializationContext
-    ): RealmList<*> {
-        val parameterizedType = typeOfT as? ParameterizedType
-        val itemType = parameterizedType?.actualTypeArguments?.get(0) ?: Any::class.java
-        val list = context.deserialize<List<*>>(json, itemType)
-        return realmListOf(*list.toTypedArray())
-    ***REMOVED***
-***REMOVED***
-
-class RealmListStringAdapter : JsonSerializer<RealmList<String>>, JsonDeserializer<RealmList<String>> {
-
-    override fun serialize(
-        src: RealmList<String>,
-        typeOfSrc: Type,
-        context: JsonSerializationContext
-    ): JsonElement {
-        val jsonArray = JsonArray()
-        for (item in src) {
-            jsonArray.add(item)
-        ***REMOVED***
-        return jsonArray
-    ***REMOVED***
-
-    override fun deserialize(
-        json: JsonElement,
-        typeOfT: Type,
-        context: JsonDeserializationContext
-    ): RealmList<String> {
-        val jsonArray = json.asJsonArray
-        val realmList = realmListOf<String>()
-        for (item in jsonArray) {
-            if (item.isJsonPrimitive && item.asJsonPrimitive.isString) {
-                realmList.add(item.asString)
-            ***REMOVED*** else {
-                // Handle other JSON element types if needed
-                println("Unexpected JSON element type: ${item.javaClass***REMOVED***")
-            ***REMOVED***
-        ***REMOVED***
-        return realmList
-    ***REMOVED***
-***REMOVED***
 
 class TemplateViewModel : ViewModel() {
 
@@ -172,13 +111,15 @@ class TemplateViewModel : ViewModel() {
     ***REMOVED***
 
     // Function to load JSON from res/raw
-    fun loadTemplateFromJson(context: Context, resource: Int): Template? {
+    private fun loadTemplateFromJson(context: Context, resource: Int): Template? {
         val jsonString = context.resources.openRawResource(resource)
             .bufferedReader().use { it.readText() ***REMOVED***
+        println(jsonString)
 
         val gson = GsonBuilder()
-            .registerTypeAdapter(RealmList::class.java, RealmListAdapterLocal())
-            .registerTypeAdapter(RealmList::class.java, RealmListStringAdapter()) // Register the new adapter
+            .registerTypeAdapter(object : TypeToken<RealmList<String>>() {***REMOVED***.type, RealmListStringAdapter())
+            .registerTypeAdapter(object : TypeToken<RealmList<TemplateField>>() {***REMOVED***.type, TemplateFieldListAdapter())
+            .registerTypeAdapter(object : TypeToken<RealmList<TemplateTable>>() {***REMOVED***.type, TemplateTableListAdapter())
             .create()
 
         return gson.fromJson(jsonString, Template::class.java)
@@ -187,13 +128,13 @@ class TemplateViewModel : ViewModel() {
     fun createSampleTemplates(context: Context) {
 
         val article = loadTemplateFromJson(context, R.raw.article)
-        val business_card = loadTemplateFromJson(context, R.raw.business_card)
-        val id_passport = loadTemplateFromJson(context, R.raw.id_passport)
+        val businessCard = loadTemplateFromJson(context, R.raw.business_card)
+        val idPassport = loadTemplateFromJson(context, R.raw.id_passport)
         val prescription = loadTemplateFromJson(context, R.raw.prescription)
         val receipt= loadTemplateFromJson(context, R.raw.receipt)
-        val resume_cv = loadTemplateFromJson(context, R.raw.resume_cv)
-        val terms_conditions = loadTemplateFromJson(context, R.raw.terms_conditions)
-        val utility_bill = loadTemplateFromJson(context, R.raw.utility_bill)
+        val resumeCv = loadTemplateFromJson(context, R.raw.resume_cv)
+        val termsConditions = loadTemplateFromJson(context, R.raw.terms_conditions)
+        val utilityBill = loadTemplateFromJson(context, R.raw.utility_bill)
 
 
         viewModelScope.launch {
@@ -215,23 +156,23 @@ class TemplateViewModel : ViewModel() {
                 if (article != null) {
                     copyToRealm(article)
                 ***REMOVED***
-                if (business_card != null) {
-                    copyToRealm(business_card)
+                if (businessCard != null) {
+                    copyToRealm(businessCard)
                 ***REMOVED***
-                if (id_passport != null) {
-                    copyToRealm(id_passport)
+                if (idPassport != null) {
+                    copyToRealm(idPassport)
                 ***REMOVED***
                 if (prescription != null) {
                     copyToRealm(prescription)
                 ***REMOVED***
-                if (resume_cv != null) {
-                    copyToRealm(resume_cv)
+                if (resumeCv != null) {
+                    copyToRealm(resumeCv)
                 ***REMOVED***
-                if (terms_conditions != null) {
-                    copyToRealm(terms_conditions)
+                if (termsConditions != null) {
+                    copyToRealm(termsConditions)
                 ***REMOVED***
-                if (utility_bill != null) {
-                    copyToRealm(utility_bill)
+                if (utilityBill != null) {
+                    copyToRealm(utilityBill)
                 ***REMOVED***
 
             ***REMOVED***

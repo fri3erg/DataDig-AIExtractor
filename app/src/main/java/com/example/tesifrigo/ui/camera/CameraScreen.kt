@@ -682,7 +682,7 @@ fun ButtonBar(
                     ***REMOVED***
                 ***REMOVED***, modifier = Modifier.weight(1f), defaultSelectedItemIndex = defaultIndex
 ***REMOVED***
-            HelpIconButton(stringResource(R.string.select_the_model_to_use_for_the_extraction))
+            HelpIconButton(stringResource(R.string.select_the_model_to_use_for_the_extraction), title=stringResource(R.string.model))
             val formatList = listOf("json", "csv", "txt", "xml")
             DropDownGeneral(
                 items = formatList,
@@ -696,7 +696,7 @@ fun ButtonBar(
                 modifier = Modifier.weight(1f),
                 defaultSelectedItemIndex = formatList.indexOf(it.format)
 ***REMOVED***
-            HelpIconButton(stringResource(R.string.select_the_format_to_export_the_extraction))
+            HelpIconButton(stringResource(R.string.select_the_format_to_export_the_extraction), title = stringResource(R.string.format))
             val languageList = listOf("auto-detect", "en", "it", "es", "fr", "de")
             DropDownGeneral(
                 items = languageList,

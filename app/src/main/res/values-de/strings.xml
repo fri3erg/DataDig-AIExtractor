@@ -217,5 +217,21 @@
     <string name="search_icon">Suchsymbol</string>
     <string name="help_icon">Hilfesymbol</string>
     <string name="this_is_the_description_of_the_template_this_will_be_used_for_the_extraction_but_it_is_highly_optional_and_can_be_left_empty_use_it_if_you_need_to_pass_more_context">Dies ist die Beschreibung der Vorlage. Diese wird für die Extraktion verwendet, ist jedoch optional und kann leer gelassen werden. Verwenden Sie sie, wenn Sie mehr Kontext übergeben müssen.</string>
-    <string name="template_description">Vorlagenbeschreibung</string>
+    <string name="template_description">Vorlagenbeschreibung</string>à
+
+    <string name="you_can_create_your_own_templates_or_use_the_sample_templates_to_extract_data_from_images_and_pdfs_click_on_the_camera_icon_to_take_a_photo_of_or_select_your_document_then_choose_the_desired_template_your_options_and_start_the_extraction_you_can_then_open_download_or_send_a_file_containing_the_extracted_values_and_use_them_however_you_want_but_one_thing_before_all_of_this_we_are_transparent_about_ai_usage_costs_and_our_app_must_use_external_keys_to_operate_please_head_to_the_settings_to_insert_your_own_openai_key_to_use_for_the_extraction">
+    Sie können Ihre eigenen Vorlagen erstellen oder die Beispielvorlagen verwenden, um Daten aus Bildern und PDFs zu extrahieren.
+    Klicken Sie auf das Kamerasymbol, um ein Foto aufzunehmen oder Ihr Dokument auszuwählen, wählen Sie dann die gewünschte Vorlage, Ihre Optionen und starten Sie die Extraktion!
+    Sie können dann eine Datei mit den extrahierten Werten öffnen, herunterladen oder senden und diese nach Belieben verwenden.
+    Aber eines vorweg:
+    Wir sind transparent über die Kosten der KI-Nutzung und unsere App muss externe Schlüssel verwenden, um zu funktionieren.
+    Bitte gehen Sie zu den Einstellungen, um Ihren eigenen OpenAI-Schlüssel für die Extraktion einzugeben.
+</string>
+    <string name="welcome_to_smartxtractor">Willkommen bei SmartXtractor!</string>
+    <string name="here_you_can_manage_your_extractions_change_whatever_you_like_and_manage_the_extracted_files">Hier können Sie Ihre Extraktionen verwalten, beliebige Änderungen vornehmen und die extrahierten Dateien verwalten.</string>
+    <string name="extractions">Extraktionen</string>
+    <string name="file_recreated_to_fit_format">Datei neu erstellt, um dem Format zu entsprechen: %1$s</string>
+    <string name="model">Modell</string>
+    <string name="format">Format\n</string>
+    <string name="enter_date_manually">Die Analyse ist fehlgeschlagen. Bitte geben Sie ein Datum in einem gültigen Format ein.\n</string>
 </resources>

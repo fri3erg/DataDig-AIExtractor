@@ -31,8 +31,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.tesifrigo.R
 import com.example.tesifrigo.Screen
 import com.example.tesifrigo.models.Template
 import com.example.tesifrigo.ui.theme.cyan_custom
@@ -151,10 +153,10 @@ fun TemplateScreen(
         if(firstTimeModal){
             AlertDialog(
                 title={
-                    Text("Welcome to SmartXtractor!")
+                    Text(stringResource(R.string.welcome_to_smartxtractor))
                 ***REMOVED***,
                 text = {
-                    Text("You can create your own templates or use the sample templates to extract data from images.")
+                    Text(stringResource(R.string.you_can_create_your_own_templates_or_use_the_sample_templates_to_extract_data_from_images_and_pdfs_click_on_the_camera_icon_to_take_a_photo_of_or_select_your_document_then_choose_the_desired_template_your_options_and_start_the_extraction_you_can_then_open_download_or_send_a_file_containing_the_extracted_values_and_use_them_however_you_want_but_one_thing_before_all_of_this_we_are_transparent_about_ai_usage_costs_and_our_app_must_use_external_keys_to_operate_please_head_to_the_settings_to_insert_your_own_openai_key_to_use_for_the_extraction))
                 ***REMOVED***,
                 shape = RoundedCornerShape(8.dp),
                 onDismissRequest = { firstTimeModal=false ***REMOVED***,

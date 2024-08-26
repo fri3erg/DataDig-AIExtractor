@@ -217,4 +217,21 @@
     <string name="help_icon">Icône d\'aide</string>
     <string name="this_is_the_description_of_the_template_this_will_be_used_for_the_extraction_but_it_is_highly_optional_and_can_be_left_empty_use_it_if_you_need_to_pass_more_context">Ceci est la description du modèle. Elle sera utilisée pour l\'extraction, mais elle est facultative et peut être laissée vide. Utilisez-la si vous avez besoin de fournir plus de contexte.</string>
     <string name="template_description"> Description du modèle</string>
+
+
+    <string name="you_can_create_your_own_templates_or_use_the_sample_templates_to_extract_data_from_images_and_pdfs_click_on_the_camera_icon_to_take_a_photo_of_or_select_your_document_then_choose_the_desired_template_your_options_and_start_the_extraction_you_can_then_open_download_or_send_a_file_containing_the_extracted_values_and_use_them_however_you_want_but_one_thing_before_all_of_this_we_are_transparent_about_ai_usage_costs_and_our_app_must_use_external_keys_to_operate_please_head_to_the_settings_to_insert_your_own_openai_key_to_use_for_the_extraction">
+    Vous pouvez créer vos propres modèles ou utiliser les modèles d\'exemple pour extraire des données d\'images et de fichiers PDF.
+    Cliquez sur l\'icône de l\'appareil photo pour prendre une photo ou sélectionner votre document, puis choisissez le modèle souhaité, vos options et lancez l\'extraction !
+    Vous pouvez ensuite ouvrir, télécharger ou envoyer un fichier contenant les valeurs extraites et les utiliser comme vous le souhaitez.
+    Mais une chose avant tout :
+    Nous sommes transparents sur les coûts d\'utilisation de l\'IA et notre application doit utiliser des clés externes pour fonctionner,
+    veuillez vous rendre dans les paramètres pour insérer votre propre clé OpenAI à utiliser pour l\'extraction.
+</string>
+    <string name="welcome_to_smartxtractor">Bienvenue dans SmartXtractor !</string>
+    <string name="here_you_can_manage_your_extractions_change_whatever_you_like_and_manage_the_extracted_files">Ici vous pouvez gérer vos extractions, modifier ce que vous voulez et gérer les fichiers extraits.</string>
+    <string name="extractions">Extractions</string>
+    <string name="file_recreated_to_fit_format">Fichier recréé pour correspondre au format : %1$s</string>
+    <string name="model">Modèle</string>
+    <string name="format">Format\n</string>
+    <string name="enter_date_manually">L\'analyse a échoué, veuillez saisir une date dans un format valide\n</string>
 </resources>

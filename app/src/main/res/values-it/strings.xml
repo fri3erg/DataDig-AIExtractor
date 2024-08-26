@@ -172,8 +172,10 @@
         L\'estrazione attualmente non supporta altre lingue per impostazione predefinita, ma puoi richiedere supporto nelle descrizioni.
     </string>
         <string name="language">Lingua</string>
-        <string name="select_the_format_to_export_the_extraction">Seleziona il formato per esportare l\'estrazione.</string>
-        <string name="select_the_model_to_use_for_the_extraction">Seleziona il modello da utilizzare per l\'estrazione.</string>
+        <string name="select_the_format_to_export_the_extraction">Seleziona il formato per esportare l\'estrazione.
+        \n Il file creato sarà del formato richiesto</string>
+        <string name="select_the_model_to_use_for_the_extraction">Seleziona il modello da utilizzare per l\'estrazione.
+        \n Un modello migliore estrarrà meglio ma costerà anche di più</string>
         <string name="use_azure_ocr_for_the_extraction">
         Azure OCR è migliore di quello predefinito e restituirà risultati migliori, ma implica costi più elevati
         poiché ogni pagina verrà scansionata invece di solo quelle con tabelle.
@@ -220,5 +222,19 @@
     <string name="this_is_the_description_of_the_template_this_will_be_used_for_the_extraction_but_it_is_highly_optional_and_can_be_left_empty_use_it_if_you_need_to_pass_more_context">Questa è la descrizione del modello. Sarà utilizzata per l\'estrazione ma è altamente facoltativa e può essere lasciata vuota. Usala se hai bisogno di fornire più contesto.</string>
     <string name="template_description">Descrizione del modello (Opzionale)</string>
 
-
+    <string name="you_can_create_your_own_templates_or_use_the_sample_templates_to_extract_data_from_images_and_pdfs_click_on_the_camera_icon_to_take_a_photo_of_or_select_your_document_then_choose_the_desired_template_your_options_and_start_the_extraction_you_can_then_open_download_or_send_a_file_containing_the_extracted_values_and_use_them_however_you_want_but_one_thing_before_all_of_this_we_are_transparent_about_ai_usage_costs_and_our_app_must_use_external_keys_to_operate_please_head_to_the_settings_to_insert_your_own_openai_key_to_use_for_the_extraction">
+    Puoi creare i tuoi modelli o utilizzare i modelli di esempio per estrarre dati da immagini e PDF.
+    \n Clicca sull\'icona della fotocamera per scattare una foto o selezionare il tuo documento, quindi scegli il modello desiderato, le tue opzioni e avvia l\'estrazione!
+    \n Puoi quindi aprire, scaricare o inviare un file contenente i valori estratti e utilizzarli come preferisci.
+    \n Ma una cosa prima di tutto:
+    \n Siamo trasparenti sui costi di utilizzo dell\'IA e la nostra app deve utilizzare chiavi esterne per funzionare,
+    per favore vai nelle impostazioni per inserire la tua chiave OpenAI da utilizzare per l\'estrazione.
+</string>
+    <string name="welcome_to_smartxtractor">Benvenuto in SmartXtractor!</string>
+    <string name="here_you_can_manage_your_extractions_change_whatever_you_like_and_manage_the_extracted_files">Qui puoi gestire le tue estrazioni, modificare ciò che desideri e gestire i file estratti.</string>
+    <string name="extractions">Estrazioni</string>
+    <string name="file_recreated_to_fit_format">File ricreato per adattarsi al formato: %1$s</string>
+    <string name="model">Modello</string>
+    <string name="format">Formato\n</string>
+    <string name="enter_date_manually">L\'analisi non è riuscita, inserisci una data in un formato valido\n</string>
 </resources>

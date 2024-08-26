@@ -132,7 +132,13 @@ fun EditTemplateScreen(
 
     Scaffold(topBar = {
         TopAppBar(title = {
-            Row {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+***REMOVED*** {
                 title?.let {
                     Text(
                         text = it,
@@ -140,28 +146,30 @@ fun EditTemplateScreen(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier
-                            .padding(16.dp)
+                            .weight(1f) // Allow the title to take up available space, but ellipsize if needed
                             .align(Alignment.CenterVertically)
         ***REMOVED***
                 ***REMOVED***
-                Spacer(modifier = Modifier.weight(1f))
                 template?.let {
-                Button(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .align(Alignment.CenterVertically),
-                    shape = RoundedCornerShape(8.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = light_gray),
-                    onClick = {
-                        navController.navigate(Screen.Camera.routeWithOptionalArgs("templateId" to it.id.toHexString()))
-
-                    ***REMOVED***) {
-                    Text(text = stringResource(id = R.string.use),
-                        color = Color.Black,
+                    Button(
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically),
+                        shape = RoundedCornerShape(8.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = light_gray),
+                        onClick = {
+                            template?.id?.let { templateId ->
+                                navController.navigate(Screen.Camera.routeWithOptionalArgs("templateId" to templateId.toHexString()))
+                            ***REMOVED***
+                        ***REMOVED***
+        ***REMOVED*** {
+                        Text(
+                            text = stringResource(id = R.string.use),
+                            color = Color.Black,
+                            maxLines = 1,
+                            overflow = TextOverflow.Visible // Allow button text to be visible even if it overflows
             ***REMOVED***
-
+                    ***REMOVED***
                 ***REMOVED***
-            ***REMOVED***
             ***REMOVED***
         ***REMOVED***, navigationIcon = {
             IconButton(onClick = {
@@ -462,7 +470,10 @@ fun TemplateFieldComposable(
                                 label = { Text(stringResource(R.string.field_description)) ***REMOVED***,
                                 modifier = Modifier.weight(1f),
                                 trailingIcon = {
-                                    HelpIconButton(helpText = stringResource(R.string.this_is_the_description_of_the_field_this_will_also_be_used_to_extract_the_data_but_you_dont_need_to_be_super_specific_this_field_can_be_left_empty_if_the_title_is_descriptive_enough))
+                                    HelpIconButton(helpText = stringResource(R.string.this_is_the_description_of_the_field_this_will_also_be_used_to_extract_the_data_but_you_dont_need_to_be_super_specific_this_field_can_be_left_empty_if_the_title_is_descriptive_enough),
+                                        title = stringResource(
+                                            R.string.field_description
+                            ***REMOVED***)
                                 ***REMOVED***)
                         ***REMOVED***
                     ***REMOVED***
@@ -537,7 +548,9 @@ fun TemplateFieldComposable(
                             ***REMOVED***
                         ***REMOVED***
                         Spacer(modifier = Modifier.width(4.dp)) // Reduced spacing
-                        HelpIconButton(helpText = stringResource(R.string.specify_the_type_of_data_expected_for_this_field_e_g_text_number_date_this_will_affect_the_type_of_the_extracted_data_the_default_value_must_be_set_accordingly))
+                        HelpIconButton(helpText = stringResource(R.string.specify_the_type_of_data_expected_for_this_field_e_g_text_number_date_this_will_affect_the_type_of_the_extracted_data_the_default_value_must_be_set_accordingly), title= stringResource(
+                            id = R.string.type)
+            ***REMOVED***
                     ***REMOVED***
                     Spacer(modifier = Modifier.height(8.dp))
                     list?.let {

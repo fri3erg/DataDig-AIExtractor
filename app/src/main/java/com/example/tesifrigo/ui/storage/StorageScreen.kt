@@ -139,10 +139,10 @@ fun StorageScreen(navController: NavHostController, extractionViewModel: Extract
         if(firstTimeModal){
             AlertDialog(
                 title={
-                    Text("Welcome to SmartXtractor!")
+                    Text(stringResource(R.string.extractions))
                 ***REMOVED***,
                 text = {
-                    Text("You can create your own templates or use the sample templates to extract data from images.")
+                    Text(stringResource(R.string.here_you_can_manage_your_extractions_change_whatever_you_like_and_manage_the_extracted_files))
                 ***REMOVED***,
                 shape = RoundedCornerShape(8.dp),
                 onDismissRequest = { firstTimeModal=false ***REMOVED***,

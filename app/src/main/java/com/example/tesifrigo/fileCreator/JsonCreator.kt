@@ -3,14 +3,12 @@ package com.example.tesifrigo.fileCreator
 import android.content.Context
 import android.net.Uri
 import com.example.tesifrigo.models.Extraction
+import com.example.tesifrigo.utils.RealmListAdapter
 import com.google.gson.*
-import io.realm.kotlin.ext.realmListOf
 import io.realm.kotlin.types.RealmList
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
-import java.lang.reflect.Type
-import java.lang.reflect.ParameterizedType
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -49,31 +47,6 @@ class JsonCreator {
             // Handle the exception (log, throw, etc.)
             e.printStackTrace() // Placeholder for error handling
             null
-        ***REMOVED***
-    ***REMOVED***
-
-    // Adapter for RealmList
-    class RealmListAdapter : JsonSerializer<RealmList<*>>, JsonDeserializer<RealmList<*>> {
-
-        override fun serialize(
-            src: RealmList<*>,
-            typeOfSrc: Type,
-            context: JsonSerializationContext
-        ): JsonElement {
-            return context.serialize(src.toList())
-        ***REMOVED***
-
-        override fun deserialize(
-            json: JsonElement,
-            typeOfT: Type,
-            context: JsonDeserializationContext
-        ): RealmList<*> {
-            // Get the parameterized type of the RealmList
-            val parameterizedType = typeOfT as? ParameterizedType
-            val itemType = parameterizedType?.actualTypeArguments?.get(0) ?: Any::class.java
-
-            val list = context.deserialize<List<*>>(json, itemType)
-            return realmListOf(*list.toTypedArray())
         ***REMOVED***
     ***REMOVED***
 ***REMOVED***
