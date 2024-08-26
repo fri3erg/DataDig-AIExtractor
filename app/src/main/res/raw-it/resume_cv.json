@@ -1,0 +1,67 @@
+{
+  "title": "Curriculum Vitae/CV",
+  "description": "Modello per un curriculum vitae o CV standard",
+  "fields": [
+    {
+      "title": "Informazioni Personali",
+      "description": "Informazioni di base sulla persona. Include il nome completo, le informazioni di contatto e altri dettagli identificativi.",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Obiettivo Professionale",
+      "description": "Una breve dichiarazione che riassume gli obiettivi di carriera della persona.",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Esperienze Lavorative",
+      "description": "Dettagli sulle esperienze lavorative passate della persona. Include il titolo del lavoro, il nome dell'azienda, la durata, le responsabilità e i risultati.",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": true
+    ***REMOVED***,
+    {
+      "title": "Formazione",
+      "description": "Dettagli sul background educativo della persona. Include titolo di studio, istituzione, anni di frequenza e campo di studio.",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": true
+    ***REMOVED***,
+    {
+      "title": "Competenze",
+      "description": "Elenco delle competenze chiave possedute dalla persona. Include sia competenze tecniche che trasversali.",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": true
+    ***REMOVED***,
+    {
+      "default": "N/A",
+      "description": "Una valutazione dei principali punti di forza e di debolezza della persona. Include caratteristiche, competenze e aree di miglioramento.",
+      "extraDescription": "",
+      "intelligentExtraction": true,
+      "list": false,
+      "required": true,
+      "title": "Punti di Forza e di Debolezza",
+      "type": "Text"
+    ***REMOVED***
+  ],
+  "tags": ["Curriculum", "CV", "Carriera", "Lavoro"]
+***REMOVED***

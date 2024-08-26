@@ -1,0 +1,78 @@
+{
+  "title": "Biglietto da Visita",
+  "description": "Modello per un biglietto da visita standard",
+  "fields": [
+    {
+      "title": "Nome Completo",
+      "description": "Nome della persona",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Titolo Professionale",
+      "description": "Posizione lavorativa o titolo della persona",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Nome dell'Azienda",
+      "description": "Nome dell'azienda",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Numero di Telefono",
+      "description": "Numero di telefono di contatto",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Indirizzo Email",
+      "description": "Indirizzo email di contatto",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Sito Web",
+      "description": "Sito web aziendale o personale",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Indirizzo",
+      "description": "Indirizzo fisico dell'azienda",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***
+  ],
+  "tables": [],
+  "tags": ["Biglietto da Visita", "Informazioni di Contatto", "Professionale"]
+***REMOVED***

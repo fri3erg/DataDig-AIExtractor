@@ -24,7 +24,7 @@
     ***REMOVED***,
     {
       "title": "Prescription Date",
-      "description": "The date when the prescription was issued, in the format DD/MM/YYYY",
+      "description": "The date when the prescription was issued, in the numbers format YYYY-MM-DD",
       "extraDescription": "",
       "type": "Date",
       "required": true,

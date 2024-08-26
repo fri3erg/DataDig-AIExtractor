@@ -1,0 +1,78 @@
+{
+  "title": "Tarjeta de Presentación",
+  "description": "Plantilla para una tarjeta de presentación estándar",
+  "fields": [
+    {
+      "title": "Nombre Completo",
+      "description": "Nombre de la persona",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Cargo",
+      "description": "Puesto o cargo de la persona",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Nombre de la Empresa",
+      "description": "Nombre de la empresa",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Número de Teléfono",
+      "description": "Número de teléfono de contacto",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Dirección de Correo Electrónico",
+      "description": "Dirección de correo electrónico de contacto",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Sitio Web",
+      "description": "Sitio web de la empresa o personal",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Dirección",
+      "description": "Dirección física de la empresa",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***
+  ],
+  "tables": [],
+  "tags": ["Tarjeta de Presentación", "Información de Contacto", "Profesional"]
+***REMOVED***

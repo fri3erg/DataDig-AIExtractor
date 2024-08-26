@@ -90,13 +90,17 @@ class ServiceRepository @Inject constructor(
                     table.templateTable = table.templateTable?.let { findLatest(it) ***REMOVED***
                     for (row in table.fields) {
                         for (field in row.fields) {
-                            // Check if the field is already managed by Realm
-                            if (field.isManaged()) {
-                                field.templateField = field.templateField?.let { findLatest(it) ***REMOVED***
+                            val managedField = field.templateField?.let {
+                                if (it.isManaged()) {
+                                    findLatest(it)
+                                ***REMOVED*** else {
+                                    null // Or handle it as an unmanaged object
+                                ***REMOVED***
+                            ***REMOVED***
+                            if (managedField != null) {
+                                field.templateField = managedField
                             ***REMOVED*** else {
-                                // If the field is unmanaged, add it to Realm first
-                                copyToRealm(field)
-
+                                copyToRealm(field, UpdatePolicy.ALL) // If not found, copy to Realm
                             ***REMOVED***
                         ***REMOVED***
                         ***REMOVED***

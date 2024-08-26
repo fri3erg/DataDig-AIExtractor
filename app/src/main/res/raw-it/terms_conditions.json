@@ -1,0 +1,48 @@
+{
+  "title": "Termini e Condizioni",
+  "description": "Modello per un documento standard di Termini e Condizioni",
+  "fields": [
+    {
+      "title": "Termini Generali",
+      "description": "Termini standard applicabili a tutti gli utenti o clienti, Regole e linee guida di base per l'utilizzo del servizio o del prodotto",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": true
+    ***REMOVED***,
+    {
+      "title": "Condizioni Importanti",
+      "description": "Condizioni chiave di cui gli utenti devono essere a conoscenza, Termini critici che hanno un impatto significativo sui diritti e le responsabilità degli utenti",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": true
+    ***REMOVED***,
+    {
+      "title": "Condizioni Inusuali o Pericolose",
+      "description": "Qualsiasi condizione non comune o che ponga potenziali rischi, Termini che possono comportare obblighi, rischi o limitazioni significativi, cerca di capire dal contesto di cosa devo preoccuparmi",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": true,
+      "default": "N/A",
+      "list": true
+    ***REMOVED***,
+    {
+      "title": "Legge Applicabile",
+      "description": "La giurisdizione legale in base alla quale sono regolati i termini e le condizioni",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***
+  ],
+  "tables": [],
+  "tags": ["Legale", "Termini e Condizioni"]
+***REMOVED***

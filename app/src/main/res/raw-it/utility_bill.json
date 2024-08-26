@@ -1,0 +1,109 @@
+{
+  "title": "Bolletta",
+  "description": "Modello per una bolletta standard (ad esempio, elettricità, acqua, gas)",
+  "fields": [
+    {
+      "title": "Informazioni sul Cliente",
+      "description": "Dettagli del cliente che riceve la bolletta",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Numero di Conto",
+      "description": "Numero di conto o codice del cliente presso il fornitore di servizi",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Periodo di Fatturazione",
+      "description": "Periodo di tempo per il quale viene fatturato l'utilizzo del servizio",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Data di Emissione",
+      "description": "Data in cui è stata emessa la bolletta, nel formato numerico AAAA-MM-GG",
+      "extraDescription": "",
+      "type": "Date",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Data di Scadenza",
+      "description": "Data entro la quale deve essere effettuato il pagamento",
+      "extraDescription": "",
+      "type": "Date",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***
+  ],
+  "tables": [
+    {
+      "title": "Dettagli di Utilizzo",
+      "description": "Dettagli sull'utilizzo del servizio durante il periodo di fatturazione",
+      "keywords": ["Tipo di Servizio", "Utilizzo", "Tariffa", "Totale"],
+      "all": false,
+      "rows": [
+        {
+          "title": "Tipo di Servizio",
+          "description": "Tipo di servizio (ad esempio, elettricità, acqua, gas)",
+          "extraDescription": "",
+          "type": "Text",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": "N/A",
+          "list": false
+        ***REMOVED***
+      ],
+      "columns": [
+        {
+          "title": "Utilizzo",
+          "description": "Quantità di servizio utilizzata (ad esempio, kWh, metri cubi)",
+          "extraDescription": "",
+          "type": "Number",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": -1,
+          "list": false
+        ***REMOVED***,
+        {
+          "title": "Tariffa",
+          "description": "Tariffa per unità di servizio",
+          "extraDescription": "",
+          "type": "Float",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": -1.0,
+          "list": false
+        ***REMOVED***,
+        {
+          "title": "Totale",
+          "description": "Costo totale per l'utilizzo del servizio",
+          "extraDescription": "",
+          "type": "Float",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": -1.0,
+          "list": false
+        ***REMOVED***
+      ]
+    ***REMOVED***
+  ],
+  "tags": ["Bolletta", "Elettricità", "Acqua", "Gas"]
+***REMOVED***

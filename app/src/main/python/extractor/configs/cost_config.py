@@ -15,7 +15,7 @@ cost_per_token = {
         "gpt-4": 6.0e-5,  # $60.00 per 1 million tokens
         "gpt-4-turbo": 3.0e-5,  # $30.00 per 1 million tokens
     ***REMOVED***,
-    "azure": 0.01,
+    "azure": 0.00,#0.05 after 500
 ***REMOVED***
 available_costs = [
     "gpt-4-turbo",

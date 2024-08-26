@@ -1,0 +1,98 @@
+{
+  "title": "Carte d'identité/Passeport",
+  "description": "Modèle pour une carte d'identité ou un passeport standard",
+  "fields": [
+    {
+      "title": "Nom complet",
+      "description": "Nom légal complet de la personne tel qu'il figure sur la carte d'identité ou le passeport",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Date de naissance",
+      "description": "Date de naissance de la personne, au format numérique JJ/MM/AAAA",
+      "extraDescription": "",
+      "type": "Date",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Nationalité",
+      "description": "Pays de nationalité",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Numéro de document",
+      "description": "Numéro de document unique, le numéro d'identification ou le numéro de passeport",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Date d'expiration",
+      "description": "Date d'expiration de la carte d'identité ou du passeport, au format numérique AAAA-MM-JJ",
+      "extraDescription": "",
+      "type": "Date",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Lieu d'émission",
+      "description": "Lieu où la carte d'identité ou le passeport a été émis, ville ou pays d'émission",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Genre",
+      "description": "Genre de la personne, Homme, Femme ou Autre",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Taille",
+      "description": "Taille de la personne, en centimètres",
+      "extraDescription": "",
+      "type": "Number",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "-1",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Numéro personnel",
+      "description": "Numéro d'identification personnel optionnel",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***
+  ],
+  "tables": [],
+  "tags": ["Carte d'identité", "Passeport", "Identification"]
+***REMOVED***

@@ -1,0 +1,88 @@
+{
+  "title": "Prescrizione Medica",
+  "description": "Modello per una prescrizione medica standard",
+  "fields": [
+    {
+      "title": "Informazioni sul Paziente",
+      "description": "Dettagli sul paziente che riceve la prescrizione, inclusi il nome completo del paziente, la data di nascita e altri dettagli identificativi",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Medico Prescrittore",
+      "description": "Informazioni sul medico che emette la prescrizione",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Data della Prescrizione",
+      "description": "La data in cui è stata emessa la prescrizione, nel formato numerico AAAA-MM-GG",
+      "extraDescription": "",
+      "type": "Date",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***
+  ],
+  "tables": [
+    {
+      "title": "Farmaci",
+      "description": "Elenco dei farmaci prescritti con dettagli",
+      "keywords": ["medication", "dosage", "instructions"],
+      "all": false,
+      "rows": [],
+      "columns": [
+        {
+          "title": "Nome del Farmaco",
+          "description": "Il nome del farmaco prescritto",
+          "extraDescription": "Include il nome commerciale o il nome generico",
+          "type": "Text",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": "N/A",
+          "list": false
+        ***REMOVED***,
+        {
+          "title": "Dosaggio",
+          "description": "Il dosaggio del farmaco",
+          "extraDescription": "In genere include la quantità (ad esempio, mg) e la frequenza",
+          "type": "Text",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": "N/A",
+          "list": false
+        ***REMOVED***,
+        {
+          "title": "Quantità",
+          "description": "Quantità totale del farmaco prescritto. Di solito indicata come numero totale di pillole, millilitri, ecc.",
+          "extraDescription": "",
+          "type": "Number",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": "-1",
+          "list": false
+        ***REMOVED***,
+        {
+          "title": "Istruzioni",
+          "description": "Istruzioni su come il paziente deve assumere il farmaco. Istruzioni dettagliate sull'uso (ad esempio, assumere con il cibo, assumere due volte al giorno)",
+          "extraDescription": "",
+          "type": "Text",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": "N/A",
+          "list": false
+        ***REMOVED***
+      ]
+    ***REMOVED***
+  ],
+  "tags": ["Medico", "Prescrizione", "Salute"]
+***REMOVED***

@@ -95,6 +95,7 @@ import com.example.tesifrigo.ui.theme.vale
 import com.example.tesifrigo.utils.AddButton
 import com.example.tesifrigo.utils.DeleteButton
 import com.example.tesifrigo.utils.HelpIconButton
+import com.example.tesifrigo.viewmodels.ServiceViewModel
 import com.example.tesifrigo.viewmodels.TemplateViewModel
 import com.guru.fontawesomecomposelib.FaIcon
 import com.guru.fontawesomecomposelib.FaIcons
@@ -108,7 +109,7 @@ import java.util.TimeZone
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditTemplateScreen(
-    navController: NavHostController, templateId: String, templateViewModel: TemplateViewModel
+    navController: NavHostController, templateId: String, templateViewModel: TemplateViewModel, serviceViewModel: ServiceViewModel
 ) {
     if (templateId.isEmpty()) {
         navController.navigateUp()
@@ -158,6 +159,13 @@ fun EditTemplateScreen(
                         colors = ButtonDefaults.buttonColors(containerColor = light_gray),
                         onClick = {
                             template?.id?.let { templateId ->
+
+                                serviceViewModel.clearImageUris()
+                                serviceViewModel.setActiveExtraction(false)
+                                serviceViewModel.setActivePhoto(true)
+                                templateViewModel.setActiveTemplate(null)
+                                serviceViewModel.setProgress(0f)
+                                serviceViewModel.clearResult()
                                 navController.navigate(Screen.Camera.routeWithOptionalArgs("templateId" to templateId.toHexString()))
                             ***REMOVED***
                         ***REMOVED***

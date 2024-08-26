@@ -1,12 +1,10 @@
 {
-  "id": 70,
-  "title": "Resume/CV",
-  "description": "Template for a standard resume or curriculum vitae (CV)",
+  "title": "Reçu standard",
+  "description": "Modèle pour un reçu standard de vente au détail ou de service",
   "fields": [
     {
-      "id": 71,
-      "title": "Personal Information",
-      "description": "Basic information about the individual, Includes the individual's full name, contact information, and other identifying details",
+      "title": "Numéro de transaction/commande",
+      "description": "Identifiant unique de la transaction ou de la commande",
       "extraDescription": "",
       "type": "Text",
       "required": true,
@@ -15,9 +13,8 @@
       "list": false
     ***REMOVED***,
     {
-      "id": 72,
-      "title": "Objective Statement",
-      "description": "A brief statement summarizing the individual's career goals",
+      "title": "Informations sur le client",
+      "description": "Nom, adresse ou autres informations d'identification du client",
       "extraDescription": "",
       "type": "Text",
       "required": false,
@@ -26,49 +23,107 @@
       "list": false
     ***REMOVED***,
     {
-      "id": 73,
-      "title": "Work Experience",
-      "description": "Details about the individual's past work experiences, Includes job title, company name, duration, responsibilities, and achievements",
+      "title": "Nom du magasin",
+      "description": "Nom du magasin émettant le reçu",
       "extraDescription": "",
       "type": "Text",
       "required": true,
       "intelligentExtraction": false,
       "default": "N/A",
-      "list": true
+      "list": false
     ***REMOVED***,
     {
-      "id": 74,
-      "title": "Education",
-      "description": "Details about the individual's educational background, Includes degree, institution, years attended, and field of study",
+      "title": "Adresse du magasin",
+      "description": "Adresse du magasin",
       "extraDescription": "",
       "type": "Text",
       "required": true,
       "intelligentExtraction": false,
       "default": "N/A",
-      "list": true
+      "list": false
     ***REMOVED***,
     {
-      "id": 75,
-      "title": "Skills",
-      "description": "List of key skills the individual possesses,Includes both technical and soft skills",
+      "title": "Numéro de téléphone",
+      "description": "Numéro de téléphone du magasin",
       "extraDescription": "",
       "type": "Text",
-      "required": true,
+      "required": false,
       "intelligentExtraction": false,
       "default": "N/A",
-      "list": true
+      "list": false
     ***REMOVED***,
     {
-      "id": 76,
-      "title": "Strengths and Weaknesses",
-      "description": "An assessment of the individual's key strengths and weaknesses, Includes characteristics, competencies, and areas for improvement",
+      "title": "Site web",
+      "description": "Site web du magasin",
       "extraDescription": "",
       "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Date d'émission",
+      "description": "Date d'émission de la facture, au format numérique AAAA-MM-JJ",
+      "extraDescription": "",
+      "type": "Date",
       "required": true,
-      "intelligentExtraction": true,
+      "intelligentExtraction": false,
       "default": "N/A",
       "list": false
     ***REMOVED***
   ],
-  "tags": ["Resume", "CV", "Career", "Job"]
+  "tables": [
+    {
+      "title": "Articles achetés",
+      "description": "Détails des articles achetés",
+      "keywords": ["Nom de l'article", "Quantité", "Prix"],
+      "all": false,
+      "rows": [
+        {
+          "title": "Nom/Description de l'article",
+          "description": "Nom ou description de l'article",
+          "extraDescription": "",
+          "type": "Text",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": "N/A",
+          "list": false
+        ***REMOVED***
+      ],
+      "columns": [
+        {
+          "title": "Quantité",
+          "description": "Nombre d'articles",
+          "extraDescription": "",
+          "type": "Number",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": -1,
+          "list": false
+        ***REMOVED***,
+        {
+          "title": "Prix unitaire",
+          "description": "Prix par article",
+          "extraDescription": "",
+          "type": "Float",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": -1.0,
+          "list": false
+        ***REMOVED***,
+        {
+          "title": "Prix total",
+          "description": "Prix total des articles",
+          "extraDescription": "",
+          "type": "Float",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": -1.0,
+          "list": false
+        ***REMOVED***
+      ]
+    ***REMOVED***
+  ],
+  "tags": ["Reçu", "Transaction", "Vente au détail"]
 ***REMOVED***

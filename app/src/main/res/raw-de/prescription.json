@@ -1,0 +1,88 @@
+{
+  "title": "Medizinisches Rezept",
+  "description": "Vorlage für ein Standardrezept",
+  "fields": [
+    {
+      "title": "Patienteninformationen",
+      "description": "Details über den Patienten, der das Rezept erhält. Enthält den vollständigen Namen des Patienten, das Geburtsdatum und andere identifizierende Details.",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Verschreibender Arzt",
+      "description": "Informationen über den Arzt, der das Rezept ausstellt",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Rezeptdatum",
+      "description": "Das Datum, an dem das Rezept ausgestellt wurde, im Zahlenformat JJJJ-MM-TT",
+      "extraDescription": "",
+      "type": "Date",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***
+  ],
+  "tables": [
+    {
+      "title": "Medikamente",
+      "description": "Liste der verschriebenen Medikamente mit Details",
+      "keywords": ["medication", "dosage", "instructions"],
+      "all": false,
+      "rows": [],
+      "columns": [
+        {
+          "title": "Medikamentenname",
+          "description": "Der Name des verschriebenen Medikaments",
+          "extraDescription": "Enthält den Markennamen oder den generischen Namen",
+          "type": "Text",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": "N/A",
+          "list": false
+        ***REMOVED***,
+        {
+          "title": "Dosierung",
+          "description": "Die Dosierung des Medikaments",
+          "extraDescription": "Enthält typischerweise die Menge (z. B. mg) und Häufigkeit",
+          "type": "Text",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": "N/A",
+          "list": false
+        ***REMOVED***,
+        {
+          "title": "Menge",
+          "description": "Gesamtmenge des verschriebenen Medikaments. Wird normalerweise als Gesamtzahl der Pillen, Milliliter usw. angegeben.",
+          "extraDescription": "",
+          "type": "Number",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": "-1",
+          "list": false
+        ***REMOVED***,
+        {
+          "title": "Anweisungen",
+          "description": "Anweisungen für den Patienten, wie das Medikament einzunehmen ist. Detaillierte Gebrauchsanweisung (z. B. mit Nahrung einnehmen, zweimal täglich einnehmen)",
+          "extraDescription": "",
+          "type": "Text",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": "N/A",
+          "list": false
+        ***REMOVED***
+      ]
+    ***REMOVED***
+  ],
+  "tags": ["Medizinisch", "Rezept", "Gesundheitswesen"]
+***REMOVED***

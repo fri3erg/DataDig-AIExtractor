@@ -29,6 +29,8 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.example.tesifrigo.R
 import com.example.tesifrigo.ui.template.BooleanFieldWithLabel
+import com.example.tesifrigo.ui.theme.dark_red
+import com.example.tesifrigo.ui.theme.see_result
 import com.example.tesifrigo.ui.theme.vale
 import com.example.tesifrigo.utils.HelpIconButton
 import com.example.tesifrigo.viewmodels.Keys
@@ -176,7 +178,7 @@ fun ApiKeyInput(
             Text(text = keyName)
             Spacer(modifier = Modifier.width(16.dp))
             FaIcon(
-                faIcon = FaIcons.Check, tint = if (apiKey) Color.Green else Color.Red
+                faIcon = FaIcons.Check, tint = if (apiKey) see_result else dark_red
 ***REMOVED***
             Spacer(modifier = Modifier.weight(1f)) // Push items to the right
 

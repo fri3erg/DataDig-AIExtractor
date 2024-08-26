@@ -1,5 +1,5 @@
 {
-  "title": "General News Article",
+  "title": "News Article",
   "description": "Template for a standard news article or general article",
   "fields": [
     {
@@ -34,9 +34,9 @@
     ***REMOVED***,
     {
       "title": "Publication Date",
-      "description": "Date when the article was published,in DD/MM/YYYY format",
+      "description": "Date when the article was published,in YYYY-MM-DD numbers format",
       "extraDescription": "",
-      "type": "Text",
+      "type": "Date",
       "required": true,
       "intelligentExtraction": false,
       "default": "N/A",

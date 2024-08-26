@@ -1,0 +1,129 @@
+{
+  "title": "Standardbeleg",
+  "description": "Vorlage für einen Standard-Einzelhandels- oder Dienstleistungsbeleg",
+  "fields": [
+    {
+      "title": "Transaktions-/Bestellnummer",
+      "description": "Eindeutige Kennung für die Transaktion oder Bestellung",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Kundeninformationen",
+      "description": "Name, Adresse oder andere identifizierende Informationen über den Kunden",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Geschäftsname",
+      "description": "Name des Geschäfts, das den Beleg ausstellt",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Geschäftsadresse",
+      "description": "Adresse des Geschäfts",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Telefonnummer",
+      "description": "Kontaktnummer des Geschäfts",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Webseite",
+      "description": "Webseite des Geschäfts",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Ausstellungsdatum",
+      "description": "Datum, an dem die Rechnung ausgestellt wurde, im Zahlenformat JJJJ-MM-TT",
+      "extraDescription": "",
+      "type": "Date",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***
+  ],
+  "tables": [
+    {
+      "title": "Gekaufte Artikel",
+      "description": "Details der gekauften Artikel",
+      "keywords": ["Artikelname", "Menge", "Preis"],
+      "all": false,
+      "rows": [
+        {
+          "title": "Artikelname/Beschreibung",
+          "description": "Name oder Beschreibung des Artikels",
+          "extraDescription": "",
+          "type": "Text",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": "N/A",
+          "list": false
+        ***REMOVED***
+      ],
+      "columns": [
+        {
+          "title": "Menge",
+          "description": "Anzahl der Artikel",
+          "extraDescription": "",
+          "type": "Number",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": -1,
+          "list": false
+        ***REMOVED***,
+        {
+          "title": "Einzelpreis",
+          "description": "Preis pro Artikel",
+          "extraDescription": "",
+          "type": "Float",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": -1.0,
+          "list": false
+        ***REMOVED***,
+        {
+          "title": "Gesamtpreis",
+          "description": "Gesamtpreis für die Artikel",
+          "extraDescription": "",
+          "type": "Float",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": -1.0,
+          "list": false
+        ***REMOVED***
+      ]
+    ***REMOVED***
+  ],
+  "tags": ["Beleg", "Transaktion", "Einzelhandel"]
+***REMOVED***

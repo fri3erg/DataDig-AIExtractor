@@ -503,7 +503,7 @@ def create_pydantic_class(template: Template):
         if template_field.required:
             description += " (required)"
         if template_field.type == "date":
-            description += "this field searches for a date, (format: YYYY-MM-DD)"
+            description += "this field searches for a date, (format: YYYY-MM-DD, numbers)"
 
         default = get_typed_default(template_field.default, pydantic_type)
 

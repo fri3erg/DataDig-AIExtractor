@@ -37,12 +37,19 @@ class JsonCreator {
 
         // Convert the modified Extraction object to JSON and save to the file
         return try {
+            val directory = outputFile.parentFile
+            if (directory != null && !directory.exists()) {
+                directory.mkdirs()
+            ***REMOVED***
+
+            // Write the JSON to the file
             val json = gson.toJson(extraction)
             FileWriter(outputFile).use { writer ->
                 writer.write(json)
             ***REMOVED***
+
             // Return the URI of the created file
-            Uri.fromFile(outputFile)
+            return Uri.fromFile(outputFile)
         ***REMOVED*** catch (e: IOException) {
             // Handle the exception (log, throw, etc.)
             e.printStackTrace() // Placeholder for error handling

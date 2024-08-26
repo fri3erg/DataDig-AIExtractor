@@ -1,0 +1,48 @@
+{
+  "title": "Términos y Condiciones",
+  "description": "Plantilla para un documento estándar de Términos y Condiciones",
+  "fields": [
+    {
+      "title": "Condiciones Generales",
+      "description": "Condiciones estándar aplicables a todos los usuarios o clientes, reglas y pautas básicas para usar el servicio o producto",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": true
+    ***REMOVED***,
+    {
+      "title": "Condiciones Importantes",
+      "description": "Condiciones clave que los usuarios deben conocer, términos críticos que tienen un impacto significativo en los derechos y responsabilidades de los usuarios",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": true
+    ***REMOVED***,
+    {
+      "title": "Condiciones Inusuales o Peligrosas",
+      "description": "Cualquier condición que sea poco común o que presente riesgos potenciales, términos que pueden implicar obligaciones, riesgos o limitaciones significativas, intenta comprender del contexto a qué debo temer",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": true,
+      "default": "N/A",
+      "list": true
+    ***REMOVED***,
+    {
+      "title": "Legislación Aplicable",
+      "description": "La jurisdicción legal bajo la cual se rigen los términos y condiciones",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***
+  ],
+  "tables": [],
+  "tags": ["Legal", "Términos y Condiciones"]
+***REMOVED***

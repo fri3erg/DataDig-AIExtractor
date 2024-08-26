@@ -1,0 +1,98 @@
+{
+  "title": "Ausweis/Reisepass",
+  "description": "Vorlage für einen Standard-Personalausweis oder Reisepass",
+  "fields": [
+    {
+      "title": "Vollständiger Name",
+      "description": "Vollständiger offizieller Name der Person, wie auf dem Ausweis oder Reisepass angegeben",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Geburtsdatum",
+      "description": "Geburtsdatum der Person, im Zahlenformat TT/MM/JJJJ",
+      "extraDescription": "",
+      "type": "Date",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Staatsangehörigkeit",
+      "description": "Land der Staatsangehörigkeit",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Dokumentennummer",
+      "description": "Eindeutige Dokumentennummer, die Identifikationsnummer oder Reisepassnummer",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Ablaufdatum",
+      "description": "Ablaufdatum des Ausweises oder Reisepasses, im Zahlenformat JJJJ-MM-TT",
+      "extraDescription": "",
+      "type": "Date",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Ausstellungsort",
+      "description": "Ort, an dem der Ausweis oder Reisepass ausgestellt wurde, Stadt oder Land der Ausstellung",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Geschlecht",
+      "description": "Geschlecht der Person, Männlich, Weiblich oder Andere",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Größe",
+      "description": "Größe der Person, in Zentimetern",
+      "extraDescription": "",
+      "type": "Number",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "-1",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Persönliche Nummer",
+      "description": "Optionale persönliche Identifikationsnummer",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***
+  ],
+  "tables": [],
+  "tags": ["Ausweis", "Reisepass", "Identifikation"]
+***REMOVED***

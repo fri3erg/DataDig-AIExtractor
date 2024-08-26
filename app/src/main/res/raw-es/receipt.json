@@ -1,0 +1,129 @@
+{
+  "title": "Recibo Estándar",
+  "description": "Plantilla para un recibo estándar de venta minorista o servicio",
+  "fields": [
+    {
+      "title": "Número de Transacción/Pedido",
+      "description": "Identificador único para la transacción o pedido",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Información del Cliente",
+      "description": "Nombre, dirección u otra información de identificación del cliente",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Nombre de la Tienda",
+      "description": "Nombre de la tienda que emite el recibo",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Dirección de la Tienda",
+      "description": "Dirección de la tienda",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Número de Teléfono",
+      "description": "Número de contacto de la tienda",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Sitio Web",
+      "description": "Sitio web de la tienda",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Fecha de Emisión",
+      "description": "Fecha en que se emitió la factura, en el formato numérico AAAA-MM-DD",
+      "extraDescription": "",
+      "type": "Date",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***
+  ],
+  "tables": [
+    {
+      "title": "Artículos Comprados",
+      "description": "Detalles de los artículos comprados",
+      "keywords": ["Nombre del Artículo", "Cantidad", "Precio"],
+      "all": false,
+      "rows": [
+        {
+          "title": "Nombre/Descripción del Artículo",
+          "description": "Nombre o descripción del artículo",
+          "extraDescription": "",
+          "type": "Text",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": "N/A",
+          "list": false
+        ***REMOVED***
+      ],
+      "columns": [
+        {
+          "title": "Cantidad",
+          "description": "Número de artículos",
+          "extraDescription": "",
+          "type": "Number",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": -1,
+          "list": false
+        ***REMOVED***,
+        {
+          "title": "Precio Unitario",
+          "description": "Precio por artículo",
+          "extraDescription": "",
+          "type": "Float",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": -1.0,
+          "list": false
+        ***REMOVED***,
+        {
+          "title": "Precio Total",
+          "description": "Precio total de los artículos",
+          "extraDescription": "",
+          "type": "Float",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": -1.0,
+          "list": false
+        ***REMOVED***
+      ]
+    ***REMOVED***
+  ],
+  "tags": ["Recibo", "Transacción", "Venta Minorista"]
+***REMOVED***

@@ -1,0 +1,67 @@
+{
+  "title": "Lebenslauf/CV",
+  "description": "Vorlage für einen Standard-Lebenslauf oder Curriculum Vitae (CV)",
+  "fields": [
+    {
+      "title": "Persönliche Informationen",
+      "description": "Grundlegende Informationen über die Person. Enthält den vollständigen Namen der Person, Kontaktinformationen und andere identifizierende Details.",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Zielsetzung",
+      "description": "Eine kurze Erklärung, die die beruflichen Ziele der Person zusammenfasst.",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Berufserfahrung",
+      "description": "Details über die bisherigen Berufserfahrungen der Person. Enthält Berufsbezeichnung, Firmenname, Dauer, Verantwortlichkeiten und Erfolge.",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": true
+    ***REMOVED***,
+    {
+      "title": "Ausbildung",
+      "description": "Details über den Bildungshintergrund der Person. Enthält Abschluss, Institution, besuchte Jahre und Studienfach.",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": true
+    ***REMOVED***,
+    {
+      "title": "Fähigkeiten",
+      "description": "Liste der wichtigsten Fähigkeiten, die die Person besitzt. Enthält sowohl technische als auch soziale Kompetenzen.",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": true
+    ***REMOVED***,
+    {
+      "default": "N/A",
+      "description": "Eine Einschätzung der wichtigsten Stärken und Schwächen der Person. Enthält Eigenschaften, Kompetenzen und Bereiche, die verbessert werden können.",
+      "extraDescription": "",
+      "intelligentExtraction": true,
+      "list": false,
+      "required": true,
+      "title": "Stärken und Schwächen",
+      "type": "Text"
+    ***REMOVED***
+  ],
+  "tags": ["Lebenslauf", "CV", "Karriere", "Job"]
+***REMOVED***

@@ -1,0 +1,129 @@
+{
+  "title": "Ricevuta Standard",
+  "description": "Modello per una ricevuta standard di vendita al dettaglio o di servizio",
+  "fields": [
+    {
+      "title": "Numero di Transazione/Ordine",
+      "description": "Identificatore univoco per la transazione o l'ordine",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Informazioni sul Cliente",
+      "description": "Nome, indirizzo o altre informazioni identificative sul cliente",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Nome del Negozio",
+      "description": "Nome del negozio che emette la ricevuta",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Indirizzo del Negozio",
+      "description": "Indirizzo del negozio",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Numero di Telefono",
+      "description": "Numero di telefono del negozio",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Sito Web",
+      "description": "Sito web del negozio",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Data di Emissione",
+      "description": "Data in cui è stata emessa la ricevuta, nel formato numerico AAAA-MM-GG",
+      "extraDescription": "",
+      "type": "Date",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***
+  ],
+  "tables": [
+    {
+      "title": "Articoli Acquistati",
+      "description": "Dettagli degli articoli acquistati",
+      "keywords": ["Nome Articolo", "Quantità", "Prezzo"],
+      "all": false,
+      "rows": [
+        {
+          "title": "Nome/Descrizione Articolo",
+          "description": "Nome o descrizione dell'articolo",
+          "extraDescription": "",
+          "type": "Text",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": "N/A",
+          "list": false
+        ***REMOVED***
+      ],
+      "columns": [
+        {
+          "title": "Quantità",
+          "description": "Numero di articoli",
+          "extraDescription": "",
+          "type": "Number",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": -1,
+          "list": false
+        ***REMOVED***,
+        {
+          "title": "Prezzo Unitario",
+          "description": "Prezzo per articolo",
+          "extraDescription": "",
+          "type": "Float",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": -1.0,
+          "list": false
+        ***REMOVED***,
+        {
+          "title": "Prezzo Totale",
+          "description": "Prezzo totale degli articoli",
+          "extraDescription": "",
+          "type": "Float",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": -1.0,
+          "list": false
+        ***REMOVED***
+      ]
+    ***REMOVED***
+  ],
+  "tags": ["Ricevuta", "Transazione", "Vendita al Dettaglio"]
+***REMOVED***

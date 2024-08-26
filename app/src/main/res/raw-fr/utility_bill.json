@@ -1,0 +1,109 @@
+{
+  "title": "Facture de services publics",
+  "description": "Modèle pour une facture de services publics standard (électricité, eau, gaz)",
+  "fields": [
+    {
+      "title": "Informations client",
+      "description": "Détails sur le client destinataire de la facture",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Numéro de compte",
+      "description": "Numéro de compte ou code du client auprès du fournisseur de services publics",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Période de facturation",
+      "description": "Période pour laquelle la consommation de services publics est facturée",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Date d'émission",
+      "description": "Date à laquelle la facture a été émise, au format numérique AAAA-MM-JJ",
+      "extraDescription": "",
+      "type": "Date",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Date d'échéance",
+      "description": "Date à laquelle le paiement doit être effectué",
+      "extraDescription": "",
+      "type": "Date",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***
+  ],
+  "tables": [
+    {
+      "title": "Détails de consommation",
+      "description": "Détails de la consommation de services publics pendant la période de facturation",
+      "keywords": ["Type de service public", "Consommation", "Tarif", "Total"],
+      "all": false,
+      "rows": [
+        {
+          "title": "Type de service public",
+          "description": "Type de service public (par exemple, électricité, eau, gaz)",
+          "extraDescription": "",
+          "type": "Text",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": "N/A",
+          "list": false
+        ***REMOVED***
+      ],
+      "columns": [
+        {
+          "title": "Consommation",
+          "description": "Quantité de service public utilisée (par exemple, kWh, mètres cubes)",
+          "extraDescription": "",
+          "type": "Number",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": -1,
+          "list": false
+        ***REMOVED***,
+        {
+          "title": "Tarif",
+          "description": "Tarif par unité de service public",
+          "extraDescription": "",
+          "type": "Float",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": -1.0,
+          "list": false
+        ***REMOVED***,
+        {
+          "title": "Total",
+          "description": "Coût total de la consommation de services publics",
+          "extraDescription": "",
+          "type": "Float",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": -1.0,
+          "list": false
+        ***REMOVED***
+      ]
+    ***REMOVED***
+  ],
+  "tags": ["Facture de services publics", "Électricité", "Eau", "Gaz"]
+***REMOVED***

@@ -1,0 +1,48 @@
+{
+  "title": "Allgemeine Geschäftsbedingungen",
+  "description": "Vorlage für ein Standarddokument mit Allgemeinen Geschäftsbedingungen",
+  "fields": [
+    {
+      "title": "Allgemeine Bedingungen",
+      "description": "Standardbedingungen, die für alle Benutzer oder Kunden gelten, Grundregeln und Richtlinien für die Nutzung des Dienstes oder Produkts",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": true
+    ***REMOVED***,
+    {
+      "title": "Wichtige Bedingungen",
+      "description": "Wichtige Bedingungen, die Benutzer beachten müssen, Kritische Bedingungen, die erhebliche Auswirkungen auf die Rechte und Pflichten der Benutzer haben",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": true
+    ***REMOVED***,
+    {
+      "title": "Ungewöhnliche oder gefährliche Bedingungen",
+      "description": "Alle Bedingungen, die ungewöhnlich sind oder potenzielle Risiken bergen, Bedingungen, die erhebliche Verpflichtungen, Risiken oder Einschränkungen beinhalten können, versuchen Sie aus dem Kontext zu verstehen, wovor ich mich fürchten muss",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": true,
+      "default": "N/A",
+      "list": true
+    ***REMOVED***,
+    {
+      "title": "Anwendbares Recht",
+      "description": "Die Rechtsprechung, unter der die Allgemeinen Geschäftsbedingungen geregelt werden",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***
+  ],
+  "tables": [],
+  "tags": ["Rechtlich", "Allgemeine Geschäftsbedingungen"]
+***REMOVED***

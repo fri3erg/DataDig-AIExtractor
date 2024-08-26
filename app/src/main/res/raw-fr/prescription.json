@@ -1,0 +1,88 @@
+{
+  "title": "Ordonnance Médicale",
+  "description": "Modèle pour une ordonnance médicale standard",
+  "fields": [
+    {
+      "title": "Informations sur le patient",
+      "description": "Détails sur le patient recevant l'ordonnance, y compris le nom complet du patient, la date de naissance et d'autres détails d'identification",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Médecin prescripteur",
+      "description": "Informations sur le médecin qui a délivré l'ordonnance",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Date de l'ordonnance",
+      "description": "La date à laquelle l'ordonnance a été délivrée, au format numérique AAAA-MM-JJ",
+      "extraDescription": "",
+      "type": "Date",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***
+  ],
+  "tables": [
+    {
+      "title": "Médicaments",
+      "description": "Liste des médicaments prescrits avec leurs détails",
+      "keywords": ["medication", "dosage", "instructions"],
+      "all": false,
+      "rows": [],
+      "columns": [
+        {
+          "title": "Nom du médicament",
+          "description": "Le nom du médicament prescrit",
+          "extraDescription": "Inclut le nom de marque ou le nom générique",
+          "type": "Text",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": "N/A",
+          "list": false
+        ***REMOVED***,
+        {
+          "title": "Dosage",
+          "description": "Le dosage du médicament",
+          "extraDescription": "Comprend généralement la quantité (par exemple, mg) et la fréquence",
+          "type": "Text",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": "N/A",
+          "list": false
+        ***REMOVED***,
+        {
+          "title": "Quantité",
+          "description": "Quantité totale de médicaments prescrite. Généralement indiquée comme un nombre total de comprimés, de millilitres, etc.",
+          "extraDescription": "",
+          "type": "Number",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": "-1",
+          "list": false
+        ***REMOVED***,
+        {
+          "title": "Instructions",
+          "description": "Instructions sur la façon dont le patient doit prendre le médicament. Instructions d'utilisation détaillées (par exemple, prendre avec de la nourriture, prendre deux fois par jour)",
+          "extraDescription": "",
+          "type": "Text",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": "N/A",
+          "list": false
+        ***REMOVED***
+      ]
+    ***REMOVED***
+  ],
+  "tags": ["Médical", "Ordonnance", "Santé"]
+***REMOVED***

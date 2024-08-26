@@ -1,0 +1,88 @@
+{
+  "title": "Receta Médica",
+  "description": "Plantilla para una receta médica estándar",
+  "fields": [
+    {
+      "title": "Información del Paciente",
+      "description": "Detalles sobre el paciente que recibe la receta, incluyendo su nombre completo, fecha de nacimiento y otros datos de identificación",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Médico Prescriptor",
+      "description": "Información sobre el médico que emite la receta",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Fecha de la Receta",
+      "description": "La fecha en que se emitió la receta, en formato numérico AAAA-MM-DD",
+      "extraDescription": "",
+      "type": "Date",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***
+  ],
+  "tables": [
+    {
+      "title": "Medicamentos",
+      "description": "Lista de medicamentos recetados con detalles",
+      "keywords": ["medication", "dosage", "instructions"],
+      "all": false,
+      "rows": [],
+      "columns": [
+        {
+          "title": "Nombre del Medicamento",
+          "description": "El nombre del medicamento recetado",
+          "extraDescription": "Incluye el nombre de marca o el nombre genérico",
+          "type": "Text",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": "N/A",
+          "list": false
+        ***REMOVED***,
+        {
+          "title": "Dosis",
+          "description": "La dosis del medicamento",
+          "extraDescription": "Normalmente incluye la cantidad (por ejemplo, mg) y la frecuencia",
+          "type": "Text",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": "N/A",
+          "list": false
+        ***REMOVED***,
+        {
+          "title": "Cantidad",
+          "description": "Cantidad total del medicamento recetado. Generalmente se indica como un número total de pastillas, mililitros, etc.",
+          "extraDescription": "",
+          "type": "Number",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": "-1",
+          "list": false
+        ***REMOVED***,
+        {
+          "title": "Instrucciones",
+          "description": "Instrucciones sobre cómo el paciente debe tomar el medicamento. Instrucciones de uso detalladas (por ejemplo, tomar con alimentos, tomar dos veces al día)",
+          "extraDescription": "",
+          "type": "Text",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": "N/A",
+          "list": false
+        ***REMOVED***
+      ]
+    ***REMOVED***
+  ],
+  "tags": ["Médico", "Receta", "Salud"]
+***REMOVED***

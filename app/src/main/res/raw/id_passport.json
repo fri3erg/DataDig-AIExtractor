@@ -14,9 +14,9 @@
     ***REMOVED***,
     {
       "title": "Date of Birth",
-      "description": "Birthdate of the individual, in DD/MM/YYYY format",
+      "description": "Birthdate of the individual, in DD/MM/YYYY numbers format",
       "extraDescription": "",
-      "type": "Text",
+      "type": "Date",
       "required": true,
       "intelligentExtraction": false,
       "default": "N/A",
@@ -44,9 +44,9 @@
     ***REMOVED***,
     {
       "title": "Expiration Date",
-      "description": "Expiration date of the ID or passport, in DD/MM/YYYY format",
+      "description": "Expiration date of the ID or passport, in YYYY-MM-DD numbers format",
       "extraDescription": "",
-      "type": "Text",
+      "type": "Date",
       "required": true,
       "intelligentExtraction": false,
       "default": "N/A",

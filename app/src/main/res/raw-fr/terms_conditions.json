@@ -1,0 +1,48 @@
+{
+  "title": "Conditions générales de vente",
+  "description": "Modèle pour un document standard de conditions générales de vente",
+  "fields": [
+    {
+      "title": "Conditions générales",
+      "description": "Conditions standard applicables à tous les utilisateurs ou clients, règles et directives de base pour l'utilisation du service ou du produit",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": true
+    ***REMOVED***,
+    {
+      "title": "Conditions importantes",
+      "description": "Conditions clés dont les utilisateurs doivent être conscients, conditions critiques ayant un impact significatif sur les droits et responsabilités des utilisateurs",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": true
+    ***REMOVED***,
+    {
+      "title": "Conditions inhabituelles ou dangereuses",
+      "description": "Toutes conditions inhabituelles ou présentant des risques potentiels, conditions pouvant impliquer des obligations, des risques ou des limitations importants, essayez de comprendre à partir du contexte ce dont je dois avoir peur",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": true,
+      "default": "N/A",
+      "list": true
+    ***REMOVED***,
+    {
+      "title": "Loi applicable",
+      "description": "La juridiction légale sous laquelle les conditions générales sont régies",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***
+  ],
+  "tables": [],
+  "tags": ["Légal", "Conditions générales de vente"]
+***REMOVED***

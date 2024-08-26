@@ -722,7 +722,10 @@ fun FileCard(
     ***REMOVED***
 
     fun openFile(uri: Uri) {
-        if (uri.path == null) return
+        if (uri.path == "null") {
+            Toast.makeText(context, context.getString(R.string.file_not_found), Toast.LENGTH_SHORT).show()
+            return
+        ***REMOVED***
         val contentUri = FileProvider.getUriForFile(
             context, "com.example.tesifrigo.fileprovider", File(uri.path!!)
         )

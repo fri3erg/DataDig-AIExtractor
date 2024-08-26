@@ -1,0 +1,78 @@
+{
+  "title": "Carte de Visite",
+  "description": "Modèle pour une carte de visite standard",
+  "fields": [
+    {
+      "title": "Nom Complet",
+      "description": "Nom de la personne",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Fonction",
+      "description": "Poste ou fonction de la personne",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Nom de l'Entreprise",
+      "description": "Nom de l'entreprise",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Numéro de Téléphone",
+      "description": "Numéro de téléphone de contact",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Adresse E-mail",
+      "description": "Adresse e-mail de contact",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Site Web",
+      "description": "Site web de l'entreprise ou personnel",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Adresse",
+      "description": "Adresse physique de l'entreprise",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***
+  ],
+  "tables": [],
+  "tags": ["Carte de Visite", "Informations de Contact", "Professionnel"]
+***REMOVED***

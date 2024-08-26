@@ -68,6 +68,7 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -79,8 +80,10 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -108,6 +111,7 @@ import com.guru.fontawesomecomposelib.FaIcon
 import com.guru.fontawesomecomposelib.FaIcons
 import java.text.ParseException
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Locale
 import java.util.TimeZone
 
@@ -192,7 +196,9 @@ fun SingleExtractionScreen(
                     ***REMOVED***
                             ***REMOVED***
                             items(tables) { table ->
-                                ExtractionTableDisplay(table, extractionViewModel)
+                                if(table.fields.isNotEmpty()) {
+                                    ExtractionTableDisplay(table, extractionViewModel)
+                                ***REMOVED***
                             ***REMOVED***
                         ***REMOVED***
                     ***REMOVED***
@@ -917,7 +923,7 @@ fun ExtractionFieldComposable(
         Column(
             modifier = modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             val elements = if (templateField.list) value.split("|") else listOf(value)
@@ -971,37 +977,74 @@ fun Picker(
     ***REMOVED***
         ***REMOVED***
         "Date" -> {
+
+            var parsedDateMillis: Long? = null
+            var showError by remember { mutableStateOf(false) ***REMOVED***
             // Try to parse the date from the text
-            val parsedDateMillis = text.let {
-                val possibleDateFormats = listOf(
-                    "yyyy-MM-dd",
-                    "dd/MM/yyyy",
-                    "MM/dd/yyyy",
-                    "yyyyMMdd",
-                    "MMMM d, yyyy",
-                    "d MMMM yyyy"
-                    // Add more formats as needed
-    ***REMOVED***
+            try {
+                parsedDateMillis = text.let {
 
-                for (formatString in possibleDateFormats) {
-                    try {
-                        val dateFormat = SimpleDateFormat(formatString, Locale.getDefault())
-                        dateFormat.timeZone = TimeZone.getTimeZone("UTC")
-                        val parsedDate = dateFormat.parse(it)
-                        if (parsedDate != null) {
-                            return@let parsedDate.time
+                    val possibleDateFormats = listOf(
+                        "yyyy-MM-dd",
+                        "dd/MM/yyyy",
+                        "MM/dd/yyyy",
+                        "yyyyMMdd",
+                        "MMMM d, yyyy",
+                        "d MMMM yyyy",
+
+                        // Additional YYYY-MM-DD formats
+                        "yyyy.MM.dd",
+                        "yyyy/MM/dd",
+                        "dd.MM.yyyy",
+                        "dd-MM-yyyy",
+                        "MM-dd-yyyy",
+
+                        // Other variations with separators
+                        "dd MMM yyyy",  // e.g., "12 Sep 2023"
+                        "dd MMMM, yyyy", // e.g., "12 September, 2023"
+                        "MMMM dd yyyy",  // e.g., "September 12 2023"
+                        // Add more formats as needed
+        ***REMOVED***
+
+                    for (formatString in possibleDateFormats) {
+                        try {
+
+                            val dateFormat = SimpleDateFormat(formatString, Locale.getDefault())
+                            dateFormat.timeZone = TimeZone.getTimeZone("UTC")
+                            val parsedDate = dateFormat.parse(it)
+                            if (parsedDate != null) {
+                                val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+                                calendar.time = parsedDate
+                                val year = calendar.get(Calendar.YEAR)
+
+                                if (year in 1900..2100) { // Check if year is within the allowed range
+                                    return@let parsedDate.time
+                                ***REMOVED*** else {
+                                    showError =
+                                        true // Set showError to true if year is out of range
+                                ***REMOVED***
+                            ***REMOVED***
+                        ***REMOVED*** catch (e: ParseException) {
+                            // Ignore parsing errors and try the next format
+                        ***REMOVED*** catch (e: Exception) {
+                            // Ignore parsing errors and try the next format
                         ***REMOVED***
-                    ***REMOVED*** catch (e: ParseException) {
-                        // Ignore parsing errors and try the next format
-                    ***REMOVED***
-                ***REMOVED***
-                return@let null // Return null if no format matches
-            ***REMOVED***
 
-            if (parsedDateMillis != null) {
-                val datePickerState = rememberDatePickerState(
-                    initialSelectedDateMillis = parsedDateMillis
+                    ***REMOVED***
+
+
+                    return@let null // Return null if no format matches
+                ***REMOVED***
+            ***REMOVED*** catch (e: Exception) {
+        showError = true
     ***REMOVED***
+
+
+
+
+            if (parsedDateMillis != null && !showError) {
+                val datePickerState =rememberDatePickerState(initialSelectedDateMillis = parsedDateMillis)
+
                 Spacer(modifier = Modifier.height(8.dp))
                 Box(
                     modifier = Modifier
@@ -1020,18 +1063,38 @@ fun Picker(
                 ***REMOVED***
             ***REMOVED*** else {
                 // Fallback to an OutlinedTextField if parsing fails
+                var localText by remember { mutableStateOf(text) ***REMOVED***
+                var lastKnownText by remember { mutableStateOf(text) ***REMOVED***
+
                 OutlinedTextField(
-                    value = text,
+                    value = localText,
                     onValueChange = { newText ->
-                        editableText = newText
-                        changeText(newText)
+                        localText = newText
                     ***REMOVED***,
-                    label = { Text(text = stringResource(R.string.enter_date_manually)) ***REMOVED***,
+                    label = {
+                        val labelText = if (showError) {
+                            stringResource(R.string.enter_date_manually)
+                        ***REMOVED*** else {
+                            stringResource(id = R.string.date)
+                        ***REMOVED***
+                        Text(text = labelText)
+                    ***REMOVED***,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp),
+                    trailingIcon = {
+                        IconButton(onClick = {
+                            changeText(localText)
+                            lastKnownText = localText
+                            showError = false
+                        ***REMOVED***,
+                            enabled = localText != lastKnownText
+                ***REMOVED*** {
+                            FaIcon(faIcon = FaIcons.Check, tint = Color.Black)
+                        ***REMOVED***
+                    ***REMOVED***,
                     singleLine = true,
-                    isError = true
+                    isError = showError
     ***REMOVED***
             ***REMOVED***
         ***REMOVED***

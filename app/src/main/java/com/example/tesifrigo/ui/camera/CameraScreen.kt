@@ -246,6 +246,7 @@ fun startExtraction(context: Context, serviceViewModel: ServiceViewModel, imageU
         it.putParcelableArrayListExtra("imageUris", ArrayList(imageUris))
     ***REMOVED***
     serviceViewModel.setActiveExtraction(true)
+    serviceViewModel.setProgress(0f)
     ContextCompat.startForegroundService(context, intent)
 ***REMOVED***
 
@@ -482,8 +483,9 @@ fun ExtractionDetails(
                 .padding(start = 16.dp, end = 16.dp),
         ) {
             MyImageArea(imageUris = imageUris, onDelete = { uri ->
+
                 serviceViewModel.removeImageUri(uri)
-                if (imageUris.isEmpty()) {
+                if (imageUris.size == 1) {
                     serviceViewModel.setActivePhoto(true)
                 ***REMOVED***
             ***REMOVED***)

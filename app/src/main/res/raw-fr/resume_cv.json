@@ -1,0 +1,67 @@
+{
+  "title": "CV/Curriculum Vitae",
+  "description": "Modèle pour un CV ou curriculum vitae standard",
+  "fields": [
+    {
+      "title": "Informations personnelles",
+      "description": "Informations de base sur la personne, incluant le nom complet, les coordonnées et d'autres détails d'identification",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Objectif professionnel",
+      "description": "Une brève déclaration résumant les objectifs de carrière de la personne",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Expérience professionnelle",
+      "description": "Détails sur les expériences professionnelles passées de la personne, incluant le titre du poste, le nom de l'entreprise, la durée, les responsabilités et les réalisations",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": true
+    ***REMOVED***,
+    {
+      "title": "Formation",
+      "description": "Détails sur le parcours scolaire et universitaire de la personne, incluant le diplôme, l'établissement, les années d'études et le domaine d'études",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": true
+    ***REMOVED***,
+    {
+      "title": "Compétences",
+      "description": "Liste des compétences clés que possède la personne, incluant les compétences techniques et les compétences générales",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": true
+    ***REMOVED***,
+    {
+      "default": "N/A",
+      "description": "Une évaluation des principales forces et faiblesses de la personne. Inclut les caractéristiques, les compétences et les domaines à améliorer",
+      "extraDescription": "",
+      "intelligentExtraction": true,
+      "list": false,
+      "required": true,
+      "title": "Forces et faiblesses",
+      "type": "Text"
+    ***REMOVED***
+  ],
+  "tags": ["CV", "Curriculum Vitae", "Carrière", "Emploi"]
+***REMOVED***

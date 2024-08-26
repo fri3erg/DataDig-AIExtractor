@@ -1,0 +1,109 @@
+{
+  "title": "Stromrechnung",
+  "description": "Vorlage für eine Standard-Stromrechnung (z.B. Strom, Wasser, Gas)",
+  "fields": [
+    {
+      "title": "Kundeninformationen",
+      "description": "Details zum Rechnungsempfänger",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Kontonummer",
+      "description": "Kundennummer oder Code beim Versorgungsunternehmen",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Abrechnungszeitraum",
+      "description": "Zeitraum, für den der Verbrauch abgerechnet wird",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Ausstellungsdatum",
+      "description": "Datum der Rechnungsstellung, im Zahlenformat JJJJ-MM-TT",
+      "extraDescription": "",
+      "type": "Date",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Fälligkeitsdatum",
+      "description": "Datum, bis zu dem die Zahlung erfolgen soll",
+      "extraDescription": "",
+      "type": "Date",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***
+  ],
+  "tables": [
+    {
+      "title": "Verbrauchsdetails",
+      "description": "Details zum Verbrauch im Abrechnungszeitraum",
+      "keywords": ["Art des Versorgungsunternehmens", "Verbrauch", "Tarif", "Gesamt"],
+      "all": false,
+      "rows": [
+        {
+          "title": "Art des Versorgungsunternehmens",
+          "description": "Art des Versorgungsunternehmens (z.B. Strom, Wasser, Gas)",
+          "extraDescription": "",
+          "type": "Text",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": "N/A",
+          "list": false
+        ***REMOVED***
+      ],
+      "columns": [
+        {
+          "title": "Verbrauch",
+          "description": "Verbrauchte Menge (z.B. kWh, Kubikmeter)",
+          "extraDescription": "",
+          "type": "Number",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": -1,
+          "list": false
+        ***REMOVED***,
+        {
+          "title": "Tarif",
+          "description": "Tarif pro Verbrauchseinheit",
+          "extraDescription": "",
+          "type": "Float",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": -1.0,
+          "list": false
+        ***REMOVED***,
+        {
+          "title": "Gesamt",
+          "description": "Gesamtkosten für den Verbrauch",
+          "extraDescription": "",
+          "type": "Float",
+          "required": true,
+          "intelligentExtraction": false,
+          "default": -1.0,
+          "list": false
+        ***REMOVED***
+      ]
+    ***REMOVED***
+  ],
+  "tags": ["Stromrechnung", "Strom", "Wasser", "Gas"]
+***REMOVED***

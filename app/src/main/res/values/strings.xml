@@ -249,7 +249,8 @@
     <string name="file_recreated_to_fit_format">File recreated to fit format: %1$s</string>
     <string name="model">Model</string>
     <string name="format">Format\n</string>
-    <string name="enter_date_manually">Parsing went bad, please put this in a formattable state\n</string>
+    <string name="enter_date_manually">Parsing went bad, please put this in a formattable state(anything with / works)\n</string>
+    <string name="file_not_found" translatable="false">File not found</string>
 
 
 </resources>

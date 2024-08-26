@@ -1,0 +1,127 @@
+{
+  "title": "Articolo di Notizia",
+  "description": "Modello per un articolo di notizie standard o un articolo generale",
+  "fields": [
+    {
+      "title": "Titolo",
+      "description": "Il titolo principale dell'articolo",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Sottotitolo",
+      "description": "Un sottotitolo opzionale che fornisce ulteriore contesto",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Autore",
+      "description": "Nome della persona che ha scritto l'articolo, nome completo dell'autore",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Data di Pubblicazione",
+      "description": "Data in cui l'articolo è stato pubblicato, in formato numerico AAAA-MM-GG",
+      "extraDescription": "",
+      "type": "Date",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Introduzione",
+      "description": "Il paragrafo di apertura o il riassunto dell'articolo, una breve panoramica di ciò di cui tratta l'articolo",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Contenuto Principale",
+      "description": "Il corpo dell'articolo, contenuto dettagliato dell'articolo, inclusi tutti i paragrafi",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": true
+    ***REMOVED***,
+    {
+      "title": "Contesto",
+      "description": "Contesto o contesto storico relativo all'articolo, informazioni che aiutano a comprendere la situazione discussa",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": true,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Posizione dell'Articolo",
+      "description": "La posizione o la prospettiva presentata nell'articolo, interpretazione della posizione dell'articolo sull'argomento",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": true,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Dati e Prove",
+      "description": "Qualsiasi dato o prova presentata nell'articolo (statistiche, studi o pareri di esperti rilevanti)",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": true,
+      "default": "N/A",
+      "list": true
+    ***REMOVED***,
+    {
+      "title": "Conclusione",
+      "description": "Il paragrafo finale che riassume i punti principali dell'articolo, conclusione o riflessioni finali sul tema dell'articolo",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": true,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Riferimenti",
+      "description": "Qualsiasi fonte o riferimento citato nell'articolo, elenco di riferimenti esterni utilizzati per supportare il contenuto dell'articolo",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": true,
+      "default": "N/A",
+      "list": true
+    ***REMOVED***
+  ],
+  "tables": [
+    {
+      "title": "Qualsiasi tabella",
+      "description": "Qualsiasi tabella presente nell'articolo",
+      "keywords": ["Table"],
+      "all": true,
+      "rows": [],
+      "columns": []
+    ***REMOVED***
+  ],
+  "tags": ["News", "Articolo", "Generale"]
+***REMOVED***

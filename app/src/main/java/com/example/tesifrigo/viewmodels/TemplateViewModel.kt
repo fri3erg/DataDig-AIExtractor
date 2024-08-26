@@ -243,13 +243,15 @@ class TemplateViewModel : ViewModel() {
 
     fun addTemplate(): String {
         val newField = TemplateField().apply {
-            title = "New Field"
-            description = "This is a new field"
+            title = ""
+            description = ""
+            type="Text"
+            required=true
+
         ***REMOVED***
         val newTemplate = Template().apply {
-            title = "New Template"
-            description = "This is a new template"
-            tags = realmListOf("freezer")
+            title = ""
+            description = ""
             fields = realmListOf(newField)
         ***REMOVED***
         viewModelScope.launch {

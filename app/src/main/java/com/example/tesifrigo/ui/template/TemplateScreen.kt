@@ -43,6 +43,7 @@ import com.example.tesifrigo.ui.theme.vale
 import com.example.tesifrigo.utils.DropdownWithNavigation
 import com.example.tesifrigo.utils.SearchBar
 import com.example.tesifrigo.utils.isFirstTimeVisit
+import com.example.tesifrigo.viewmodels.ServiceViewModel
 import com.example.tesifrigo.viewmodels.SortOrder
 import com.example.tesifrigo.viewmodels.TemplateViewModel
 import com.guru.fontawesomecomposelib.FaIcon
@@ -52,7 +53,8 @@ import com.guru.fontawesomecomposelib.FaIcons
 @Composable
 fun TemplateScreen(
     navController: NavHostController,
-    templateViewModel: TemplateViewModel
+    templateViewModel: TemplateViewModel,
+    serviceViewModel: ServiceViewModel
 ) {
     val searchText by templateViewModel.searchText.collectAsState()
     val ascending by templateViewModel.ascending.collectAsState()
@@ -145,7 +147,7 @@ fun TemplateScreen(
 
             LazyColumn {
                 items(templates) { template ->  // Iterate directly over templates
-                    TemplateItem(template, navController, templateViewModel)
+                    TemplateItem(template, navController, templateViewModel, serviceViewModel)
                 ***REMOVED***
             ***REMOVED***
 
@@ -174,7 +176,8 @@ fun TemplateScreen(
 fun TemplateItem(
     template: Template,
     navController: NavHostController,
-    viewmodel: TemplateViewModel
+    viewmodel: TemplateViewModel,
+    serviceViewModel: ServiceViewModel
 ) {
     Card( // Consider using a Card for visual structure
         modifier = Modifier
@@ -201,6 +204,13 @@ fun TemplateItem(
                 Spacer(modifier = Modifier.weight(1f)) // Creates space between text and button
                 val id = template.id.toHexString()
                 val onUse = {
+
+                    serviceViewModel.clearImageUris()
+                    serviceViewModel.setActiveExtraction(false)
+                    serviceViewModel.setActivePhoto(true)
+                    viewmodel.setActiveTemplate(null)
+                    serviceViewModel.setProgress(0f)
+                    serviceViewModel.clearResult()
                     navController.navigate(Screen.Camera.routeWithOptionalArgs("templateId" to id))
                 ***REMOVED***
                 val onEdit =

@@ -1,0 +1,78 @@
+{
+  "title": "Visitenkarte",
+  "description": "Vorlage für eine Standard-Visitenkarte",
+  "fields": [
+    {
+      "title": "Vollständiger Name",
+      "description": "Name der Person",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Berufsbezeichnung",
+      "description": "Berufsposition oder Titel der Person",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Firmenname",
+      "description": "Name des Unternehmens",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Telefonnummer",
+      "description": "Kontakttelefonnummer",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "E-Mail-Adresse",
+      "description": "Kontakt-E-Mail-Adresse",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Webseite",
+      "description": "Unternehmens- oder persönliche Webseite",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Adresse",
+      "description": "Physische Adresse des Unternehmens",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***
+  ],
+  "tables": [],
+  "tags": ["Visitenkarte", "Kontaktinformationen", "Professionell"]
+***REMOVED***

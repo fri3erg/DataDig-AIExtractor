@@ -1,0 +1,98 @@
+{
+  "title": "Carta d'Identità/Passaporto",
+  "description": "Modello per una carta d'identità o un passaporto standard",
+  "fields": [
+    {
+      "title": "Nome Completo",
+      "description": "Nome legale completo della persona come mostrato sulla carta d'identità o sul passaporto",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Data di Nascita",
+      "description": "Data di nascita della persona, in formato numerico GG/MM/AAAA",
+      "extraDescription": "",
+      "type": "Date",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Nazionalità",
+      "description": "Paese di nazionalità",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Numero del Documento",
+      "description": "Numero univoco del documento, il numero di identificazione o il numero del passaporto",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Data di Scadenza",
+      "description": "Data di scadenza della carta d'identità o del passaporto, in formato numerico AAAA-MM-GG",
+      "extraDescription": "",
+      "type": "Date",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Luogo di Rilascio",
+      "description": "Luogo in cui è stata rilasciata la carta d'identità o il passaporto, Città o paese di rilascio",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Sesso",
+      "description": "Sesso della persona, Maschio, Femmina o Altro",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Altezza",
+      "description": "Altezza della persona, in centimetri",
+      "extraDescription": "",
+      "type": "Number",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "-1",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Numero Personale",
+      "description": "Numero di identificazione personale opzionale",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***
+  ],
+  "tables": [],
+  "tags": ["Carta d'Identità", "Passaporto", "Identificazione"]
+***REMOVED***

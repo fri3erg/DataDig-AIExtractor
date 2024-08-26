@@ -1,0 +1,67 @@
+{
+  "title": "Currículum Vitae / Hoja de Vida",
+  "description": "Plantilla para un currículum vitae o hoja de vida estándar",
+  "fields": [
+    {
+      "title": "Información Personal",
+      "description": "Información básica sobre el individuo, incluye el nombre completo, información de contacto y otros detalles de identificación",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Objetivo Profesional",
+      "description": "Una breve declaración que resume los objetivos profesionales del individuo",
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Experiencia Laboral",
+      "description": "Detalles sobre las experiencias laborales anteriores del individuo, incluye el cargo, nombre de la empresa, duración, responsabilidades y logros",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": true
+    ***REMOVED***,
+    {
+      "title": "Educación",
+      "description": "Detalles sobre la formación académica del individuo, incluye título, institución, años de asistencia y campo de estudio",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": true
+    ***REMOVED***,
+    {
+      "title": "Habilidades",
+      "description": "Lista de habilidades clave que posee el individuo, incluye tanto habilidades técnicas como habilidades blandas",
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": true
+    ***REMOVED***,
+    {
+      "default": "N/A",
+      "description": "Una evaluación de las fortalezas y debilidades clave del individuo, incluye características, competencias y áreas de mejora",
+      "extraDescription": "",
+      "intelligentExtraction": true,
+      "list": false,
+      "required": true,
+      "title": "Fortalezas y Debilidades",
+      "type": "Text"
+    ***REMOVED***
+  ],
+  "tags": ["Currículum", "Hoja de Vida", "Carrera", "Trabajo"]
+***REMOVED***

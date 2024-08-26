@@ -102,7 +102,7 @@ def llm_extraction_and_tag(page, template: Template, file_id, pydantic_class, op
         print("error in extraction", e)
         optional_error = ExceptionsExtracted(e, "llm_extraction", repr(e))
         response = str(page)
-    response = str.replace(r"\*\*", "", response)
+    response = str.replace(r"\*\*", "", sanitize_text(response))
 
     print("response:", response)
     # To ensure optimal data standardization

@@ -47,7 +47,7 @@ fun AppNavigation(navController: NavHostController, modifier: Modifier = Modifie
         ***REMOVED***
         composable(Screen.Storage.route) { StorageScreen(navController, extractionViewModel) ***REMOVED***
         composable(Screen.Settings.route) { SettingsScreen(serviceViewModel) ***REMOVED***
-        composable(Screen.Templates.route) { TemplateScreen(navController, templateViewModel) ***REMOVED***
+        composable(Screen.Templates.route) { TemplateScreen(navController, templateViewModel, serviceViewModel) ***REMOVED***
         composable(Screen.EditTemplate.route + "/templateId={templateId***REMOVED***",
             arguments = listOf(navArgument("templateId") {
                 type = NavType.StringType
@@ -55,7 +55,7 @@ fun AppNavigation(navController: NavHostController, modifier: Modifier = Modifie
                 nullable = false
             ***REMOVED***)) {
             EditTemplateScreen(
-                navController, it.arguments?.getString("templateId")!!, templateViewModel
+                navController, it.arguments?.getString("templateId")!!, templateViewModel, serviceViewModel
 ***REMOVED***
         ***REMOVED***
         composable(Screen.SingleExtraction.route + "/extractionId={extractionId***REMOVED***",

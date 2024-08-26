@@ -1,0 +1,98 @@
+{
+  "title": "Documento de Identidad/Pasaporte", // ID/Passport
+  "description": "Plantilla para un documento de identidad o pasaporte estándar", // Template for a standard ID card or passport
+  "fields": [
+    {
+      "title": "Nombre Completo", // Full Name
+      "description": "Nombre legal completo de la persona tal como se muestra en el documento de identidad o pasaporte", // Full legal name of the individual as shown on the ID or passport
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Fecha de Nacimiento", // Date of Birth
+      "description": "Fecha de nacimiento de la persona, en formato numérico DD/MM/AAAA", // Birthdate of the individual, in DD/MM/YYYY numbers format
+      "extraDescription": "",
+      "type": "Date",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Nacionalidad", // Nationality
+      "description": "País de nacionalidad", // Country of nationality
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Número de Documento", // Document Number
+      "description": "Número de documento único, el número de identificación o número de pasaporte", // Unique document number, The identification number or passport number
+      "extraDescription": "",
+      "type": "Text",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Fecha de Caducidad", // Expiration Date
+      "description": "Fecha de caducidad del documento de identidad o pasaporte, en formato numérico AAAA-MM-DD", // Expiration date of the ID or passport, in YYYY-MM-DD numbers format
+      "extraDescription": "",
+      "type": "Date",
+      "required": true,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Lugar de Expedición", // Place of Issue
+      "description": "Lugar donde se emitió el documento de identidad o pasaporte, ciudad o país de emisión", // Location where the ID or passport was issued, City or country of issue
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Sexo", // Gender
+      "description": "Sexo de la persona, Masculino, Femenino u Otro", // Gender of the individual, Male, Female, or Other
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Altura", // Height
+      "description": "Altura de la persona, en centímetros", // Height of the individual, in centimeters
+      "extraDescription": "",
+      "type": "Number",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "-1",
+      "list": false
+    ***REMOVED***,
+    {
+      "title": "Número Personal", // Personal Number
+      "description": "Número de identificación personal opcional", // Optional personal identification number
+      "extraDescription": "",
+      "type": "Text",
+      "required": false,
+      "intelligentExtraction": false,
+      "default": "N/A",
+      "list": false
+    ***REMOVED***
+  ],
+  "tables": [],
+  "tags": ["ID", "Pasaporte", "Identificación"] // ID, Passport, Identification
+***REMOVED***
