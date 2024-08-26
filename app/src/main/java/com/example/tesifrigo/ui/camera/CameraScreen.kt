@@ -1,6 +1,7 @@
 package com.example.tesifrigo.ui.camera
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -51,7 +52,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -75,7 +75,7 @@ import com.example.tesifrigo.models.Options
 import com.example.tesifrigo.services.ExtractionService
 import com.example.tesifrigo.ui.theme.cyan_custom
 import com.example.tesifrigo.ui.theme.light_gray
-import com.example.tesifrigo.ui.theme.see_result
+import com.example.tesifrigo.ui.theme.dark_green
 import com.example.tesifrigo.ui.theme.vale
 import com.example.tesifrigo.ui.theme.white_trasparent
 import com.example.tesifrigo.utils.DropDownGeneral
@@ -140,7 +140,7 @@ fun CameraScreen(
                 .fillMaxSize()
                 .padding(innerPadding),
         ) {
-            if (activePhoto) {
+            if (activePhoto || imageUris.isEmpty()) {
                 Column(modifier = Modifier.fillMaxSize()) {
                     CameraPreview(modifier = Modifier.fillMaxSize(),
                         onSetUri = { newUri ->
@@ -158,7 +158,7 @@ fun CameraScreen(
 
             ***REMOVED*** else {
                 ExtractionDetails(
-                    template!!.title,
+                    template?.title ?: "",
                     modifier = Modifier,
                     navController,
                     imageUris,
@@ -500,7 +500,7 @@ fun ExtractionDetails(
                     .size(100.dp, 50.dp)
                     .align(Alignment.CenterHorizontally),
                 shape = RoundedCornerShape(8.dp),
-                colors = ButtonDefaults.buttonColors(Color.Green),
+                colors = ButtonDefaults.buttonColors(dark_green),
                 onClick = onExtractionClick
 ***REMOVED*** {
                 Text(text = stringResource(R.string.extract), color = Color.Black)
@@ -808,7 +808,7 @@ fun ShownExtraction(
                     .size(150.dp, 60.dp),
 
                     shape = RoundedCornerShape(8.dp),
-                    colors = ButtonDefaults.buttonColors(see_result),
+                    colors = ButtonDefaults.buttonColors(dark_green),
                     onClick = {
                         it.id.let { extractionId ->
 
@@ -851,7 +851,11 @@ fun CameraPreview(
                 uris?.forEach { uri ->
                     onSetUri(uri)
                 ***REMOVED***
-                changeActivePhoto()
+                uris?.let {
+                    if (it.isEmpty()) {
+                        changeActivePhoto()
+                    ***REMOVED***
+                ***REMOVED***
             ***REMOVED***)
     val imagePickerLauncherLegacy =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.GetMultipleContents(),
@@ -859,7 +863,11 @@ fun CameraPreview(
                 uris?.forEach { uri ->
                     onSetUri(uri)
                 ***REMOVED***
-                changeActivePhoto()
+                uris?.let {
+                    if (it.isEmpty()) {
+                        changeActivePhoto()
+                    ***REMOVED***
+                ***REMOVED***
             ***REMOVED***)
     val requestPermissionLauncher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission(),
@@ -880,12 +888,13 @@ fun CameraPreview(
                     val uri: Uri = clipData.getItemAt(i).uri
                     onSetUri(uri)
                 ***REMOVED***
+                changeActivePhoto()
             ***REMOVED*** else {
                 data?.data?.let { uri ->
                     onSetUri(uri)
+                    changeActivePhoto()
                 ***REMOVED***
             ***REMOVED***
-            changeActivePhoto()
         ***REMOVED***)
     val onFilePickerClick = {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {

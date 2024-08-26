@@ -101,6 +101,7 @@ import com.example.tesifrigo.models.ExtractionField
 import com.example.tesifrigo.models.ExtractionTable
 import com.example.tesifrigo.models.Review
 import com.example.tesifrigo.ui.template.BooleanFieldWithLabel
+import com.example.tesifrigo.ui.theme.dark_green
 import com.example.tesifrigo.ui.theme.vale
 import com.example.tesifrigo.utils.FileCard
 import com.example.tesifrigo.utils.HelpIconButton
@@ -322,7 +323,7 @@ fun RatingModal(onDismiss: () -> Unit, viewModel: ExtractionViewModel, extractio
                     viewModel.saveReview(review)
                     onDismiss()
                 ***REMOVED***, colors = ButtonDefaults.textButtonColors(
-                    containerColor = Color.Green, contentColor = Color.Black
+                    containerColor = dark_green, contentColor = Color.Black
     ***REMOVED***
 ***REMOVED*** {
                 Text(stringResource(R.string.send))
