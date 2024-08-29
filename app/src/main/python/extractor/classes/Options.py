@@ -19,8 +19,3 @@ class Options:
         self.resize = resize
 
 
-class ExceptionsExtracted:
-    def __init__(self, error: Exception, error_location: str, error_description: str):
-        self.error = error
-        self.error_type = error_location
-        self.error_description = error_description

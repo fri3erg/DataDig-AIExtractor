@@ -2,8 +2,8 @@ from abc import abstractmethod
 from typing import Any, List
 
 from pandas import DataFrame
-from ...classes.Extracted import Extracted, ExtractedField, ExtractedTable, ExtractionCosts
-from ...classes.Options import ExceptionsExtracted, Options
+from ...classes.Extracted import Extracted, ExtractedField, ExtractedTable, ExtractionCosts,ExceptionsExtracted
+from ...classes.Options import  Options
 from ..ai_manager.ai_models import Models
 from ...configs.cost_config import cost_per_token
 from .extractor_utils import (

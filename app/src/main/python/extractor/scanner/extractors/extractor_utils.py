@@ -1,17 +1,9 @@
 from collections import defaultdict
 from datetime import date
-import os
-import re
-from tempfile import NamedTemporaryFile
-from langchain_community.document_loaders import PyPDFLoader
 from pydantic import Field, create_model
 from typing import Any, Dict, List, Optional, get_origin
-from PIL import Image
-from io import BytesIO
 from ...classes.Extracted import ExtractedField
 from ...classes.Template import Template, TemplateTable, TemplateField
-import pytesseract
-import pandas as pd
 from ...configs.basic_tags import ExtractedTable
 
 
@@ -58,7 +50,8 @@ def select_desired_table(tables, words_repr):
 
     for i, table in enumerate(tables):
         for word in words_repr:
-            counter[str(i)] += table.apply(lambda col, word=word: col.str.count(word, flags=re.IGNORECASE)).sum().sum()
+            lower_word = word.lower()
+            counter[str(i)] += table.applymap(lambda cell: str(cell).lower().count(lower_word)).sum().sum()
 
     # Check if counter is empty
     if len(counter) == 0:
@@ -93,86 +86,10 @@ def num_tokens_from_string(string: str | List[str], encoding_name: str = "gpt-4"
     return int(len(string) * (1 + buffer) / average_token_length)
 
 
-def is_more_number(text):
-    """Check if a text in the page is composed  more than 30% of numbers
-
-    Args:
-        text (str): text to check
-
-    Returns:
-        Bool: if the text is composed more than 30% of numbers
-    """
-
-    letter_count = sum(1 for char in text if char.isalpha())
-    number_count = sum(1 for char in text if char.isnumeric())
-    ratio = number_count / (number_count + letter_count + 1)
-    if ratio > 0.3:
-        return True
-    else:
-        return False
 
 
-def get_document_text(images: list[bytes], language: str | None) -> List[str]:
-    """Extracts text from a list of PIL Image objects or bytes (base64 images).
-
-    Args:
-        images: List of PIL Image objects or bytes representing base64 encoded images.
-
-    Returns:
-        str: Concatenated text extracted from all images.
-    """
-    is_chaquopy = False
-    all_text = []
-    try:
-        import chaquopy  # Try importing Chaquopy
-
-        tess_exe_path = os.environ.get("TESSDATA_PREFIX") or ""
-        pytesseract.pytesseract.tesseract_cmd = tess_exe_path
-        is_chaquopy = True
-    except ImportError:
-        # Not running in Chaquopy (e.g., standalone script)
-        tess_exe_path = None  # Use the default Tesseract data path
-        pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-    tessdata_dir_config = f'--tessdata-dir "{tess_exe_path***REMOVED***/tessdata"' if tess_exe_path else ""
-
-    if not is_chaquopy:
-        for image in images:
-            try:
-                # Handle different image input types
-                if isinstance(image, bytes):  # Directly handle bytes
-                    image = Image.open(BytesIO(image))
-                    if image.format != "PNG":  # Example: converting to PNG
-                        image = image.convert("PNG")
-                elif not isinstance(image, Image.Image):
-                    raise TypeError("Unsupported image type. Expected PIL Image or bytes (base64 image).")
-
-                # ... (Your image preprocessing logic here) ...
-                # (e.g., grayscale conversion, thresholding, etc.)
-
-                # Perform OCR
-                all_text.append(pytesseract.image_to_string(image, config=tessdata_dir_config, lang=language))
-
-            except Exception as e:
-                print(f"Error processing image: {e***REMOVED***")
-                all_text.append("")  # Add empty string if an error occurs
-    else:
-        for image_bytes in images:
-            with NamedTemporaryFile(suffix=".png") as temp:  # Assuming PNG format
-                temp.write(image_bytes)
-                temp.flush()
-                text = pytesseract.image_to_string(temp.name, lang=language, config=tessdata_dir_config)
-                all_text.append(text)
-
-    return all_text
-
-
-def get_document_text_pdf(file_path: str) -> List[str]:
-    images: list[bytes] = PyPDFLoader(file_path).load()
-    return get_document_text(images, "it")
-
-
-def is_in_text(pattern, text) -> bool:
-    """returns True if the pattern is found in the text
+"""def is_in_text(pattern, text) -> bool:
+    returns True if the pattern is found in the text
 
     Args:
         pattern (str): pattern to search
@@ -180,15 +97,15 @@ def is_in_text(pattern, text) -> bool:
 
     Returns:
         bool: if the pattern is found in the text
-    """
+    
 
     pattern = re.compile(pattern, re.IGNORECASE)
     ret = bool(pattern.search(text))
     return ret
+"""
 
-
-def search_in_pattern_in_text(pattern, text, pattern_inside):
-    """searches for a pattern inside a pattern in a text
+"""def search_in_pattern_in_text(pattern, text, pattern_inside):
+    searches for a pattern inside a pattern in a text
 
     Args:
         pattern (str): initial pattern
@@ -197,7 +114,7 @@ def search_in_pattern_in_text(pattern, text, pattern_inside):
 
     Returns:
         str: value found
-    """
+    
     match = re.search(pattern, text, re.IGNORECASE)
     if not match:
         return
@@ -205,10 +122,10 @@ def search_in_pattern_in_text(pattern, text, pattern_inside):
     if not match_final:
         return
     return match_final[-1]
+"""
 
-
-def set_flag(extraction, pattern):
-    """sets a flag if the pattern is found in the extraction
+"""def set_flag(extraction, pattern):
+    sets a flag if the pattern is found in the extraction
 
     Args:
         extraction (str): to search in
@@ -216,7 +133,7 @@ def set_flag(extraction, pattern):
 
     Returns:
         bool: if the pattern is found in the extraction
-    """
+    
 
     if is_in_text(pattern, extraction):
         extraction = True
@@ -224,10 +141,10 @@ def set_flag(extraction, pattern):
         extraction = False
 
     return extraction
+"""
 
-
-def filter_list_by_pattern(extraction, pattern):
-    """filter the list leaving only the pattern
+"""def filter_list_by_pattern(extraction, pattern):
+    filter the list leaving only the pattern
 
     Args:
         extraction (List): to clean
@@ -235,7 +152,7 @@ def filter_list_by_pattern(extraction, pattern):
 
     Returns:
         List: cleaned list
-    """
+   
 
     searches = []
     for str in extraction:
@@ -244,10 +161,10 @@ def filter_list_by_pattern(extraction, pattern):
             searches.append(search.group(1))
     extraction = searches if searches else ["not found"]
     return extraction
+ """
 
-
-def extract_between(text, start, end):
-    """extracts the text between two strings
+"""def extract_between(text, start, end):
+    extracts the text between two strings
 
     Args:
         text (str): text to search in
@@ -256,18 +173,18 @@ def extract_between(text, start, end):
 
     Returns:
         str: text in between
-    """
+    
     pattern = f"(\\n)?\s*{re.escape(start)***REMOVED***\s*(\\n)?\s*(\S.*?)\s*(?={re.escape(end)***REMOVED***)"
     matches = re.findall(pattern, text, re.IGNORECASE)
     return matches[0][-1] if matches and matches[0] else None
+"""
 
-
-def extract_regex_text(pattern, value_to_search, page, boolean_to_check=None, str_to_check=None):
-    """Extracts the text from the page and checks if the regexes are present in the text.
+"""def extract_regex_text(pattern, value_to_search, page, boolean_to_check=None, str_to_check=None):
+    Extracts the text from the page and checks if the regexes are present in the text.
 
     Returns:
         dict(): dictionary containing the callable
-    """
+    
     if boolean_to_check is None:
         boolean_to_check = {***REMOVED***
     if str_to_check is None:
@@ -289,17 +206,17 @@ def extract_regex_text(pattern, value_to_search, page, boolean_to_check=None, st
         ***REMOVED***
 
     return {**boolean_to_check, **str_to_check***REMOVED***
+"""
 
-
-def format_pages_num(arr):
-    """return the list as the function wants,
+"""def format_pages_num(arr):
+    return the list as the function wants,
 
     Args:
         arr (_type_): _description_
 
     Returns:
         str: strified list
-    """
+    
     if not arr:
         return None
     if isinstance(arr, str):
@@ -335,25 +252,27 @@ def format_pages_num(arr):
 def check_valid(main_table, other_tables):
     return all(not main_table.equals(other) for other in other_tables) and isinstance(main_table, pd.DataFrame)
 
+"""
+"""
+    def divide_regex(text):
+        Divide a text in two parts using a regex.
+    
+        Args:
+            text (str): text to divide
+    
+        Returns:
+            tuple(str,str): tuple containing the two parts of the text
+        
+        # gets the 2 numbers
+        divided = [x.group() for x in re.finditer("\d+[\.,]?\d*", text, re.IGNORECASE)]
+        if divided.__len__() != 0:
+            return divided
+        return ["-"]
+"""
 
-def divide_regex(text):
-    """Divide a text in two parts using a regex.
 
-    Args:
-        text (str): text to divide
-
-    Returns:
-        tuple(str,str): tuple containing the two parts of the text
-    """
-    # gets the 2 numbers
-    divided = [x.group() for x in re.finditer("\d+[\.,]?\d*", text, re.IGNORECASE)]
-    if divided.__len__() != 0:
-        return divided
-    return ["-"]
-
-
-def search_reg(search, text):
-    """Search a regex in a text and return the match if found.
+"""def search_reg(search, text):
+    Search a regex in a text and return the match if found.
 
     Args:
         language (str): language associated to regex
@@ -362,14 +281,14 @@ def search_reg(search, text):
 
     Returns:
         str: match if found
-    """
+    
     match = re.search(search, text, re.IGNORECASE)
     return match is not None
-
+"""
 
 # TO REVIEW
-def clean_response_regex(cleaner: dict, response, to_add=""):
-    """cleans a response using a regex
+"""def clean_response_regex(cleaner: dict, response, to_add=""):
+    cleans a response using a regex
 
         Args:
         cleaner (dict): dict of keys and string of regex cleaner
@@ -377,7 +296,7 @@ def clean_response_regex(cleaner: dict, response, to_add=""):
         to_add (str, optional): string to add to the cleaned data. Defaults to "".
     Returns:
         dict()| object: data cleaned
-    """
+    
     try:
         # dict of regexes
 
@@ -400,9 +319,9 @@ def clean_response_regex(cleaner: dict, response, to_add=""):
 
     return response
 
-
-def clean_response_strips(strips, response):
-    """cleans a response using a list of strings to strip
+"""
+"""def clean_response_strips(strips, response):
+    cleans a response using a list of strings to strip
 
     Args:
         strips ([str]): list of strings to strip
@@ -410,7 +329,7 @@ def clean_response_strips(strips, response):
 
     Returns:
         str: data cleaned
-    """
+    
 
     # cut strips from response
     for s in strips:
@@ -426,9 +345,9 @@ def clean_response_strips(strips, response):
 
 exc_multiple_lines = []
 
-
-def regex_extract(searches: dict, table):
-    """extract via regex from the table
+"""
+"""def regex_extract(searches: dict, table):
+    extract via regex from the table
 
     Args:
         searches (dict()): dict of searches
@@ -437,7 +356,7 @@ def regex_extract(searches: dict, table):
 
     Returns:
         dict(): dict with value extracted for each search
-    """
+    
     ret = dict()
     intermediate = dict()
     # for each search find it via regex in first column and then extract the value in last column
@@ -470,10 +389,10 @@ def regex_extract(searches: dict, table):
         else:
             ret.update(dict([(field, value)]))
     return ret
+"""
 
-
-def handle_exc(table, a, search):
-    """handles exceptions where table may be split in multiple lines, looks until next search is found
+"""def handle_exc(table, a, search):
+    handles exceptions where table may be split in multiple lines, looks until next search is found
 
     Args:
         table (pd.dataframe): table to look into
@@ -483,14 +402,14 @@ def handle_exc(table, a, search):
 
     Returns:
         str: values found
-    """
+    
     ret = ""
     # while not at the end and we didn't find the next search join the values
     while a < len(table.index) and (not search_reg(search, table.iloc[a, 0])):
         ret = " ".join([ret, str(table.iloc[a, -1])])
         a = a + 1
     return ret
-
+"""
 
 def create_pydantic_class(template: Template):
     """Creates a Pydantic model based on the provided Template object."""
@@ -819,22 +738,25 @@ def extracted_from_columns(tagged_data, template: TemplateTable) -> Dict[str, Di
     return result_matrix
 
 
-def sanitize_text(text:str):
+def sanitize_text(text: str) -> str:
     """
     Sanitizes a given text by replacing dangerous characters with their escaped equivalents.
-    
+
     Args:
         text (str): The text to be sanitized.
-    
+
     Returns:
         str: The sanitized text with all non-word and non-space characters removed.
     """
     
-    
     dangerous_chars = [';', "'", '"', '=', '<', '>', '{', '***REMOVED***', '(', ')', '$', '&', '|']
-
-  # Replace dangerous characters with their escaped equivalents
-    for char in dangerous_chars:
-        text = text.replace(char, '\\' + char) 
     
-    return re.sub(r'[^\w\s]', '', text)
+    # Replace dangerous characters with their escaped equivalents
+    sanitized_text = ''
+    for char in text:
+        if char in dangerous_chars:
+            sanitized_text += '\\' + char
+        elif char.isalnum() or char.isspace():
+            sanitized_text += char
+    
+    return sanitized_text

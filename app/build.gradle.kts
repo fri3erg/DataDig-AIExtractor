@@ -8,6 +8,9 @@ plugins {
     id("dagger.hilt.android.plugin")
     id("io.realm.kotlin")
     kotlin("plugin.serialization") version "1.9.23"
+    alias(libs.plugins.googleGmsGoogleServices)
+    alias(libs.plugins.googleFirebaseCrashlytics)
+    id("com.autonomousapps.dependency-analysis")
 
 ***REMOVED***
 
@@ -112,15 +115,17 @@ android {
             pip {
                 // "-r"` followed by a requirements filename, relative to the
                 // project directory:
-                install("numpy")
+
+
+
                 install("pandas")
-                install("greenlet")
-                install("regex")
                 install("pillow")
+
+
+
                 //install("pydantic_core")
                 //install("instructor == 0.3.0")
                 install("-r", projectDir.absolutePath + "/src/main/python/requirements_kotlin.txt")
-                extractPackages("tesseract")
             ***REMOVED***
         ***REMOVED***
 
@@ -138,7 +143,11 @@ android {
             jvmTarget = "11"
         ***REMOVED***
     ***REMOVED***
+    // For Android Gradle Plugin tasks
+
 ***REMOVED***
+// For Android Gradle Plugin and Google Services Plugin (Java 11)
+
 
 
 dependencies {
@@ -147,27 +156,21 @@ dependencies {
     implementation(libs.vision.common)
     implementation(libs.play.services.mlkit.text.recognition.common)
     implementation(libs.play.services.mlkit.text.recognition)
-    implementation(libs.androidx.paging.common.android)
-    implementation(libs.firebase.crashlytics.buildtools)
-    implementation(libs.text.recognition) // Or latest version
-    implementation(libs.androidx.navigation.fragment.ktx)
-    implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.navigation.compose)
     implementation(libs.hilt.android)
-    implementation(libs.androidx.room.ktx)
-    implementation(libs.tess.two) // Or latest version
+    runtimeOnly(libs.tess.two)
+    implementation(libs.firebase.crashlytics) // Or latest version
     kapt(libs.hilt.android.compiler)
     implementation(libs.android.image.cropper) // or later version
     implementation (libs.androidx.material3.v100)
-    implementation(libs.androidx.core.splashscreen) // Or the latest version
     implementation (libs.ui.tooling.preview)
     kapt(libs.hilt.android)
     implementation(libs.androidx.hilt.work)
     implementation(libs.androidx.hilt.navigation.compose)
     kapt(libs.androidx.hilt.compiler)
+    implementation(libs.firebase.crashlytics.buildtools)
     implementation(libs.androidx.work.runtime.ktx.v281)
-    implementation(libs.kotlinx.metadata.jvm) // Use the latest version
-    implementation (libs.accompanist.pager.v0312alpha) // Replace with the latest version
+    runtimeOnly(libs.kotlinx.metadata.jvm) // Use the latest version
     implementation(libs.androidx.foundation) // Or the latest version
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -175,25 +178,19 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.accompanist.permissions) // Replace with your desired version
     implementation(libs.androidx.camera.core)
-    implementation(libs.androidx.runtime.livedata) // Or same version
     implementation(libs.androidx.security.crypto) // Or the latest version
-    implementation(libs.androidx.localbroadcastmanager)
     implementation (libs.fontawesomecompose)
     implementation(libs.coil.compose)
-    implementation(libs.cronet.embedded)
+    runtimeOnly(libs.cronet.embedded)
     implementation(libs.androidx.camera.lifecycle)
-    implementation(libs.androidx.room.common)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    implementation (libs.camera.camera2)
+    runtimeOnly (libs.camera.camera2)
     implementation (libs.androidx.camera.view.v130alpha06)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.library.base)
@@ -204,10 +201,43 @@ dependencies {
     implementation(libs.supabase.gotrue.kt)
     implementation(libs.realtime.kt)
     implementation(libs.ktor.client.android)
-    implementation(libs.ktor.client.serialization.jvm) // Or the latest version
+    runtimeOnly(libs.ktor.client.serialization.jvm) // Or the latest version
+    implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.androidx.ui.tooling.preview)
 
-
-
+    androidTestImplementation("androidx.test:monitor:1.7.1")
+    androidTestImplementation(libs.junit)
+    implementation("androidx.activity:activity:1.9.1")
+    implementation("androidx.annotation:annotation:1.8.1")
+    implementation("androidx.compose.animation:animation-core:1.7.0-alpha08")
+    implementation("androidx.compose.animation:animation:1.7.0-alpha08")
+    implementation("androidx.compose.foundation:foundation-layout:1.7.0-alpha08")
+    implementation("androidx.compose.material:material-icons-core:1.6.8")
+    implementation("androidx.compose.runtime:runtime:1.7.0-alpha08")
+    implementation("androidx.compose.ui:ui-geometry:1.7.0-alpha08")
+    implementation("androidx.compose.ui:ui-text:1.7.0-alpha08")
+    implementation("androidx.compose.ui:ui-unit:1.7.0-alpha08")
+    implementation("androidx.core:core:1.13.1")
+    implementation("androidx.fragment:fragment:1.6.2")
+    implementation("androidx.lifecycle:lifecycle-common:2.8.4")
+    implementation("androidx.lifecycle:lifecycle-process:2.8.4")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.4")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.4")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:2.8.4")
+    implementation("androidx.lifecycle:lifecycle-viewmodel:2.8.4")
+    implementation("androidx.navigation:navigation-common:2.8.0-alpha08")
+    implementation("androidx.navigation:navigation-runtime:2.8.0-alpha08")
+    implementation("androidx.savedstate:savedstate:1.2.1")
+    implementation("com.google.dagger:dagger:2.51")
+    implementation("com.google.dagger:hilt-core:2.51")
+    implementation("com.google.guava:listenablefuture:1.0")
+    implementation("io.ktor:ktor-http:2.3.12")
+    implementation("io.realm.kotlin:cinterop:1.11.0")
+    implementation("io.realm.kotlin:jni-swig-stub:1.11.0")
+    implementation("javax.inject:javax.inject:1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.6.3")
+    kapt("com.google.dagger:dagger-compiler:2.51")
 
 ***REMOVED***
 kapt {

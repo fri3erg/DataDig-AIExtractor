@@ -53,11 +53,13 @@ class MainActivity : ComponentActivity() {
                         color = MaterialTheme.colorScheme.background
         ***REMOVED*** {
                         MainAppScreen()
+
                     ***REMOVED***
                 ***REMOVED***
             ***REMOVED***
 
         ***REMOVED***
+
 
 
     @Composable
@@ -71,4 +73,5 @@ class MainActivity : ComponentActivity() {
                 AppNavigation(navController, modifier = Modifier.padding(innerPadding))
             ***REMOVED***)
     ***REMOVED***
+
 ***REMOVED***

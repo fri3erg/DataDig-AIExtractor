@@ -1,7 +1,7 @@
 import io
 import os
-from extractor.classes.Extracted import Extracted
-from extractor.classes.Options import ExceptionsExtracted, Options
+from extractor.classes.Extracted import Extracted, ExceptionsExtracted
+from extractor.classes.Options import Options
 import logging
 import base64
 from typing import List
@@ -160,7 +160,7 @@ def create_test() -> tuple[Template, Options]:
 
     # Create sample TemplateTable objects
     table1 = TemplateTable(
-        "1", "Personal Information", [], "table that describes personal info", [field1, field2, field3], [], True
+        "1", "Personal Information", ["ciao", "dd"], "table that describes personal info", [field1, field2, field3], [], True
     )
     table2 = TemplateTable("2", "Contact Information", ["contact", "info"], "", [], [field1, field2, field3], True)
 
@@ -170,6 +170,7 @@ def create_test() -> tuple[Template, Options]:
         "Ai uprising",
         "text about the ai uprising",
         [field1, field2, field3, field4, field5, field6, field7],  # Fields directly associated with the template
+        tables=[table1, table2],  # Tables directly associated with the template
     )
 
     def fake_keys(progress):
@@ -270,15 +271,9 @@ def reduce_image_size(base64_str, target_size_mb=4, initial_quality=100, min_qua
     template, option = create_test()
     text = ["this is a long text that will be extracted"]
     base64_image = []
-    with open("extractor\\test\\111.jpg", "rb") as image_file:  # Open in binary mode
+    with open("extractor\\test\\table.jpg", "rb") as image_file:  # Open in binary mode
         image_data = image_file.read()
         base64_image = [base64.b64encode(image_data).decode("utf-8")]
-    with open("extractor\\test\\222.jpg", "rb") as image_file:  # Open in binary mode
-        image_data = image_file.read()
-        base64_image += [base64.b64encode(image_data).decode("utf-8")]    
-    with open("extractor\\test\\333.jpg", "rb") as image_file:  # Open in binary mode
-        image_data = image_file.read()
-        base64_image +=[base64.b64encode(image_data).decode("utf-8")]
         
     base64_image= [reduce_image_size(image) for image in base64_image]
 

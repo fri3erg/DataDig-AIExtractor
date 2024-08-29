@@ -1,15 +1,13 @@
 # import instructor.exceptions
 
-import re
 from ...scanner.extractors.extractor_utils import num_tokens_from_string
 import threading
 from ...configs.cost_config import cost_per_token
 from openai import OpenAI, AuthenticationError
-from typing import List, Optional, Any, Dict, Type, TypeVar
+from typing import List, Optional, Any, Dict
 from ...classes.Extracted import ExtractionCosts
 from langchain.prompts import PromptTemplate
 import os
-import asyncio
 
 from langchain.output_parsers import PydanticOutputParser
 
@@ -209,36 +207,3 @@ class Models(LLM):
             del cls._file_locks[file_id]
         if file_id in cls._costs:
             del cls._costs[file_id]
-
-from langchain_core.output_parsers import BaseOutputParser
-import json
-from pydantic import BaseModel, ValidationError
-from langchain_core.exceptions import OutputParserException
-
-T = TypeVar("T", bound=BaseModel)
-
-class MyJSONOutputParser(BaseOutputParser[T]):
-
-    pydantic_object: Type[T]
-    """The pydantic model to parse."""
-
-    def parse(self, text: str) -> T:
-        try:
-            # Greedy search for 1st json candidate.
-            match = re.search(
-                r"\{.*\***REMOVED***", text.strip(), re.MULTILINE | re.IGNORECASE | re.DOTALL
-***REMOVED***
-            json_str = ""
-            if match:
-                json_str = match.group()
-            json_object = json.loads(json_str, strict=False)
-            return self.pydantic_object.parse_obj(json_object)
-
-        except (json.JSONDecodeError, ValidationError) as e:
-            name = self.pydantic_object.__name__
-            msg = f"Failed to parse {name***REMOVED*** from completion {text***REMOVED***. Got: {e***REMOVED***"
-            raise OutputParserException(msg, llm_output=text)
-
-    def get_format_instructions(self) -> str:
-
-        return "Output a JSON object that strictly adheres to the provided schema."

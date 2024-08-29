@@ -1,19 +1,8 @@
-azure-ai-formrecognizer  # Replaced deprecated azure-ai-documentintelligence
-azure-core               # Removed azure-common as it's likely included in core
-langchain
-numpy
-openai
-pandas
-pydantic
-pypdf                   # Removed PyPDF2, keeping pypdf as it's newer
-python-dotenv
-regex
-#tiktoken
-typing-extensions       # Removed typing-inspect as extensions is the newer standard
+typing-extensions==4.9.0
+pydantic==1.10.0
+openai==1.9.0
+azure-core==1.29.7
+langchain==0.1.0
 pillow
-pytesseract
-pdf2image
-tesseract
-opencv-python
-langchain_openai
-instructor
+pandas
+azure-ai-formrecognizer==3.3.3

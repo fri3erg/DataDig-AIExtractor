@@ -97,7 +97,8 @@ fun TemplateScreen(
                                     .width(100.dp)
                                     .padding(start = 10.dp)
                                 , // Add padding only to the first button
-                                onClick = { templateViewModel.updateSortOrder(option) ***REMOVED***
+                                onClick = {
+                                    templateViewModel.updateSortOrder(option) ***REMOVED***
                 ***REMOVED*** {
                                 Text(text = option.name.removePrefix("BY_").lowercase())
                             ***REMOVED***

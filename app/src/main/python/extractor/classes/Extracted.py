@@ -1,6 +1,5 @@
 from typing import Any, Dict, List, Optional
 
-from ..classes.Options import ExceptionsExtracted
 from .Template import TemplateField, TemplateTable, Template
 
 
@@ -31,6 +30,13 @@ class ExtractionCosts:
         self.cost = cost
         self.currency = currency
 
+
+
+class ExceptionsExtracted:
+    def __init__(self, error: Exception, error_location: str, error_description: str):
+        self.error = error
+        self.error_type = error_location
+        self.error_description = error_description
 
 class Extracted:
     def __init__(
