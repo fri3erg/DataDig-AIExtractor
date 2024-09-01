@@ -68,7 +68,6 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -80,10 +79,8 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -895,7 +892,11 @@ fun FormatSection(extraction: Extraction, viewModel: ExtractionViewModel) {
             formatOptions.forEach { format ->
                 DropdownMenuItem(text = { Text(format) ***REMOVED***, onClick = {
                     selectedFormat = format
-                    viewModel.changeFormat(extraction, format, context)
+                    for (f in formatOptions) {
+                        viewModel.removeTag(extraction, f)
+                    ***REMOVED***
+                    viewModel.addTag(extraction, format)
+                    viewModel.updateFile(extraction, format, context)
                     Toast.makeText(context,
                         context.getString(R.string.file_recreated_to_fit_format, format), Toast.LENGTH_SHORT).show()
                     expanded = false
@@ -908,7 +909,7 @@ fun FormatSection(extraction: Extraction, viewModel: ExtractionViewModel) {
     // File Card Section (display only if fileUri is available)
     Spacer(modifier = Modifier.height(16.dp))
     FileCard(
-        extraction = extraction, modifier = Modifier.fillMaxWidth()
+        extraction = extraction, modifier = Modifier.fillMaxWidth(), extractionViewModel = viewModel
     )
 
 
@@ -989,6 +990,8 @@ fun Picker(
                         "yyyy-MM-dd",
                         "dd/MM/yyyy",
                         "MM/dd/yyyy",
+                        "ddMMyyyy",
+                        "MMddyyyy",
                         "yyyyMMdd",
                         "MMMM d, yyyy",
                         "d MMMM yyyy",

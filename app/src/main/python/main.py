@@ -25,6 +25,7 @@ def main(encoded_images: list, text: list[str], template: Template, options: Opt
         doc_folder (str): folder containing the pdf files
     """
     exceptions_occurred: List[ExceptionsExtracted] = []
+    tags : List[str] =[]
     try:
         images: list[bytes] = [base64.b64decode(image) for image in list(encoded_images)]
 
@@ -38,7 +39,7 @@ def main(encoded_images: list, text: list[str], template: Template, options: Opt
 
         try:
             extractor = MainExtractor(images, text, template, options)
-            progress_callback(0.1)
+            progress_callback(0.25)
 
         except Exception as error:
             print("initialization error:" + repr(error))
@@ -48,7 +49,6 @@ def main(encoded_images: list, text: list[str], template: Template, options: Opt
 
         try:
             if extractor:
-                progress_callback(0.2)
                 progress = extractor.first_stage()
                 progress_callback(progress or 0.6)
                 extractor.second_stage()
@@ -65,8 +65,12 @@ def main(encoded_images: list, text: list[str], template: Template, options: Opt
         if extraction:
             extraction.add_exceptions(exceptions_occurred)
         else:
-            extraction = Extracted(template, exceptions=exceptions_occurred)
-        print(extraction)
+            if extractor:
+                tags=extractor.get_tags()
+            if exceptions_occurred:
+                tags+=["errors occurred"]
+
+            extraction = Extracted(template, exceptions=exceptions_occurred, tags=tags)
         
         for table in extraction.extracted_tables:
             for key, value in table.fields.items():

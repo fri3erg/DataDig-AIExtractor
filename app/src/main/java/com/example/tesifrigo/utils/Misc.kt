@@ -90,6 +90,7 @@ import com.example.tesifrigo.ui.theme.dark_blue
 import com.example.tesifrigo.ui.theme.dark_red
 import com.example.tesifrigo.ui.theme.light_gray
 import com.example.tesifrigo.ui.theme.vale
+import com.example.tesifrigo.viewmodels.ExtractionViewModel
 import com.guru.fontawesomecomposelib.FaIcon
 import com.guru.fontawesomecomposelib.FaIcons
 import java.io.File
@@ -660,7 +661,7 @@ fun MyImageArea(
 
 @Composable
 fun FileCard(
-    extraction: Extraction, modifier: Modifier = Modifier
+    extraction: Extraction, modifier: Modifier = Modifier, extractionViewModel: ExtractionViewModel
 ) {
 
     val context = LocalContext.current
@@ -811,7 +812,9 @@ fun FileCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
-                .clickable(onClick = { openFile(Uri.parse(extraction.fileUri)) ***REMOVED***), // Make the Row clickable
+                .clickable(onClick = {
+                    extractionViewModel.updateFile(extraction, extraction.format, context)
+                    openFile(Uri.parse(extraction.fileUri)) ***REMOVED***), // Make the Row clickable
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Preview Section
@@ -843,6 +846,7 @@ fun FileCard(
     ***REMOVED*** {
                     // Make the icons clickable
                     Box(modifier = Modifier.clickable {
+                        extractionViewModel.updateFile(extraction, extraction.format, context)
                         if (extraction.fileUri != null) {
                             downloadFileExtra(Uri.parse(extraction.fileUri))
                         ***REMOVED***
@@ -855,6 +859,8 @@ fun FileCard(
                     Spacer(modifier = Modifier.width(8.dp))
 
                     Box(modifier = Modifier.clickable {
+                        extractionViewModel.updateFile(extraction, extraction.format, context)
+
                         if (extraction.fileUri != null) {
                             shareFile(Uri.parse(extraction.fileUri))
                         ***REMOVED***

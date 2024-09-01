@@ -58,7 +58,6 @@ def general_table_inspection(
         add_text = f"{desc_tabella[options.language or 'en']***REMOVED*** {add_text***REMOVED*** " if add_text else ""
         table = sanitize_text(f"{add_text***REMOVED*** TABLE-> {table.to_string()***REMOVED***")
         prompt = create_language_tag_messages(text=table, language=options.language or "it", is_table=True)
-        print(prompt.template)
         extraction_adapted, errors_occurred = Models.tag(prompt, pydantic_class, file_id, options.model)
 
     except Exception as error:
@@ -87,7 +86,6 @@ def llm_extraction_and_tag(page, template: Template, file_id, pydantic_class, op
     optional_error: Optional[ExceptionsExtracted] = None
     input_variables: list[str] = ["template", "context"]
     prompt = PromptTemplate(input_variables=input_variables, template=initial_prompt)
-    print("prompt",prompt, "text",page )
     # Select model size based on context
     if options.model == "gpt-3.5-turbo":
         total_token = num_tokens_from_string(str(page) + template_readable)

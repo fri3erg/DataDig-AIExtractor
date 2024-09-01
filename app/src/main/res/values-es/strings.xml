@@ -239,4 +239,13 @@
     <string name="model">Modelo</string>
     <string name="format">Formato\n</string>
     <string name="enter_date_manually">El análisis falló, por favor, introduce una fecha en un formato válido\n</string>
+    <string name="file_not_found">Archivo no encontrado</string>
+    <string name="you_can_cut_and_add_column_and_rows_at_will_only_the_specified_columns_and_rows_will_be_extracted_if_the_table_is_bi_dimensional_or_you_can_choose_to_leave_one_of_the_two_empty_in_that_case_everything_found_in_the_rows_column_will_be_extracted_leaving_both_empty_or_toggling_the_find_everything_button_will_return_everything_found">
+    Define tanto filas como columnas para una extracción precisa de celdas específicas en tu tabla. \n\n
+    Elimina todas las columnas para extraer todos los datos encontrados de las filas especificadas, independientemente de los nombres de las columnas en las que se encuentren. \n
+    Elimina todas las filas para extraer todos los datos de las columnas especificadas, independientemente de los nombres de las filas en las que se encuentren. \n\n
+    Elimina ambas o activa "Todo lo que encuentres" para extraer todos los datos de la tabla que podamos encontrar.\n\n
+    En esencia, especificar filas y columnas extraerá solo lo que se solicita, es más confiable y devolverá menos datos, mientras que no especificar devolverá todo lo que se encuentre de lo que no se especifica (filas o columnas).
+</string>
+    <string name="table_usage">Uso de la Tabla</string>
 </resources>

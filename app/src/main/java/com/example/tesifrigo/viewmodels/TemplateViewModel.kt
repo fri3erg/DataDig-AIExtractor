@@ -44,8 +44,7 @@ class TemplateViewModel : ViewModel() {
     val _focusRequesterIndex = MutableStateFlow<Int?>(null) // Index of the element to focus
     val focusRequesterIndex: StateFlow<Int?> get() = _focusRequesterIndex.asStateFlow()
 
-    private val _template = MutableStateFlow<Template?>(null) // Initialize with your template data
-    val template: StateFlow<Template?> = _template.asStateFlow()
+
 
 
 
@@ -99,8 +98,8 @@ class TemplateViewModel : ViewModel() {
     ***REMOVED***
 
     fun queryTemplate(id: String): StateFlow<Template?> {
-        if (id.isEmpty()) {
-            return template
+        if (id.isBlank()) {
+            return MutableStateFlow(null)
         ***REMOVED***
         return templates.map { templateList ->
             templateList.find {
@@ -313,23 +312,23 @@ class TemplateViewModel : ViewModel() {
 
     fun addTable(template: Template) {
         val newField = TemplateField().apply {
-            title = ""
+            title = "row 1"
             type = "Text"
             required = true
 
         ***REMOVED***
         val newField2 = TemplateField().apply {
-            title = ""
+            title = "row 2"
             type = "Text"
             required = true
         ***REMOVED***
         val newField3 = TemplateField().apply {
-            title = ""
+            title = "column 1"
             type = "Text"
             required = true
         ***REMOVED***
         val newField4 = TemplateField().apply {
-            title = ""
+            title = "column 2"
             type = "Text"
             required = true
         ***REMOVED***
@@ -453,12 +452,7 @@ class TemplateViewModel : ViewModel() {
         ***REMOVED***
     ***REMOVED***
 
-    fun setActiveTemplate(template: Template?) {
-        viewModelScope.launch {
-            _template.value = template
-        ***REMOVED***
 
-    ***REMOVED***
 
     fun removeKeyword(table: TemplateTable, indexOf: Int) {
         viewModelScope.launch {

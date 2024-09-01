@@ -234,4 +234,13 @@
     <string name="model">Modèle</string>
     <string name="format">Format\n</string>
     <string name="enter_date_manually">L\'analyse a échoué, veuillez saisir une date dans un format valide\n</string>
+    <string name="file_not_found">Fichier introuvable</string>
+    <string name="you_can_cut_and_add_column_and_rows_at_will_only_the_specified_columns_and_rows_will_be_extracted_if_the_table_is_bi_dimensional_or_you_can_choose_to_leave_one_of_the_two_empty_in_that_case_everything_found_in_the_rows_column_will_be_extracted_leaving_both_empty_or_toggling_the_find_everything_button_will_return_everything_found">
+    Définissez à la fois les lignes et les colonnes pour une extraction précise à partir de cellules spécifiques de votre tableau. \n\n
+    Supprimez toutes les colonnes pour extraire toutes les données trouvées dans les lignes spécifiées, quels que soient les noms des colonnes dans lesquelles elles se trouvent. \n
+    Supprimez toutes les lignes pour extraire toutes les données des colonnes spécifiées, quels que soient les noms des lignes dans lesquelles elles se trouvent. \n\n
+    Supprimez les deux ou activez "Tout ce que vous trouvez" pour extraire toutes les données du tableau que nous pouvons trouver.\n\n
+    En substance, la spécification des lignes et des colonnes extraira uniquement ce qui est demandé, est plus fiable et renverra moins de données, tandis que la non-spécification renverra tout ce qui se trouve de ce qui n\'est pas spécifié (lignes ou colonnes).
+</string>
+    <string name="table_usage">Utilisation du tableau</string>
 </resources>

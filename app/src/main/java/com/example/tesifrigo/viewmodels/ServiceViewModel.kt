@@ -96,6 +96,11 @@ class ServiceViewModel @Inject constructor(
         progressRepository.clearResult()
     ***REMOVED***
 
+    fun setActiveTemplate(active: Template?) {
+        progressRepository.setTemplate(active)
+
+    ***REMOVED***
+
 
 ***REMOVED***
 

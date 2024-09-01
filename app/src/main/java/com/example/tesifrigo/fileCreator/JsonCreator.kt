@@ -3,7 +3,6 @@ package com.example.tesifrigo.fileCreator
 import android.content.Context
 import android.net.Uri
 import com.example.tesifrigo.models.Extraction
-import com.example.tesifrigo.utils.RealmListAdapter
 import com.google.gson.*
 import io.realm.kotlin.types.RealmList
 import java.io.File
@@ -18,7 +17,6 @@ class JsonCreator {
 
 
     private val gson: Gson = GsonBuilder()
-        .registerTypeAdapter(RealmList::class.java, RealmListAdapter()) // Generic Adapter
         .excludeFieldsWithoutExposeAnnotation() // Exclude fields without @Expose
         .setPrettyPrinting()
         .create()

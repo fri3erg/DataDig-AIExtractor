@@ -97,28 +97,5 @@ class RealmListStringAdapter : JsonSerializer<RealmList<String>>,
 ***REMOVED***
 
 
-// Adapter for RealmList
-class RealmListAdapter : JsonSerializer<RealmList<*>>, JsonDeserializer<RealmList<*>> {
 
-    override fun serialize(
-        src: RealmList<*>,
-        typeOfSrc: Type,
-        context: JsonSerializationContext
-    ): JsonElement {
-        return context.serialize(src.toList())
-    ***REMOVED***
-
-    override fun deserialize(
-        json: JsonElement,
-        typeOfT: Type,
-        context: JsonDeserializationContext
-    ): RealmList<*> {
-        // Get the parameterized type of the RealmList
-        val parameterizedType = typeOfT as? ParameterizedType
-        val itemType = parameterizedType?.actualTypeArguments?.get(0) ?: Any::class.java
-
-        val list = context.deserialize<List<*>>(json, itemType)
-        return realmListOf(*list.toTypedArray())
-    ***REMOVED***
-***REMOVED***
 

@@ -462,7 +462,7 @@ def create_intelligent_pydantic_class(template: Template):
 
 def create_pydantic_table_class(template: TemplateTable):
     """Creates a Pydantic model based on the provided Template object."""
-    if template.all:
+    if template.all or (template.rows== [] and template.columns == []):
         return ExtractedTable
     if template.rows == []:
         return pydantic_table_listed_column(template)

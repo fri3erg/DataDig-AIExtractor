@@ -234,4 +234,13 @@
     <string name="model">Modell</string>
     <string name="format">Format\n</string>
     <string name="enter_date_manually">Die Analyse ist fehlgeschlagen. Bitte geben Sie ein Datum in einem gültigen Format ein.\n</string>
+    <string name="file_not_found">Datei nicht gefunden</string>
+    <string name="you_can_cut_and_add_column_and_rows_at_will_only_the_specified_columns_and_rows_will_be_extracted_if_the_table_is_bi_dimensional_or_you_can_choose_to_leave_one_of_the_two_empty_in_that_case_everything_found_in_the_rows_column_will_be_extracted_leaving_both_empty_or_toggling_the_find_everything_button_will_return_everything_found">
+    Definieren Sie sowohl Zeilen als auch Spalten für eine präzise Extraktion aus bestimmten Zellen in Ihrer Tabelle. \n\n
+    Löschen Sie alle Spalten, um alle Daten aus den angegebenen Zeilen zu extrahieren, unabhängig von den Namen der Spalten, in denen sie sich befinden. \n
+    Löschen Sie alle Zeilen, um alle Daten aus den angegebenen Spalten zu extrahieren, unabhängig von den Namen der Zeilen, in denen sie sich befinden. \n\n
+    Löschen Sie beides oder aktivieren Sie "Alles, was Sie finden", um alle Tabellendaten zu extrahieren, die wir finden können.\n\n
+    Im Wesentlichen wird durch die Angabe von Zeilen und Spalten nur das extrahiert, was abgefragt wird, ist zuverlässiger und liefert weniger Daten, während die Nichtangabe alles zurückgibt, was von dem nicht spezifizierten (Zeilen oder Spalten) gefunden wird.
+</string>
+    <string name="table_usage">Tabellen Verwendung</string>
 </resources>

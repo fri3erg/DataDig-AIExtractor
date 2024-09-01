@@ -250,7 +250,15 @@
     <string name="model">Model</string>
     <string name="format">Format\n</string>
     <string name="enter_date_manually">Parsing went bad, please put this in a formattable state(anything with / works)\n</string>
-    <string name="file_not_found" translatable="false">File not found</string>
+    <string name="file_not_found" >File not found</string>
+    <string name="you_can_cut_and_add_column_and_rows_at_will_only_the_specified_columns_and_rows_will_be_extracted_if_the_table_is_bi_dimensional_or_you_can_choose_to_leave_one_of_the_two_empty_in_that_case_everything_found_in_the_rows_column_will_be_extracted_leaving_both_empty_or_toggling_the_find_everything_button_will_return_everything_found">
+        Define both rows and columns for precise extraction from specific cells in your table. \n\n
+        Delete all columns to extract all data found from the specified rows, regardless of the names of the column they are in. \n
+        Delete all rows to extract all data from the specified columns, regardless of the names of the row they are in. \n\n
+        Delete both or toggle "Everything you find" to extract all table data we can find.\n\n
+        In essence, specifying rows and columns will extract only what is asked, is more reliable and will return less data, while not specifying will return all that is found of what is left unspecified (rows or column).
+    </string>
+    <string name="table_usage">Table Usage</string>
 
 
 </resources>

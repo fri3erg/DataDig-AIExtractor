@@ -372,31 +372,15 @@ class ExtractionViewModel @Inject constructor() : ViewModel() {
     fun removeTag(extraction: Extraction, tag: String) {
         viewModelScope.launch {
             realm.writeBlocking {
-                extraction.tags.remove(tag)
+                val latestExtraction = findLatest(extraction) ?: return@writeBlocking
+                latestExtraction.tags.removeIf { it == tag ***REMOVED***
             ***REMOVED***
         ***REMOVED***
 
     ***REMOVED***
 
-    fun changeFormat(extraction: Extraction, format: String, context: Context) {
-        var newFile: String? = extraction.fileUri
-        when (format) {
-            "json" -> {
-                newFile = JsonCreator().convertToJsonFile(extraction, context).toString()
-            ***REMOVED***
-
-            "csv" -> {
-                newFile = CsvCreator().convertToCsvFile(extraction, context).toString()
-            ***REMOVED***
-
-            "txt" -> {
-                newFile = TextCreator().convertToTextFile(extraction, context).toString()
-            ***REMOVED***
-
-            "xml" -> {
-                newFile = XmlCreator().convertToXmlFile(extraction, context).toString()
-            ***REMOVED***
-        ***REMOVED***
+    fun updateFile(extraction: Extraction, format: String, context: Context) {
+        val newFile = remakeExtraction(extraction, format, context)?: extraction.fileUri
         viewModelScope.launch {
             realm.writeBlocking {
                 val latestExtraction = findLatest(extraction) ?: return@writeBlocking
@@ -405,6 +389,28 @@ class ExtractionViewModel @Inject constructor() : ViewModel() {
             ***REMOVED***
         ***REMOVED***
 
+    ***REMOVED***
+
+    private fun remakeExtraction(extraction: Extraction, format: String, context: Context): String? {
+        val unManagedExtraction= realm.copyFromRealm(extraction)
+        when (format) {
+            "json" -> {
+                return JsonCreator().convertToJsonFile(unManagedExtraction, context).toString()
+            ***REMOVED***
+
+            "csv" -> {
+                return CsvCreator().convertToCsvFile(unManagedExtraction, context).toString()
+            ***REMOVED***
+
+            "txt" -> {
+                return TextCreator().convertToTextFile(unManagedExtraction, context).toString()
+            ***REMOVED***
+
+            "xml" -> {
+                return XmlCreator().convertToXmlFile(unManagedExtraction, context).toString()
+            ***REMOVED***
+        ***REMOVED***
+        return null
     ***REMOVED***
 
     fun updateField(field: ExtractionField, newValue: String) {

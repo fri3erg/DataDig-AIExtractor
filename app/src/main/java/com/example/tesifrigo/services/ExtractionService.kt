@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.Service
 import android.content.ContentResolver
 import android.content.Context
@@ -29,6 +30,7 @@ import androidx.core.app.NotificationManagerCompat
 import com.chaquo.python.PyObject
 import com.chaquo.python.Python
 import com.chaquo.python.android.AndroidPlatform
+import com.example.tesifrigo.MainActivity
 import com.example.tesifrigo.MyApp
 import com.example.tesifrigo.R
 import com.example.tesifrigo.models.ExceptionOccurred
@@ -485,42 +487,62 @@ private fun getTemplate(
     return pythonTemplate
 ***REMOVED***
 
-
 fun sendNotification(context: Context, title: String, content: String) {
-    val channelId = "extraction_channel"
-    val notificationId = 1
+    CoroutineScope(Dispatchers.Main).launch {
+        val channelId = "extraction_channel"
+        val notificationId = 2  // Ensure this ID doesn't conflict with your foreground service
 
-    // Create a notification channel (required for Android 8.0+)
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        val name = "Extraction Notifications"
-        val descriptionText = "Notifications for extraction completion"
-        val importance = NotificationManager.IMPORTANCE_DEFAULT
-        val channel = NotificationChannel(channelId, name, importance).apply {
-            description = descriptionText
+        // Create an Intent to launch your app
+        val intent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         ***REMOVED***
-        // Register the channel with the system
-        val notificationManager: NotificationManager =
-            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(channel)
-    ***REMOVED***
 
-    // Create the notification
-    val builder = NotificationCompat.Builder(context, channelId)
-        .setSmallIcon(R.mipmap.logo_vale) // Replace with your own icon
-        .setContentTitle(title).setContentText(content)
-        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+        // Create the PendingIntent
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(
+            context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
 
-    // Show the notification
-    with(NotificationManagerCompat.from(context)) {
-        if (ActivityCompat.checkSelfPermission(
-                context, Manifest.permission.POST_NOTIFICATIONS
-***REMOVED*** != PackageManager.PERMISSION_GRANTED
-        ) {
-            return
+        // Create a notification channel (required for Android 8.0+)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "Extraction Completed"
+            val descriptionText = "Your extraction was completed successfully"
+            val importance = NotificationManager.IMPORTANCE_HIGH // Set to HIGH for more visibility
+            val channel = NotificationChannel(channelId, name, importance).apply {
+                description = descriptionText
+            ***REMOVED***
+            // Register the channel with the system
+            val notificationManager: NotificationManager =
+                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
         ***REMOVED***
-        notify(notificationId, builder.build())
+
+        // Create the notification
+        val builder = NotificationCompat.Builder(context, channelId)
+            .setSmallIcon(R.mipmap.logo_vale) // Replace with your own icon
+            .setContentTitle(title)
+            .setContentText(content)
+            .setPriority(NotificationCompat.PRIORITY_HIGH) // Set to HIGH for more visibility
+            .setAutoCancel(true) // Dismiss the notification when clicked
+            .setContentIntent(pendingIntent)  // Set the intent that will fire when the user taps the notification
+
+        // Show the notification
+        CoroutineScope(Dispatchers.Main).launch {
+
+        with(NotificationManagerCompat.from(context)) {
+            if (ActivityCompat.checkSelfPermission(
+                    context, Manifest.permission.POST_NOTIFICATIONS
+    ***REMOVED*** == PackageManager.PERMISSION_GRANTED
+***REMOVED*** {
+                notify(notificationId, builder.build())
+            ***REMOVED*** else {
+                // Handle the case where the permission is not granted
+                Log.e("Notification", "POST_NOTIFICATIONS permission not granted")
+            ***REMOVED***
+        ***REMOVED***
+        ***REMOVED***
     ***REMOVED***
 ***REMOVED***
+
 
 fun processUri(contentResolver: ContentResolver, uri: Uri, pyListImages: PyObject): List<Bitmap> {
     val bitmaps = mutableListOf<Bitmap>()

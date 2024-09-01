@@ -31,8 +31,6 @@ class MainExtractor(GeneralScanner):
 
             if self.tables_present:
                 self.tables: dict[TemplateTable, Any] = self.get_tables() or {***REMOVED***
-                for key , value in self.tables.items():
-                    print(value)
 
             intelligent_template, basic_template = self.template.split_template()
 
@@ -139,7 +137,6 @@ class MainExtractor(GeneralScanner):
 ***REMOVED***
             filename = self.template.title
 
-        print(self.extraction)
         Models.clear_resources_file(filename)
 
         return self.extraction

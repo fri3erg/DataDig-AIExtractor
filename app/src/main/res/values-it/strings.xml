@@ -237,4 +237,13 @@
     <string name="model">Modello</string>
     <string name="format">Formato\n</string>
     <string name="enter_date_manually">L\'analisi non è riuscita, inserisci una data in un formato valido\n</string>
+    <string name="file_not_found">File non trovato</string>
+    <string name="you_can_cut_and_add_column_and_rows_at_will_only_the_specified_columns_and_rows_will_be_extracted_if_the_table_is_bi_dimensional_or_you_can_choose_to_leave_one_of_the_two_empty_in_that_case_everything_found_in_the_rows_column_will_be_extracted_leaving_both_empty_or_toggling_the_find_everything_button_will_return_everything_found">
+    Definisci sia righe che colonne per un\'estrazione precisa da celle specifiche nella tua tabella. \n\n
+    Elimina tutte le colonne per estrarre tutti i dati trovati dalle righe specificate, indipendentemente dai nomi delle colonne in cui si trovano. \n
+    Elimina tutte le righe per estrarre tutti i dati dalle colonne specificate, indipendentemente dai nomi delle righe in cui si trovano. \n\n
+    Elimina entrambi o attiva "Tutto ciò che trovi" per estrarre tutti i dati della tabella che possiamo trovare.\n\n
+    In sostanza, specificando righe e colonne estrarrai solo ciò che viene chiesto, è più affidabile e restituirà meno dati, mentre non specificando restituirà tutto ciò che viene trovato di ciò che non è specificato (righe o colonne).
+</string>
+    <string name="table_usage">Utilizzo della Tabella</string>
 </resources>

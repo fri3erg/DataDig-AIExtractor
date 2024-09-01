@@ -58,7 +58,7 @@ class ServiceRepository @Inject constructor(
 
     private val realm = MyApp.realm
 
-    fun setTemplate(template: Template) {
+    fun setTemplate(template: Template?) {
         _template.value = template
     ***REMOVED***
 

@@ -163,7 +163,7 @@ fun EditTemplateScreen(
                                 serviceViewModel.clearImageUris()
                                 serviceViewModel.setActiveExtraction(false)
                                 serviceViewModel.setActivePhoto(true)
-                                templateViewModel.setActiveTemplate(null)
+                                serviceViewModel.setActiveTemplate(null)
                                 serviceViewModel.setProgress(0f)
                                 serviceViewModel.clearResult()
                                 navController.navigate(Screen.Camera.routeWithOptionalArgs("templateId" to templateId.toHexString()))
@@ -948,7 +948,7 @@ fun TableGrid(viewModel: TemplateViewModel, tableIndex: Int, template: Template)
                 .horizontalScroll(scrollState)
         ) { // Apply horizontal scrolling){ // Make the header row horizontally scrollable) { // Wrap column headers in a Row with weight
             TableCellTemplate(
-                modifier = Modifier.weight(1f), invisible = true
+                modifier = Modifier.weight(1f), invisible = true, first = true
 ***REMOVED*** // Add a blank cell for the button column
             for ((columnIndex, columnField) in table.columns.withIndex()) {
                 TableCellTemplate(field = columnField, isHeader = true, onValueChange = { field ->
@@ -1040,6 +1040,7 @@ fun TableCellTemplate(
     onValueChange: (TemplateField) -> Unit = {***REMOVED***,
     invisible: Boolean = false,
     isButton: Boolean = false,
+    first: Boolean = false,
     buttonClick: () -> Unit = {***REMOVED***,
     onDelete: () -> Unit = {***REMOVED***
 ) {
@@ -1104,6 +1105,11 @@ fun TableCellTemplate(
 ***REMOVED***
 
         ***REMOVED*** else {
+            if(first){
+                HelpIconButton(helpText = stringResource(R.string.you_can_cut_and_add_column_and_rows_at_will_only_the_specified_columns_and_rows_will_be_extracted_if_the_table_is_bi_dimensional_or_you_can_choose_to_leave_one_of_the_two_empty_in_that_case_everything_found_in_the_rows_column_will_be_extracted_leaving_both_empty_or_toggling_the_find_everything_button_will_return_everything_found), title = stringResource(
+                    R.string.table_usage
+    ***REMOVED***, modifier = Modifier.align(Alignment.Center))
+            ***REMOVED***
             Text(
                 text = text,
                 textAlign = TextAlign.Center,

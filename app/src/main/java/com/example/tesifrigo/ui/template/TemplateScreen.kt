@@ -209,7 +209,7 @@ fun TemplateItem(
                     serviceViewModel.clearImageUris()
                     serviceViewModel.setActiveExtraction(false)
                     serviceViewModel.setActivePhoto(true)
-                    viewmodel.setActiveTemplate(null)
+                    serviceViewModel.setActiveTemplate(null)
                     serviceViewModel.setProgress(0f)
                     serviceViewModel.clearResult()
                     navController.navigate(Screen.Camera.routeWithOptionalArgs("templateId" to id))

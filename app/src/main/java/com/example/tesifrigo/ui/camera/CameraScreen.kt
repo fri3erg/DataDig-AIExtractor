@@ -1,7 +1,6 @@
 package com.example.tesifrigo.ui.camera
 
 import android.Manifest
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -72,6 +71,7 @@ import com.example.tesifrigo.R
 import com.example.tesifrigo.Screen
 import com.example.tesifrigo.models.Extraction
 import com.example.tesifrigo.models.Options
+import com.example.tesifrigo.models.Template
 import com.example.tesifrigo.services.ExtractionService
 import com.example.tesifrigo.ui.theme.cyan_custom
 import com.example.tesifrigo.ui.theme.light_gray
@@ -91,6 +91,7 @@ import com.example.tesifrigo.viewmodels.TemplateViewModel
 import com.guru.fontawesomecomposelib.FaIcon
 import com.guru.fontawesomecomposelib.FaIcons
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.combine
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -108,10 +109,19 @@ fun CameraScreen(
 
     val sharedPrefs =
         LocalContext.current.getSharedPreferences("my_app_prefs", Context.MODE_PRIVATE)
-
+    var id = templateId
     val context = LocalContext.current
     val imageUris by serviceViewModel.imageUris.collectAsState()
-    val template by templateViewModel.queryTemplate(templateId ?: "").collectAsState(initial = null)
+    //val template by templateViewModel.queryTemplate(id ?: "").collectAsState(initial = null)
+    //val template = templateState.value ?: serviceViewModel.template.collectAsState(initial=null)
+    val combinedTemplate: State<Template?> = combine(
+        templateViewModel.queryTemplate(id ?: ""),
+        serviceViewModel.template
+    ) { templateFromQuery, serviceTemplate ->
+        templateFromQuery ?: serviceTemplate // If templateFromQuery is null, fallback to serviceTemplate
+    ***REMOVED***.collectAsState(initial = null)
+    val template by combinedTemplate
+
     val activePhoto by serviceViewModel.activePhoto.collectAsState()
     val activeExtraction by serviceViewModel.activeExtraction.collectAsState()
     var openGptKeysDialog by remember { mutableStateOf(false) ***REMOVED***
@@ -119,10 +129,9 @@ fun CameraScreen(
     var reasonTable by remember { mutableStateOf(false) ***REMOVED***
     val options by serviceViewModel.options.collectAsState()
 
-    if (templateId != null) {
+    if (id != null) {
         template?.let {
             serviceViewModel.setTemplate(it)
-            templateViewModel.setActiveTemplate(it)
         ***REMOVED***
 
     ***REMOVED***
@@ -198,8 +207,8 @@ fun CameraScreen(
                     ***REMOVED***,
                     serviceViewModel,
                     extractionViewModel,
-                    templateViewModel,
-                    sharedPrefs
+                    sharedPrefs,
+                    changeId = { newId -> id = newId ***REMOVED***
     ***REMOVED***
 
             ***REMOVED***
@@ -384,7 +393,6 @@ fun ChooseTemplate(navController: NavHostController, templateViewModel: Template
                         .fillMaxWidth() // Occupy full width
                         .clickable {
                             serviceViewModel.setTemplate(template)
-                            templateViewModel.setActiveTemplate(template)
                         ***REMOVED***
                         .padding(8.dp),
                     border = CardDefaults.outlinedCardBorder(), // Add a border
@@ -436,8 +444,8 @@ fun ExtractionDetails(
     onExtractionClick: () -> Unit = {***REMOVED***,
     serviceViewModel: ServiceViewModel,
     extractionViewModel: ExtractionViewModel,
-    templateViewModel: TemplateViewModel,
-    sharedPrefs: SharedPreferences
+    sharedPrefs: SharedPreferences,
+    changeId: (String?) -> Unit = {***REMOVED***
 ) {
 
     val defaultOptions = Options()
@@ -491,7 +499,7 @@ fun ExtractionDetails(
             ***REMOVED***)
         ***REMOVED***
         if (!activeExtraction) {
-            ButtonBar(serviceViewModel, sharedPrefs, templateViewModel)
+            ButtonBar(serviceViewModel, sharedPrefs)
             HorizontalDivider()
 
             Button(
@@ -506,7 +514,7 @@ fun ExtractionDetails(
                 Text(text = stringResource(R.string.extract), color = Color.Black)
             ***REMOVED***
         ***REMOVED*** else {
-            ExtractedBar(serviceViewModel, templateViewModel)
+            ExtractedBar(serviceViewModel, changeId)
 
             ShownExtraction(
                 navController = navController,
@@ -518,7 +526,7 @@ fun ExtractionDetails(
 ***REMOVED***
 
 @Composable
-fun ExtractedBar(serviceViewModel: ServiceViewModel, templateViewModel: TemplateViewModel) {
+fun ExtractedBar(serviceViewModel: ServiceViewModel, changeId: (String?) -> Unit) {
 
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -532,7 +540,7 @@ fun ExtractedBar(serviceViewModel: ServiceViewModel, templateViewModel: Template
                 serviceViewModel.clearImageUris()
                 serviceViewModel.setActiveExtraction(false)
                 serviceViewModel.setActivePhoto(true)
-                templateViewModel.setActiveTemplate(null)
+                serviceViewModel.setActiveTemplate(null)
                 serviceViewModel.setProgress(0f)
                 serviceViewModel.clearResult()
             ***REMOVED***
@@ -578,8 +586,9 @@ fun ExtractedBar(serviceViewModel: ServiceViewModel, templateViewModel: Template
         Column(modifier = Modifier
             .weight(1f)
             .clickable {
+                changeId(null)
                 serviceViewModel.setActiveExtraction(false)
-                templateViewModel.setActiveTemplate(null)
+                serviceViewModel.setActiveTemplate(null)
             ***REMOVED***
             .padding(8.dp), // Optional padding
             horizontalAlignment = Alignment.CenterHorizontally) {
@@ -603,8 +612,7 @@ fun ExtractedBar(serviceViewModel: ServiceViewModel, templateViewModel: Template
 @Composable
 fun ButtonBar(
     serviceViewModel: ServiceViewModel,
-    sharedPrefs: SharedPreferences,
-    templateViewModel: TemplateViewModel
+    sharedPrefs: SharedPreferences
 ) {
     val options by serviceViewModel.options.collectAsState()
 
@@ -635,7 +643,7 @@ fun ButtonBar(
 ***REMOVED***
         ***REMOVED***
         IconButton(onClick = {
-            templateViewModel.setActiveTemplate(null)
+            serviceViewModel.setActiveTemplate(null)
             serviceViewModel.setActiveExtraction(false)
 
         ***REMOVED***) {
@@ -819,7 +827,7 @@ fun ShownExtraction(
                 ***REMOVED***
             ***REMOVED***
             if (it.fileUri != null) {
-                FileCard(it)
+                FileCard(it, extractionViewModel=extractionViewModel)
             ***REMOVED***
             if (errorOccurred) {
                 ExceptionsDialog({ errorOccurred = false ***REMOVED***, it)
