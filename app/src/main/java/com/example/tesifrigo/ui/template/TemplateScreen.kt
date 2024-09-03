@@ -156,7 +156,7 @@ fun TemplateScreen(
         if(firstTimeModal){
             AlertDialog(
                 title={
-                    Text(stringResource(R.string.welcome_to_smartxtractor))
+                    Text(stringResource(R.string.welcome_to_data_dig))
                 ***REMOVED***,
                 text = {
                     Text(stringResource(R.string.you_can_create_your_own_templates_or_use_the_sample_templates_to_extract_data_from_images_and_pdfs_click_on_the_camera_icon_to_take_a_photo_of_or_select_your_document_then_choose_the_desired_template_your_options_and_start_the_extraction_you_can_then_open_download_or_send_a_file_containing_the_extracted_values_and_use_them_however_you_want_but_one_thing_before_all_of_this_we_are_transparent_about_ai_usage_costs_and_our_app_must_use_external_keys_to_operate_please_head_to_the_settings_to_insert_your_own_openai_key_to_use_for_the_extraction))

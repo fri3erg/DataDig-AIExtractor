@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">SmartXtractor</string>
+    <string name="app_name" translatable="false">DataDig</string>
     <string name="fileprovider" translatable="false">com.example.tesifrigo.fileprovider</string>
 
 
@@ -243,7 +243,7 @@
         \n But one thing before all of this:
         \n We are transparent about AI usage costs and our app must use external keys to operate,
         please head to the settings to insert your own OpenAI key to use for the extraction</string>
-    <string name="welcome_to_smartxtractor">Welcome to SmartXtractor!</string>
+    <string name="welcome_to_data_dig">Welcome to DataDig!</string>
     <string name="here_you_can_manage_your_extractions_change_whatever_you_like_and_manage_the_extracted_files">Here you can manage your extractions, change whatever you like, and manage the extracted files</string>
     <string name="extractions">Extractions</string>
     <string name="file_recreated_to_fit_format">File recreated to fit format: %1$s</string>

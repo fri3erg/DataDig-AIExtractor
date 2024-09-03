@@ -511,7 +511,7 @@ fun ExtractionDetails(
                 colors = ButtonDefaults.buttonColors(dark_green),
                 onClick = onExtractionClick
 ***REMOVED*** {
-                Text(text = stringResource(R.string.extract), color = Color.Black)
+                Text(text = stringResource(R.string.extract), color = Color.White)
             ***REMOVED***
         ***REMOVED*** else {
             ExtractedBar(serviceViewModel, changeId)

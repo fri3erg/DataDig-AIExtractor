@@ -227,7 +227,7 @@
     Nous sommes transparents sur les coûts d\'utilisation de l\'IA et notre application doit utiliser des clés externes pour fonctionner,
     veuillez vous rendre dans les paramètres pour insérer votre propre clé OpenAI à utiliser pour l\'extraction.
 </string>
-    <string name="welcome_to_smartxtractor">Bienvenue dans SmartXtractor !</string>
+    <string name="welcome_to_data_dig">Bienvenue dans DataDig !</string>
     <string name="here_you_can_manage_your_extractions_change_whatever_you_like_and_manage_the_extracted_files">Ici vous pouvez gérer vos extractions, modifier ce que vous voulez et gérer les fichiers extraits.</string>
     <string name="extractions">Extractions</string>
     <string name="file_recreated_to_fit_format">Fichier recréé pour correspondre au format : %1$s</string>
