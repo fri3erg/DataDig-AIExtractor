@@ -2,7 +2,9 @@ package com.example.tesifrigo.fileCreator
 
 import android.content.Context
 import android.net.Uri
+import android.util.Base64
 import com.example.tesifrigo.models.Extraction
+import com.example.tesifrigo.utils.encodeImageToBase64
 import com.google.gson.*
 import io.realm.kotlin.types.RealmList
 import java.io.File
@@ -42,8 +44,22 @@ class JsonCreator {
 
             // Write the JSON to the file
             val json = gson.toJson(extraction)
+
+            val jsonObject = JsonParser.parseString(json).asJsonObject
+
+            // Convert image URIs to base64 strings
+            val extraImagesBase64 = extraction.extraImages.mapNotNull {
+                encodeImageToBase64(context, Uri.parse(it))
+            ***REMOVED***
+
+            // Add the base64 image data to the JsonObject
+            jsonObject.add("extraImages", JsonArray().apply {
+                extraImagesBase64.forEach { add(it) ***REMOVED***
+            ***REMOVED***)
+
+
             FileWriter(outputFile).use { writer ->
-                writer.write(json)
+                writer.write(jsonObject.toString())
             ***REMOVED***
 
             // Return the URI of the created file
@@ -54,4 +70,5 @@ class JsonCreator {
             null
         ***REMOVED***
     ***REMOVED***
+
 ***REMOVED***

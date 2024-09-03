@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Base64
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -935,4 +936,17 @@ fun isFirstTimeVisit(context: Context, key: String): Boolean {
     ***REMOVED***
 
     return isFirstTime
+***REMOVED***
+
+
+fun encodeImageToBase64(context: Context, imageUri: Uri): String? {
+    return try {
+        val inputStream = context.contentResolver.openInputStream(imageUri)
+        val bytes = inputStream?.readBytes()
+        bytes?.let { Base64.encodeToString(it, Base64.DEFAULT) ***REMOVED***
+    ***REMOVED*** catch (e: IOException) {
+        e.printStackTrace()
+        null
+
+    ***REMOVED***
 ***REMOVED***

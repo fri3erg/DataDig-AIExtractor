@@ -50,7 +50,7 @@ class Extraction : RealmObject {
     @Expose
     var model: String? = null
 
-    @Expose
+    @Expose(serialize = false, deserialize = false) // Exclude from serialization)
     var extraImages: RealmList<String> = realmListOf()
 
     @Expose(serialize = false, deserialize = false) // Exclude from serialization

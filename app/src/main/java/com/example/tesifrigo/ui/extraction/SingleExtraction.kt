@@ -127,13 +127,21 @@ fun SingleExtractionScreen(
 
 
     DisposableEffect(navController) {
-        val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
+        val listener = NavController.OnDestinationChangedListener { _, destination, arguments ->
             val currentRoute = destination.route ?: return@OnDestinationChangedListener
-            if (!currentRoute.startsWith("singleExtraction") && !showRatingModal && extraction != null && extraction?.review != true) {
+
+            if (!currentRoute.startsWith(Screen.SingleExtraction.route) && !showRatingModal && extraction != null && extraction?.review != true) {
                 // Capture the intended destination route
-                pendingDestinationRoute = currentRoute
-                // Block the navigation by showing the modal
-                showRatingModal = true
+                val templateId = arguments?.getString("templateId")
+
+                if (templateId != null && currentRoute.startsWith(Screen.EditTemplate.route)) {
+                    pendingDestinationRoute = Screen.EditTemplate.withArgs("templateId" to templateId) // Construct the route manually
+                    showRatingModal = true
+                ***REMOVED*** else {
+                    pendingDestinationRoute = currentRoute
+                    // Block the navigation by showing the modal
+                    showRatingModal = true
+                ***REMOVED***
 
                 // Reset to previous destination
                 navController.popBackStack()
@@ -567,9 +575,9 @@ fun TemplateInfo(
             Row(modifier = Modifier
                 .fillMaxWidth()
                 .clickable {
-                    val templateId = extraction.template?.id
-                    if (templateId != null) {
-                        navController.navigate(Screen.EditTemplate.withArgs("templateId" to templateId.toString()))
+                    val id = extraction.template?.id?.toHexString()
+                    if (id != null) {
+                        navController.navigate(Screen.EditTemplate.withArgs("templateId" to id))
                     ***REMOVED*** else {
                         Toast
                             .makeText(

@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.util.Xml
 import com.example.tesifrigo.models.Extraction
+import com.example.tesifrigo.utils.encodeImageToBase64
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
@@ -203,6 +204,21 @@ class XmlCreator {
                         ***REMOVED***
                         serializer.endTag(null, "extractedTables")
                         serializer.text("\n") // Add newline
+
+                        serializer.startTag(null, "extraImages")
+                        serializer.text("\n") // Add newline
+                        for (image in extraction.extraImages) {
+                            serializer.startTag(null, "image")
+                            serializer.text("\n") // Add newline
+                            encodeImageToBase64(context, Uri.parse(image))?.let {
+                                serializer.text(it)
+                            ***REMOVED***
+                            serializer.text("\n") // Add newline
+
+                            serializer.endTag(null, "image")
+                            serializer.text("\n") // Add newline
+                        ***REMOVED***
+                        serializer.endTag(null, "extraImages")
 
                         // End 'extraction' tag
                         serializer.endTag(null, "extraction")

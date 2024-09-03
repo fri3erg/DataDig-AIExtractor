@@ -3,6 +3,7 @@ package com.example.tesifrigo.fileCreator
 import android.content.Context
 import android.net.Uri
 import com.example.tesifrigo.models.Extraction
+import com.example.tesifrigo.utils.encodeImageToBase64
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
@@ -68,6 +69,10 @@ class TextCreator {
                     ***REMOVED***
                 ***REMOVED*** else {
                     writer.write("No exceptions occurred.\n")
+                ***REMOVED***
+                writer.write("extraImages: \n")
+                for (image in extraction.extraImages) {
+                    writer.write("  ${encodeImageToBase64(context,Uri.parse(image))***REMOVED***\n")
                 ***REMOVED***
             ***REMOVED***
             Uri.fromFile(outputFile)

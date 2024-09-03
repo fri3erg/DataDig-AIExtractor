@@ -566,6 +566,8 @@ fun ExtractedBar(serviceViewModel: ServiceViewModel, changeId: (String?) -> Unit
                 serviceViewModel.clearImageUris()
                 serviceViewModel.setActiveExtraction(false)
                 serviceViewModel.setActivePhoto(true)
+                serviceViewModel.setProgress(0f)
+                serviceViewModel.clearResult()
             ***REMOVED***
             .padding(8.dp), // Optional padding
             horizontalAlignment = Alignment.CenterHorizontally) {
@@ -589,6 +591,8 @@ fun ExtractedBar(serviceViewModel: ServiceViewModel, changeId: (String?) -> Unit
                 changeId(null)
                 serviceViewModel.setActiveExtraction(false)
                 serviceViewModel.setActiveTemplate(null)
+                serviceViewModel.setProgress(0f)
+                serviceViewModel.clearResult()
             ***REMOVED***
             .padding(8.dp), // Optional padding
             horizontalAlignment = Alignment.CenterHorizontally) {

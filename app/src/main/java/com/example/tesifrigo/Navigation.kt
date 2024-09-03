@@ -55,7 +55,7 @@ fun AppNavigation(navController: NavHostController, modifier: Modifier = Modifie
                 nullable = false
             ***REMOVED***)) {
             EditTemplateScreen(
-                navController, it.arguments?.getString("templateId")!!, templateViewModel, serviceViewModel
+                navController, it.arguments?.getString("templateId")?:"", templateViewModel, serviceViewModel
 ***REMOVED***
         ***REMOVED***
         composable(Screen.SingleExtraction.route + "/extractionId={extractionId***REMOVED***",

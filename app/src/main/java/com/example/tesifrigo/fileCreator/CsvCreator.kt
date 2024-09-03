@@ -3,6 +3,7 @@ package com.example.tesifrigo.fileCreator
 import android.content.Context
 import android.net.Uri
 import com.example.tesifrigo.models.Extraction
+import com.example.tesifrigo.utils.encodeImageToBase64
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
@@ -32,7 +33,9 @@ class CsvCreator {
                     extraction.exceptionsOccurred.firstOrNull()?.error,
                     extraction.exceptionsOccurred.firstOrNull()?.errorType,
                     extraction.exceptionsOccurred.firstOrNull()?.errorDescription,
-                    "", "", "", "" // Empty fields for non-Extraction attributes
+                    "", "", "", "", // Empty fields for non-Extraction attributes
+                    extraction.extraImages.joinToString("|") { encodeImageToBase64(context, Uri.parse(it)) ?: "" ***REMOVED*** // Add extraImagesBase64
+
     ***REMOVED***.joinToString(",")
                 writer.write("$extractionRow\n")
 
@@ -43,6 +46,7 @@ class CsvCreator {
                         "", "", "", "", // Empty fields for non-field attributes
                         field.templateField?.title,
                         field.value, "", ""
+
         ***REMOVED***.joinToString(",")
                     writer.write("$fieldRow\n")
                 ***REMOVED***
