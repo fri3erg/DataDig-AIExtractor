@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.tesifrigo">
+
     <queries>
         <intent>
             <action android:name="android.intent.action.VIEW" />
@@ -12,6 +13,7 @@
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
+
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
@@ -32,8 +34,7 @@
         android:roundIcon="@mipmap/logo_vale_big"
         android:supportsRtl="true"
         android:theme="@style/Theme.TesiFrigo"
-        tools:targetApi="31"
-        >
+        tools:targetApi="31">
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.example.tesifrigo.fileprovider"
@@ -41,11 +42,11 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/filepaths"/>
+                android:resource="@xml/filepaths" />
         </provider>
 
 
-    <activity
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/Theme.TesiFrigo">
@@ -54,23 +55,22 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        <meta-data
-            android:name="android.app.SplashScreen"
+            <meta-data
+                android:name="android.app.SplashScreen"
 
-        android:resource="@mipmap/logo_vale_big_foreground" />
+                android:resource="@mipmap/logo_vale_big_foreground" />
         </activity>
         <activity
             android:name="com.canhub.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />
+
         <service
             android:name=".services.ExtractionService"
-            android:foregroundServiceType="dataSync"
             android:exported="false"
-            />
+            android:foregroundServiceType="dataSync" />
 
 
     </application>
-
 
 
 </manifest>

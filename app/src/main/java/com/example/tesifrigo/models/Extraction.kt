@@ -9,9 +9,10 @@ import io.realm.kotlin.types.annotations.PrimaryKey
 import kotlinx.serialization.Serializable
 import org.mongodb.kbson.ObjectId
 
+
 class Extraction : RealmObject {
     @PrimaryKey
-    @Expose(serialize = false, deserialize = false) // Exclude from serialization
+    @Expose(serialize = false, deserialize = false)
     var id: ObjectId = ObjectId()
 
     @Expose
@@ -29,19 +30,19 @@ class Extraction : RealmObject {
     @Expose
     var exceptionsOccurred: RealmList<ExceptionOccurred> = realmListOf()
 
-    @Expose(serialize = false, deserialize = false) // Exclude from serialization
+    @Expose(serialize = false, deserialize = false)
     var image: RealmList<String> = realmListOf()
 
     @Expose(serialize = false, deserialize = false)
     var template: Template? = null
 
-    @Expose(serialize = false, deserialize = false) // Exclude from serialization
+    @Expose(serialize = false, deserialize = false)
     var format: String = ""
 
-    @Expose(serialize = false, deserialize = false) // Exclude from serialization
+    @Expose(serialize = false, deserialize = false)
     var tags: RealmList<String> = realmListOf()
 
-    @Expose(serialize = false, deserialize = false) // Exclude from serialization
+    @Expose(serialize = false, deserialize = false)
     var fileUri: String? = null
 
     @Expose
@@ -50,16 +51,16 @@ class Extraction : RealmObject {
     @Expose
     var model: String? = null
 
-    @Expose(serialize = false, deserialize = false) // Exclude from serialization)
+    @Expose(serialize = false, deserialize = false)
     var extraImages: RealmList<String> = realmListOf()
 
-    @Expose(serialize = false, deserialize = false) // Exclude from serialization
-    var review: Boolean = false
+    @Expose(serialize = false, deserialize = false)
+    var review: Boolean = false // Whether the extraction has been reviewed
 ***REMOVED***
 
 class ExtractionTable : RealmObject {
     @PrimaryKey
-    @Expose(serialize = false, deserialize = false) // Exclude from serialization
+    @Expose(serialize = false, deserialize = false)
     var id: ObjectId = ObjectId()
 
     @Expose
@@ -70,7 +71,8 @@ class ExtractionTable : RealmObject {
     var templateTable: TemplateTable? = null
 
     @Expose
-    var dataframe: String = ""
+    var dataframe: String =
+        "" // not seen by the user, but useful in debugging what the table looks like in the backend
 
     @Expose
     var fields: RealmList<ExtractionTableRow> = realmListOf()
@@ -78,7 +80,7 @@ class ExtractionTable : RealmObject {
 
 class ExtractionTableRow : RealmObject {
     @PrimaryKey
-    @Expose(serialize = false, deserialize = false) // Exclude from serialization
+    @Expose(serialize = false, deserialize = false)
     var id: ObjectId = ObjectId()
 
     @Expose
@@ -90,7 +92,7 @@ class ExtractionTableRow : RealmObject {
 
 class ExceptionOccurred : RealmObject {
     @PrimaryKey
-    @Expose(serialize = false, deserialize = false) // Exclude from serialization
+    @Expose(serialize = false, deserialize = false)
     var id: ObjectId = ObjectId()
 
     @Expose
@@ -105,7 +107,7 @@ class ExceptionOccurred : RealmObject {
 
 class ExtractionField : RealmObject {
     @PrimaryKey
-    @Expose(serialize = false, deserialize = false) // Exclude from serialization
+    @Expose(serialize = false, deserialize = false)
     var id: ObjectId = ObjectId()
 
     @Expose
@@ -113,17 +115,28 @@ class ExtractionField : RealmObject {
     var templateField: TemplateField? = null
 
     @Expose
-    var value: String = ""
+    var value: String = "" // The extracted value
 ***REMOVED***
 
 
+/**
+ * Options
+ *
+ * @property model the ai model to use for extraction
+ * @property language the language to use for extraction
+ * @property azureOcr whether to use azure ocr
+ * @property getApiKey a function to get the api key from backend
+ * @property format the format of the extraction
+ * @property resize whether to resize the image
+ * @constructor Create empty Options
+ */
 data class Options(
     var model: String,
     var language: String,
     var azureOcr: Boolean,
     var getApiKey: (String) -> String?,
     var format: String,
-    var resize : Boolean
+    var resize: Boolean
 
 ) {
     constructor() : this("", "", false, { "" ***REMOVED***, "", true)
@@ -132,7 +145,7 @@ data class Options(
 
 class ExtractionCosts : RealmObject {
     @PrimaryKey
-    @Expose(serialize = false, deserialize = false) // Exclude from serialization
+    @Expose(serialize = false, deserialize = false)
     var id: ObjectId = ObjectId()
 
     @Expose
@@ -150,6 +163,5 @@ class ExtractionCosts : RealmObject {
 
 @Serializable
 data class Review(
-    var rating: Int,
-    var comment: String
+    var rating: Int, var comment: String
 )

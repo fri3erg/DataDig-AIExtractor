@@ -2,11 +2,9 @@ package com.example.tesifrigo.fileCreator
 
 import android.content.Context
 import android.net.Uri
-import android.util.Base64
 import com.example.tesifrigo.models.Extraction
 import com.example.tesifrigo.utils.encodeImageToBase64
 import com.google.gson.*
-import io.realm.kotlin.types.RealmList
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
@@ -15,27 +13,36 @@ import java.util.Date
 import java.util.Locale
 
 
+/**
+ * Json creator
+ *
+ * @constructor Create empty Json creator
+ */
 class JsonCreator {
 
 
-    private val gson: Gson = GsonBuilder()
-        .excludeFieldsWithoutExposeAnnotation() // Exclude fields without @Expose
-        .setPrettyPrinting()
-        .create()
+    private val gson: Gson =
+        GsonBuilder().excludeFieldsWithoutExposeAnnotation() // Exclude fields without @Expose
+            .setPrettyPrinting().create()
 
 
+    /**
+     * Convert to json file
+     *
+     * @param extraction The extraction to convert
+     * @param context The context for the file creation
+     * @return The uri of the created file
+     */
     fun convertToJsonFile(extraction: Extraction, context: Context): Uri? {
         // Create a filename based on the timestamp and template title
         val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ITALY).format(Date())
         val templateTitle = extraction.template?.title ?: "Untitled"
         val filename = "$templateTitle-$timestamp.json"
 
-        // Get the output directory (replace with actual directory if needed)
         val outputDirectory = context.filesDir
         val outputFile = File(outputDirectory, filename)
 
 
-        // Convert the modified Extraction object to JSON and save to the file
         return try {
             val directory = outputFile.parentFile
             if (directory != null && !directory.exists()) {
@@ -46,13 +53,11 @@ class JsonCreator {
             val json = gson.toJson(extraction)
 
             val jsonObject = JsonParser.parseString(json).asJsonObject
-
-            // Convert image URIs to base64 strings
+            // Add extraImagesBase64 to the JSON
             val extraImagesBase64 = extraction.extraImages.mapNotNull {
                 encodeImageToBase64(context, Uri.parse(it))
             ***REMOVED***
-
-            // Add the base64 image data to the JsonObject
+            // Add extraImagesBase64 to the JSON
             jsonObject.add("extraImages", JsonArray().apply {
                 extraImagesBase64.forEach { add(it) ***REMOVED***
             ***REMOVED***)
@@ -62,11 +67,9 @@ class JsonCreator {
                 writer.write(jsonObject.toString())
             ***REMOVED***
 
-            // Return the URI of the created file
             return Uri.fromFile(outputFile)
         ***REMOVED*** catch (e: IOException) {
-            // Handle the exception (log, throw, etc.)
-            e.printStackTrace() // Placeholder for error handling
+            e.printStackTrace()
             null
         ***REMOVED***
     ***REMOVED***

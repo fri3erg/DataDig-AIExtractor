@@ -78,8 +78,8 @@ kotlinx-metadata-jvm = { module = "org.jetbrains.kotlinx:kotlinx-metadata-jvm", 
 ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktorVersion" ***REMOVED***
 ktor-client-serialization-jvm = { module = "io.ktor:ktor-client-serialization-jvm", version.ref = "ktorVersion" ***REMOVED***
 library-base = { module = "io.realm.kotlin:library-base", version.ref = "libraryBase" ***REMOVED***
-navigation-compose = { module="androidx.navigation:navigation-compose", version.ref = "composeNavigation" ***REMOVED***
-kotlinx-serialization-json = { module="org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization"***REMOVED***
+navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "composeNavigation" ***REMOVED***
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" ***REMOVED***
 postgrest-kt = { module = "io.github.jan-tennert.supabase:postgrest-kt" ***REMOVED***
 realtime-kt = { module = "io.github.jan-tennert.supabase:realtime-kt" ***REMOVED***
 supabase-gotrue-kt = { module = "io.github.jan-tennert.supabase:gotrue-kt" ***REMOVED***

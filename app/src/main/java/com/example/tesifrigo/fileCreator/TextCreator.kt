@@ -11,9 +11,22 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+/**
+ * Text file creator
+ *
+ * @constructor Create empty Text creator
+ */
 class TextCreator {
 
+    /**
+     * Convert to text file from extraction
+     *
+     * @param extraction The extraction to convert
+     * @param context The context for the file creation
+     * @return The uri of the created file
+     */
     fun convertToTextFile(extraction: Extraction, context: Context): Uri? {
+        // Create a filename based on the timestamp and template title
         val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ITALY).format(Date())
         val templateTitle = extraction.template?.title ?: "Untitled"
         val filename = "${templateTitle***REMOVED***-$timestamp.txt"
@@ -22,6 +35,7 @@ class TextCreator {
         val outputFile = File(outputDirectory, filename)
 
         return try {
+            // use a FileWriter to write the text to the file
             FileWriter(outputFile).use { writer ->
                 // Extraction Title
                 writer.write("Extraction Title: ${extraction.title***REMOVED***\n\n")
@@ -41,7 +55,8 @@ class TextCreator {
                     for (table in extraction.extractedTables) {
                         writer.write("  Table Title: ${table.title ?: ""***REMOVED***\n")
                         // Column Headers
-                        val columnHeaders = table.fields.firstOrNull()?.fields?.mapNotNull { it.templateField?.title ***REMOVED***
+                        val columnHeaders =
+                            table.fields.firstOrNull()?.fields?.mapNotNull { it.templateField?.title ***REMOVED***
                         if (columnHeaders != null) {
                             writer.write("    ${columnHeaders.joinToString(", ")***REMOVED***\n")
                         ***REMOVED***
@@ -72,7 +87,7 @@ class TextCreator {
                 ***REMOVED***
                 writer.write("extraImages: \n")
                 for (image in extraction.extraImages) {
-                    writer.write("  ${encodeImageToBase64(context,Uri.parse(image))***REMOVED***\n")
+                    writer.write("  ${encodeImageToBase64(context, Uri.parse(image))***REMOVED***\n")
                 ***REMOVED***
             ***REMOVED***
             Uri.fromFile(outputFile)

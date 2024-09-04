@@ -14,7 +14,7 @@ class Template : RealmObject {
     var description: String = ""
     var fields: RealmList<TemplateField> = realmListOf()
     var tables: RealmList<TemplateTable> = realmListOf()  // Add this line
-    var tags: RealmList<String> = realmListOf()
+    var tags: RealmList<String> = realmListOf() //unused
 
 
 ***REMOVED***
@@ -27,7 +27,7 @@ class TemplateTable : RealmObject {
     var description: String = ""
     var rows: RealmList<TemplateField> = realmListOf()
     var columns: RealmList<TemplateField> = realmListOf()
-    var all : Boolean = false
+    var all: Boolean = false //if the table should ignore the rows and columns and just extract everything
 ***REMOVED***
 
 class TemplateField : RealmObject {
@@ -35,11 +35,11 @@ class TemplateField : RealmObject {
     var id: ObjectId = ObjectId()
     var title: String = ""
     var description: String = ""
-    var extraDescription: String = ""
+    var extraDescription: String = "" //unused
     var type: String = ""
     var required: Boolean = false
     var intelligentExtraction: Boolean = false
-    var default : String = ""
-    var list : Boolean = false
+    var default: String = ""
+    var list: Boolean = false
 
 ***REMOVED***

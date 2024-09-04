@@ -19,24 +19,32 @@ import com.example.tesifrigo.viewmodels.ServiceViewModel
 import com.example.tesifrigo.viewmodels.TemplateViewModel
 
 
+/**
+ * App navigation with the nav controller
+ *
+ * @param navController The navigation controller
+ * @param modifier The modifier
+ */
 @Composable
 fun AppNavigation(navController: NavHostController, modifier: Modifier = Modifier) {
-    val extractionViewModel: ExtractionViewModel = hiltViewModel()
+    val extractionViewModel: ExtractionViewModel = hiltViewModel() // Get the view models
     val templateViewModel: TemplateViewModel = hiltViewModel()
     val serviceViewModel = hiltViewModel<ServiceViewModel>()
 
-
+    //all routes
     NavHost(
         navController = navController,
         startDestination = Screen.Templates.route,
         modifier = modifier
     ) {
-        composable(route = Screen.Camera.route + "?templateId={templateId***REMOVED***",
+        composable(
+            route = Screen.Camera.route + "?templateId={templateId***REMOVED***",
             arguments = listOf(navArgument("templateId") {
                 type = NavType.StringType
                 defaultValue = null
                 nullable = true
-            ***REMOVED***)) {
+            ***REMOVED***)
+        ) {
             CameraScreen(
                 it.arguments?.getString("templateId"),
                 navController,
@@ -47,23 +55,34 @@ fun AppNavigation(navController: NavHostController, modifier: Modifier = Modifie
         ***REMOVED***
         composable(Screen.Storage.route) { StorageScreen(navController, extractionViewModel) ***REMOVED***
         composable(Screen.Settings.route) { SettingsScreen(serviceViewModel) ***REMOVED***
-        composable(Screen.Templates.route) { TemplateScreen(navController, templateViewModel, serviceViewModel) ***REMOVED***
-        composable(Screen.EditTemplate.route + "/templateId={templateId***REMOVED***",
+        composable(Screen.Templates.route) {
+            TemplateScreen(
+                navController, templateViewModel, serviceViewModel
+***REMOVED***
+        ***REMOVED***
+        composable(
+            Screen.EditTemplate.route + "/templateId={templateId***REMOVED***",
             arguments = listOf(navArgument("templateId") {
                 type = NavType.StringType
                 defaultValue = ""
                 nullable = false
-            ***REMOVED***)) {
+            ***REMOVED***)
+        ) {
             EditTemplateScreen(
-                navController, it.arguments?.getString("templateId")?:"", templateViewModel, serviceViewModel
+                navController,
+                it.arguments?.getString("templateId") ?: "",
+                templateViewModel,
+                serviceViewModel
 ***REMOVED***
         ***REMOVED***
-        composable(Screen.SingleExtraction.route + "/extractionId={extractionId***REMOVED***",
+        composable(
+            Screen.SingleExtraction.route + "/extractionId={extractionId***REMOVED***",
             arguments = listOf(navArgument("extractionId") {
                 type = NavType.StringType
                 defaultValue = ""
                 nullable = false
-            ***REMOVED***)) {
+            ***REMOVED***)
+        ) {
             SingleExtractionScreen(
                 navController, it.arguments?.getString("extractionId")!!, extractionViewModel
 ***REMOVED***

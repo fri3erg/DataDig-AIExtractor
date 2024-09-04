@@ -32,17 +32,26 @@ class AppLifecycleObserver(private val context: Context) : LifecycleEventObserve
             Lifecycle.Event.ON_START -> {
                 isInForeground = true
             ***REMOVED***
+
             Lifecycle.Event.ON_STOP -> {
                 isInForeground = false
             ***REMOVED***
+
             else -> {***REMOVED***
         ***REMOVED***
     ***REMOVED***
 ***REMOVED***
+
+/**
+ * Main application class
+ *
+ * @constructor Create empty My app
+ */
 @HiltAndroidApp
 class MyApp : Application() {
     lateinit var lifecycleObserver: AppLifecycleObserver
-    companion object {
+
+    companion object { // Attach the Realm instance to the application class
         lateinit var realm: Realm
     ***REMOVED***
 
@@ -52,7 +61,7 @@ class MyApp : Application() {
         lifecycleObserver = AppLifecycleObserver(this)
         ProcessLifecycleOwner.get().lifecycle.addObserver(lifecycleObserver)
 
-        val configuration = RealmConfiguration.Builder(
+        val configuration = RealmConfiguration.Builder( //realm configuration
             schema = setOf(
                 Extraction::class,
                 ExtractionField::class,

@@ -97,9 +97,9 @@ import com.example.tesifrigo.models.ExtractionCosts
 import com.example.tesifrigo.models.ExtractionField
 import com.example.tesifrigo.models.ExtractionTable
 import com.example.tesifrigo.models.Review
-import com.example.tesifrigo.ui.template.BooleanFieldWithLabel
 import com.example.tesifrigo.ui.theme.dark_green
-import com.example.tesifrigo.ui.theme.vale
+import com.example.tesifrigo.ui.theme.base_card_color
+import com.example.tesifrigo.utils.BooleanFieldWithLabel
 import com.example.tesifrigo.utils.FileCard
 import com.example.tesifrigo.utils.HelpIconButton
 import com.example.tesifrigo.utils.MyImageArea
@@ -114,6 +114,13 @@ import java.util.Locale
 import java.util.TimeZone
 
 
+/**
+ * Displaying a past extraction in detail
+ *
+ * @param navController Navigation controller
+ * @param extractionId ID of the extraction to display
+ * @param extractionViewModel ViewModel for extraction data
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SingleExtractionScreen(
@@ -126,7 +133,7 @@ fun SingleExtractionScreen(
 
 
 
-    DisposableEffect(navController) {
+    DisposableEffect(navController) { //block navigation and show rating modal
         val listener = NavController.OnDestinationChangedListener { _, destination, arguments ->
             val currentRoute = destination.route ?: return@OnDestinationChangedListener
 
@@ -135,7 +142,8 @@ fun SingleExtractionScreen(
                 val templateId = arguments?.getString("templateId")
 
                 if (templateId != null && currentRoute.startsWith(Screen.EditTemplate.route)) {
-                    pendingDestinationRoute = Screen.EditTemplate.withArgs("templateId" to templateId) // Construct the route manually
+                    pendingDestinationRoute =
+                        Screen.EditTemplate.withArgs("templateId" to templateId) // Construct the route manually
                     showRatingModal = true
                 ***REMOVED*** else {
                     pendingDestinationRoute = currentRoute
@@ -166,8 +174,8 @@ fun SingleExtractionScreen(
 ***REMOVED***
         ***REMOVED***, navigationIcon = {
             IconButton(onClick = {
-                val lastDestination = navController.previousBackStackEntry?.destination?.route
-                    ?: Screen.Storage.route
+                val lastDestination =
+                    navController.previousBackStackEntry?.destination?.route ?: Screen.Storage.route
                 navController.navigate(lastDestination)
             ***REMOVED***) {
                 FaIcon(faIcon = FaIcons.ArrowLeft)
@@ -175,10 +183,10 @@ fun SingleExtractionScreen(
         ***REMOVED***)
     ***REMOVED***) { innerPadding ->
         if (extraction == null) {
-            Text(text = stringResource(R.string.no_extraction_found)) // Handle null case
+            Text(text = stringResource(R.string.no_extraction_found))
         ***REMOVED*** else {
             extraction?.let { extraction ->
-                LazyColumn( // Use extraction directly without null assertion
+                LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(innerPadding)
@@ -202,7 +210,7 @@ fun SingleExtractionScreen(
                     ***REMOVED***
                             ***REMOVED***
                             items(tables) { table ->
-                                if(table.fields.isNotEmpty()) {
+                                if (table.fields.isNotEmpty()) {
                                     ExtractionTableDisplay(table, extractionViewModel)
                                 ***REMOVED***
                             ***REMOVED***
@@ -211,24 +219,23 @@ fun SingleExtractionScreen(
 
                     // Extracted Fields Section
                     if (extraction.extractedFields.isNotEmpty()) {
-                        item { // Wrap the entire section (title and fields) in a single item
+                        item {
                             Text(
                                 text = stringResource(R.string.extracted_fields),
                                 style = MaterialTheme.typography.titleLarge,
                                 fontWeight = FontWeight.Bold,
-                                modifier = Modifier.padding(8.dp) // Add some bottom padding
+                                modifier = Modifier.padding(8.dp)
                 ***REMOVED***
                             Card(
                                 modifier = Modifier.fillMaxWidth(),
                                 elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
                                 colors = CardDefaults.cardColors(
-                                    containerColor = vale, contentColor = Color.Black
+                                    containerColor = base_card_color, contentColor = Color.Black
                     ***REMOVED***,
                                 shape = RoundedCornerShape(8.dp)
 
                 ***REMOVED*** {
                                 Column(modifier = Modifier.padding(16.dp)) {
-                                    // Iterate over fields and display them within the Card
                                     for (field in extraction.extractedFields) {
                                         ExtractionFieldComposable(
                                             field = field, viewModel = extractionViewModel
@@ -248,7 +255,7 @@ fun SingleExtractionScreen(
                             modifier = Modifier.fillMaxWidth(),
                             elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
                             colors = CardDefaults.cardColors(
-                                containerColor = vale, contentColor = Color.Black
+                                containerColor = base_card_color, contentColor = Color.Black
                 ***REMOVED***,
                             shape = RoundedCornerShape(8.dp)
             ***REMOVED*** {
@@ -289,6 +296,13 @@ fun SingleExtractionScreen(
     ***REMOVED***
 ***REMOVED***
 
+/**
+ * Rating modal for the extraction that appears after clicking away from the extraction
+ *
+ * @param onDismiss
+ * @param viewModel
+ * @param extraction
+ */
 @Composable
 fun RatingModal(onDismiss: () -> Unit, viewModel: ExtractionViewModel, extraction: Extraction) {
     var review by remember { mutableStateOf(Review(10, "")) ***REMOVED***
@@ -302,18 +316,22 @@ fun RatingModal(onDismiss: () -> Unit, viewModel: ExtractionViewModel, extractio
                     Text("0")
                     Slider(
                         modifier = Modifier.weight(1f),
-                        value = review.rating.toFloat(), onValueChange = { newRating ->
-                            review = review.copy(rating = newRating.toInt()) // Update using copy
-                        ***REMOVED***, valueRange = 0f..10f, steps = 10
+                        value = review.rating.toFloat(),
+                        onValueChange = { newRating ->
+                            review = review.copy(rating = newRating.toInt())
+                        ***REMOVED***,
+                        valueRange = 0f..10f,
+                        steps = 10
         ***REMOVED***
                     Text("10")
                 ***REMOVED***
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Optional Comment Textbox
-                OutlinedTextField(value = review.comment,
+                OutlinedTextField(
+                    value = review.comment,
                     onValueChange = { newComment ->
-                        review = review.copy(comment = newComment) // Update using copy
+                        review = review.copy(comment = newComment)
                     ***REMOVED***,
                     label = { Text(stringResource(R.string.optional_comments)) ***REMOVED***,
                     modifier = Modifier.fillMaxWidth()
@@ -323,7 +341,6 @@ fun RatingModal(onDismiss: () -> Unit, viewModel: ExtractionViewModel, extractio
         confirmButton = {
             TextButton(
                 onClick = {
-                    // Handle rating submission logic here (pass satisfactionRating and comment)
                     viewModel.changeReview(extraction)
                     viewModel.saveReview(review)
                     onDismiss()
@@ -345,6 +362,11 @@ fun RatingModal(onDismiss: () -> Unit, viewModel: ExtractionViewModel, extractio
         ***REMOVED***)
 ***REMOVED***
 
+/**
+ * Extraction exceptions section,   lists all exceptions that occurred during extraction
+ *
+ * @param exceptionsOccurred List of exceptions that occurred during extraction
+ */
 @Composable
 fun ExtractionExceptions(exceptionsOccurred: List<ExceptionOccurred>) {
 
@@ -394,6 +416,11 @@ fun ExtractionExceptions(exceptionsOccurred: List<ExceptionOccurred>) {
 
 ***REMOVED***
 
+/**
+ * Extraction costs composable that lists all the costs associated with the extraction
+ *
+ * @param extractionCosts
+ */
 @Composable
 fun ExtractionCostsComposable(extractionCosts: List<ExtractionCosts>) {
 
@@ -410,8 +437,7 @@ fun ExtractionCostsComposable(extractionCosts: List<ExtractionCosts>) {
                 verticalAlignment = Alignment.CenterVertically
 ***REMOVED*** {
                 Box(
-                    modifier = Modifier.weight(1f),
-                    contentAlignment = Alignment.CenterStart // Align to start
+                    modifier = Modifier.weight(1f), contentAlignment = Alignment.CenterStart
     ***REMOVED*** {
                     Text(
                         text = "${cost.name***REMOVED***: ",
@@ -420,8 +446,7 @@ fun ExtractionCostsComposable(extractionCosts: List<ExtractionCosts>) {
             ***REMOVED***
                 ***REMOVED***
                 Box(
-                    modifier = Modifier.weight(1f),
-                    contentAlignment = Alignment.CenterStart // Align to start
+                    modifier = Modifier.weight(1f), contentAlignment = Alignment.CenterStart
     ***REMOVED*** {
                     Text(
                         text = "${cost.tokens***REMOVED*** tokens",
@@ -429,8 +454,7 @@ fun ExtractionCostsComposable(extractionCosts: List<ExtractionCosts>) {
         ***REMOVED***
                 ***REMOVED***
                 Box(
-                    modifier = Modifier.weight(1f),
-                    contentAlignment = Alignment.CenterEnd // Align to start
+                    modifier = Modifier.weight(1f), contentAlignment = Alignment.CenterEnd
     ***REMOVED*** {
                     Text(
                         text = "${cost.cost***REMOVED*** ${cost.currency***REMOVED***",
@@ -446,6 +470,13 @@ fun ExtractionCostsComposable(extractionCosts: List<ExtractionCosts>) {
 ***REMOVED***
 
 
+/**
+ * Template info section that displays the title and images of the extraction
+ *
+ * @param extraction
+ * @param navController
+ * @param viewModel
+ */
 @Composable
 fun TemplateInfo(
     extraction: Extraction, navController: NavHostController, viewModel: ExtractionViewModel
@@ -453,18 +484,18 @@ fun TemplateInfo(
     val context = LocalContext.current
 
 
-    // Launcher for cropping the image
-    val cropImageLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult(),
-        onResult = { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val resultUri =
-                    result.data?.getParcelableExtra<CropImage.ActivityResult>(CropImage.CROP_IMAGE_EXTRA_RESULT)?.uriContent
-                if (resultUri != null) {
-                    viewModel.addExtraImage(extraction, resultUri)
+    // Launcher for cropping the image for the extra images
+    val cropImageLauncher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult(),
+            onResult = { result ->
+                if (result.resultCode == Activity.RESULT_OK) {
+                    val resultUri =
+                        result.data?.getParcelableExtra<CropImage.ActivityResult>(CropImage.CROP_IMAGE_EXTRA_RESULT)?.uriContent
+                    if (resultUri != null) {
+                        viewModel.addExtraImage(extraction, resultUri)
+                    ***REMOVED***
                 ***REMOVED***
-            ***REMOVED***
-        ***REMOVED***)
+            ***REMOVED***)
 
     // Function to create the crop intent using CropImageContract
     fun createCropIntent(imageUri: Uri, context: Context): Intent {
@@ -474,16 +505,16 @@ fun TemplateInfo(
     ***REMOVED***
 
 
-    val pickImageLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickVisualMedia(),
-        onResult = { uri ->
-            if (uri != null) {
-                cropImageLauncher.launch(createCropIntent(uri, context))
-            ***REMOVED*** else {
-                Log.d("PhotoPicker", "No media selected")
-            ***REMOVED***
-        ***REMOVED***)
-
+    val pickImageLauncher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia(),
+            onResult = { uri ->
+                if (uri != null) {
+                    cropImageLauncher.launch(createCropIntent(uri, context))
+                ***REMOVED*** else {
+                    Log.d("PhotoPicker", "No media selected")
+                ***REMOVED***
+            ***REMOVED***)
+    // legacy image picker launcher
     val imagePickerLauncherLegacy = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -494,47 +525,44 @@ fun TemplateInfo(
     ***REMOVED***
 
 
-    // Permission request launcher
-    val requestPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-        onResult = { isGranted: Boolean ->
-            if (isGranted) {
+    val requestPermissionLauncher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission(),
+            onResult = { isGranted: Boolean ->
+                if (isGranted) {
 
-                pickImageLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                    pickImageLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
 
-            ***REMOVED*** else {
-                // Permission is denied, handle accordingly (e.g., show a message to the user)
-                Toast.makeText(
-                    context,
-                    context.getString(R.string.permission_denied_cannot_access_images),
-                    Toast.LENGTH_SHORT
-    ***REMOVED***.show()
-            ***REMOVED***
-        ***REMOVED***)
-
-    val requestPermissionLauncherLegacy = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-        onResult = { isGranted: Boolean ->
-            if (isGranted) {
-                // Launch the image picker using the legacy intent
-                val pickIntent = Intent(Intent.ACTION_PICK).apply {
-                    setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
+                ***REMOVED*** else {
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.permission_denied_cannot_access_images),
+                        Toast.LENGTH_SHORT
+        ***REMOVED***.show()
                 ***REMOVED***
-                imagePickerLauncherLegacy.launch(pickIntent)
-            ***REMOVED*** else {
-                // Permission is denied, handle accordingly
-                Toast.makeText(
-                    context,
-                    context.getString(R.string.permission_denied_cannot_access_images),
-                    Toast.LENGTH_SHORT
-    ***REMOVED***.show()
-            ***REMOVED***
-        ***REMOVED***)
+            ***REMOVED***)
+    // Legacy image picker launcher
+    val requestPermissionLauncherLegacy =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission(),
+            onResult = { isGranted: Boolean ->
+                if (isGranted) {
+                    // Launch the image picker using the legacy intent
+                    val pickIntent = Intent(Intent.ACTION_PICK).apply {
+                        setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
+                    ***REMOVED***
+                    imagePickerLauncherLegacy.launch(pickIntent)
+                ***REMOVED*** else {
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.permission_denied_cannot_access_images),
+                        Toast.LENGTH_SHORT
+        ***REMOVED***.show()
+                ***REMOVED***
+            ***REMOVED***)
 
     val onPhotoGalleryClick = {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13+
             if (ContextCompat.checkSelfPermission(
-                    context, Manifest.permission.READ_MEDIA_IMAGES // Use READ_MEDIA_IMAGES
+                    context, Manifest.permission.READ_MEDIA_IMAGES
     ***REMOVED*** == PackageManager.PERMISSION_GRANTED
 ***REMOVED*** {
                 // Launch the image picker
@@ -562,7 +590,7 @@ fun TemplateInfo(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
         colors = CardDefaults.cardColors(
-            containerColor = vale, contentColor = Color.Black
+            containerColor = base_card_color, contentColor = Color.Black
         )
     ) {
         Column(
@@ -600,7 +628,7 @@ fun TemplateInfo(
             ***REMOVED***
             Spacer(modifier = Modifier.height(20.dp))
 
-            // Image Carousel (if available)
+            // Image Carousel
             if (extraction.image.isNotEmpty()) {
                 MyImageArea(
                     imageUris = extraction.image.map { Uri.parse(it) ***REMOVED***,
@@ -647,6 +675,12 @@ fun TemplateInfo(
 ***REMOVED***
 
 
+/**
+ * Tags section that displays all the tags associated with the extraction
+ *
+ * @param extraction
+ * @param viewModel
+ */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun TagsSection(
@@ -728,6 +762,12 @@ fun TagsSection(
 ***REMOVED***
 
 
+/**
+ * Extraction table display that displays the extraction table in a tabular format
+ *
+ * @param extractionTable
+ * @param viewModel
+ */
 @Composable
 fun ExtractionTableDisplay(extractionTable: ExtractionTable, viewModel: ExtractionViewModel) {
     val columnHeaders =
@@ -738,7 +778,7 @@ fun ExtractionTableDisplay(extractionTable: ExtractionTable, viewModel: Extracti
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = vale, contentColor = Color.Black
+            containerColor = base_card_color, contentColor = Color.Black
         )
     ) {
         Column(
@@ -760,7 +800,8 @@ fun ExtractionTableDisplay(extractionTable: ExtractionTable, viewModel: Extracti
                         .padding(8.dp)
     ***REMOVED*** {
                     // Add an empty cell for the row index header
-                    ExtractionTableCell(text = "",
+                    ExtractionTableCell(
+                        text = "",
                         modifier = Modifier.weight(1f),
                         onValueChange = {***REMOVED***,
                         onDelete = {***REMOVED***,
@@ -798,12 +839,12 @@ fun ExtractionTableDisplay(extractionTable: ExtractionTable, viewModel: Extracti
     ***REMOVED*** {
                     // Add row index cell
 
-                    Box( // Wrap the TableCell in a Box
+                    Box(
                         modifier = Modifier
                             .weight(1f)
-                            .fillMaxHeight(), // Make the Box fill the entire height of the Row
+                            .fillMaxHeight(),
 
-                        contentAlignment = Alignment.CenterStart // Center the content vertically within the Box
+                        contentAlignment = Alignment.CenterStart
         ***REMOVED*** {
                         ExtractionTableCell(text = row.rowName,
                             modifier = Modifier.align(Alignment.CenterStart),
@@ -829,7 +870,7 @@ fun ExtractionTableDisplay(extractionTable: ExtractionTable, viewModel: Extracti
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 4.dp)
-***REMOVED*** {
+***REMOVED*** { //last row with buttons
                 ExtractionTableCell(
                     text = "",
                     modifier = Modifier.weight(1f),
@@ -857,6 +898,12 @@ fun ExtractionTableDisplay(extractionTable: ExtractionTable, viewModel: Extracti
 ***REMOVED***
 
 
+/**
+ * Format section for choosing the format of the extraction
+ *
+ * @param extraction
+ * @param viewModel
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FormatSection(extraction: Extraction, viewModel: ExtractionViewModel) {
@@ -869,11 +916,12 @@ fun FormatSection(extraction: Extraction, viewModel: ExtractionViewModel) {
 
     var expanded by remember { mutableStateOf(false) ***REMOVED***
     var selectedFormat by remember { mutableStateOf(extraction.format) ***REMOVED***
-    val formatOptions = listOf("json", "csv", "txt", "xml") // Add more formats if needed
+    val formatOptions = listOf("json", "csv", "txt", "xml")
     val context = LocalContext.current
 
     ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded ***REMOVED***) {
-        TextField(value = selectedFormat,
+        TextField(
+            value = selectedFormat,
             onValueChange = {***REMOVED***,
             readOnly = true,
             label = { Text("Format") ***REMOVED***,
@@ -905,8 +953,11 @@ fun FormatSection(extraction: Extraction, viewModel: ExtractionViewModel) {
                     ***REMOVED***
                     viewModel.addTag(extraction, format)
                     viewModel.updateFile(extraction, format, context)
-                    Toast.makeText(context,
-                        context.getString(R.string.file_recreated_to_fit_format, format), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.file_recreated_to_fit_format, format),
+                        Toast.LENGTH_SHORT
+        ***REMOVED***.show()
                     expanded = false
                 ***REMOVED***)
             ***REMOVED***
@@ -914,7 +965,7 @@ fun FormatSection(extraction: Extraction, viewModel: ExtractionViewModel) {
     ***REMOVED***
 
 
-    // File Card Section (display only if fileUri is available)
+    // File Card Section
     Spacer(modifier = Modifier.height(16.dp))
     FileCard(
         extraction = extraction, modifier = Modifier.fillMaxWidth(), extractionViewModel = viewModel
@@ -924,6 +975,13 @@ fun FormatSection(extraction: Extraction, viewModel: ExtractionViewModel) {
 ***REMOVED***
 
 
+/**
+ * single Extraction field composable
+ *
+ * @param field field to display
+ * @param viewModel extration view model
+ * @param modifier modifier for the column
+ */
 @Composable
 fun ExtractionFieldComposable(
     field: ExtractionField, viewModel: ExtractionViewModel, modifier: Modifier = Modifier
@@ -939,7 +997,7 @@ fun ExtractionFieldComposable(
             val elements = if (templateField.list) value.split("|") else listOf(value)
             Text(text = templateField.title, style = MaterialTheme.typography.titleMedium)
 
-            var editableElements by remember { mutableStateOf(elements) ***REMOVED*** // Use a separate state for editing
+            var editableElements by remember { mutableStateOf(elements) ***REMOVED***
 
             for ((index, element) in editableElements.withIndex()) {
                 Picker(type = templateField.type, text = element, changeText = { newText ->
@@ -954,6 +1012,13 @@ fun ExtractionFieldComposable(
     ***REMOVED***
 ***REMOVED***
 
+/**
+ * Picker for each field type to respect the type of the field
+ *
+ * @param type
+ * @param text
+ * @param changeText
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Picker(
@@ -963,7 +1028,7 @@ fun Picker(
 ) {
     var editableText by remember { mutableStateOf(text) ***REMOVED***
     when (type) {
-        "Text" -> {
+        "Text" -> { //normal text field
             OutlinedTextField(value = editableText, onValueChange = { newText ->
                 editableText = newText
                 changeText(newText)
@@ -974,7 +1039,7 @@ fun Picker(
     ***REMOVED***, label = { Text(stringResource(R.string.field_value)) ***REMOVED***)
         ***REMOVED***
 
-        "Number" -> {
+        "Number" -> { //keyboard type number
             OutlinedTextField(
                 value = text,
                 onValueChange = { newText ->
@@ -986,7 +1051,8 @@ fun Picker(
 
     ***REMOVED***
         ***REMOVED***
-        "Date" -> {
+
+        "Date" -> { //date picker
 
             var parsedDateMillis: Long? = null
             var showError by remember { mutableStateOf(false) ***REMOVED***
@@ -995,6 +1061,7 @@ fun Picker(
                 parsedDateMillis = text.let {
 
                     val possibleDateFormats = listOf(
+                        // List of possible date formats, the more the merrier
                         "yyyy-MM-dd",
                         "dd/MM/yyyy",
                         "MM/dd/yyyy",
@@ -1015,7 +1082,6 @@ fun Picker(
                         "dd MMM yyyy",  // e.g., "12 Sep 2023"
                         "dd MMMM, yyyy", // e.g., "12 September, 2023"
                         "MMMM dd yyyy",  // e.g., "September 12 2023"
-                        // Add more formats as needed
         ***REMOVED***
 
                     for (formatString in possibleDateFormats) {
@@ -1048,14 +1114,14 @@ fun Picker(
                     return@let null // Return null if no format matches
                 ***REMOVED***
             ***REMOVED*** catch (e: Exception) {
-        showError = true
-    ***REMOVED***
+                showError = true
+            ***REMOVED***
 
 
-
-
+            // Show the DatePicker if the date was parsed successfully
             if (parsedDateMillis != null && !showError) {
-                val datePickerState =rememberDatePickerState(initialSelectedDateMillis = parsedDateMillis)
+                val datePickerState =
+                    rememberDatePickerState(initialSelectedDateMillis = parsedDateMillis)
 
                 Spacer(modifier = Modifier.height(8.dp))
                 Box(
@@ -1063,55 +1129,44 @@ fun Picker(
                         .border(1.dp, Color.Gray, shape = RoundedCornerShape(4.dp))
                         .padding(5.dp)
     ***REMOVED*** {
-                    DatePicker( // Use DatePicker for "Date" type
-                        state = datePickerState,
-                        title = {
-                            Text(
-                                text = stringResource(R.string.date),
-                                color = Color.Black
-                ***REMOVED***
-                        ***REMOVED***
-        ***REMOVED***
+                    DatePicker(state = datePickerState, title = {
+                        Text(
+                            text = stringResource(R.string.date), color = Color.Black
+            ***REMOVED***
+                    ***REMOVED***)
                 ***REMOVED***
             ***REMOVED*** else {
                 // Fallback to an OutlinedTextField if parsing fails
                 var localText by remember { mutableStateOf(text) ***REMOVED***
                 var lastKnownText by remember { mutableStateOf(text) ***REMOVED***
 
-                OutlinedTextField(
-                    value = localText,
-                    onValueChange = { newText ->
-                        localText = newText
-                    ***REMOVED***,
-                    label = {
-                        val labelText = if (showError) {
-                            stringResource(R.string.enter_date_manually)
-                        ***REMOVED*** else {
-                            stringResource(id = R.string.date)
-                        ***REMOVED***
-                        Text(text = labelText)
-                    ***REMOVED***,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                    trailingIcon = {
-                        IconButton(onClick = {
+                OutlinedTextField(value = localText, onValueChange = { newText ->
+                    localText = newText
+                ***REMOVED***, label = {
+                    val labelText = if (showError) {
+                        stringResource(R.string.enter_date_manually)
+                    ***REMOVED*** else {
+                        stringResource(id = R.string.date)
+                    ***REMOVED***
+                    Text(text = labelText)
+                ***REMOVED***, modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp), trailingIcon = {
+                    IconButton(
+                        onClick = {
                             changeText(localText)
                             lastKnownText = localText
                             showError = false
-                        ***REMOVED***,
-                            enabled = localText != lastKnownText
-                ***REMOVED*** {
-                            FaIcon(faIcon = FaIcons.Check, tint = Color.Black)
-                        ***REMOVED***
-                    ***REMOVED***,
-                    singleLine = true,
-                    isError = showError
+                        ***REMOVED***, enabled = localText != lastKnownText
+        ***REMOVED*** {
+                        FaIcon(faIcon = FaIcons.Check, tint = Color.Black)
+                    ***REMOVED***
+                ***REMOVED***, singleLine = true, isError = showError
     ***REMOVED***
             ***REMOVED***
         ***REMOVED***
 
-
+        // Boolean field checkbox
         "Boolean" -> {
             BooleanFieldWithLabel(
                 label = stringResource(R.string.field_value_boolean),
@@ -1122,9 +1177,10 @@ fun Picker(
                 ***REMOVED***,
 ***REMOVED***
         ***REMOVED***
-
+        // Float field
         "Float" -> {
-            OutlinedTextField(value = text,
+            OutlinedTextField(
+                value = text,
                 onValueChange = { newText: String ->
                     editableText = newText
                     changeText(newText)

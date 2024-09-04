@@ -18,9 +18,7 @@ import com.example.tesifrigo.models.ExtractionField
 import com.example.tesifrigo.models.ExtractionTable
 import com.example.tesifrigo.models.ExtractionTableRow
 import com.example.tesifrigo.models.Review
-import com.example.tesifrigo.models.Template
 import com.example.tesifrigo.models.TemplateField
-import com.example.tesifrigo.models.TemplateTable
 import com.example.tesifrigo.utils.calculateCloseness
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.jan.supabase.SupabaseClient
@@ -42,6 +40,11 @@ import org.mongodb.kbson.ObjectId
 import java.io.IOException
 import javax.inject.Inject
 
+/**
+ * Extraction view model that handles the extraction data from realm and supabase
+ *
+ * @constructor Create empty Extraction view model
+ */
 @HiltViewModel
 class ExtractionViewModel @Inject constructor() : ViewModel() {
     private val realm = MyApp.realm
@@ -55,26 +58,21 @@ class ExtractionViewModel @Inject constructor() : ViewModel() {
     private val _searchText = MutableStateFlow("")
     val searchText: StateFlow<String> = _searchText.asStateFlow()
 
-    private lateinit var supabaseClient: SupabaseClient
+    private lateinit var supabaseClient: SupabaseClient // Supabase client for the reviews
 
 
     init {
 
-        //Log.d("ExtractionViewModel", "init")
-        //createSampleExtraction()
-        try {
+        try { //connect to supabase
             supabaseClient = createSupabaseClient(
                 supabaseUrl = BuildConfig.EXPO_PUBLIC_SUPABASE_URL,
                 supabaseKey = BuildConfig.EXPO_PUBLIC_SUPABASE_ANON_KEY
 ***REMOVED*** {
                 install(Auth)
                 install(Postgrest)
-                //install other modules
             ***REMOVED***
 
-            // ... use the supabaseClient
         ***REMOVED*** catch (e: IOException) {
-            // Handle the exception (e.g., log, show error message)
             Log.e("ExtractionViewModel", "Error reading local.properties", e)
         ***REMOVED***
     ***REMOVED***
@@ -126,7 +124,7 @@ class ExtractionViewModel @Inject constructor() : ViewModel() {
     ***REMOVED***.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
 
-    fun queryExtraction(id: String): StateFlow<Extraction?> {
+    fun queryExtraction(id: String): StateFlow<Extraction?> { //search for extraction by id
 
         val ex = extractions.map { extractionList ->
             extractionList.find {
@@ -136,7 +134,7 @@ class ExtractionViewModel @Inject constructor() : ViewModel() {
         return ex
     ***REMOVED***
 
-    private fun createSampleExtraction() {
+    private fun createSampleExtraction() { //debug function to create sample extractions
         viewModelScope.launch {
             realm.write {
 
@@ -153,7 +151,7 @@ class ExtractionViewModel @Inject constructor() : ViewModel() {
                 val extractionExceptionToDelete = query<ExceptionOccurred>().find()
                 delete(extractionExceptionToDelete)
 
-
+                /*
                 val templateField1 = copyToRealm(TemplateField().apply {
                     title = "Field 1"
                     description = "This is a sample field"
@@ -325,27 +323,26 @@ class ExtractionViewModel @Inject constructor() : ViewModel() {
                 copyToRealm(extraction1)
                 copyToRealm(extraction2)
                 copyToRealm(extraction3)
-
+                */
             ***REMOVED***
         ***REMOVED***
 
     ***REMOVED***
 
-    fun saveReview(review: Review) {
+    fun saveReview(review: Review) { //save review to supabase
         viewModelScope.launch {
 
             try {
 
                 supabaseClient.from("reviews").insert(review)
             ***REMOVED*** catch (e: Exception) {
-                // Handle any unexpected exceptions (e.g., network errors)
                 println("Exception during review save: $e")
             ***REMOVED***
         ***REMOVED***
     ***REMOVED***
 
 
-    fun deleteExtraction(id: String) {
+    fun deleteExtraction(id: String) { //delete extraction by id
         viewModelScope.launch {
             realm.write {
                 val extractionToDelete = query<Extraction>("id == $0", ObjectId(id)).find().first()
@@ -380,7 +377,7 @@ class ExtractionViewModel @Inject constructor() : ViewModel() {
     ***REMOVED***
 
     fun updateFile(extraction: Extraction, format: String, context: Context) {
-        val newFile = remakeExtraction(extraction, format, context)?: extraction.fileUri
+        val newFile = remakeExtraction(extraction, format, context) ?: extraction.fileUri
         viewModelScope.launch {
             realm.writeBlocking {
                 val latestExtraction = findLatest(extraction) ?: return@writeBlocking
@@ -391,8 +388,18 @@ class ExtractionViewModel @Inject constructor() : ViewModel() {
 
     ***REMOVED***
 
-    private fun remakeExtraction(extraction: Extraction, format: String, context: Context): String? {
-        val unManagedExtraction= realm.copyFromRealm(extraction)
+    /**
+     * Remake extraction file based on format
+     *
+     * @param extraction extraction to remake
+     * @param format format to remake to
+     * @param context context
+     * @return
+     */
+    private fun remakeExtraction(
+        extraction: Extraction, format: String, context: Context
+    ): String? {
+        val unManagedExtraction = realm.copyFromRealm(extraction)
         when (format) {
             "json" -> {
                 return JsonCreator().convertToJsonFile(unManagedExtraction, context).toString()
@@ -487,7 +494,9 @@ class ExtractionViewModel @Inject constructor() : ViewModel() {
         ***REMOVED***
     ***REMOVED***
 
-    fun addRow(extractionTable: ExtractionTable, it: String) {
+    fun addRow(
+        extractionTable: ExtractionTable, it: String
+    ) { //add row to extraction table with default values
         viewModelScope.launch {
             realm.writeBlocking {
                 val latestTable = findLatest(extractionTable) ?: return@writeBlocking
@@ -509,7 +518,9 @@ class ExtractionViewModel @Inject constructor() : ViewModel() {
 
     ***REMOVED***
 
-    fun addColumn(extractionTable: ExtractionTable, it: String) {
+    fun addColumn(
+        extractionTable: ExtractionTable, it: String
+    ) { //add column to extraction table with default values
         viewModelScope.launch {
             realm.writeBlocking {
                 val latestTable = findLatest(extractionTable) ?: return@writeBlocking

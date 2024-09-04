@@ -8,7 +8,7 @@ plugins {
     alias(libs.plugins.googleGmsGoogleServices) apply false
     alias(libs.plugins.googleFirebaseCrashlytics) apply false
     id("com.autonomousapps.dependency-analysis") version "1.31.0"
-
+    id("org.jetbrains.dokka") version "1.9.0"
 
 ***REMOVED***
 buildscript {

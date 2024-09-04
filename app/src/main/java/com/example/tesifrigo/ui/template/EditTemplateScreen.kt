@@ -50,7 +50,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -81,7 +80,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.tesifrigo.R
 import com.example.tesifrigo.Screen
@@ -91,8 +89,9 @@ import com.example.tesifrigo.models.TemplateTable
 import com.example.tesifrigo.ui.theme.dark_blue
 import com.example.tesifrigo.ui.theme.dark_red
 import com.example.tesifrigo.ui.theme.light_gray
-import com.example.tesifrigo.ui.theme.vale
+import com.example.tesifrigo.ui.theme.base_card_color
 import com.example.tesifrigo.utils.AddButton
+import com.example.tesifrigo.utils.BooleanFieldWithLabel
 import com.example.tesifrigo.utils.DeleteButton
 import com.example.tesifrigo.utils.HelpIconButton
 import com.example.tesifrigo.viewmodels.ServiceViewModel
@@ -106,10 +105,21 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
+/**
+ * Single template screen
+ *
+ * @param navController
+ * @param templateId The id of the template to be displayed
+ * @param templateViewModel
+ * @param serviceViewModel
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditTemplateScreen(
-    navController: NavHostController, templateId: String, templateViewModel: TemplateViewModel, serviceViewModel: ServiceViewModel
+    navController: NavHostController,
+    templateId: String,
+    templateViewModel: TemplateViewModel,
+    serviceViewModel: ServiceViewModel
 ) {
     if (templateId.isEmpty()) {
         navController.navigateUp()
@@ -147,14 +157,12 @@ fun EditTemplateScreen(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier
-                            .weight(1f) // Allow the title to take up available space, but ellipsize if needed
+                            .weight(1f)
                             .align(Alignment.CenterVertically)
         ***REMOVED***
                 ***REMOVED***
-                template?.let {
-                    Button(
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically),
+                template?.let { //Use template button
+                    Button(modifier = Modifier.align(Alignment.CenterVertically),
                         shape = RoundedCornerShape(8.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = light_gray),
                         onClick = {
@@ -168,21 +176,20 @@ fun EditTemplateScreen(
                                 serviceViewModel.clearResult()
                                 navController.navigate(Screen.Camera.routeWithOptionalArgs("templateId" to templateId.toHexString()))
                             ***REMOVED***
-                        ***REMOVED***
-        ***REMOVED*** {
+                        ***REMOVED***) {
                         Text(
                             text = stringResource(id = R.string.use),
                             color = Color.Black,
                             maxLines = 1,
-                            overflow = TextOverflow.Visible // Allow button text to be visible even if it overflows
+                            overflow = TextOverflow.Visible
             ***REMOVED***
                     ***REMOVED***
                 ***REMOVED***
             ***REMOVED***
         ***REMOVED***, navigationIcon = {
             IconButton(onClick = {
-                val lastDestination = navController.previousBackStackEntry?.destination?.route
-                    ?: Screen.Storage.route
+                val lastDestination =
+                    navController.previousBackStackEntry?.destination?.route ?: Screen.Storage.route
                 navController.navigate(lastDestination)
             ***REMOVED***) {
                 FaIcon(faIcon = FaIcons.ArrowLeft)
@@ -231,9 +238,11 @@ fun EditTemplateScreen(
                             label = { Text("Template Description", color = Color.Black) ***REMOVED***,
                             modifier = Modifier.fillMaxWidth(),
                             trailingIcon = {
-                                HelpIconButton(helpText = stringResource(R.string.this_is_the_description_of_the_template_this_will_be_used_for_the_extraction_but_it_is_highly_optional_and_can_be_left_empty_use_it_if_you_need_to_pass_more_context), title = stringResource(
-                                    R.string.template_description
-                    ***REMOVED***
+                                HelpIconButton(
+                                    helpText = stringResource(R.string.this_is_the_description_of_the_template_this_will_be_used_for_the_extraction_but_it_is_highly_optional_and_can_be_left_empty_use_it_if_you_need_to_pass_more_context),
+                                    title = stringResource(
+                                        R.string.template_description
+                        ***REMOVED***
                     ***REMOVED***
                             ***REMOVED***)
                     ***REMOVED***
@@ -265,7 +274,7 @@ fun EditTemplateScreen(
                         onClick = { templateViewModel.addField(template!!) ***REMOVED***)
                 ***REMOVED***
 
-                item {
+                item { // Template Tables Section
                     Text(
                         stringResource(R.string.template_tables),
                         style = MaterialTheme.typography.titleMedium
@@ -305,6 +314,13 @@ fun EditTemplateScreen(
     ***REMOVED***
 ***REMOVED***
 
+/**
+ * Template key words section
+ *
+ * @param template the template its referring to
+ * @param table the table its referring to
+ * @param viewModel template view model
+ */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun TemplateKeyWordsSection(
@@ -396,6 +412,15 @@ fun TemplateKeyWordsSection(
     ***REMOVED***
 ***REMOVED***
 
+/**
+ * Template field composable
+ *
+ * @param template The template its referring to
+ * @param index The index of the field
+ * @param viewModel The template view model
+ * @param focusRequesterIndex The index of the field to focus on
+ * @param changelistState The function to change the list state and scroll to the next field
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TemplateFieldComposable(
@@ -407,7 +432,7 @@ fun TemplateFieldComposable(
 
     ) {
 
-    val focusRequester = remember { FocusRequester() ***REMOVED*** // Create FocusRequester for field
+    val focusRequester = remember { FocusRequester() ***REMOVED***
     val typeOptions = listOf("Text", "Date", "Number", "Boolean", "Float")
     var expanded by remember { mutableStateOf(false) ***REMOVED***
     val foundField by remember { mutableStateOf(template?.fields?.get(index)) ***REMOVED***
@@ -420,11 +445,11 @@ fun TemplateFieldComposable(
     var list by remember { mutableStateOf(foundField?.list) ***REMOVED***
 
 
-    LaunchedEffect(key1 = focusRequesterIndex) {
+    LaunchedEffect(key1 = focusRequesterIndex) { // Focus on the field when requested
         if (focusRequesterIndex == index) {
             focusRequester.requestFocus()
             changelistState()
-            viewModel._focusRequesterIndex.value = null // Reset after focusing
+            viewModel._focusRequesterIndex.value = null
         ***REMOVED***
     ***REMOVED***
 
@@ -434,7 +459,7 @@ fun TemplateFieldComposable(
             .padding(6.dp)
             .focusRequester(focusRequester),
         colors = CardDefaults.cardColors(
-            containerColor = vale
+            containerColor = base_card_color
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp)
     ) {
@@ -452,7 +477,7 @@ fun TemplateFieldComposable(
                         ***REMOVED***
                                 ***REMOVED***,
                                 label = { Text(stringResource(R.string.field_title)) ***REMOVED***,
-                                modifier = Modifier.weight(1f), // Occupy remaining space
+                                modifier = Modifier.weight(1f),
                                 trailingIcon = {
                                     HelpIconButton(
                                         helpText = stringResource(R.string.this_is_the_title_of_the_field_the_most_important_part_of_the_field_this_will_be_used_to_extract_the_data_of_the_corresponding_field_this_field_cannot_be_left_empty),
@@ -478,10 +503,12 @@ fun TemplateFieldComposable(
                                 label = { Text(stringResource(R.string.field_description)) ***REMOVED***,
                                 modifier = Modifier.weight(1f),
                                 trailingIcon = {
-                                    HelpIconButton(helpText = stringResource(R.string.this_is_the_description_of_the_field_this_will_also_be_used_to_extract_the_data_but_you_dont_need_to_be_super_specific_this_field_can_be_left_empty_if_the_title_is_descriptive_enough),
+                                    HelpIconButton(
+                                        helpText = stringResource(R.string.this_is_the_description_of_the_field_this_will_also_be_used_to_extract_the_data_but_you_dont_need_to_be_super_specific_this_field_can_be_left_empty_if_the_title_is_descriptive_enough),
                                         title = stringResource(
                                             R.string.field_description
-                            ***REMOVED***)
+                            ***REMOVED***
+                        ***REMOVED***
                                 ***REMOVED***)
                         ***REMOVED***
                     ***REMOVED***
@@ -491,7 +518,8 @@ fun TemplateFieldComposable(
                     // Type with Help Icon
                     Row(verticalAlignment = Alignment.CenterVertically) {
 
-                        ExposedDropdownMenuBox(expanded = expanded,
+                        ExposedDropdownMenuBox(
+                            expanded = expanded,
                             onExpandedChange = { expanded = !expanded ***REMOVED***) {
                             type?.let {
                                 TextField(value = it,
@@ -508,8 +536,8 @@ fun TemplateFieldComposable(
                                         unfocusedLabelColor = Color.Black,
                                         focusedIndicatorColor = Color.Black,
                                         unfocusedIndicatorColor = Color.Black,
-                                        unfocusedContainerColor = vale,
-                                        focusedContainerColor = vale
+                                        unfocusedContainerColor = base_card_color,
+                                        focusedContainerColor = base_card_color
                         ***REMOVED***,
                                     modifier = Modifier
                                         .menuAnchor()
@@ -555,9 +583,12 @@ fun TemplateFieldComposable(
                                 ***REMOVED***
                             ***REMOVED***
                         ***REMOVED***
-                        Spacer(modifier = Modifier.width(4.dp)) // Reduced spacing
-                        HelpIconButton(helpText = stringResource(R.string.specify_the_type_of_data_expected_for_this_field_e_g_text_number_date_this_will_affect_the_type_of_the_extracted_data_the_default_value_must_be_set_accordingly), title= stringResource(
-                            id = R.string.type)
+                        Spacer(modifier = Modifier.width(4.dp))
+                        HelpIconButton(
+                            helpText = stringResource(R.string.specify_the_type_of_data_expected_for_this_field_e_g_text_number_date_this_will_affect_the_type_of_the_extracted_data_the_default_value_must_be_set_accordingly),
+                            title = stringResource(
+                                id = R.string.type
+                ***REMOVED***
             ***REMOVED***
                     ***REMOVED***
                     Spacer(modifier = Modifier.height(8.dp))
@@ -599,7 +630,7 @@ fun TemplateFieldComposable(
                     HorizontalDivider()
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    // Required & Intelligent Extraction (separate composables with equal weight)
+                    // Required & Intelligent Extraction
 
                     required?.let {
                         BooleanFieldWithLabel(
@@ -639,6 +670,17 @@ fun TemplateFieldComposable(
     ***REMOVED***
 ***REMOVED***
 
+/**
+ * picker for the default value of the field
+ *
+ * @param default The default value
+ * @param changeDefault The function to change the default value
+ * @param isList Whether the field is a list
+ * @param type The type of the field
+ * @param viewModel The template view model
+ * @param template The template its referring to
+ * @param index The index of the field
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DefaultPicker(
@@ -653,7 +695,7 @@ fun DefaultPicker(
     Row(verticalAlignment = Alignment.CenterVertically) {
 
         when (type) {
-            "Text" -> {
+            "Text" -> { //normal text field
                 default?.let {
                     OutlinedTextField(value = it,
                         enabled = !isList,
@@ -681,7 +723,7 @@ fun DefaultPicker(
                 ***REMOVED***
             ***REMOVED***
 
-            "Number" -> {
+            "Number" -> { //number keyboard
                 default?.let {
 
                     OutlinedTextField(value = it,
@@ -709,7 +751,7 @@ fun DefaultPicker(
                 ***REMOVED***
             ***REMOVED***
 
-            "Date" -> {
+            "Date" -> { //date picker
                 if (!isList) {
                     val datePickerState =
                         rememberDatePickerState(initialSelectedDateMillis = default?.let {
@@ -722,7 +764,7 @@ fun DefaultPicker(
                             ***REMOVED*** catch (e: ParseException) {
                                 null
                             ***REMOVED***
-                        ***REMOVED***) // State for DatePicker
+                        ***REMOVED***)
                     Spacer(modifier = Modifier.height(8.dp))
                     Box(
                         modifier = Modifier
@@ -740,7 +782,7 @@ fun DefaultPicker(
                                 .align(Alignment.TopEnd)
                                 .padding(6.dp)
             ***REMOVED***
-                        DatePicker( // Use DatePicker for "Date" type
+                        DatePicker(
                             state = datePickerState
             ***REMOVED***
                     ***REMOVED***
@@ -761,7 +803,7 @@ fun DefaultPicker(
                 ***REMOVED***
             ***REMOVED***
 
-            "Boolean" -> {
+            "Boolean" -> { //boolean field checkbox
                 default?.let {
                     BooleanFieldWithLabel(
                         label = stringResource(R.string.field_default_boolean),
@@ -779,7 +821,7 @@ fun DefaultPicker(
                 ***REMOVED***
             ***REMOVED***
 
-            "Float" -> {
+            "Float" -> { //float keyboard
                 default?.let {
                     OutlinedTextField(value = it,
                         onValueChange = { newValue ->
@@ -813,6 +855,15 @@ fun DefaultPicker(
     ***REMOVED***
 ***REMOVED***
 
+/**
+ * Template table display, displays an editable table with columns and rows
+ *
+ * @param tableIndex The index of the table
+ * @param viewModel The template view model
+ * @param template The template its referring to
+ * @param focusRequesterIndex The index of the field to focus on
+ * @param changelistState The function to change the list state and scroll to the next field
+ */
 @Composable
 fun TemplateTableCard(
     tableIndex: Int,
@@ -830,7 +881,7 @@ fun TemplateTableCard(
         if (focusRequesterIndex == tableIndex + template.fields.size - 1) {
             focusRequester.requestFocus()
             changelistState()
-            viewModel._focusRequesterIndex.value = -1 // Reset after focusing
+            viewModel._focusRequesterIndex.value = -1
         ***REMOVED***
     ***REMOVED***
     Card(
@@ -840,7 +891,7 @@ fun TemplateTableCard(
             .focusRequester(focusRequester),
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
         colors = CardDefaults.cardColors(
-            containerColor = vale
+            containerColor = base_card_color
         )
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -925,6 +976,13 @@ fun TemplateTableCard(
     ***REMOVED***
 ***REMOVED***
 
+/**
+ * Table grid
+ *
+ * @param viewModel the template view model
+ * @param tableIndex the index of the table
+ * @param template the template its referring to
+ */
 @Composable
 fun TableGrid(viewModel: TemplateViewModel, tableIndex: Int, template: Template) {
 
@@ -946,7 +1004,7 @@ fun TableGrid(viewModel: TemplateViewModel, tableIndex: Int, template: Template)
                 .padding(1.dp)
                 .fillMaxWidth()
                 .horizontalScroll(scrollState)
-        ) { // Apply horizontal scrolling){ // Make the header row horizontally scrollable) { // Wrap column headers in a Row with weight
+        ) {  //first row
             TableCellTemplate(
                 modifier = Modifier.weight(1f), invisible = true, first = true
 ***REMOVED*** // Add a blank cell for the button column
@@ -983,7 +1041,7 @@ fun TableGrid(viewModel: TemplateViewModel, tableIndex: Int, template: Template)
     ***REMOVED*** // Add a blank cell for the button column
             ***REMOVED***
         ***REMOVED***
-        Row(modifier = Modifier.padding(1.dp)) {
+        Row(modifier = Modifier.padding(1.dp)) { //last row
             TableCellTemplate(modifier = Modifier.weight(1f), isButton = true, buttonClick = {
                 showDialog = true; isColumn = false
             ***REMOVED***) // Add a blank cell for the button column
@@ -1032,6 +1090,19 @@ fun TableGrid(viewModel: TemplateViewModel, tableIndex: Int, template: Template)
     ***REMOVED***
 ***REMOVED***
 
+/**
+ * Table cell template
+ *
+ * @param modifier The modifier for the cell
+ * @param field The field its referring to
+ * @param isHeader Whether the cell is a header cell
+ * @param onValueChange The function to change the value of the field
+ * @param invisible Whether the cell is invisible
+ * @param isButton Whether the cell is a button
+ * @param first Whether the cell is the first cell
+ * @param buttonClick The function to call when the button is clicked
+ * @param onDelete The function to call when the delete button is clicked
+ */
 @Composable
 fun TableCellTemplate(
     modifier: Modifier = Modifier,
@@ -1047,7 +1118,7 @@ fun TableCellTemplate(
 
     var modifierPadded = modifier
         .padding(1.dp)
-        .defaultMinSize(minWidth = 24.dp, minHeight = 24.dp) // Ensure a minimum width for cells
+        .defaultMinSize(minWidth = 24.dp, minHeight = 24.dp)
     var boxSize by remember { mutableStateOf(IntSize.Zero) ***REMOVED***
     val text = field?.title ?: ""
 
@@ -1057,7 +1128,7 @@ fun TableCellTemplate(
     if (isHeader) {
         modifierPadded = modifierPadded.background(Color.LightGray)
     ***REMOVED***
-    if (isButton) {//pls round the button
+    if (isButton) {
         modifierPadded = modifierPadded
             .background(dark_blue)
             .clip(shape = RoundedCornerShape(4.dp))
@@ -1070,15 +1141,15 @@ fun TableCellTemplate(
         ***REMOVED***, contentAlignment = Alignment.Center
 
     ) {
-        if (isHeader) {
+        if (isHeader) { //header
             Text(text = text,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
                 overflow = TextOverflow.Ellipsis,
-                maxLines = 1, // Limit to a single line
+                maxLines = 1,
                 modifier = Modifier.clickable {
                     showDialog = true
-                    editedText = text // Initialize with current text
+                    editedText = text
                 ***REMOVED***)
             if (showDialog) {
                 AlertTable(
@@ -1088,7 +1159,7 @@ fun TableCellTemplate(
                     changeShowDialog = { showDialog = it ***REMOVED***,
     ***REMOVED***
             ***REMOVED***
-        ***REMOVED*** else if (isButton) {
+        ***REMOVED*** else if (isButton) { //button +
             val iconSize = if (boxSize != IntSize.Zero) {
                 LocalDensity.current.run { minOf(boxSize.width, boxSize.height).toDp() / 2 ***REMOVED***
             ***REMOVED*** else {
@@ -1104,11 +1175,15 @@ fun TableCellTemplate(
 
 ***REMOVED***
 
-        ***REMOVED*** else {
-            if(first){
-                HelpIconButton(helpText = stringResource(R.string.you_can_cut_and_add_column_and_rows_at_will_only_the_specified_columns_and_rows_will_be_extracted_if_the_table_is_bi_dimensional_or_you_can_choose_to_leave_one_of_the_two_empty_in_that_case_everything_found_in_the_rows_column_will_be_extracted_leaving_both_empty_or_toggling_the_find_everything_button_will_return_everything_found), title = stringResource(
-                    R.string.table_usage
-    ***REMOVED***, modifier = Modifier.align(Alignment.Center))
+        ***REMOVED*** else { //invisible or normal cell
+            if (first) { //first cell
+                HelpIconButton(
+                    helpText = stringResource(R.string.you_can_cut_and_add_column_and_rows_at_will_only_the_specified_columns_and_rows_will_be_extracted_if_the_table_is_bi_dimensional_or_you_can_choose_to_leave_one_of_the_two_empty_in_that_case_everything_found_in_the_rows_column_will_be_extracted_leaving_both_empty_or_toggling_the_find_everything_button_will_return_everything_found),
+                    title = stringResource(
+                        R.string.table_usage
+        ***REMOVED***,
+                    modifier = Modifier.align(Alignment.Center)
+    ***REMOVED***
             ***REMOVED***
             Text(
                 text = text,
@@ -1121,6 +1196,14 @@ fun TableCellTemplate(
     ***REMOVED***
 ***REMOVED***
 
+/**
+ * modal dialog for editing a field
+ *
+ * @param field The field its referring to
+ * @param onValueChange The function to change the value of the field
+ * @param changeShowDialog The function to change the visibility of the dialog
+ * @param onDelete The function to call when the delete button is clicked
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlertTable(
@@ -1152,7 +1235,8 @@ fun AlertTable(
                 var expanded by remember { mutableStateOf(false) ***REMOVED***
                 val typeOptions = listOf("Text", "Date", "Number", "Boolean", "Float")
 
-                ExposedDropdownMenuBox(expanded = expanded,
+                ExposedDropdownMenuBox(
+                    expanded = expanded,
                     onExpandedChange = { expanded = !expanded ***REMOVED***) {
                     TextField(
                         value = selectedType,
@@ -1216,8 +1300,7 @@ fun AlertTable(
                         this.type = selectedType
                         this.required = selectedRequired
                     ***REMOVED***
-                    onValueChange(newField) // Pass the edited text
-                    // You'll likely want to pass the selectedType to your ViewModel as well
+                    onValueChange(newField)
                     changeShowDialog(false)
                 ***REMOVED***) {
                     Text(stringResource(id = R.string.ok))
@@ -1227,90 +1310,3 @@ fun AlertTable(
 
         ***REMOVED***)
 ***REMOVED***
-
-
-@Composable
-fun AlertTableExtraction(
-    text: String,
-    onValueChange: (String) -> Unit,
-    changeShowDialog: (Boolean) -> Unit,
-    onDelete: (() -> Unit)? = null
-) {
-    var editableText by remember { mutableStateOf(text) ***REMOVED***
-    AlertDialog(containerColor = Color.White,
-        onDismissRequest = { changeShowDialog(false) ***REMOVED***,
-        title = { Text(stringResource(R.string.edit_value)) ***REMOVED***,
-        text = {
-            Column {
-                OutlinedTextField(value = editableText,
-                    colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedBorderColor = Color.Black,
-                        unfocusedLabelColor = Color.Black,
-        ***REMOVED***,
-                    onValueChange = { editableText = it ***REMOVED***,
-                    label = { Text(stringResource(R.string.enter_value), color = Color.Black) ***REMOVED***)
-            ***REMOVED***
-        ***REMOVED***,
-        confirmButton = {
-            Row {
-                if (onDelete != null) {
-                    TextButton(
-                        onClick = {
-                            onDelete()
-                            changeShowDialog(false)
-                        ***REMOVED***, modifier = Modifier.padding(end = 8.dp)
-        ***REMOVED*** {
-                        Text(stringResource(id = R.string.delete), color = dark_red)
-                    ***REMOVED***
-                    Spacer(modifier = Modifier.weight(1f))
-                ***REMOVED*** else {
-                    Spacer(modifier = Modifier.weight(1f))
-                ***REMOVED***
-                TextButton(onClick = { changeShowDialog(false) ***REMOVED***) {
-                    Text(stringResource(id = R.string.cancel))
-                ***REMOVED***
-                Spacer(modifier = Modifier.width(4.dp))
-                TextButton(onClick = {
-                    onValueChange(editableText) // Pass the edited text
-                    // You'll likely want to pass the selectedType to your ViewModel as well
-                    changeShowDialog(false)
-                ***REMOVED***) {
-                    Text(stringResource(R.string.ok))
-                ***REMOVED***
-
-            ***REMOVED***
-
-        ***REMOVED***)
-***REMOVED***
-
-
-@Composable
-fun BooleanFieldWithLabel(
-    label: String,
-    value: Boolean,
-    onValueChange: (Boolean) -> Unit,
-    modifier: Modifier = Modifier,
-    help: String = "",
-    title: String = label,
-    enabled: Boolean = true
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically, modifier = modifier
-
-    ) {
-        Text(text = label, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-        if (help.isNotEmpty()) {
-            Spacer(modifier = Modifier.width(4.dp))
-            HelpIconButton(helpText = help, title = title)
-        ***REMOVED***
-        Spacer(modifier = Modifier.weight(1f))
-        Switch(
-            enabled = enabled, checked = value, onCheckedChange = onValueChange
-        )
-    ***REMOVED***
-***REMOVED***
-
-// Help Icon Button Composable (with modal tooltip)
-
-
-

@@ -11,8 +11,22 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+/**
+ * Csv creator
+ *
+ * @constructor Create empty Csv creator
+ */
 class CsvCreator {
+    /**
+     * Convert to csv file
+     *
+     * @param extraction  The extraction to convert
+     * @param context  The context for the file creation
+     * @return The uri of the created file
+     */
     fun convertToCsvFile(extraction: Extraction, context: Context): Uri? {
+
+
         // Create a filename based on the timestamp and template title
         val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ITALY).format(Date())
         val templateTitle = extraction.template?.title ?: "Untitled"
@@ -26,15 +40,21 @@ class CsvCreator {
                 writer.write("type,title,extraction_costs,exception_occurred_error,exception_occurred_type,exception_occurred_description,template_field_title,value,row_index,column_index\n")
 
                 // Write Extraction row
-                val extractionRow = listOf(
-                    "Extraction",
+                val extractionRow = listOf("Extraction",
                     extraction.title,
                     extraction.extractionCosts,
                     extraction.exceptionsOccurred.firstOrNull()?.error,
                     extraction.exceptionsOccurred.firstOrNull()?.errorType,
                     extraction.exceptionsOccurred.firstOrNull()?.errorDescription,
-                    "", "", "", "", // Empty fields for non-Extraction attributes
-                    extraction.extraImages.joinToString("|") { encodeImageToBase64(context, Uri.parse(it)) ?: "" ***REMOVED*** // Add extraImagesBase64
+                    "",
+                    "",
+                    "",
+                    "", // Empty fields for non-Extraction attributes
+                    extraction.extraImages.joinToString("|") {
+                        encodeImageToBase64(
+                            context, Uri.parse(it)
+            ***REMOVED*** ?: ""
+                    ***REMOVED*** // Add extraImagesBase64
 
     ***REMOVED***.joinToString(",")
                 writer.write("$extractionRow\n")
@@ -42,10 +62,8 @@ class CsvCreator {
                 // Write ExtractionField rows
                 for (field in extraction.extractedFields) {
                     val fieldRow = listOf(
-                        "extracted_field",
-                        "", "", "", "", // Empty fields for non-field attributes
-                        field.templateField?.title,
-                        field.value, "", ""
+                        "extracted_field", "", "", "", "", // Empty fields for non-field attributes
+                        field.templateField?.title, field.value, "", ""
 
         ***REMOVED***.joinToString(",")
                     writer.write("$fieldRow\n")
@@ -57,7 +75,10 @@ class CsvCreator {
                         for (j in table.fields[i].fields.indices) {
                             val tableRow = listOf(
                                 "extracted_table",
-                                "", "", "", "", // Empty fields for non-table attributes
+                                "",
+                                "",
+                                "",
+                                "", // Empty fields for non-table attributes
                                 table.fields[i].fields[j].templateField?.title,
                                 table.fields[i].fields[j].value,
                                 i.toString(),

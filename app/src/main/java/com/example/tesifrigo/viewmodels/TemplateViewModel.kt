@@ -28,6 +28,11 @@ import io.realm.kotlin.types.RealmList
 import org.mongodb.kbson.ObjectId
 
 
+/**
+ * Template view model that handles the template data from realm
+ *
+ * @constructor Create empty Template view model
+ */
 class TemplateViewModel : ViewModel() {
 
     private val realm = MyApp.realm
@@ -43,9 +48,6 @@ class TemplateViewModel : ViewModel() {
 
     val _focusRequesterIndex = MutableStateFlow<Int?>(null) // Index of the element to focus
     val focusRequesterIndex: StateFlow<Int?> get() = _focusRequesterIndex.asStateFlow()
-
-
-
 
 
     val templates = realm.query<Template>().asFlow().map {
@@ -97,7 +99,7 @@ class TemplateViewModel : ViewModel() {
         //createSampleTemplates()
     ***REMOVED***
 
-    fun queryTemplate(id: String): StateFlow<Template?> {
+    fun queryTemplate(id: String): StateFlow<Template?> { // Query a single template by id
         if (id.isBlank()) {
             return MutableStateFlow(null)
         ***REMOVED***
@@ -111,26 +113,33 @@ class TemplateViewModel : ViewModel() {
 
     // Function to load JSON from res/raw
     private fun loadTemplateFromJson(context: Context, resource: Int): Template? {
-        val jsonString = context.resources.openRawResource(resource)
-            .bufferedReader().use { it.readText() ***REMOVED***
+        val jsonString =
+            context.resources.openRawResource(resource).bufferedReader().use { it.readText() ***REMOVED***
         println(jsonString)
 
-        val gson = GsonBuilder()
-            .registerTypeAdapter(object : TypeToken<RealmList<String>>() {***REMOVED***.type, RealmListStringAdapter())
-            .registerTypeAdapter(object : TypeToken<RealmList<TemplateField>>() {***REMOVED***.type, TemplateFieldListAdapter())
-            .registerTypeAdapter(object : TypeToken<RealmList<TemplateTable>>() {***REMOVED***.type, TemplateTableListAdapter())
-            .create()
+        val gson = GsonBuilder().registerTypeAdapter(
+                object : TypeToken<RealmList<String>>() {***REMOVED***.type, RealmListStringAdapter()
+***REMOVED***.registerTypeAdapter(
+                object : TypeToken<RealmList<TemplateField>>() {***REMOVED***.type, TemplateFieldListAdapter()
+***REMOVED***.registerTypeAdapter(
+                object : TypeToken<RealmList<TemplateTable>>() {***REMOVED***.type, TemplateTableListAdapter()
+***REMOVED***.create()
 
         return gson.fromJson(jsonString, Template::class.java)
     ***REMOVED***
 
+    /**
+     * Creates the initial sample templates when the app is first launched
+     *
+     * @param context The context
+     */
     fun createSampleTemplates(context: Context) {
 
         val article = loadTemplateFromJson(context, R.raw.article)
         val businessCard = loadTemplateFromJson(context, R.raw.business_card)
         val idPassport = loadTemplateFromJson(context, R.raw.id_passport)
         val prescription = loadTemplateFromJson(context, R.raw.prescription)
-        val receipt= loadTemplateFromJson(context, R.raw.receipt)
+        val receipt = loadTemplateFromJson(context, R.raw.receipt)
         val resumeCv = loadTemplateFromJson(context, R.raw.resume_cv)
         val termsConditions = loadTemplateFromJson(context, R.raw.terms_conditions)
         val utilityBill = loadTemplateFromJson(context, R.raw.utility_bill)
@@ -188,6 +197,13 @@ class TemplateViewModel : ViewModel() {
         ***REMOVED***
     ***REMOVED***
 
+    /**
+     * Update template item in realm based on the modified value pair
+     *
+     * @param template The template to update
+     * @param modifiedValue The modified value
+     * @param index The index of the field to update
+     */
     fun updateTemplateItem(template: Template, modifiedValue: Pair<String, Any>, index: Int) {
         viewModelScope.launch {
             realm.writeBlocking {
@@ -224,28 +240,25 @@ class TemplateViewModel : ViewModel() {
                         ***REMOVED***
 
                         else -> {
-                            // Handle other cases if needed
                         ***REMOVED***
                     ***REMOVED***
                 ***REMOVED***
 
-                // Update properties on latestExtraction, not extraction
                 latestTemplate.apply {
                     title = template.title
                     description = template.description
-                    // fields = extraction.fields // Don't update RealmList directly
                 ***REMOVED***
             ***REMOVED***
         ***REMOVED***
 
     ***REMOVED***
 
-    fun addTemplate(): String {
+    fun addTemplate(): String { // Add a new template to realm with default values
         val newField = TemplateField().apply {
             title = ""
             description = ""
-            type="Text"
-            required=true
+            type = "Text"
+            required = true
 
         ***REMOVED***
         val newTemplate = Template().apply {
@@ -262,7 +275,7 @@ class TemplateViewModel : ViewModel() {
         return newTemplate.id.toHexString()
     ***REMOVED***
 
-    fun addField(template: Template) {
+    fun addField(template: Template) { // Add a new field to the template with default values
         val newField = TemplateField().apply {
             title = ""
             description = ""
@@ -309,8 +322,7 @@ class TemplateViewModel : ViewModel() {
     ***REMOVED***
 
 
-
-    fun addTable(template: Template) {
+    fun addTable(template: Template) { // Add a new table to the template with default values
         val newField = TemplateField().apply {
             title = "row 1"
             type = "Text"
@@ -371,12 +383,12 @@ class TemplateViewModel : ViewModel() {
                         "keywords" -> {
                             table.keywords.add(newText.toString())
                         ***REMOVED***
+
                         "all" -> {
                             table.all = newText.toString().toBoolean()
                         ***REMOVED***
 
                         else -> {
-                            // Handle other cases if needed
                         ***REMOVED***
                     ***REMOVED***
                 ***REMOVED***
@@ -453,7 +465,6 @@ class TemplateViewModel : ViewModel() {
     ***REMOVED***
 
 
-
     fun removeKeyword(table: TemplateTable, indexOf: Int) {
         viewModelScope.launch {
             realm.writeBlocking {
@@ -505,7 +516,6 @@ class TemplateViewModel : ViewModel() {
 ***REMOVED***
 
 
-
-enum class SortOrder {
+enum class SortOrder { // Enum class for sorting order
     BY_TITLE, BY_DATE,
 ***REMOVED***

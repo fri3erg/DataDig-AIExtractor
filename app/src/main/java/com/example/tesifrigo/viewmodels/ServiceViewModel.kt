@@ -10,6 +10,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
+/**
+ * Service view model for the service screen and general use and repository interaction
+ *
+ * @property progressRepository The progress repository for storing and retrieving data
+ * @property keyManager The key manager for storing and retrieving keys
+ * @constructor Create empty Service view model
+ */
 @HiltViewModel
 class ServiceViewModel @Inject constructor(
     private val progressRepository: ServiceRepository, private val keyManager: KeyManager
@@ -19,12 +26,9 @@ class ServiceViewModel @Inject constructor(
     val result: StateFlow<String?> = progressRepository.result
     val template: StateFlow<Template?> = progressRepository.template
     val options: StateFlow<Options?> = progressRepository.options
-    val imageUris : StateFlow<List<Uri>> = progressRepository.imageUris
-    val activePhoto : StateFlow<Boolean> = progressRepository.activePhoto
-    val activeExtraction : StateFlow<Boolean> = progressRepository.activeExtraction
-
-
-
+    val imageUris: StateFlow<List<Uri>> = progressRepository.imageUris
+    val activePhoto: StateFlow<Boolean> = progressRepository.activePhoto
+    val activeExtraction: StateFlow<Boolean> = progressRepository.activeExtraction
 
 
     fun setActiveExtraction(active: Boolean) {
@@ -104,6 +108,11 @@ class ServiceViewModel @Inject constructor(
 
 ***REMOVED***
 
+/**
+ * Keys for storing and retrieving api keys
+ *
+ * @constructor Create empty Keys
+ */
 enum class Keys {
     API_KEY_1, API_KEY_2, API_KEY_3
 ***REMOVED***

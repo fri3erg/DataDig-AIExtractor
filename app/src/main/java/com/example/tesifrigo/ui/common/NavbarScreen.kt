@@ -17,6 +17,11 @@ import com.guru.fontawesomecomposelib.FaIcon
 import com.guru.fontawesomecomposelib.FaIcons
 
 
+/**
+ * Main Navbar for the app
+ *
+ * @param navController
+ */
 @Composable
 fun NavBar(navController: NavHostController) {
 
@@ -29,6 +34,7 @@ fun NavBar(navController: NavHostController) {
             currentDestination.startsWith(Screen.EditTemplate.route) || currentDestination.startsWith(
                 Screen.Templates.route
 ***REMOVED***
+        //Templates
         NavigationBarItem(colors = NavigationBarItemDefaults.colors(
             selectedIconColor = Color.Black,
             selectedTextColor = Color.White,
@@ -47,6 +53,7 @@ fun NavBar(navController: NavHostController) {
                 navController.navigate(Screen.Templates.route)
             ***REMOVED***)
         val cameraSelected = currentDestination.startsWith(Screen.Camera.route)
+        //Camera
         NavigationBarItem(colors = NavigationBarItemDefaults.colors(
             selectedIconColor = Color.Black,
             selectedTextColor = Color.White,
@@ -68,6 +75,7 @@ fun NavBar(navController: NavHostController) {
             currentDestination.startsWith(Screen.Storage.route) || currentDestination.startsWith(
                 Screen.SingleExtraction.route
 ***REMOVED***
+        //Storage
         NavigationBarItem(colors = NavigationBarItemDefaults.colors(
             selectedIconColor = Color.Black,
             selectedTextColor = Color.White,
@@ -86,6 +94,7 @@ fun NavBar(navController: NavHostController) {
                 navController.navigate(Screen.Storage.route)
             ***REMOVED***)
         val settingsSelected = currentDestination.startsWith(Screen.Settings.route)
+        //Settings
         NavigationBarItem(colors = NavigationBarItemDefaults.colors(
             selectedIconColor = Color.Black,
             selectedTextColor = Color.White,

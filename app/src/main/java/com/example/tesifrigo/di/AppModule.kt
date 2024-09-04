@@ -31,12 +31,17 @@ object ViewModelModule {
         return SavedStateViewModelFactory(application, savedStateRegistryOwner)
     ***REMOVED***
 
+    /**
+     * Provide encrypted shared preferences for the app, using the MasterKey
+     *
+     * @param context The application context
+     * @return The encrypted shared preferences
+     */
     @Provides
     @Singleton
     fun provideEncryptedSharedPreferences(@ApplicationContext context: Context): SharedPreferences {
-        val masterKeyAlias = MasterKey.Builder(context)
-            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-            .build()
+        val masterKeyAlias =
+            MasterKey.Builder(context).setKeyScheme(MasterKey.KeyScheme.AES256_GCM).build()
 
         return EncryptedSharedPreferences.create(
             context,
@@ -56,8 +61,7 @@ object ViewModelModule {
     @Provides
     @Singleton
     fun provideApplicationScope() = CoroutineScope(
-        SupervisorJob()
-                + Dispatchers.IO
+        SupervisorJob() + Dispatchers.IO
     )
 
 ***REMOVED***

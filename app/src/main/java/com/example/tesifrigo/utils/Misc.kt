@@ -85,12 +85,11 @@ import coil.compose.AsyncImage
 import com.example.tesifrigo.R
 import com.example.tesifrigo.models.Extraction
 import com.example.tesifrigo.ui.settings.ClickableWebLink
-import com.example.tesifrigo.ui.template.AlertTableExtraction
 import com.example.tesifrigo.ui.theme.cyan_custom
 import com.example.tesifrigo.ui.theme.dark_blue
 import com.example.tesifrigo.ui.theme.dark_red
 import com.example.tesifrigo.ui.theme.light_gray
-import com.example.tesifrigo.ui.theme.vale
+import com.example.tesifrigo.ui.theme.base_card_color
 import com.example.tesifrigo.viewmodels.ExtractionViewModel
 import com.guru.fontawesomecomposelib.FaIcon
 import com.guru.fontawesomecomposelib.FaIcons
@@ -100,6 +99,13 @@ import java.io.FileOutputStream
 import java.io.IOException
 
 
+/**
+ * Delete button for tables or fields
+ *
+ * @param text The text to display on the button
+ * @param onClick The callback for the button click
+ * @param modifier The modifier for styling
+ */
 @Composable
 fun DeleteButton(
     text: String, onClick: () -> Unit, modifier: Modifier = Modifier
@@ -126,11 +132,13 @@ fun DeleteButton(
     ***REMOVED***
     if (showAlert) AlertDialog(onDismissRequest = { showAlert = false ***REMOVED***,
         title = { Text(stringResource(R.string.delete_text, text)) ***REMOVED***,
-        text = { Text(
-            stringResource(
-                R.string.are_you_sure_you_want_to_delete_this,
-                text.lowercase()
-***REMOVED***) ***REMOVED***,
+        text = {
+            Text(
+                stringResource(
+                    R.string.are_you_sure_you_want_to_delete_this, text.lowercase()
+    ***REMOVED***
+***REMOVED***
+        ***REMOVED***,
         confirmButton = {
             TextButton(onClick = {
                 onClick()
@@ -146,6 +154,57 @@ fun DeleteButton(
         ***REMOVED***)
 ***REMOVED***
 
+
+/**
+ * Boolean field with label, help icon, and switch
+ *
+ * @param label The label text
+ * @param value The boolean value
+ * @param onValueChange The callback for changing the value
+ * @param modifier The modifier for styling
+ * @param help The help text
+ * @param title The title for the help dialog
+ * @param enabled The enabled state of the switch
+ */
+@Composable
+fun BooleanFieldWithLabel(
+    label: String,
+    value: Boolean,
+    onValueChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+    help: String = "",
+    title: String = label,
+    enabled: Boolean = true
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically, modifier = modifier
+
+    ) {
+        Text(text = label, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+        if (help.isNotEmpty()) {
+            Spacer(modifier = Modifier.width(4.dp))
+            HelpIconButton(helpText = help, title = title)
+        ***REMOVED***
+        Spacer(modifier = Modifier.weight(1f))
+        Switch(
+            enabled = enabled, checked = value, onCheckedChange = onValueChange
+        )
+    ***REMOVED***
+***REMOVED***
+
+
+/**
+ * table cell for the tables in the extraction screen
+ *
+ * @param modifier The modifier for styling
+ * @param text The text to display
+ * @param isHeader Whether the cell is a header cell
+ * @param onValueChange The callback for changing the cell value
+ * @param invisible Whether the cell is invisible
+ * @param isButton Whether the cell is a button
+ * @param buttonClick The callback for the button click
+ * @param onDelete The callback for deleting the cell
+ */
 @Composable
 fun ExtractionTableCell(
     modifier: Modifier = Modifier,
@@ -160,7 +219,7 @@ fun ExtractionTableCell(
     var showDialog by remember { mutableStateOf(false) ***REMOVED***
     var modifierPadded = modifier
         .padding(1.dp)
-        .defaultMinSize(minWidth = 24.dp, minHeight = 24.dp) // Ensure a minimum width for cells
+        .defaultMinSize(minWidth = 24.dp, minHeight = 24.dp)
     var boxSize by remember { mutableStateOf(IntSize.Zero) ***REMOVED***
     val editedText by remember { mutableStateOf(text) ***REMOVED***
 
@@ -170,7 +229,7 @@ fun ExtractionTableCell(
     if (isHeader) {
         modifierPadded = modifierPadded.background(Color.LightGray)
     ***REMOVED***
-    if (isButton) {//pls round the button
+    if (isButton) {
         modifierPadded = modifierPadded
             .background(dark_blue)
             .clip(shape = RoundedCornerShape(4.dp))
@@ -182,8 +241,8 @@ fun ExtractionTableCell(
         ***REMOVED***, contentAlignment = Alignment.Center
 
     ) {
-        if (isHeader) {
-            if (showX) {
+        if (isHeader) { // Header cell
+            if (showX) { // Show the X icon to delete the cell
                 FaIcon(faIcon = FaIcons.Times,
                     tint = dark_red,
                     size = 20.dp,
@@ -197,7 +256,7 @@ fun ExtractionTableCell(
                         .fillMaxWidth()
                         .align(Alignment.Center))
 
-            ***REMOVED*** else {
+            ***REMOVED*** else { // Show the text
                 Text(text = text,
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Bold,
@@ -210,18 +269,16 @@ fun ExtractionTableCell(
                         .fillMaxWidth())
             ***REMOVED***
 
-        ***REMOVED*** else if (isButton) {
-                FaIcon(faIcon = FaIcons.Plus,
-                    tint = Color.White,
-                    size = 20.dp,
-                    modifier = Modifier
-                        .clickable {
-                            showDialog = true
-                        ***REMOVED***
-                        .align(Alignment.Center)
-    ***REMOVED***
-        ***REMOVED***
-        else{
+        ***REMOVED*** else if (isButton) { // Button cell
+            FaIcon(faIcon = FaIcons.Plus,
+                tint = Color.White,
+                size = 20.dp,
+                modifier = Modifier
+                    .clickable {
+                        showDialog = true
+                    ***REMOVED***
+                    .align(Alignment.Center))
+        ***REMOVED*** else { // Normal cell
             Text(text = text,
                 textAlign = TextAlign.Center,
                 overflow = TextOverflow.Ellipsis,
@@ -233,16 +290,89 @@ fun ExtractionTableCell(
                     .fillMaxWidth())
         ***REMOVED***
     ***REMOVED***
-    if(showDialog){
+    if (showDialog) {
         AlertTableExtraction(
-            text = editedText, onValueChange =if(isButton) buttonClick else onValueChange, changeShowDialog = {
-        showDialog = false
-        ***REMOVED***,
-            onDelete =onDelete)
+            text = editedText,
+            onValueChange = if (isButton) buttonClick else onValueChange,
+            changeShowDialog = {
+                showDialog = false
+            ***REMOVED***,
+            onDelete = onDelete
+        )
     ***REMOVED***
 ***REMOVED***
 
 
+/**
+ * modal dialog for editing table cell
+ *
+ * @param text text to be edited
+ * @param onValueChange callback for changing the text
+ * @param changeShowDialog callback for changing the dialog visibility
+ * @param onDelete callback for deleting the cell
+ */
+@Composable
+fun AlertTableExtraction(
+    text: String,
+    onValueChange: (String) -> Unit,
+    changeShowDialog: (Boolean) -> Unit,
+    onDelete: (() -> Unit)? = null
+) {
+    var editableText by remember { mutableStateOf(text) ***REMOVED***
+    AlertDialog(containerColor = Color.White,
+        onDismissRequest = { changeShowDialog(false) ***REMOVED***,
+        title = { Text(stringResource(R.string.edit_value)) ***REMOVED***,
+        text = {
+            Column {
+                OutlinedTextField(value = editableText,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedBorderColor = Color.Black,
+                        unfocusedLabelColor = Color.Black,
+        ***REMOVED***,
+                    onValueChange = { editableText = it ***REMOVED***,
+                    label = { Text(stringResource(R.string.enter_value), color = Color.Black) ***REMOVED***)
+            ***REMOVED***
+        ***REMOVED***,
+        confirmButton = {
+            Row {
+                if (onDelete != null) {
+                    TextButton(
+                        onClick = {
+                            onDelete()
+                            changeShowDialog(false)
+                        ***REMOVED***, modifier = Modifier.padding(end = 8.dp)
+        ***REMOVED*** {
+                        Text(stringResource(id = R.string.delete), color = dark_red)
+                    ***REMOVED***
+                    Spacer(modifier = Modifier.weight(1f))
+                ***REMOVED*** else {
+                    Spacer(modifier = Modifier.weight(1f))
+                ***REMOVED***
+                TextButton(onClick = { changeShowDialog(false) ***REMOVED***) {
+                    Text(stringResource(id = R.string.cancel))
+                ***REMOVED***
+                Spacer(modifier = Modifier.width(4.dp))
+                TextButton(onClick = {
+                    onValueChange(editableText)
+                    changeShowDialog(false)
+                ***REMOVED***) {
+                    Text(stringResource(R.string.ok))
+                ***REMOVED***
+
+            ***REMOVED***
+
+        ***REMOVED***)
+***REMOVED***
+
+
+/**
+ * Search bar with text field and search icon
+ *
+ * @param text The text in the search bar
+ * @param onTextChange The callback for changing the text
+ * @param onSearch The callback for searching
+ * @param modifier The modifier for styling
+ */
 @Composable
 fun SearchBar(
     text: String,
@@ -258,8 +388,8 @@ fun SearchBar(
             focusedLeadingIconColor = cyan_custom,
         ),
         onValueChange = {
-            onTextChange(it) // Update the ViewModel's searchText state
-            onSearch(it) // Trigger the search function (optional)
+            onTextChange(it)
+            onSearch(it)
         ***REMOVED***,
         label = { Text(stringResource(R.string.search)) ***REMOVED***,
         modifier = modifier
@@ -268,18 +398,30 @@ fun SearchBar(
         singleLine = true, // Ensure single-line input
         leadingIcon = {
             Icon(
-                imageVector = Icons.Default.Search, contentDescription = stringResource(R.string.search_icon)
+                imageVector = Icons.Default.Search,
+                contentDescription = stringResource(R.string.search_icon)
 ***REMOVED***
         ***REMOVED***)
 ***REMOVED***
 
 
+/**
+ * Help icon button with modal dialog
+ *
+ * @param helpText The help text to display in the dialog
+ * @param modifier The modifier for styling
+ * @param title The title for the dialog
+ * @param link The link to display in the dialog (optional)
+ */
 @Composable
-fun HelpIconButton(helpText: String, modifier: Modifier = Modifier, title: String = "Help", link:String="") {
+fun HelpIconButton(
+    helpText: String, modifier: Modifier = Modifier, title: String = "Help", link: String = ""
+) {
     var showDialog by remember { mutableStateOf(false) ***REMOVED***
 
     IconButton(
-        onClick = { showDialog = true ***REMOVED***, modifier = modifier.size(20.dp), // Make the icon smaller
+        onClick = { showDialog = true ***REMOVED***,
+        modifier = modifier.size(20.dp),
         colors = IconButtonDefaults.filledIconButtonColors(
             contentColor = Color.Black, containerColor = Color.Black
         )
@@ -289,36 +431,39 @@ fun HelpIconButton(helpText: String, modifier: Modifier = Modifier, title: Strin
             imageVector = Icons.Default.Info,
             contentDescription = stringResource(R.string.help_icon),
             tint = Color.White,
-            //modifier = Modifier.border(1.dp, Color.Black, RoundedCornerShape(10.dp))
-        ) // Use the Info icon from Material Design
+        )
 
     ***REMOVED***
 
     if (showDialog) {
-        AlertDialog(onDismissRequest = { showDialog = false ***REMOVED***,
-            title = { Text(title) ***REMOVED***,
-            text = { Column {
+        AlertDialog(onDismissRequest = { showDialog = false ***REMOVED***, title = { Text(title) ***REMOVED***, text = {
+            Column {
                 Text(helpText)
-                if(link.isNotEmpty()){
+                if (link.isNotEmpty()) {
                     ClickableWebLink(text = link, url = link)
                 ***REMOVED***
             ***REMOVED***
-                   ***REMOVED***,
-            confirmButton = {
-                TextButton(onClick = { showDialog = false ***REMOVED***) {
-                    Text("OK")
-                ***REMOVED***
-            ***REMOVED***)
+        ***REMOVED***, confirmButton = {
+            TextButton(onClick = { showDialog = false ***REMOVED***) {
+                Text("OK")
+            ***REMOVED***
+        ***REMOVED***)
     ***REMOVED***
 ***REMOVED***
 
+/**
+ * Dropdown with navigation to use, edit, or delete
+ *
+ * @param onUse  The callback for using the item
+ * @param onEdit The callback for editing the item
+ * @param onDelete The callback for deleting the item
+ */
 @Composable
 fun DropdownWithNavigation(onUse: () -> Unit, onEdit: () -> Unit, onDelete: () -> Unit) {
     var expanded by remember { mutableStateOf(false) ***REMOVED***
     var showDeleteDialog by remember { mutableStateOf(false) ***REMOVED***
 
-    Box { // Use a Box for positioning
-        // Icon to trigger dropdown
+    Box {
         IconButton(
             onClick = { expanded = true ***REMOVED***,
             modifier = Modifier
@@ -332,7 +477,7 @@ fun DropdownWithNavigation(onUse: () -> Unit, onEdit: () -> Unit, onDelete: () -
             expanded = expanded,
             onDismissRequest = { expanded = false ***REMOVED***,
             modifier = Modifier
-                .width(150.dp) // Adjust width as needed
+                .width(150.dp)
                 .align(Alignment.TopEnd)
                 .background(Color.White)
         ) {
@@ -373,6 +518,14 @@ fun DropdownWithNavigation(onUse: () -> Unit, onEdit: () -> Unit, onDelete: () -
 ***REMOVED***
 
 
+/**
+ * Labeled switch for boolean fields
+ *
+ * @param label The label text
+ * @param checked The boolean value
+ * @param onCheckedChange The callback for changing the value
+ * @param modifier The modifier for styling
+ */
 @Composable
 fun LabeledSwitch(
     label: String,
@@ -389,9 +542,7 @@ fun LabeledSwitch(
         )
         Spacer(modifier = Modifier.width(8.dp))
         Switch(
-            checked = checked,
-            onCheckedChange = onCheckedChange,
-            colors = SwitchDefaults.colors( // Customize colors if needed
+            checked = checked, onCheckedChange = onCheckedChange, colors = SwitchDefaults.colors(
                 checkedThumbColor = MaterialTheme.colorScheme.primary,
                 checkedTrackColor = MaterialTheme.colorScheme.primaryContainer
 ***REMOVED***
@@ -399,6 +550,14 @@ fun LabeledSwitch(
     ***REMOVED***
 ***REMOVED***
 
+/**
+ * Drop down of items with a callback
+ *
+ * @param items The list of items
+ * @param onItemSelected The callback for the selected item
+ * @param modifier The modifier for styling
+ * @param defaultSelectedItemIndex The default selected item index
+ */
 @Composable
 fun DropDownGeneral(
     items: List<String>,
@@ -414,17 +573,19 @@ fun DropDownGeneral(
             onClick = { expanded = true ***REMOVED***, modifier = Modifier.fillMaxWidth()
         ) {
             Row {
-                Text(selectedItem,
-                    modifier=Modifier.padding(start=6.dp),
+                Text(
+                    selectedItem,
+                    modifier = Modifier.padding(start = 6.dp),
                     fontSize = 13.sp,
                     color = Color.Black
 
     ***REMOVED***
                 Spacer(modifier = Modifier.weight(1f))
-                FaIcon(faIcon = if (expanded) FaIcons.ChevronUp else FaIcons.ChevronDown,
+                FaIcon(
+                    faIcon = if (expanded) FaIcons.ChevronUp else FaIcons.ChevronDown,
                     tint = cyan_custom,
                     size = 16.dp,
-                    modifier=Modifier.offset(y=2.dp)
+                    modifier = Modifier.offset(y = 2.dp)
     ***REMOVED***
 
             ***REMOVED***
@@ -449,6 +610,13 @@ fun DropDownGeneral(
     ***REMOVED***
 ***REMOVED***
 
+/**
+ * My image area
+ *
+ * @param imageUris The list of image URIs
+ * @param modifier The modifier for styling
+ * @param onDelete The callback for deleting an image
+ */
 @Composable
 fun MyImageArea(
     imageUris: List<Uri>, modifier: Modifier = Modifier, onDelete: ((Int) -> Unit)? = null
@@ -463,7 +631,8 @@ fun MyImageArea(
     val openFileLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) {***REMOVED***
-    fun openFile(uri: Uri) {
+
+    fun openFile(uri: Uri) { // Open the file using ACTION_VIEW
         uri.path?.let {
 
             val intent = Intent(Intent.ACTION_VIEW).apply {
@@ -478,20 +647,24 @@ fun MyImageArea(
             if (activities.isNotEmpty()) {
                 openFileLauncher.launch(intent)
             ***REMOVED*** else {
-                Toast.makeText(context,
-                    context.getString(R.string.no_app_found_to_open_the_file), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.no_app_found_to_open_the_file),
+                    Toast.LENGTH_SHORT
+    ***REMOVED***.show()
             ***REMOVED***
         ***REMOVED***
     ***REMOVED***
-    Box(modifier = modifier
-        .fillMaxWidth()
-        .padding(top = 8.dp, bottom = 8.dp)
-        .clip(RoundedCornerShape(16.dp))
-        .background(vale)) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(top = 8.dp, bottom = 8.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .background(base_card_color)
+    ) {
         Column {
             HorizontalPager(
-                state = pagerState, modifier = Modifier
-                    .fillMaxWidth()
+                state = pagerState, modifier = Modifier.fillMaxWidth()
 ***REMOVED*** { page ->
 
                 val uri = imageUris[page]
@@ -509,14 +682,13 @@ fun MyImageArea(
                                 if (mimeType == "application/pdf") {
                                     openFile(uri)
                                 ***REMOVED*** else {
-                                    selectedImageUri = uri // Set the selected image URI
+                                    selectedImageUri = uri
                                     showImage = true
                                 ***REMOVED***
                             ***REMOVED***,
 
-                        shape = RoundedCornerShape(32.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = vale, contentColor = Color.Black
+                        shape = RoundedCornerShape(32.dp), colors = CardDefaults.cardColors(
+                            containerColor = base_card_color, contentColor = Color.Black
             ***REMOVED***
         ***REMOVED*** {
 
@@ -548,12 +720,12 @@ fun MyImageArea(
                                 contentDescription = null,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(200.dp) // Reduce height to scale down image display
+                                    .height(200.dp)
                                     .padding(16.dp)
                                     .clip(RoundedCornerShape(16.dp)),
-                                contentScale = ContentScale.Crop, // Crop the image to fit
+                                contentScale = ContentScale.Crop,
                                 placeholder = painterResource(id = R.drawable.placeholder),
-                                error = painterResource(id = R.drawable.error404) // Replace with your error image resource
+                                error = painterResource(id = R.drawable.error404) // Placeholder and error images
 
                 ***REMOVED***
                         ***REMOVED***
@@ -565,15 +737,12 @@ fun MyImageArea(
                             .fillMaxWidth()
                             .align(Alignment.BottomCenter)
                             .padding(
-                                start = 16.dp,
-                                end = 16.dp,
-                                top = 8.dp
-                ***REMOVED***  // Padding applied first
-                            .shadow(20.dp)                        // Then the shadow, outside the padding
+                                start = 16.dp, end = 16.dp, top = 8.dp
+                ***REMOVED***
+                            .shadow(20.dp)
                             .clip(
                                 RoundedCornerShape(
-                                    bottomStart = 16.dp,
-                                    bottomEnd = 16.dp
+                                    bottomStart = 16.dp, bottomEnd = 16.dp
                     ***REMOVED***
                 ***REMOVED*** // Clipping next
                             .background(Color.White),
@@ -590,12 +759,10 @@ fun MyImageArea(
                                 .padding(start = 24.dp)
             ***REMOVED***
                         if (onDelete != null) {
-                            IconButton(
-                                onClick = {
-                                    showDialog.value = true
-                                    deletedPage = page
-                                ***REMOVED***
-                ***REMOVED*** {
+                            IconButton(onClick = {
+                                showDialog.value = true
+                                deletedPage = page
+                            ***REMOVED***) {
                                 FaIcon(faIcon = FaIcons.Trash, tint = Color.Black)
                             ***REMOVED***
                         ***REMOVED***
@@ -645,14 +812,13 @@ fun MyImageArea(
     if (showImage && selectedImageUri != null) {
         Dialog(onDismissRequest = { showImage = false ***REMOVED***) {
             Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp)
+                modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp)
 ***REMOVED*** {
                 AsyncImage(
                     model = selectedImageUri,
                     contentDescription = null,
                     modifier = Modifier.fillMaxWidth(),
-                    contentScale = ContentScale.Fit // Adjust contentScale as needed
+                    contentScale = ContentScale.Fit
     ***REMOVED***
             ***REMOVED***
         ***REMOVED***
@@ -660,6 +826,13 @@ fun MyImageArea(
 ***REMOVED***
 
 
+/**
+ * File card to display a file
+ *
+ * @param extraction The extraction to display
+ * @param modifier The modifier for styling
+ * @param extractionViewModel The extraction view model to update the progress
+ */
 @Composable
 fun FileCard(
     extraction: Extraction, modifier: Modifier = Modifier, extractionViewModel: ExtractionViewModel
@@ -674,6 +847,7 @@ fun FileCard(
         ***REMOVED***
     ***REMOVED***
 
+    // Function to download a file from a content URI
     fun downloadFile(uri: Uri?, failedOpen: Boolean = false) {
         if (uri == null || uri.path == null) return
         val contentUri = FileProvider.getUriForFile(
@@ -704,28 +878,33 @@ fun FileCard(
             if (!failedOpen) {
                 Toast.makeText(
                     context,
-                    context.getString(R.string.file_downloaded_to_downloads_folder), Toast.LENGTH_SHORT
+                    context.getString(R.string.file_downloaded_to_downloads_folder),
+                    Toast.LENGTH_SHORT
     ***REMOVED***.show()
             ***REMOVED***
         ***REMOVED*** catch (e: IOException) {
-            // Handle exceptions (e.g., log the error, show an error message to the user)
+            // Handle particular IOException cases
             if ((e is FileNotFoundException) && (e.message?.contains("EEXIST") == true)) {
 
-                Toast.makeText(context,
-                    context.getString(R.string.file_already_downloaded), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context, context.getString(R.string.file_already_downloaded), Toast.LENGTH_SHORT
+    ***REMOVED***.show()
 
             ***REMOVED*** else {
                 // Handle other IOException cases
                 e.printStackTrace()
-                Toast.makeText(context,
-                    context.getString(R.string.error_downloading_file), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context, context.getString(R.string.error_downloading_file), Toast.LENGTH_SHORT
+    ***REMOVED***.show()
             ***REMOVED***
         ***REMOVED***
     ***REMOVED***
 
+    // Function to open a file from a content URI
     fun openFile(uri: Uri) {
         if (uri.path == "null") {
-            Toast.makeText(context, context.getString(R.string.file_not_found), Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.file_not_found), Toast.LENGTH_SHORT)
+                .show()
             return
         ***REMOVED***
         val contentUri = FileProvider.getUriForFile(
@@ -756,13 +935,15 @@ fun FileCard(
             // No suitable app found, so download the file
             Toast.makeText(
                 context,
-                context.getString(R.string.no_app_found_to_open_the_file_downloading_instead), Toast.LENGTH_SHORT
+                context.getString(R.string.no_app_found_to_open_the_file_downloading_instead),
+                Toast.LENGTH_SHORT
 ***REMOVED***.show()
             downloadFile(uri, true)
         ***REMOVED***
 
     ***REMOVED***
 
+    // Function to download a file using ACTION_CREATE_DOCUMENT
     fun downloadFileExtra(uri: Uri) {
         if (uri.path == null) return
         val contentUri = FileProvider.getUriForFile(
@@ -772,7 +953,6 @@ fun FileCard(
         val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply { // Use ACTION_CREATE_DOCUMENT
             type = context.contentResolver.getType(contentUri)
             putExtra(Intent.EXTRA_STREAM, contentUri)
-            // Suggest a filename for the downloaded file (optional)
             val fileName = contentUri.lastPathSegment ?: "downloaded_file"
             putExtra(Intent.EXTRA_TITLE, fileName)
             addCategory(Intent.CATEGORY_OPENABLE)
@@ -807,7 +987,11 @@ fun FileCard(
     ***REMOVED***
 
     Surface(
-        modifier = modifier.padding(8.dp), shape = RoundedCornerShape(8.dp), color = light_gray, shadowElevation = 6.dp, border = BorderStroke(1.dp, Color.Gray)
+        modifier = modifier.padding(8.dp),
+        shape = RoundedCornerShape(8.dp),
+        color = light_gray,
+        shadowElevation = 6.dp,
+        border = BorderStroke(1.dp, Color.Gray)
     ) {
         Row(
             modifier = Modifier
@@ -815,8 +999,8 @@ fun FileCard(
                 .padding(16.dp)
                 .clickable(onClick = {
                     extractionViewModel.updateFile(extraction, extraction.format, context)
-                    openFile(Uri.parse(extraction.fileUri)) ***REMOVED***), // Make the Row clickable
-            verticalAlignment = Alignment.CenterVertically
+                    openFile(Uri.parse(extraction.fileUri))
+                ***REMOVED***), verticalAlignment = Alignment.CenterVertically
         ) {
             // Preview Section
             Box(
@@ -877,6 +1061,13 @@ fun FileCard(
 ***REMOVED***
 
 
+/**
+ * Add button
+ *
+ * @param text The text to display on the button
+ * @param onClick The callback for the button click
+ * @param modifier The modifier for styling
+ */
 @Composable
 fun AddButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
     Button(
@@ -899,7 +1090,7 @@ fun calculateCloseness(text1: String, text2: String): Int {//simple Levenshtein 
         return -1 // Negative value to prioritize exact matches
     ***REMOVED***
 
-    val d = Array(m + 1) { IntArray(n + 1) ***REMOVED***
+    val d = Array(m + 1) { IntArray(n + 1) ***REMOVED*** // 2D array for dynamic programming
     for (i in 0..m) d[i][0] = i
     for (j in 0..n) d[0][j] = j
     for (j in 1..n) {
@@ -911,12 +1102,12 @@ fun calculateCloseness(text1: String, text2: String): Int {//simple Levenshtein 
     return d[m][n]
 ***REMOVED***
 
-fun getPdfFileName(context: Context, uri: Uri): String? {
+fun getPdfFileName(context: Context, uri: Uri): String? { // Get the filename of a PDF file
     val projection = arrayOf(MediaStore.MediaColumns.DISPLAY_NAME)
 
-    return context.contentResolver.query(uri, projection, null,
-    null, null)?.use { cursor
-        ->
+    return context.contentResolver.query(
+        uri, projection, null, null, null
+    )?.use { cursor ->
         if (cursor.moveToFirst()) {
             val nameIndex = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME)
             cursor.getString(nameIndex)
@@ -926,8 +1117,11 @@ fun getPdfFileName(context: Context, uri: Uri): String? {
     ***REMOVED***
 ***REMOVED***
 
-fun isFirstTimeVisit(context: Context, key: String): Boolean {
-    val sharedPreferences: SharedPreferences = context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+fun isFirstTimeVisit(
+    context: Context, key: String
+): Boolean { // Check if the app is visited for the first time
+    val sharedPreferences: SharedPreferences =
+        context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
     val isFirstTime = sharedPreferences.getBoolean(key, true)
 
     if (isFirstTime) {
@@ -939,7 +1133,7 @@ fun isFirstTimeVisit(context: Context, key: String): Boolean {
 ***REMOVED***
 
 
-fun encodeImageToBase64(context: Context, imageUri: Uri): String? {
+fun encodeImageToBase64(context: Context, imageUri: Uri): String? { // Encode an image to Base64
     return try {
         val inputStream = context.contentResolver.openInputStream(imageUri)
         val bytes = inputStream?.readBytes()

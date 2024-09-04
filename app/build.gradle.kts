@@ -36,10 +36,14 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        buildConfigField("String", "EXPO_PUBLIC_SUPABASE_URL",
+        buildConfigField(
+            "String",
+            "EXPO_PUBLIC_SUPABASE_URL",
             localProperties.getProperty("EXPO_PUBLIC_SUPABASE_URL")
         )
-        buildConfigField("String", "EXPO_PUBLIC_SUPABASE_ANON_KEY",
+        buildConfigField(
+            "String",
+            "EXPO_PUBLIC_SUPABASE_ANON_KEY",
             localProperties.getProperty("EXPO_PUBLIC_SUPABASE_ANON_KEY")
         )
 
@@ -51,10 +55,14 @@ android {
 
     buildTypes {
         debug {
-***REMOVED***"String", "EXPO_PUBLIC_SUPABASE_URL",
 ***REMOVED***
 ***REMOVED***
-***REMOVED***"String", "EXPO_PUBLIC_SUPABASE_ANON_KEY",
+***REMOVED***
+***REMOVED***
+***REMOVED***
+***REMOVED***
+***REMOVED***
+***REMOVED***
 ***REMOVED***
 ***REMOVED***
         ***REMOVED***
@@ -62,11 +70,16 @@ android {
         release {
             isMinifyEnabled = false
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
 ***REMOVED***
-***REMOVED***"String", "EXPO_PUBLIC_SUPABASE_URL", "\"https://evxuxenxmtadutqpunue.supabase.co\"")
-***REMOVED***"String", "EXPO_PUBLIC_SUPABASE_ANON_KEY", "\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV2eHV4ZW54bXRhZHV0cXB1bnVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjMzODg1MDYsImV4cCI6MjAzODk2NDUwNn0.o_kS_WFx5PsmuO9Jb51T_ytPjSqOZzicdQxPJXJpvFg\"")
+***REMOVED***
+***REMOVED*** "EXPO_PUBLIC_SUPABASE_URL", "\"https://evxuxenxmtadutqpunue.supabase.co\""
+***REMOVED***
+***REMOVED***
+***REMOVED***
+***REMOVED***
+                "\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV2eHV4ZW54bXRhZHV0cXB1bnVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjMzODg1MDYsImV4cCI6MjAzODk2NDUwNn0.o_kS_WFx5PsmuO9Jb51T_ytPjSqOZzicdQxPJXJpvFg\""
+***REMOVED***
         ***REMOVED***
     ***REMOVED***
     compileOptions {
@@ -117,10 +130,8 @@ android {
                 // project directory:
 
 
-
                 install("pandas")
                 install("pillow")
-
 
 
                 //install("pydantic_core")
@@ -130,9 +141,8 @@ android {
         ***REMOVED***
 
     ***REMOVED***
-        sourceSets {
-        ***REMOVED***
-    kapt{
+    sourceSets {***REMOVED***
+    kapt {
         javacOptions {
             option("-source", "11")
             option("-target", "11")
@@ -149,7 +159,6 @@ android {
 // For Android Gradle Plugin and Google Services Plugin (Java 11)
 
 
-
 dependencies {
     implementation(libs.androidx.ui.v1610)
     implementation(libs.composetheme)
@@ -162,8 +171,8 @@ dependencies {
     implementation(libs.firebase.crashlytics) // Or latest version
     kapt(libs.hilt.android.compiler)
     implementation(libs.android.image.cropper) // or later version
-    implementation (libs.androidx.material3.v100)
-    implementation (libs.ui.tooling.preview)
+    implementation(libs.androidx.material3.v100)
+    implementation(libs.ui.tooling.preview)
     kapt(libs.hilt.android)
     implementation(libs.androidx.hilt.work)
     implementation(libs.androidx.hilt.navigation.compose)
@@ -180,7 +189,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.camera.core)
     implementation(libs.androidx.security.crypto) // Or the latest version
-    implementation (libs.fontawesomecompose)
+    implementation(libs.fontawesomecompose)
     implementation(libs.coil.compose)
     runtimeOnly(libs.cronet.embedded)
     implementation(libs.androidx.camera.lifecycle)
@@ -190,11 +199,11 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    runtimeOnly (libs.camera.camera2)
-    implementation (libs.androidx.camera.view.v130alpha06)
+    runtimeOnly(libs.camera.camera2)
+    implementation(libs.androidx.camera.view.v130alpha06)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.library.base)
-    implementation (libs.gson)
+    implementation(libs.gson)
 
     implementation(platform("io.github.jan-tennert.supabase:bom:2.5.4"))
     implementation(libs.postgrest.kt)

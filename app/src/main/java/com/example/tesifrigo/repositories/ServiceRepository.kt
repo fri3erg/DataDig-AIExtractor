@@ -23,6 +23,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
+/**
+ * Service repository to handle the extraction progress, result and other utilities
+ *
+ * @constructor Create empty Service repository
+ */
 @Singleton
 class ServiceRepository @Inject constructor(
 
@@ -39,19 +44,19 @@ class ServiceRepository @Inject constructor(
     val result: StateFlow<String?> = _result.asStateFlow()
 
 
-    private val _template = MutableStateFlow<Template?>(null)
+    private val _template = MutableStateFlow<Template?>(null) // Current template user is using
     val template: StateFlow<Template?> = _template.asStateFlow()
 
-    private val _options = MutableStateFlow<Options?>(null)
+    private val _options = MutableStateFlow<Options?>(null) // Current options user is using
     val options: StateFlow<Options?> = _options.asStateFlow()
 
-    private val _imageUris = MutableStateFlow(emptyList<Uri>())
+    private val _imageUris = MutableStateFlow(emptyList<Uri>()) // List of image uris user has selected
     val imageUris: StateFlow<List<Uri>> = _imageUris.asStateFlow()
 
-    private val _activePhoto = MutableStateFlow(true)
+    private val _activePhoto = MutableStateFlow(true) // Whether the photo view is active
     val activePhoto: StateFlow<Boolean> = _activePhoto.asStateFlow()
 
-    private val _activeExtraction = MutableStateFlow(false)
+    private val _activeExtraction = MutableStateFlow(false) // Whether the extraction is active
     val activeExtraction: StateFlow<Boolean> = _activeExtraction.asStateFlow()
 
 
@@ -78,14 +83,20 @@ class ServiceRepository @Inject constructor(
         _progress.value = newProgress
     ***REMOVED***
 
+    /**
+     * Update result
+     *
+     * @param newResult The new result to update from the service
+     * @param context The context for the file creation
+     */
     fun updateResult(newResult: Extraction, context: Context) {
         repositoryScope.launch {
 
             realm.writeBlocking {
-                // Update existing nested objects (example)
+                // Find the latest version of the template it is based on
                 newResult.template = newResult.template?.let { findLatest(it) ***REMOVED*** // Smart cast
 
-
+                //need to check that the template is not created by the backend for the tables
                 for (table in newResult.extractedTables) {
                     table.templateTable = table.templateTable?.let { findLatest(it) ***REMOVED***
                     for (row in table.fields) {
@@ -94,7 +105,7 @@ class ServiceRepository @Inject constructor(
                                 if (it.isManaged()) {
                                     findLatest(it)
                                 ***REMOVED*** else {
-                                    null // Or handle it as an unmanaged object
+                                    null
                                 ***REMOVED***
                             ***REMOVED***
                             if (managedField != null) {

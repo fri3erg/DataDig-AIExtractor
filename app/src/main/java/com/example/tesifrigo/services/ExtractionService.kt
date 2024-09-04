@@ -23,7 +23,6 @@ import android.util.Base64
 import android.util.Log
 import android.webkit.MimeTypeMap
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -58,6 +57,11 @@ import kotlinx.coroutines.isActive
 import java.io.FileNotFoundException
 import java.io.IOException
 
+/**
+ * Extraction service to call the chaquopy python code
+ *
+ * @constructor Create empty Extraction service
+ */
 @AndroidEntryPoint
 class ExtractionService : Service() {
 
@@ -79,7 +83,6 @@ class ExtractionService : Service() {
         return null // We'll use a started service, not a bound service
     ***REMOVED***
 
-    @RequiresApi(Build.VERSION_CODES.P)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
             Actions.STOP.toString() -> stopSelf()
@@ -88,7 +91,7 @@ class ExtractionService : Service() {
         return START_NOT_STICKY // Service won't restart automatically if stopped
     ***REMOVED***
 
-    @RequiresApi(Build.VERSION_CODES.P)
+
     private fun start(intent: Intent?) {
         startForeground(1, createNotification())
 
@@ -120,8 +123,15 @@ class ExtractionService : Service() {
             .build()
     ***REMOVED***
 
-    // Simulate image processing for now
-    @RequiresApi(Build.VERSION_CODES.P)
+    /**
+     * Process image
+     *
+     * @param imageUris The image uris to process
+     * @param serviceRepository The service repository
+     * @param keyManager The key manager to get the api key
+     * @param template The template to use for extraction
+     * @param options The options to use for extraction
+     */// Simulate image processing for now
     private fun processImage(
         imageUris: List<Uri>,
         serviceRepository: ServiceRepository,
@@ -131,6 +141,7 @@ class ExtractionService : Service() {
     ) {
         val localContext = this
 
+        // Callback to update the result in the repository
         val onResult: (PyObject) -> Unit = { result ->
             serviceRepository.updateResult(extractResult(result, template, imageUris), localContext)
             val isAppInForeground =
@@ -146,8 +157,8 @@ class ExtractionService : Service() {
 
             ***REMOVED***
         ***REMOVED***
-
-        val sendError :() -> Unit= {
+        // Callback to send an error
+        val sendError: () -> Unit = {
             serviceRepository.setActiveExtraction(false)
             serviceRepository.setProgress(0f)
 
@@ -156,6 +167,7 @@ class ExtractionService : Service() {
         serviceScope.launch {
             try {
                 Log.d("TestService", "Processing image: $imageUris")
+                // Callback to update the progress in the repository
                 val progressCallback: (Float) -> Unit = { progress ->
                     serviceScope.launch {
                         updateProgress(progress)
@@ -172,6 +184,7 @@ class ExtractionService : Service() {
                 val pyListImages = builtinModule.callAttr("list") // Create an empty Python list
                 val bitmapList = mutableListOf<Bitmap>()
 
+                // Process each image and add to the list
                 imageUris.forEach { imageUri ->
                     val bitmaps = processUri(localContext.contentResolver, imageUri, pyListImages)
                     bitmapList.addAll(bitmaps)
@@ -181,6 +194,7 @@ class ExtractionService : Service() {
                 val imageUriOcr = ImageOCR()
                 val pyListText = builtinModule.callAttr("list") // Create an empty Python list
 
+                // Extract text from each bitmap and add to the list
                 bitmapList.forEach { bitmap ->
                     pyListText.callAttr(
                         "append", imageUriOcr.extractTextFromBitmap(bitmap)
@@ -191,6 +205,7 @@ class ExtractionService : Service() {
                 val classesOptionModule =
                     py.getModule("extractor.classes.Options") // Get the module
 
+                // Callback to get the api key
                 val getApiKey = { key: String ->
                     when (key) {
                         "API_KEY_1" -> keyManager.getApiKey(Keys.API_KEY_1)
@@ -200,6 +215,7 @@ class ExtractionService : Service() {
                     ***REMOVED***
                 ***REMOVED***
 
+                // Create the options python object
                 val chosenOption = classesOptionModule.callAttr(
                     "Options",  // Directly call the constructor
                     PyObject.fromJava(options?.model),
@@ -216,7 +232,7 @@ class ExtractionService : Service() {
 
                 val pythonTemplate = getTemplate(classesModule, builtinModule, template)
 
-
+                // Call the main function in the Python code to process the images
                 val deferredPyResult = async(Dispatchers.Default) { // Use async for Python call
                     module.callAttr(
                         "main_kotlin", pyListImages, pyListText, pythonTemplate, chosenOption
@@ -242,7 +258,8 @@ class ExtractionService : Service() {
             ***REMOVED*** catch (e: IllegalArgumentException) {
                 Log.e("TestService", "Unsupported file format", e)
                 Handler(Looper.getMainLooper()).post { // Post to the main thread
-                    Toast.makeText(localContext, "Unsupported file format", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(localContext, "Unsupported file format", Toast.LENGTH_SHORT)
+                        .show()
                 ***REMOVED***
                 sendError()
                 stopSelf()
@@ -256,14 +273,16 @@ class ExtractionService : Service() {
             ***REMOVED*** catch (e: IOException) {
                 Log.e("TestService", "Error processing image", e)
                 Handler(Looper.getMainLooper()).post {
-                    Toast.makeText(localContext, "Error processing image", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(localContext, "Error processing image", Toast.LENGTH_SHORT)
+                        .show()
                 ***REMOVED***
                 sendError()
                 stopSelf()
             ***REMOVED*** catch (e: Exception) {
                 Log.e("TestService", "Error processing image", e)
                 Handler(Looper.getMainLooper()).post {
-                    Toast.makeText(localContext, "Error processing image", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(localContext, "Error processing image", Toast.LENGTH_SHORT)
+                        .show()
                 ***REMOVED***
                 sendError()
                 stopSelf()
@@ -282,6 +301,14 @@ class ExtractionService : Service() {
 ***REMOVED***
 
 
+/**
+ * creates the extraction object from the python result
+ *
+ * @param pyResult The python result extracted
+ * @param templateOg The template to use
+ * @param imageUris The image uris used
+ * @return Extraction
+ */
 private fun extractResult(
     pyResult: PyObject, templateOg: Template, imageUris: List<Uri>
 ): Extraction {
@@ -306,6 +333,7 @@ private fun extractResult(
         ***REMOVED***
 
         title = pyResult["title"].toString()
+
         pyResult["exceptions_occurred"]?.asList()?.let {
             exceptionsOccurred.addAll(it.map { pyException ->
                 val errorFiltered = filterErrors(pyException["error"].toString())
@@ -316,6 +344,7 @@ private fun extractResult(
                 ***REMOVED***
             ***REMOVED***)
         ***REMOVED***
+
         pyResult["extracted_fields"]?.asList()?.let { pyObjects ->
             extractedFields.addAll(pyObjects.map { pyExtractedField ->
                 ExtractionField().apply {
@@ -327,18 +356,23 @@ private fun extractResult(
                 ***REMOVED***
             ***REMOVED***)
         ***REMOVED***
+
         pyResult["extracted_tables"]?.asList()?.forEach { pyExtractedTable ->
             extractedTables.add(extractTable(pyExtractedTable, templateOg))
         ***REMOVED***
+
         template = templateOg
     ***REMOVED***
-
-    // Convert to JSON and save to file
-
-
     return extracted
 ***REMOVED***
 
+
+/**
+ * Filter errors, shortens the error message for the user
+ *
+ * @param error
+ * @return
+ */
 fun filterErrors(error: String): String {
     //if error string contains certain recognized words it rewords it for the user
     return when {
@@ -352,8 +386,14 @@ fun filterErrors(error: String): String {
 ***REMOVED***
 
 
+/**
+ * creates the extraction table object from the python result
+ *
+ * @param pyExtractedTable The python extracted table
+ * @param template The template to use
+ * @return ExtractionTable
+ */
 private fun extractTable(pyExtractedTable: PyObject, template: Template): ExtractionTable {
-
 
     val realmExtractionTable = ExtractionTable().apply {
         title = pyExtractedTable["title"].toString()
@@ -361,7 +401,7 @@ private fun extractTable(pyExtractedTable: PyObject, template: Template): Extrac
             it.id.toHexString() == pyExtractedTable["template_table"]?.get("id").toString()
         ***REMOVED***
         dataframe = pyExtractedTable["dataframe"].toString()
-        // Handle fields (nested dictionaries)
+        // Handle fields, nested dictionaries :(((((((((((((
         val rows = mutableListOf<ExtractionTableRow>()
         val pyFields = pyExtractedTable["fields"]?.asMap()
         if (pyFields != null) {
@@ -373,8 +413,9 @@ private fun extractTable(pyExtractedTable: PyObject, template: Template): Extrac
                     for ((columnIndex, columnData) in rowData.asMap()) {
                         var templateColumn =
                             table.columns.firstOrNull { it.title == columnIndex.toString() ***REMOVED***
-                        if (templateColumn == null) {
-                            templateColumn= TemplateField().apply { title = columnIndex.toString() ***REMOVED***
+                        if (templateColumn == null) { //case where the column is not in the template and has been invented
+                            templateColumn =
+                                TemplateField().apply { title = columnIndex.toString() ***REMOVED***
                         ***REMOVED***
                         val foundField = ExtractionField().apply {
                             templateField = templateColumn
@@ -399,6 +440,14 @@ private fun extractTable(pyExtractedTable: PyObject, template: Template): Extrac
 ***REMOVED***
 
 
+/**
+ * Get template as a python object
+ *
+ * @param classesModule The classes module to use
+ * @param builtinModule The builtin module to use
+ * @param template The template to use
+ * @return
+ */
 private fun getTemplate(
     classesModule: PyObject, builtinModule: PyObject, template: Template
 ): PyObject? {
@@ -420,14 +469,14 @@ private fun getTemplate(
                 PyObject.fromJava(realmField.intelligentExtraction),
                 PyObject.fromJava(realmField.default)
 ***REMOVED***
-        )  // Add Base64 image to the Python list
+        )
 
     ***REMOVED***
-    val pyTables = builtinModule.callAttr("list") // Create an empty Python list
+    val pyTables = builtinModule.callAttr("list")
 // Create Python TemplateTable objects (with their fields)
     template.tables.map { realmTable ->
-        val pyTableRows = builtinModule.callAttr("list") // Create an empty Python list
-        val pyTableColumns = builtinModule.callAttr("list") // Create an empty Python list
+        val pyTableRows = builtinModule.callAttr("list")
+        val pyTableColumns = builtinModule.callAttr("list")
         realmTable.rows.map { tableField ->
             pyTableRows.callAttr(
                 "append", classesModule.callAttr(
@@ -440,7 +489,7 @@ private fun getTemplate(
                     PyObject.fromJava(tableField.required),
                     PyObject.fromJava(tableField.intelligentExtraction)
     ***REMOVED***
-***REMOVED***  // Add Base64 image to the Python list
+***REMOVED***
         ***REMOVED***
         realmTable.columns.map { tableField ->
             pyTableColumns.callAttr(
@@ -454,7 +503,7 @@ private fun getTemplate(
                     PyObject.fromJava(tableField.required),
                     PyObject.fromJava(tableField.intelligentExtraction)
     ***REMOVED***
-***REMOVED***  // Add Base64 image to the Python list
+***REMOVED***
         ***REMOVED***
 
         val keywords = builtinModule.callAttr("list") // Create an empty Python list
@@ -472,7 +521,7 @@ private fun getTemplate(
                 pyTableColumns,
                 PyObject.fromJava(realmTable.all)
 ***REMOVED***
-        )  // Add Base64 image to the Python list
+        )
     ***REMOVED***
 
 // Create the Python Template object
@@ -487,22 +536,26 @@ private fun getTemplate(
     return pythonTemplate
 ***REMOVED***
 
+/**
+ * Send notification if the user is not in the app
+ *
+ * @param context The context to use
+ * @param title The title of the notification
+ * @param content The content of the notification
+ */
 fun sendNotification(context: Context, title: String, content: String) {
     CoroutineScope(Dispatchers.Main).launch {
         val channelId = "extraction_channel"
-        val notificationId = 2  // Ensure this ID doesn't conflict with your foreground service
+        val notificationId = 2  // Ensuring this ID doesn't conflict with your foreground service
 
-        // Create an Intent to launch your app
         val intent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         ***REMOVED***
 
-        // Create the PendingIntent
         val pendingIntent: PendingIntent = PendingIntent.getActivity(
             context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        // Create a notification channel (required for Android 8.0+)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = "Extraction Completed"
             val descriptionText = "Your extraction was completed successfully"
@@ -519,8 +572,7 @@ fun sendNotification(context: Context, title: String, content: String) {
         // Create the notification
         val builder = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(R.mipmap.logo_vale) // Replace with your own icon
-            .setContentTitle(title)
-            .setContentText(content)
+            .setContentTitle(title).setContentText(content)
             .setPriority(NotificationCompat.PRIORITY_HIGH) // Set to HIGH for more visibility
             .setAutoCancel(true) // Dismiss the notification when clicked
             .setContentIntent(pendingIntent)  // Set the intent that will fire when the user taps the notification
@@ -528,22 +580,29 @@ fun sendNotification(context: Context, title: String, content: String) {
         // Show the notification
         CoroutineScope(Dispatchers.Main).launch {
 
-        with(NotificationManagerCompat.from(context)) {
-            if (ActivityCompat.checkSelfPermission(
-                    context, Manifest.permission.POST_NOTIFICATIONS
-    ***REMOVED*** == PackageManager.PERMISSION_GRANTED
-***REMOVED*** {
-                notify(notificationId, builder.build())
-            ***REMOVED*** else {
-                // Handle the case where the permission is not granted
-                Log.e("Notification", "POST_NOTIFICATIONS permission not granted")
+            with(NotificationManagerCompat.from(context)) {
+                if (ActivityCompat.checkSelfPermission(
+                        context, Manifest.permission.POST_NOTIFICATIONS
+        ***REMOVED*** == PackageManager.PERMISSION_GRANTED
+    ***REMOVED*** {
+                    notify(notificationId, builder.build())
+                ***REMOVED*** else {
+                    Log.e("Notification", "POST_NOTIFICATIONS permission not granted")
+                ***REMOVED***
             ***REMOVED***
-        ***REMOVED***
         ***REMOVED***
     ***REMOVED***
 ***REMOVED***
 
 
+/**
+ * Process uri transforms the uri into a base64 image
+ *
+ * @param contentResolver The content resolver to use
+ * @param uri The uri to process
+ * @param pyListImages The python list to append the base64 image to
+ * @return List<Bitmap>
+ */
 fun processUri(contentResolver: ContentResolver, uri: Uri, pyListImages: PyObject): List<Bitmap> {
     val bitmaps = mutableListOf<Bitmap>()
 
@@ -604,6 +663,7 @@ fun pdfToBase64Images(contentResolver: ContentResolver, uri: Uri): List<String> 
 
             for (pageIndex in 0 until pdfRenderer.pageCount) {
                 val page = pdfRenderer.openPage(pageIndex)
+                // Create a Bitmap object
                 val bitmap = Bitmap.createBitmap(
                     page.width, page.height, Bitmap.Config.ARGB_8888
     ***REMOVED***

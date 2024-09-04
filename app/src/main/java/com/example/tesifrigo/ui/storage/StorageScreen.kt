@@ -43,7 +43,7 @@ import com.example.tesifrigo.Screen
 import com.example.tesifrigo.models.Extraction
 import com.example.tesifrigo.ui.theme.cyan_custom
 import com.example.tesifrigo.ui.theme.light_gray
-import com.example.tesifrigo.ui.theme.vale
+import com.example.tesifrigo.ui.theme.base_card_color
 import com.example.tesifrigo.utils.SearchBar
 import com.example.tesifrigo.utils.isFirstTimeVisit
 import com.example.tesifrigo.viewmodels.ExtractionViewModel
@@ -51,6 +51,12 @@ import com.example.tesifrigo.viewmodels.SortOrder
 import com.guru.fontawesomecomposelib.FaIcon
 import com.guru.fontawesomecomposelib.FaIcons
 
+/**
+ * Storage screen for managing extractions
+ *
+ * @param navController
+ * @param extractionViewModel
+ */
 @Composable
 fun StorageScreen(navController: NavHostController, extractionViewModel: ExtractionViewModel) {
 
@@ -72,7 +78,7 @@ fun StorageScreen(navController: NavHostController, extractionViewModel: Extract
                 .fillMaxWidth()
                 .padding(bottom = 8.dp)
         ) {
-
+            // Search bar and sort options
             SearchBar(text = searchText,
                 onTextChange = { extractionViewModel.updateSearchText(it) ***REMOVED***,
                 onSearch = { extractionViewModel.updateSearchText(it) ***REMOVED***)
@@ -81,12 +87,12 @@ fun StorageScreen(navController: NavHostController, extractionViewModel: Extract
                 val sortOrder = extractionViewModel.sortOrder.collectAsState().value
 
                 Row {
-                    val sortOptions = listOf( SortOrder.BY_DATE,SortOrder.BY_TITLE)
+                    val sortOptions = listOf(SortOrder.BY_DATE, SortOrder.BY_TITLE)
                     Spacer(modifier = Modifier.width(10.dp))
                     sortOptions.forEach { option ->
                         Button(colors = ButtonDefaults.buttonColors(
-                            containerColor = if (sortOrder == option) cyan_custom else light_gray, // Change color based on selection
-                            contentColor = if (sortOrder == option) Color.White else Color.Black, // Change text color based on selection
+                            containerColor = if (sortOrder == option) cyan_custom else light_gray,
+                            contentColor = if (sortOrder == option) Color.White else Color.Black,
             ***REMOVED***,
                             border = BorderStroke(1.dp, cyan_custom),
                             modifier = Modifier
@@ -124,7 +130,7 @@ fun StorageScreen(navController: NavHostController, extractionViewModel: Extract
             ***REMOVED***
 
         ***REMOVED***
-    ***REMOVED***) { innerPadding ->
+    ***REMOVED***) { innerPadding -> //list of extractions
         LazyColumn(
             modifier = Modifier.padding(innerPadding)
         ) {
@@ -136,16 +142,15 @@ fun StorageScreen(navController: NavHostController, extractionViewModel: Extract
     ***REMOVED***
             ***REMOVED***
         ***REMOVED***
-        if(firstTimeModal){
-            AlertDialog(
-                title={
-                    Text(stringResource(R.string.extractions))
-                ***REMOVED***,
+        if (firstTimeModal) { // First time visit modal
+            AlertDialog(title = {
+                Text(stringResource(R.string.extractions))
+            ***REMOVED***,
                 text = {
                     Text(stringResource(R.string.here_you_can_manage_your_extractions_change_whatever_you_like_and_manage_the_extracted_files))
                 ***REMOVED***,
                 shape = RoundedCornerShape(8.dp),
-                onDismissRequest = { firstTimeModal=false ***REMOVED***,
+                onDismissRequest = { firstTimeModal = false ***REMOVED***,
                 confirmButton = {
                     Button(onClick = { firstTimeModal = false ***REMOVED***) {
                         Text("OK")
@@ -155,6 +160,13 @@ fun StorageScreen(navController: NavHostController, extractionViewModel: Extract
     ***REMOVED***
 ***REMOVED***
 
+/**
+ * Single Extraction item
+ *
+ * @param extraction
+ * @param viewModel
+ * @param navController
+ */
 @Composable
 fun ExtractionItem(
     extraction: Extraction, viewModel: ExtractionViewModel, navController: NavHostController
@@ -169,10 +181,10 @@ fun ExtractionItem(
                 navController.navigate(Screen.SingleExtraction.withArgs("extractionId" to extraction.id.toHexString()))
             ***REMOVED***,
         colors = CardDefaults.cardColors(
-            containerColor = vale,
-            contentColor = Color.Black
+            containerColor = base_card_color, contentColor = Color.Black
         ),
-        border = CardDefaults.outlinedCardBorder(), // Add a border        elevation = CardDefaults.cardElevation(defaultElevation = 5.dp) // Add elevation for better visuals
+        border = CardDefaults.outlinedCardBorder(),
+        elevation = CardDefaults.cardElevation(defaultElevation = 5.dp)
 
     ) {
         Column {
@@ -181,16 +193,17 @@ fun ExtractionItem(
 ***REMOVED*** {
                 Text(
                     text = extraction.title,
-                    modifier = Modifier.padding(start=16.dp, top = 16.dp),
-                    fontWeight =  FontWeight.Bold,
+                    modifier = Modifier.padding(start = 16.dp, top = 16.dp),
+                    fontWeight = FontWeight.Bold,
                     color = Color.Black,
                     fontSize = 20.sp
     ***REMOVED***
-                Spacer(modifier = Modifier.weight(1f)) // Creates space between text and button
+                Spacer(modifier = Modifier.weight(1f))
                 IconButton(
                     onClick = {
                         showDeleteDialog = true
-                    ***REMOVED***, modifier = Modifier
+                    ***REMOVED***,
+                    modifier = Modifier
                         .align(Alignment.CenterVertically)
                         .padding(top = 4.dp, end = 4.dp)
     ***REMOVED*** {
@@ -198,13 +211,13 @@ fun ExtractionItem(
                 ***REMOVED***
             ***REMOVED***
             LazyRow(
-                modifier = Modifier.padding(start=16.dp, bottom = 8.dp)
+                modifier = Modifier.padding(start = 16.dp, bottom = 8.dp)
 ***REMOVED*** {
                 items(extraction.tags) { field ->
-                    AssistChip(onClick = {***REMOVED***, label = { Text(field) ***REMOVED***,
+                    AssistChip(onClick = {***REMOVED***,
+                        label = { Text(field) ***REMOVED***,
                         colors = AssistChipDefaults.assistChipColors(
-                            containerColor = Color.White,
-                            labelColor = Color.Black
+                            containerColor = Color.White, labelColor = Color.Black
             ***REMOVED***
 
         ***REMOVED***
@@ -219,12 +232,12 @@ fun ExtractionItem(
 // Confirmation Dialog
         if (showDeleteDialog) {
             AlertDialog(onDismissRequest = { showDeleteDialog = false ***REMOVED***,
-                title = { Text(stringResource(R.string.confirm_delete)) ***REMOVED***, // Confirm the action
+                title = { Text(stringResource(R.string.confirm_delete)) ***REMOVED***,
                 text = { Text(stringResource(R.string.are_you_sure_you_want_to_delete_this_extraction)) ***REMOVED***,
                 confirmButton = {
                     Button(onClick = {
-                        viewModel.deleteExtraction(extraction.id.toHexString()) // Delete the template
-                        showDeleteDialog = false // Close dialog
+                        viewModel.deleteExtraction(extraction.id.toHexString())
+                        showDeleteDialog = false
                     ***REMOVED***) {
                         Text(stringResource(R.string.delete))
                     ***REMOVED***

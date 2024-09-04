@@ -10,7 +10,6 @@ import androidx.compose.ui.unit.dp
 
 private val LightColorScheme = lightColorScheme(
     primary = Color( 0,138, 230),  // Replace with your colors
-    // ... other ColorScheme colors
 )
 
 val AppShapes = Shapes(

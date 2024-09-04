@@ -11,10 +11,14 @@ import com.google.gson.JsonSerializer
 import com.google.gson.reflect.TypeToken
 import io.realm.kotlin.ext.realmListOf
 import io.realm.kotlin.types.RealmList
-import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 
 
+/**
+ * Template field list adapter
+ *
+ * @constructor Create empty Template field list adapter
+ */
 class TemplateFieldListAdapter : JsonSerializer<RealmList<TemplateField>>,
     JsonDeserializer<RealmList<TemplateField>> {
 
@@ -38,7 +42,12 @@ class TemplateFieldListAdapter : JsonSerializer<RealmList<TemplateField>>,
     ***REMOVED***
 ***REMOVED***
 
-// Adapter for RealmList<ExtractionTable>
+
+/**
+ * Template table list adapter
+ *
+ * @constructor Create empty Template table list adapter
+ */
 class TemplateTableListAdapter : JsonSerializer<RealmList<TemplateTable>>,
     JsonDeserializer<RealmList<TemplateTable>> {
 
@@ -62,6 +71,11 @@ class TemplateTableListAdapter : JsonSerializer<RealmList<TemplateTable>>,
     ***REMOVED***
 ***REMOVED***
 
+/**
+ * Realm list string adapter
+ *
+ * @constructor Create empty Realm list string adapter
+ */
 class RealmListStringAdapter : JsonSerializer<RealmList<String>>,
     JsonDeserializer<RealmList<String>> {
 

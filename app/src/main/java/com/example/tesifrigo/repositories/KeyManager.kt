@@ -4,6 +4,12 @@ import android.content.SharedPreferences
 import com.example.tesifrigo.viewmodels.Keys
 import javax.inject.Inject
 
+/**
+ * Key manager
+ *
+ * @property encryptedSharedPrefs The encrypted shared preferences from the AppModule
+ * @constructor Create empty Key manager
+ */
 class KeyManager @Inject constructor(
     private val encryptedSharedPrefs: SharedPreferences
 ) {
@@ -13,7 +19,6 @@ class KeyManager @Inject constructor(
 
 
     fun getApiKey(number: Keys): String? {
-
         return encryptedSharedPrefs.getString(number.toString(), null)
     ***REMOVED***
 

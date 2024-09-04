@@ -7,9 +7,20 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 
+/**
+ *  Extract text from image using OCR
+ *
+ * @constructor Create empty Image OCR
+ */
 class ImageOCR {
     private val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
 
+    /**
+     * Extract text from bitmap using TextRecognition
+     *
+     * @param bitmap The bitmap to extract text from
+     * @return
+     */
     fun extractTextFromBitmap(bitmap: Bitmap): String {
         val image = InputImage.fromBitmap(bitmap, 0)
         return try {

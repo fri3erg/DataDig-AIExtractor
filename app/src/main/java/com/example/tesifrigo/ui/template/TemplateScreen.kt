@@ -39,7 +39,7 @@ import com.example.tesifrigo.Screen
 import com.example.tesifrigo.models.Template
 import com.example.tesifrigo.ui.theme.cyan_custom
 import com.example.tesifrigo.ui.theme.light_gray
-import com.example.tesifrigo.ui.theme.vale
+import com.example.tesifrigo.ui.theme.base_card_color
 import com.example.tesifrigo.utils.DropdownWithNavigation
 import com.example.tesifrigo.utils.SearchBar
 import com.example.tesifrigo.utils.isFirstTimeVisit
@@ -50,6 +50,13 @@ import com.guru.fontawesomecomposelib.FaIcon
 import com.guru.fontawesomecomposelib.FaIcons
 
 
+/**
+ * Template screen composable, which displays a list of templates
+ *
+ * @param navController The navigation controller
+ * @param templateViewModel The view model for templates
+ * @param serviceViewModel The view model for services
+ */
 @Composable
 fun TemplateScreen(
     navController: NavHostController,
@@ -71,7 +78,7 @@ fun TemplateScreen(
         topBar = {
             Column(modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 8.dp)) {
+                .padding(bottom = 8.dp)) { //Search bar and sort options
 
                 SearchBar(
                     text = searchText,
@@ -88,15 +95,14 @@ fun TemplateScreen(
                         sortOptions.forEach { option ->
                             Button(
                                 colors = ButtonDefaults.buttonColors(
-                                    containerColor = if (sortOrder == option) cyan_custom else light_gray, // Change color based on selection
-                                    contentColor = if (sortOrder == option) Color.White else Color.Black, // Change text color based on selection
+                                    containerColor = if (sortOrder == option) cyan_custom else light_gray,
+                                    contentColor = if (sortOrder == option) Color.White else Color.Black,
                     ***REMOVED***,
                                 border= BorderStroke(1.dp, cyan_custom),
                                 modifier = Modifier
                                     .height(40.dp)
                                     .width(100.dp)
-                                    .padding(start = 10.dp)
-                                , // Add padding only to the first button
+                                    .padding(start = 10.dp),
                                 onClick = {
                                     templateViewModel.updateSortOrder(option) ***REMOVED***
                 ***REMOVED*** {
@@ -147,13 +153,13 @@ fun TemplateScreen(
 
 
             LazyColumn {
-                items(templates) { template ->  // Iterate directly over templates
+                items(templates) { template ->  // Display the list of templates
                     TemplateItem(template, navController, templateViewModel, serviceViewModel)
                 ***REMOVED***
             ***REMOVED***
 
         ***REMOVED***
-        if(firstTimeModal){
+        if(firstTimeModal){ // Show the first time modal
             AlertDialog(
                 title={
                     Text(stringResource(R.string.welcome_to_data_dig))
@@ -173,6 +179,14 @@ fun TemplateScreen(
 
 ***REMOVED***
 
+/**
+ * single template item composable
+ *
+ * @param template The template to display
+ * @param navController The navigation controller
+ * @param viewmodel The template view model
+ * @param serviceViewModel The service view model
+ */
 @Composable
 fun TemplateItem(
     template: Template,
@@ -180,29 +194,29 @@ fun TemplateItem(
     viewmodel: TemplateViewModel,
     serviceViewModel: ServiceViewModel
 ) {
-    Card( // Consider using a Card for visual structure
+    Card(
         modifier = Modifier
-            .fillMaxWidth() // Occupy full width
+            .fillMaxWidth()
             .clickable {
                 navController.navigate(Screen.EditTemplate.withArgs("templateId" to template.id.toHexString()))
-            ***REMOVED*** // Make the entire item clickable
+            ***REMOVED***
             .padding(8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = vale,
+            containerColor = base_card_color,
             contentColor = Color.Black
         ),
-        border = CardDefaults.outlinedCardBorder(), // Add a border
-        elevation = CardDefaults.cardElevation(defaultElevation = 5.dp) // Add elevation for better visuals
+        border = CardDefaults.outlinedCardBorder(),
+        elevation = CardDefaults.cardElevation(defaultElevation = 5.dp)
 
     ) {
-        Column(modifier = Modifier.padding(16.dp)) { // Inner Column for content
+        Column(modifier = Modifier.padding(16.dp)) {
             Row {
 
                 Text(
                     text = template.title, style = MaterialTheme.typography.headlineSmall,
                     modifier = Modifier.padding(top = 8.dp, start = 8.dp)
-    ***REMOVED*** // Title
-                Spacer(modifier = Modifier.weight(1f)) // Creates space between text and button
+    ***REMOVED***
+                Spacer(modifier = Modifier.weight(1f))
                 val id = template.id.toHexString()
                 val onUse = {
 
