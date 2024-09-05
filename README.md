@@ -1,6 +1,6 @@
-# DATADIG :it:
+# DATADIG    :it:
 
-## Table of Contents
+## Table of Contents  :pushpin:
 
 - [Introduction](#introduction)
 - [Tech Stack](#tech-stack)
@@ -12,11 +12,11 @@
 
 ## Introduction
 
-kotlin application that allows for customizable extraction from documents such as images(jpg, jpeg, png), and pdfs using AI (openAI API and Azure document intelligence API).
+Kotlin application that allows for customizable extraction from documents such as images (jpg, jpeg, png), and pdfs using AI (openAI API and Azure document intelligence API).
 Keys get added by the user and the templates used to extract are fully customizable by the user.
 App also comes with amples useful templates and provides files of the extractions in various formats( txt, csv, xml, json)
 
-## Key Features
+## Key Features :bulb: {#key-features***REMOVED***
 
 - **Template Management:**  Create, edit, and delete templates to define the structure and rules for extracting specific data points from documents.
 - **Camera Integration:** Capture images directly within the app or select existing images from the device gallery for extraction.
@@ -25,7 +25,7 @@ App also comes with amples useful templates and provides files of the extraction
 - **Secure API Key Storage:** Sensitive API keys are stored securely using encryption.
 - **Multilingual Support:** The app is localized to support 5 languages.
 
-## Tech Stack
+## Tech Stack :scroll: {#tech-stack***REMOVED***
 
 - **Language:** Kotlin
 - **UI Framework:** Jetpack Compose
@@ -40,7 +40,7 @@ App also comes with amples useful templates and provides files of the extraction
 - **Localization:** Support for 5 languages
 - **OCR:** TextRecognition library
 
-## Working With DataDig
+## Working With DataDig :two_hearts: {#working-with-datadig***REMOVED***
 
 If you are using DataDig for your company you can handle the flow of data from the extraction in 2 ways:
 
@@ -63,7 +63,7 @@ If you are using DataDig for your company you can handle the flow of data from t
 
    *Please ensure secure handling of the shared data if it contains sensitive information.*  
 
-## Extraction Object Model
+## Extraction Object Model :notebook_with_decorative_cover: {#extraction-object-model***REMOVED***
 
 This section outlines the classes used to represent the results of a data extraction process in DataDig.
 (useful for parsing)
@@ -120,14 +120,15 @@ Breakdown of the costs associated with the extraction process.
 - **`currency`** (String): Currency code (e.g., "USD").
 - **`tokens`** (Int): Number of tokens used (if applicable to the cost model).
 
-## Contact
+## Contact :mailbox_with_mail: {#contact***REMOVED***
 
+Good luck! :vulcan_salute:
 Feel free to reach out to me via:
 
 - **Email:** [elia.fri3erg@gmail.com](mailto:elia.fri3erg@gmail.com)
 - **LinkedIn:** [elia.friberg](https://www.linkedin.com/in/elia-friberg-021a90295/)
 - **Whatsapp:** [@elia.friberg](+393924123304)
 
-## DEVS
+## DEVS :finnadie: {#devs***REMOVED***
 
 Elia Friberg
