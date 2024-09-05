@@ -145,7 +145,7 @@
 
 
         <string name="optional_comments">Commenti (facoltativi)</string>
-        <string name="satisfaction_rating">Valutazione di soddisfazione:</string>
+        <string name="satisfaction_rating"> Sei soddifatto del risultato?</string>
         <string name="rate_the_extraction">Valuta l\'estrazione</string>
         <string name="extracted_fields">Campi Estratti</string>
         <string name="extracted_tables">Tabelle Estratte</string>
@@ -165,7 +165,7 @@
         <string name="use_case_binding_failed">Associazione caso d\'uso non riuscita</string>
         <string name="go_to_extraction">Vai all\'Estrazione</string>
         <string name="extraction_result">Risultato dell\'estrazione:</string>
-        <string name="progress">Avanzamento: %1$d%%</string>
+        <string name="progress">Progresso: %1$d%%</string>
         <string name="select_the_language_to_use_for_the_extraction">
         Seleziona la lingua da utilizzare per l\'estrazione. Dovrebbe essere la stessa lingua utilizzata nel documento.\n
         Puoi anche lasciare che il sistema rilevi automaticamente la lingua. \n
@@ -246,4 +246,5 @@
     In sostanza, specificando righe e colonne estrarrai solo ciò che viene chiesto, è più affidabile e restituirà meno dati, mentre non specificando restituirà tutto ciò che viene trovato di ciò che non è specificato (righe o colonne).
 </string>
     <string name="table_usage">Utilizzo della Tabella</string>
+    <string name="no_table_found">Nessuna tabella trovata</string>
 </resources>

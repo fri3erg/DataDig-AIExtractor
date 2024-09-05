@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.tesifrigo.R
@@ -107,7 +108,8 @@ fun NavBar(navController: NavHostController) {
                     //tint = if(settingsSelected) Color.Black else Color.White
     ***REMOVED***
             ***REMOVED***,
-            label = { Text(stringResource(R.string.settings)) ***REMOVED***,
+            label = { Text(stringResource(R.string.settings),
+                overflow = TextOverflow.Ellipsis) ***REMOVED***,
             selected = settingsSelected,
             onClick = {
                 navController.navigate(Screen.Settings.route)

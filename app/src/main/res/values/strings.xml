@@ -259,6 +259,7 @@
         In essence, specifying rows and columns will extract only what is asked, is more reliable and will return less data, while not specifying will return all that is found of what is left unspecified (rows or column).
     </string>
     <string name="table_usage">Table Usage</string>
+    <string name="no_table_found">This Table is empty</string>
 
 
 </resources>

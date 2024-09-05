@@ -84,6 +84,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.canhub.cropper.CropImage
 import com.canhub.cropper.CropImageContract
@@ -311,7 +312,9 @@ fun RatingModal(onDismiss: () -> Unit, viewModel: ExtractionViewModel, extractio
         text = {
             Column {
                 // Satisfaction Slider
-                Text(stringResource(R.string.satisfaction_rating))
+                Text(
+                    stringResource(R.string.satisfaction_rating), fontSize = 14.sp
+    ***REMOVED***
                 Row {
                     Text("0")
                     Slider(
@@ -328,8 +331,7 @@ fun RatingModal(onDismiss: () -> Unit, viewModel: ExtractionViewModel, extractio
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Optional Comment Textbox
-                OutlinedTextField(
-                    value = review.comment,
+                OutlinedTextField(value = review.comment,
                     onValueChange = { newComment ->
                         review = review.copy(comment = newComment)
                     ***REMOVED***,
@@ -353,7 +355,10 @@ fun RatingModal(onDismiss: () -> Unit, viewModel: ExtractionViewModel, extractio
         ***REMOVED***,
         dismissButton = {
             TextButton(
-                onClick = onDismiss, colors = ButtonDefaults.textButtonColors(
+                onClick = {
+                    viewModel.changeReview(extraction)
+                    onDismiss()
+                ***REMOVED***, colors = ButtonDefaults.textButtonColors(
                     containerColor = Color.LightGray, contentColor = Color.Gray
     ***REMOVED***
 ***REMOVED*** {
@@ -485,17 +490,17 @@ fun TemplateInfo(
 
 
     // Launcher for cropping the image for the extra images
-    val cropImageLauncher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult(),
-            onResult = { result ->
-                if (result.resultCode == Activity.RESULT_OK) {
-                    val resultUri =
-                        result.data?.getParcelableExtra<CropImage.ActivityResult>(CropImage.CROP_IMAGE_EXTRA_RESULT)?.uriContent
-                    if (resultUri != null) {
-                        viewModel.addExtraImage(extraction, resultUri)
-                    ***REMOVED***
+    val cropImageLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult(),
+        onResult = { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val resultUri =
+                    result.data?.getParcelableExtra<CropImage.ActivityResult>(CropImage.CROP_IMAGE_EXTRA_RESULT)?.uriContent
+                if (resultUri != null) {
+                    viewModel.addExtraImage(extraction, resultUri)
                 ***REMOVED***
-            ***REMOVED***)
+            ***REMOVED***
+        ***REMOVED***)
 
     // Function to create the crop intent using CropImageContract
     fun createCropIntent(imageUri: Uri, context: Context): Intent {
@@ -505,15 +510,15 @@ fun TemplateInfo(
     ***REMOVED***
 
 
-    val pickImageLauncher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia(),
-            onResult = { uri ->
-                if (uri != null) {
-                    cropImageLauncher.launch(createCropIntent(uri, context))
-                ***REMOVED*** else {
-                    Log.d("PhotoPicker", "No media selected")
-                ***REMOVED***
-            ***REMOVED***)
+    val pickImageLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = { uri ->
+            if (uri != null) {
+                cropImageLauncher.launch(createCropIntent(uri, context))
+            ***REMOVED*** else {
+                Log.d("PhotoPicker", "No media selected")
+            ***REMOVED***
+        ***REMOVED***)
     // legacy image picker launcher
     val imagePickerLauncherLegacy = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
@@ -525,39 +530,39 @@ fun TemplateInfo(
     ***REMOVED***
 
 
-    val requestPermissionLauncher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission(),
-            onResult = { isGranted: Boolean ->
-                if (isGranted) {
+    val requestPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted: Boolean ->
+            if (isGranted) {
 
-                    pickImageLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                pickImageLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
 
-                ***REMOVED*** else {
-                    Toast.makeText(
-                        context,
-                        context.getString(R.string.permission_denied_cannot_access_images),
-                        Toast.LENGTH_SHORT
-        ***REMOVED***.show()
-                ***REMOVED***
-            ***REMOVED***)
+            ***REMOVED*** else {
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.permission_denied_cannot_access_images),
+                    Toast.LENGTH_SHORT
+    ***REMOVED***.show()
+            ***REMOVED***
+        ***REMOVED***)
     // Legacy image picker launcher
-    val requestPermissionLauncherLegacy =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission(),
-            onResult = { isGranted: Boolean ->
-                if (isGranted) {
-                    // Launch the image picker using the legacy intent
-                    val pickIntent = Intent(Intent.ACTION_PICK).apply {
-                        setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
-                    ***REMOVED***
-                    imagePickerLauncherLegacy.launch(pickIntent)
-                ***REMOVED*** else {
-                    Toast.makeText(
-                        context,
-                        context.getString(R.string.permission_denied_cannot_access_images),
-                        Toast.LENGTH_SHORT
-        ***REMOVED***.show()
+    val requestPermissionLauncherLegacy = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted: Boolean ->
+            if (isGranted) {
+                // Launch the image picker using the legacy intent
+                val pickIntent = Intent(Intent.ACTION_PICK).apply {
+                    setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
                 ***REMOVED***
-            ***REMOVED***)
+                imagePickerLauncherLegacy.launch(pickIntent)
+            ***REMOVED*** else {
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.permission_denied_cannot_access_images),
+                    Toast.LENGTH_SHORT
+    ***REMOVED***.show()
+            ***REMOVED***
+        ***REMOVED***)
 
     val onPhotoGalleryClick = {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13+
@@ -772,7 +777,14 @@ fun TagsSection(
 fun ExtractionTableDisplay(extractionTable: ExtractionTable, viewModel: ExtractionViewModel) {
     val columnHeaders =
         extractionTable.fields.firstOrNull()?.fields?.mapNotNull { it.templateField?.title ***REMOVED***
-
+    if (columnHeaders == null && extractionTable.fields.isEmpty()) {
+        Text(
+            stringResource(R.string.no_table_found),
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(8.dp),
+            color = Color.Gray
+        )
+    ***REMOVED***
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
@@ -800,8 +812,7 @@ fun ExtractionTableDisplay(extractionTable: ExtractionTable, viewModel: Extracti
                         .padding(8.dp)
     ***REMOVED*** {
                     // Add an empty cell for the row index header
-                    ExtractionTableCell(
-                        text = "",
+                    ExtractionTableCell(text = "",
                         modifier = Modifier.weight(1f),
                         onValueChange = {***REMOVED***,
                         onDelete = {***REMOVED***,
@@ -920,8 +931,7 @@ fun FormatSection(extraction: Extraction, viewModel: ExtractionViewModel) {
     val context = LocalContext.current
 
     ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded ***REMOVED***) {
-        TextField(
-            value = selectedFormat,
+        TextField(value = selectedFormat,
             onValueChange = {***REMOVED***,
             readOnly = true,
             label = { Text("Format") ***REMOVED***,
@@ -1179,8 +1189,7 @@ fun Picker(
         ***REMOVED***
         // Float field
         "Float" -> {
-            OutlinedTextField(
-                value = text,
+            OutlinedTextField(value = text,
                 onValueChange = { newText: String ->
                     editableText = newText
                     changeText(newText)

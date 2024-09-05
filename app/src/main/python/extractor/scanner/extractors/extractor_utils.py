@@ -740,23 +740,34 @@ def extracted_from_columns(tagged_data, template: TemplateTable) -> Dict[str, Di
 
 def sanitize_text(text: str) -> str:
     """
-    Sanitizes a given text by replacing dangerous characters with their escaped equivalents.
-
+    Sanitizes a given text by escaping characters that are not allowed in JSON format.
+    
     Args:
         text (str): The text to be sanitized.
-
+        
     Returns:
-        str: The sanitized text with all non-word and non-space characters removed.
+        str: The sanitized text with necessary characters escaped for JSON compatibility.
     """
     
-    dangerous_chars = [';', "'", '"', '=', '<', '>', '{', '***REMOVED***', '(', ')', '$', '&', '|']
+    dangerous_chars = {
+        '"': '\\"',   # Escape double quotes
+        '\\': '\\\\', # Escape backslashes
+        '\n': '\\n',  # Escape newline
+        '\r': '\\r',  # Escape carriage return
+        '\t': '\\t',  # Escape tabs
+        '\b': '\\b',  # Escape backspace
+        '\f': '\\f'   # Escape form feed
+    ***REMOVED***
+    
+    sanitized_text = ""
     
     # Replace dangerous characters with their escaped equivalents
-    sanitized_text = ''
     for char in text:
         if char in dangerous_chars:
-            sanitized_text += '\\' + char
-        elif char.isalnum() or char.isspace():
+            sanitized_text += dangerous_chars[char]
+        elif ord(char) < 0x20:  # Exclude other control characters below ASCII 32
+            continue
+        else:
             sanitized_text += char
-    
+
     return sanitized_text

@@ -60,6 +60,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -560,13 +561,15 @@ fun ExtractionDetails(
             Button(
                 modifier = Modifier
                     .padding(16.dp)
-                    .size(100.dp, 50.dp)
+                    .height( 50.dp)
                     .align(Alignment.CenterHorizontally),
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(dark_green),
                 onClick = onExtractionClick
 ***REMOVED*** {
-                Text(text = stringResource(R.string.extract), color = Color.White)
+                Text(text = stringResource(R.string.extract),
+                    fontSize = 15.sp,
+                    color = Color.White)
             ***REMOVED***
         ***REMOVED*** else { //extraction ongoing or complete
             ExtractedBar(serviceViewModel, changeId)
@@ -613,7 +616,8 @@ fun ExtractedBar(serviceViewModel: ServiceViewModel, changeId: () -> Unit) {
             Text(
                 text = stringResource(R.string.new_extraction),
                 fontSize = 12.sp,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                overflow = TextOverflow.Ellipsis
 ***REMOVED***
         ***REMOVED***
 
@@ -635,7 +639,8 @@ fun ExtractedBar(serviceViewModel: ServiceViewModel, changeId: () -> Unit) {
             Text(
                 text = stringResource(R.string.use_new_photos),
                 fontSize = 12.sp,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                overflow = TextOverflow.Ellipsis
 ***REMOVED***
         ***REMOVED***
 
@@ -657,7 +662,8 @@ fun ExtractedBar(serviceViewModel: ServiceViewModel, changeId: () -> Unit) {
             Text(
                 text = stringResource(R.string.change_template),
                 fontSize = 12.sp,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                overflow = TextOverflow.Ellipsis
 ***REMOVED***
         ***REMOVED***
 
@@ -888,7 +894,8 @@ fun ShownExtraction(
                     modifier = Modifier.padding(16.dp),
                     fontSize = 20.sp,
                     color = Color.Black,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    overflow = TextOverflow.Ellipsis
     ***REMOVED***
                 Button(modifier = Modifier
                     .padding(16.dp)

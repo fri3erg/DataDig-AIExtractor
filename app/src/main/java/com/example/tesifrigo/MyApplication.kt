@@ -4,7 +4,6 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.content.SharedPreferences
 import android.os.Build
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -23,7 +22,7 @@ import dagger.hilt.android.HiltAndroidApp
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
 
-class AppLifecycleObserver(private val context: Context) : LifecycleEventObserver {
+class AppLifecycleObserver : LifecycleEventObserver {
     var isInForeground = false
         private set
 
@@ -58,7 +57,7 @@ class MyApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        lifecycleObserver = AppLifecycleObserver(this)
+        lifecycleObserver = AppLifecycleObserver()
         ProcessLifecycleOwner.get().lifecycle.addObserver(lifecycleObserver)
 
         val configuration = RealmConfiguration.Builder( //realm configuration

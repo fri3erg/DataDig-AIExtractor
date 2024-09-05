@@ -253,7 +253,6 @@ fun ExtractionTableCell(
                             ***REMOVED***
                             showX = false
                         ***REMOVED***
-                        .fillMaxWidth()
                         .align(Alignment.Center))
 
             ***REMOVED*** else { // Show the text
@@ -261,7 +260,7 @@ fun ExtractionTableCell(
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Bold,
                     overflow = TextOverflow.Ellipsis,
-                    maxLines = 1, // Limit to a single line
+                    maxLines = 1,
                     modifier = Modifier
                         .clickable {
                             showX = true
@@ -577,7 +576,8 @@ fun DropDownGeneral(
                     selectedItem,
                     modifier = Modifier.padding(start = 6.dp),
                     fontSize = 13.sp,
-                    color = Color.Black
+                    color = Color.Black,
+                    overflow = TextOverflow.Ellipsis
 
     ***REMOVED***
                 Spacer(modifier = Modifier.weight(1f))

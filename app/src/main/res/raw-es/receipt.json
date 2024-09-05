@@ -79,7 +79,8 @@
       "description": "Detalles de los artículos comprados",
       "keywords": ["Nombre del Artículo", "Cantidad", "Precio"],
       "all": false,
-      "rows": [
+      "rows": [],
+      "columns": [
         {
           "title": "Nombre/Descripción del Artículo",
           "description": "Nombre o descripción del artículo",
@@ -89,9 +90,7 @@
           "intelligentExtraction": false,
           "default": "N/A",
           "list": false
-        ***REMOVED***
-      ],
-      "columns": [
+        ***REMOVED***,
         {
           "title": "Cantidad",
           "description": "Número de artículos",

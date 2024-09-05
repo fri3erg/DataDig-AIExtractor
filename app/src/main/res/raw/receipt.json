@@ -79,7 +79,8 @@
       "description": "Details of purchased items",
       "keywords": ["Item Name", "Quantity", "Price"],
       "all": false,
-      "rows": [
+      "rows": [],
+      "columns": [
         {
           "title": "Item Name/Description",
           "description": "Name or description of the item",
@@ -89,9 +90,7 @@
           "intelligentExtraction": false,
           "default": "N/A",
           "list": false
-        ***REMOVED***
-      ],
-      "columns": [
+        ***REMOVED***,
         {
           "title": "Quantity",
           "description": "Number of items",
