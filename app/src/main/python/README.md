@@ -5,8 +5,8 @@
 - [Introduction](#introduction)
 - [Basic Structure](#basic-structure)
 - [Important Points](#important-points-exclamation)
-- [Contact](#contact)
-- [DEVS](#devs)
+- [Contact](#contact-mailbox_with_mail)
+- [DEVS](#devs-finnadie)
 
 ## Introduction
 
@@ -27,7 +27,7 @@ generally divided in 3 parts, the first 2 run in parallel different tasks
 - dependencies depends from the chaquopy avaiables ones, instructor is impossible due to pydantic<2.0 so json parsing is needed
 - images get shrunk to fit 4mb for azure free trial
 
-## Contact :mailbox_with_mail: {#contact***REMOVED***
+## Contact :mailbox_with_mail:
 
 Good luck :vulcan_salute:
 Feel free to reach out to me via:
@@ -36,6 +36,6 @@ Feel free to reach out to me via:
 - **LinkedIn:** [elia.friberg](https://www.linkedin.com/in/elia-friberg-021a90295/)
 - **Whatsapp:** [@elia.friberg](+393924123304)
 
-## DEVS :finnadie: {#devs***REMOVED***
+## DEVS :finnadie:
 
 Elia Friberg
