@@ -8,7 +8,7 @@
 - [Working With DataDig](#working-with-datadig-two_hearts)
 - [Extraction Object Model](#extraction-object-model-notebook_with_decorative_cover)
 - [Contact](#contact-mailbox_with_mail)
-- [DEVS](#devs-finnadie)
+- [DEVS](#devs)
 
 ## Introduction
 
@@ -129,6 +129,6 @@ Feel free to reach out to me via:
 - **LinkedIn:** [elia.friberg](https://www.linkedin.com/in/elia-friberg-021a90295/)
 - **Whatsapp:** [@elia.friberg](+393924123304)
 
-## DEVS :finnadie:
+## DEVS
 
-Elia Friberg
+Elia Friberg :finnadie:
