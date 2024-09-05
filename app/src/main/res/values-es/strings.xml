@@ -248,6 +248,6 @@
     En esencia, especificar filas y columnas extraerá solo lo que se solicita, es más confiable y devolverá menos datos, mientras que no especificar devolverá todo lo que se encuentre de lo que no se especifica (filas o columnas).
 </string>
     <string name="table_usage">Uso de la Tabla</string>
-
     <string name="no_table_found">No se encontró ninguna tabla</string>
+    <string name="add">Añadir %1$s</string>
 </resources>

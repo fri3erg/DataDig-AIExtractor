@@ -244,4 +244,6 @@
 </string>
     <string name="table_usage">Tabellen Verwendung</string>
     <string name="no_table_found">Keine Tabelle gefunden</string>
+
+    <string name="add"> %1$s hinzufügen</string>
 </resources>

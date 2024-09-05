@@ -243,6 +243,6 @@
     En substance, la spécification des lignes et des colonnes extraira uniquement ce qui est demandé, est plus fiable et renverra moins de données, tandis que la non-spécification renverra tout ce qui se trouve de ce qui n\'est pas spécifié (lignes ou colonnes).
 </string>
     <string name="table_usage">Utilisation du tableau</string>
-
     <string name="no_table_found">Aucun tableau trouvé</string>
+    <string name="add">Ajouter %1$s</string>
 </resources>

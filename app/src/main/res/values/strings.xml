@@ -260,6 +260,7 @@
     </string>
     <string name="table_usage">Table Usage</string>
     <string name="no_table_found">This Table is empty</string>
+    <string name="add">Add %1$s</string>
 
 
 </resources>

@@ -1075,7 +1075,7 @@ fun AddButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier) 
             onClick()
         ***REMOVED***, modifier = modifier.fillMaxWidth()
     ) {
-        Text("Add $text", textAlign = TextAlign.Center)
+        Text(stringResource(R.string.add, text), textAlign = TextAlign.Center)
     ***REMOVED***
 ***REMOVED***
 
