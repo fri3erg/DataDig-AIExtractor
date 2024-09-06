@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.tesifrigo">
+    package="com.friberg.dataDig">
 
     <queries>
         <intent>
@@ -24,7 +24,7 @@
 
 
     <application
-        android:name=".MyApp"
+        android:name="com.friberg.dataDig.MyApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:enableOnBackInvokedCallback="true"
@@ -37,7 +37,7 @@
         tools:targetApi="31">
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.example.tesifrigo.fileprovider"
+            android:authorities="com.friberg.dataDig.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -47,7 +47,7 @@
 
 
         <activity
-            android:name=".MainActivity"
+            android:name="com.friberg.dataDig.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.TesiFrigo">
             <intent-filter>
@@ -65,7 +65,7 @@
             android:theme="@style/Base.Theme.AppCompat" />
 
         <service
-            android:name=".services.ExtractionService"
+            android:name="com.friberg.dataDig.services.ExtractionService"
             android:exported="false"
             android:foregroundServiceType="dataSync" />
 

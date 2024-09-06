@@ -22,7 +22,7 @@ val localProperties = Properties().apply {
 ***REMOVED***
 
 android {
-    namespace = "com.example.tesifrigo"
+    namespace = "com.friberg.dataDig"
     compileSdk = 34
 
     defaultConfig {
@@ -30,7 +30,7 @@ android {
             // On Apple silicon, you can omit x86_64.
             abiFilters += listOf("arm64-v8a", "x86_64")
         ***REMOVED***
-        applicationId = "com.example.tesifrigo"
+        applicationId = "com.friberg.dataDig"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -52,6 +52,14 @@ android {
             useSupportLibrary = true
         ***REMOVED***
     ***REMOVED***
+    signingConfigs {
+        create("release") {
+            storeFile = file(project.findProperty("MY_STORE_FILE") ?: "keystore.jks")
+            storePassword = project.findProperty("MY_STORE_PASSWORD") as String?
+            keyAlias = project.findProperty("MY_KEY_ALIAS") as String?
+            keyPassword = project.findProperty("MY_KEY_PASSWORD") as String?
+        ***REMOVED***
+    ***REMOVED***
 
     buildTypes {
         debug {
@@ -69,6 +77,7 @@ android {
 
         release {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
 ***REMOVED***

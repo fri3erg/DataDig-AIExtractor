@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="AppInsightsSettings">
-    <option name="selectedTabId" value="Android Vitals" />
+    <option name="selectedTabId" value="Firebase Crashlytics" />
     <option name="tabSettings">
       <map>
         <entry key="Firebase Crashlytics">
@@ -9,9 +9,9 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="com.example.tesifrigo" />
+                  <option name="appId" value="com.friberg.dataDig" />
                   <option name="mobileSdkAppId" value="1:347121990385:android:04c571dd561afe6defc750" />
-                  <option name="projectId" value="tesifrigo" />
+                  <option name="projectId" value="dataDig" />
                   <option name="projectNumber" value="347121990385" />
                 </ConnectionSetting>
               </option>
