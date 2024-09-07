@@ -22,8 +22,7 @@ from langchain.llms.base import LLM
 # from langchain_openai.chat_models.base import ChatOpenAI # use ChatOpenAI from the core library
 from langchain.schema import BaseMessage
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-api_key = OPENAI_API_KEY
+
 
 
 from typing import Any
@@ -61,8 +60,13 @@ class Models(LLM):
         if model_name not in self._models:
             self._models[model_name] = {***REMOVED***
         if temperature not in self._models[model_name]:
-            self._models[model_name][temperature] = ChatOpenAI(
-                model=model_name, temperature=temperature, **kwargs  # Include any additional keyword arguments
+            self._models[model_name][temperature] = {***REMOVED***
+        api_key= os.getenv("OPENAI_API_KEY")
+        if hash(api_key) not in self._models[model_name][temperature]:
+            print(f"creating model {model_name***REMOVED*** with apikey: {api_key***REMOVED***")
+            self._models[model_name][temperature][hash(api_key)] = ChatOpenAI(
+            openai_api_key=api_key,
+            model=model_name, temperature=temperature, **kwargs  # Include any additional keyword arguments
 ***REMOVED***
         if self._openAI_instance is None:
             self._openAI_instance = OpenAI()
@@ -79,7 +83,7 @@ class Models(LLM):
         temperature = kwargs.get("temperature", 0.0)
 
         # Get the correct model instance
-        model_instance: ChatOpenAI = self._models[model_name][temperature]
+        model_instance: ChatOpenAI = self._models[model_name][temperature][hash(os.getenv("OPENAI_API_KEY"))]
 
         messages: List[BaseMessage] = [
             BaseMessage(content=prompt, type="user"),
@@ -102,7 +106,7 @@ class Models(LLM):
 
         if model == "smart_mix":
             model = "gpt-4"
-        llm: ChatOpenAI = cls(model, temperature)._models[model][temperature]
+        llm: ChatOpenAI = cls(model, temperature)._models[model][temperature][hash(os.getenv("OPENAI_API_KEY"))]
 
         """if cls._openAI_instance is None:
             cls._openAI_instance = OpenAI()
@@ -148,7 +152,7 @@ class Models(LLM):
     def extract(cls, file_id, model, prompt: PromptTemplate, pages, template, temperature=0) -> str:
         if model == "smart_mix":
             model = "gpt-3.5-turbo"
-        llm: ChatOpenAI = cls(model, temperature)._models[model][temperature]  # Get the singleton instance
+        llm: ChatOpenAI = cls(model, temperature)._models[model][temperature][hash(os.getenv("OPENAI_API_KEY"))]  # Get the singleton instance
         try:
             chain = LLMChain(llm=llm, prompt=prompt)
         except AuthenticationError as auth_err:

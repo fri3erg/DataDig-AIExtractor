@@ -206,6 +206,7 @@ def main_kotlin(base64_images: list, text: list[str], template: Template, option
 
     for key, item in keys_config.items():
         os.environ[key] = options.get_api_key(item) or ""
+        print(f"{key***REMOVED***={os.environ[key]***REMOVED***")
     if options.resize:
         base64_images= [reduce_image_size(image) for image in base64_images]
 

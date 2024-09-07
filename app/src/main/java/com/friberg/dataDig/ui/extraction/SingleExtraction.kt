@@ -400,8 +400,10 @@ fun ExtractionExceptions(exceptionsOccurred: List<ExceptionOccurred>) {
                         overflow = TextOverflow.Ellipsis
         ***REMOVED***
                     Text(
-                        text = exception.errorType, style = MaterialTheme.typography.bodyMedium
-        ***REMOVED***
+                        text = exception.errorType,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.weight(1f),
+            ***REMOVED***
                 ***REMOVED***
                 Text(
                     text = exception.errorDescription,
@@ -413,6 +415,7 @@ fun ExtractionExceptions(exceptionsOccurred: List<ExceptionOccurred>) {
 
             ***REMOVED***
             HorizontalDivider()
+            Spacer(modifier = Modifier.height(8.dp))
 
         ***REMOVED***
     ***REMOVED***

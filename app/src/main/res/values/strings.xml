@@ -146,8 +146,8 @@
     <string name="no_connected_template_found">No connected template found</string>
     <string name="permission_denied_cannot_access_images">Permission denied. Cannot access images.</string>
     <string name="extraction_costs">Extraction Costs</string>
-    <string name="no_exceptions_occurred">No exceptions occurred.</string>
-    <string name="exceptions_occurred">Exceptions Occurred</string>
+    <string name="no_exceptions_occurred">No errors occurred.</string>
+    <string name="exceptions_occurred">Errors Occurred</string>
     <string name="send">Send</string>
     <string name="skip">Skip</string>
 

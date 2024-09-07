@@ -56,8 +56,9 @@ def general_table_inspection(
 
         # First normal extraction, then tagging
         add_text = f"{desc_tabella[options.language or 'en']***REMOVED*** {add_text***REMOVED*** " if add_text else ""
-        table = sanitize_text(f"{add_text***REMOVED*** TABLE-> {table.to_string()***REMOVED***")
+        table = f"{sanitize_text(add_text)***REMOVED*** TABLE-> {table***REMOVED***"
         prompt = create_language_tag_messages(text=table, language=options.language or "it", is_table=True)
+        print("table",table)
         extraction_adapted, errors_occurred = Models.tag(prompt, pydantic_class, file_id, options.model)
 
     except Exception as error:
@@ -100,7 +101,7 @@ def llm_extraction_and_tag(page, template: Template, file_id, pydantic_class, op
         print("error in extraction", e)
         optional_error = ExceptionsExtracted(e, "llm_extraction", repr(e))
         response = str(page)
-    response = str.replace(r"\*\*", "", sanitize_text(response))
+    response = str.replace(r"\*\*", "", response)
 
     print("response:", response)
     # To ensure optimal data standardization

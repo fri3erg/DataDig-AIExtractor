@@ -226,7 +226,7 @@ class GeneralScanner:
     ***REMOVED***
                 if errors_occurred:
                     self.add_exceptions(
-                        ExceptionsExtracted(errors_occurred, "extracting tables", repr(errors_occurred))
+                        ExceptionsExtracted(errors_occurred, "extracting from tables 1", repr(errors_occurred))
         ***REMOVED***
                 extracted_fields, title = extracted_from_pydantic_table(extraction, template)
 
@@ -236,7 +236,7 @@ class GeneralScanner:
 
             except Exception as error:
                 print("extract table error" + repr(error))
-                self.add_exceptions(ExceptionsExtracted(error, f"extracting tables: {template.title***REMOVED***", repr(error)))
+                self.add_exceptions(ExceptionsExtracted(error, f"extracting from tables: {template.title***REMOVED***", repr(error)))
 
         return extracted_table
 

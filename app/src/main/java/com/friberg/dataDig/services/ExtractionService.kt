@@ -343,12 +343,13 @@ private fun extractResult(
 
         pyResult["exceptions_occurred"]?.asList()?.let {
             exceptionsOccurred.addAll(it.map { pyException ->
-                val errorFiltered = filterErrors(pyException["error"].toString())
-                ExceptionOccurred().apply {
-                    error = errorFiltered
-                    errorType = pyException["error_type"].toString()
-                    errorDescription = pyException["error_description"].toString()
-                ***REMOVED***
+                filterErrors(pyException["error"].toString())
+                    ?: ExceptionOccurred().apply {
+                        error = pyException["error"].toString()
+                        errorType = pyException["error_type"].toString()
+                        errorDescription = pyException["error_description"].toString()
+                    ***REMOVED***
+
             ***REMOVED***)
         ***REMOVED***
 
@@ -377,17 +378,43 @@ private fun extractResult(
 /**
  * Filter errors, shortens the error message for the user
  *
- * @param error
+ * @param errorFound
  * @return
  */
-fun filterErrors(error: String): String {
+fun filterErrors(errorFound: String): ExceptionOccurred? {
     //if error string contains certain recognized words it rewords it for the user
     return when {
-        error.contains("API key") -> "API key is invalid"
-        error.contains("Model") -> "Model is invalid"
-        error.contains("Language") -> "Language is invalid"
-        error.contains("Azure") -> "Azure OCR is invalid"
-        else -> error
+        errorFound.contains("Incorrect API key")&& errorFound.contains("openai") ->
+            ExceptionOccurred().apply{
+                error="API key is invalid"
+                errorType="OpenAI"
+                errorDescription = "Check your OpenAI API key on the openai platform and reinsert it"
+            ***REMOVED***
+        errorFound.contains("Incorrect API key")&& errorFound.contains("azure") ->
+            ExceptionOccurred().apply{
+                error="API key is invalid"
+                errorType="Azure"
+                errorDescription= "Azure API key is invalid"
+            ***REMOVED***
+        /*errorFound.contains("Language") ->
+            ExceptionOccurred().apply{
+                error="Language not supported"
+                errorType="OpenAI"
+                errorDescription= "The language you have selected is not supported by OpenAI"
+            ***REMOVED****/
+        errorFound.contains("Azure") || errorFound.contains("No connection adapters were found") ->
+            ExceptionOccurred().apply{
+                error="Azure Error"
+                errorType="Azure"
+                errorDescription= "An error occurred with Azure, check your key and endpoint"
+            ***REMOVED***
+        errorFound.contains("PromptTemplate")  ->
+            ExceptionOccurred().apply{
+                error="Tag failed because of weird characters"
+                errorType="Tagging"
+                errorDescription= "Tag failed because of weird characters, this will be fixed in the next update"
+            ***REMOVED***
+        else -> null
     ***REMOVED***
 
 ***REMOVED***

@@ -1,6 +1,7 @@
 
 # from openai.types.chat import ChatCompletionMessageParam
 from langchain.prompts import PromptTemplate
+from ..scanner.extractors.extractor_utils import sanitize_text
 
 
 prompts = {
@@ -365,8 +366,9 @@ def create_language_tag_messages(text: str, language: str, is_table=False) -> Pr
         ***REMOVED***
     ]"""
     template = (table_prompt[language] if is_table else system_prompt[language]) + user_prompt[language].format(
-        text=text
+        text=sanitize_text(text)
     )
+    print("template" ,template)
     return PromptTemplate(input_variables=["schema"], template=template)
 
 

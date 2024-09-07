@@ -750,6 +750,15 @@ def sanitize_text(text: str) -> str:
     """
     
     dangerous_chars = {
+        '{': '\\{',   # Escape curly braces
+        '***REMOVED***': '\\***REMOVED***',   # Escape curly braces
+        '[': '\\[',   # Escape square brackets
+        ']': '\\]',   # Escape square brackets
+        '(': '\\(',   # Escape parentheses
+        ')': '\\)',   # Escape parentheses
+        ':': '\\:',   # Escape colon
+        ',': '\\,',   # Escape comma
+        "'": "\\'",   # Escape single quotes
         '"': '\\"',   # Escape double quotes
         '\\': '\\\\', # Escape backslashes
         '\n': '\\n',  # Escape newline

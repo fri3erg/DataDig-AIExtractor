@@ -138,8 +138,8 @@
         <string name="no_connected_template_found">Nessun modello collegato trovato</string>
         <string name="permission_denied_cannot_access_images">Permesso negato. Impossibile accedere alle immagini.</string>
         <string name="extraction_costs">Costi di estrazione</string>
-        <string name="no_exceptions_occurred">Nessuna eccezione si è verificata.</string>
-        <string name="exceptions_occurred">Eccezioni verificatesi</string>
+        <string name="no_exceptions_occurred">Nessun errore si è verificato.</string>
+        <string name="exceptions_occurred">Errori verificatesi</string>
         <string name="send">Invia</string>
         <string name="skip">Salta</string>
 
