@@ -46,7 +46,12 @@ If you are using DataDig for your company you can handle the flow of data from t
 
 - **Implicit Intent** (recommended)
 
-    > Make yourself an android app that can receive the implicit intent: Intent(Intent.ACTION_VIEW) that contains the Uri to the extraction file
+    > Make yourself an android app that can receive the implicit intent:
+        Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(contentUri, mimeType)
+            flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+        ***REMOVED***
+    that contains the Uri to the extraction file
 
     1. Register your app to handle the `ACTION_VIEW` intent in your `AndroidManifest.xml`.
     2. When the user clicks on the extracted file (json or xml recommended) within DataDig, your app will appear as an option to open it.
