@@ -6,6 +6,8 @@ import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -22,6 +24,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
@@ -37,6 +41,7 @@ import com.friberg.dataDig.viewmodels.ServiceViewModel
 import com.guru.fontawesomecomposelib.FaIcon
 import com.guru.fontawesomecomposelib.FaIcons
 import com.friberg.dataDig.R
+import com.friberg.dataDig.utils.isFirstTimeVisit
 
 /**
  * Settings screen for inputting API keys and other settings
@@ -45,6 +50,12 @@ import com.friberg.dataDig.R
  */
 @Composable
 fun SettingsScreen(serviceViewModel: ServiceViewModel) {
+    val context = LocalContext.current
+    var firstTimeModal by remember { mutableStateOf(false) ***REMOVED***
+    val composableKey = "Settings"
+    if (isFirstTimeVisit(context, composableKey)) {
+        firstTimeModal = true
+    ***REMOVED***
     var resize by remember { mutableStateOf(serviceViewModel.options.value?.resize ?: true) ***REMOVED***
     Column(
         modifier = Modifier
@@ -54,7 +65,7 @@ fun SettingsScreen(serviceViewModel: ServiceViewModel) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Settings",
+            text = stringResource(R.string.settings),
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 16.dp)
@@ -180,6 +191,21 @@ fun SettingsScreen(serviceViewModel: ServiceViewModel) {
 
 
     ***REMOVED***
+    if (firstTimeModal) { // First time visit modal
+        AlertDialog(title = {
+            Text(stringResource(R.string.settings))
+        ***REMOVED***,
+            text = {
+                Text(stringResource(R.string.this_is_the_settings_screen_the_first_thing_you_need_to_do_is_to_insert_your_own_openai_key_to_use_for_the_extraction_please_head_to_the_openai_platform_by_clicking_on_the_blue_undescored_text_to_create_your_own_key_remember_to_also_insert_your_billing_information_as_the_extractor_required_at_least_a_tier_1_account_to_use_the_api_after_you_have_inserted_your_key_you_can_also_insert_your_azure_api_key_and_endpoint_in_the_same_way_to_access_table_extraction_for_more_information_on_the_keys_click_on_the_information_icon_next_to_the_key_name))
+            ***REMOVED***,
+            shape = RoundedCornerShape(8.dp),
+            onDismissRequest = { firstTimeModal = false ***REMOVED***,
+            confirmButton = {
+                Button(onClick = { firstTimeModal = false ***REMOVED***) {
+                    Text("OK")
+                ***REMOVED***
+            ***REMOVED***)
+    ***REMOVED***
 ***REMOVED***
 
 /**
@@ -217,17 +243,20 @@ fun ApiKeyInput(
                 tint = if (apiKey) dark_green else dark_red // Checkmark icon green if key exists, red if not
 ***REMOVED***
             Spacer(modifier = Modifier.weight(1f))
-
+            val accessibilityLabel = if (showInput) stringResource(R.string.hide_input) else stringResource(R.string.open_input)
             FaIcon(
                 faIcon = if (showInput) FaIcons.ArrowUp else FaIcons.ArrowDown,
-                modifier = Modifier.clickable {
-                    showInput = !showInput
-                ***REMOVED***,
+                modifier = Modifier
+                    .semantics { contentDescription = accessibilityLabel ***REMOVED***
+                    .clickable {
+                        showInput = !showInput
+                    ***REMOVED***,
                 tint = Color.Black
 ***REMOVED***
         ***REMOVED***
 
         if (showInput) {
+            val accessibilityLabel = stringResource(R.string.save_button)
             Column(modifier = Modifier.fillMaxWidth()) {
                 Row {
                     OutlinedTextField(value = newKey,
@@ -239,7 +268,11 @@ fun ApiKeyInput(
                                 modifier = Modifier.padding(end = 16.dp)
                 ***REMOVED*** {
                                 FaIcon(
-                                    modifier = Modifier.clickable {
+                                    modifier = Modifier
+                                        .semantics {
+                                            contentDescription = accessibilityLabel
+                                        ***REMOVED***
+                                        .clickable {
                                             if (newKey.isNotBlank()) {
                                                 viewModel.storeApiKey(key, newKey)
                                                 apiKey = true

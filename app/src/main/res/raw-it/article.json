@@ -1,5 +1,5 @@
 {
-  "title": "Articolo di Notizia",
+  "title": "Articolo di Giornale",
   "description": "Modello per un articolo di notizie standard o un articolo generale",
   "fields": [
     {
@@ -34,7 +34,7 @@
     ***REMOVED***,
     {
       "title": "Data di Pubblicazione",
-      "description": "Data in cui l'articolo è stato pubblicato, in formato numerico AAAA-MM-GG",
+      "description": "Data in cui l'articolo è stato pubblicato, nel formato numerico YYYY-MM-DD",
       "extraDescription": "",
       "type": "Date",
       "required": true,

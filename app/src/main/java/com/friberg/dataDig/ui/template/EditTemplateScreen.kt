@@ -74,6 +74,8 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -94,6 +96,7 @@ import com.friberg.dataDig.utils.AddButton
 import com.friberg.dataDig.utils.BooleanFieldWithLabel
 import com.friberg.dataDig.utils.DeleteButton
 import com.friberg.dataDig.utils.HelpIconButton
+import com.friberg.dataDig.utils.translateType
 import com.friberg.dataDig.viewmodels.ServiceViewModel
 import com.friberg.dataDig.viewmodels.TemplateViewModel
 import com.guru.fontawesomecomposelib.FaIcon
@@ -142,6 +145,7 @@ fun EditTemplateScreen(
 
 
     Scaffold(topBar = {
+        val context = LocalContext.current
         TopAppBar(title = {
             Row(
                 modifier = Modifier
@@ -150,17 +154,20 @@ fun EditTemplateScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
 ***REMOVED*** {
-                title?.let {
                     Text(
-                        text = it,
+                        text = title ?: "",
                         fontWeight = FontWeight.Bold,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier
                             .weight(1f)
+                            .semantics {
+                                contentDescription =
+                                    context.getString(R.string.template_title)
+                            ***REMOVED***
                             .align(Alignment.CenterVertically)
         ***REMOVED***
-                ***REMOVED***
+
                 template?.let { //Use template button
                     Button(modifier = Modifier.align(Alignment.CenterVertically),
                         shape = RoundedCornerShape(8.dp),
@@ -217,10 +224,10 @@ fun EditTemplateScreen(
                                 templateViewModel.updateTemplateTitle(template!!, newValue)
                                 title = newValue
                             ***REMOVED***,
-                            label = { Text("Template Title", color = Color.Black) ***REMOVED***,
+                            label = { Text(stringResource(R.string.template_title), color = Color.Black) ***REMOVED***,
                             modifier = Modifier.fillMaxWidth(),
                             trailingIcon = {
-                                HelpIconButton(helpText = stringResource(R.string.this_is_the_title_of_the_template_this_is_irrelevant_for_the_extraction_just_for_your_own_reference))
+                                HelpIconButton(helpText = stringResource(R.string.this_is_the_title_of_the_template_this_is_irrelevant_for_the_extraction_just_for_your_own_reference),title = stringResource(R.string.template_title))
                             ***REMOVED***)
                     ***REMOVED***
                 ***REMOVED***
@@ -235,7 +242,7 @@ fun EditTemplateScreen(
                                 templateViewModel.updateTemplateDescription(template!!, newValue)
                                 description = newValue
                             ***REMOVED***,
-                            label = { Text("Template Description", color = Color.Black) ***REMOVED***,
+                            label = { Text(stringResource(R.string.template_description), color = Color.Black) ***REMOVED***,
                             modifier = Modifier.fillMaxWidth(),
                             trailingIcon = {
                                 HelpIconButton(
@@ -522,7 +529,7 @@ fun TemplateFieldComposable(
                             expanded = expanded,
                             onExpandedChange = { expanded = !expanded ***REMOVED***) {
                             type?.let {
-                                TextField(value = it,
+                                TextField(value = translateType(it, LocalContext.current),
                                     onValueChange = {***REMOVED***,
                                     readOnly = true,
                                     label = { Text(stringResource(id = R.string.type)) ***REMOVED***,
@@ -549,7 +556,7 @@ fun TemplateFieldComposable(
                                 expanded = expanded,
                                 onDismissRequest = { expanded = false ***REMOVED***) {
                                 typeOptions.forEach { newType ->
-                                    DropdownMenuItem(text = { Text(newType) ***REMOVED***, onClick = {
+                                    DropdownMenuItem(text = { Text(translateType(newType, LocalContext.current)) ***REMOVED***, onClick = {
                                         type = newType
                                         when (newType) {
                                             "Text" -> {
@@ -602,7 +609,7 @@ fun TemplateFieldComposable(
                                 viewModel.updateTemplateItem(
                                     template, "list" to newValue, index
                     ***REMOVED***
-                                default = "[]"
+                                default = ""
                                 viewModel.updateTemplateItem(
                                     template, "default" to "", index
                     ***REMOVED***
@@ -1239,7 +1246,7 @@ fun AlertTable(
                     expanded = expanded,
                     onExpandedChange = { expanded = !expanded ***REMOVED***) {
                     TextField(
-                        value = selectedType,
+                        value = translateType(selectedType, LocalContext.current),
                         onValueChange = { selectedType = it ***REMOVED***,
                         readOnly = true,
                         label = { Text(stringResource(R.string.type)) ***REMOVED***,
@@ -1257,11 +1264,12 @@ fun AlertTable(
                             .focusRequester(focusRequester)
         ***REMOVED***
 
+
                     ExposedDropdownMenu(modifier = Modifier.background(Color.White),
                         expanded = expanded,
                         onDismissRequest = { expanded = false ***REMOVED***) {
                         typeOptions.forEach { type ->
-                            DropdownMenuItem(text = { Text(type) ***REMOVED***, onClick = {
+                            DropdownMenuItem(text = { Text(translateType(type, LocalContext.current)) ***REMOVED***, onClick = {
                                 selectedType = type
                                 expanded = false
                             ***REMOVED***)

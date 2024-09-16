@@ -59,6 +59,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -86,6 +88,7 @@ import com.friberg.dataDig.utils.HelpIconButton
 import com.friberg.dataDig.utils.LabeledSwitch
 import com.friberg.dataDig.utils.MyImageArea
 import com.friberg.dataDig.utils.SearchBar
+import com.friberg.dataDig.utils.translateType
 import com.friberg.dataDig.viewmodels.ExtractionViewModel
 import com.friberg.dataDig.viewmodels.ServiceViewModel
 import com.friberg.dataDig.viewmodels.SortOrder
@@ -388,10 +391,9 @@ fun ChooseTemplate(
                             border = BorderStroke(1.dp, cyan_custom),
                             modifier = Modifier
                                 .height(40.dp)
-                                .width(100.dp)
                                 .padding(start = 10.dp),
                             onClick = { templateViewModel.updateSortOrder(option) ***REMOVED***) {
-                            Text(text = option.name.removePrefix("BY_").lowercase())
+                            Text(text = translateType(option.name.removePrefix("BY_").lowercase(), LocalContext.current))
                         ***REMOVED***
                     ***REMOVED***
                 ***REMOVED***
@@ -456,16 +458,6 @@ fun ChooseTemplate(
                                 modifier = Modifier.padding(top = 8.dp, start = 8.dp, bottom = 8.dp)
                 ***REMOVED***
                             Spacer(modifier = Modifier.weight(1f))
-
-                            FaIcon(faIcon = FaIcons.Edit,
-                                tint = Color.Black,
-                                size = 24.dp,
-                                modifier = Modifier
-                                    .clickable {
-                                        navController.navigate(Screen.EditTemplate.withArgs("templateId" to template.id.toHexString()))
-                                    ***REMOVED***
-                                    .align(Alignment.CenterVertically)
-                                    .padding(end = 8.dp))
                         ***REMOVED***
 
                     ***REMOVED***
@@ -561,7 +553,7 @@ fun ExtractionDetails(
             Button(
                 modifier = Modifier
                     .padding(16.dp)
-                    .height( 50.dp)
+                    .height(50.dp)
                     .align(Alignment.CenterHorizontally),
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(dark_green),
@@ -899,13 +891,12 @@ fun ShownExtraction(
     ***REMOVED***
                 Button(modifier = Modifier
                     .padding(16.dp)
-                    .size(150.dp, 60.dp),
+                    .size(150.dp, 70.dp),
 
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(dark_green),
                     onClick = {
                         it.id.let { extractionId ->
-
                             navController.navigate(Screen.SingleExtraction.withArgs("extractionId" to extractionId.toHexString()))
                         ***REMOVED***
                     ***REMOVED***) {
@@ -1139,6 +1130,7 @@ fun CameraPreview(
         ***REMOVED***
         // Capture Button
         Button(modifier = Modifier
+            .semantics { contentDescription = context.getString(R.string.capture_photo_button) ***REMOVED***
             .padding(bottom = 20.dp)
             .size(80.dp)
             .clip(CircleShape)
@@ -1188,7 +1180,7 @@ fun CameraPreview(
         Box(
             modifier = Modifier
                 .padding(20.dp)
-                .size(70.dp, 35.dp)
+                .width(70.dp)
                 .align(Alignment.TopStart)
                 .background(
                     shape = RoundedCornerShape(10.dp), color = white_transparent

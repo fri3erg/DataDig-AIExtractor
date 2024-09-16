@@ -72,6 +72,8 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -121,7 +123,7 @@ fun DeleteButton(
         modifier = modifier.fillMaxWidth(),
     ) {
         Text(
-            "Delete $text",
+            stringResource(R.string.delete_text, text),
             maxLines = 1,
             textAlign = TextAlign.Center,
             fontStyle = FontStyle.Normal,
@@ -178,7 +180,7 @@ fun BooleanFieldWithLabel(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically, modifier = modifier
-
+            .semantics { contentDescription = label ***REMOVED***
     ) {
         Text(text = label, fontSize = 16.sp, fontWeight = FontWeight.Bold)
         if (help.isNotEmpty()) {
@@ -417,10 +419,12 @@ fun HelpIconButton(
     helpText: String, modifier: Modifier = Modifier, title: String = "Help", link: String = ""
 ) {
     var showDialog by remember { mutableStateOf(false) ***REMOVED***
-
+    val accessibilityLabel = stringResource(R.string.get_more_information)
     IconButton(
         onClick = { showDialog = true ***REMOVED***,
-        modifier = modifier.size(20.dp),
+        modifier = modifier
+            .semantics { contentDescription = accessibilityLabel ***REMOVED***
+            .size(20.dp),
         colors = IconButtonDefaults.filledIconButtonColors(
             contentColor = Color.Black, containerColor = Color.Black
         )
@@ -461,12 +465,13 @@ fun HelpIconButton(
 fun DropdownWithNavigation(onUse: () -> Unit, onEdit: () -> Unit, onDelete: () -> Unit) {
     var expanded by remember { mutableStateOf(false) ***REMOVED***
     var showDeleteDialog by remember { mutableStateOf(false) ***REMOVED***
-
+    val accessibilityLabel = stringResource(R.string.open_options)
     Box {
         IconButton(
             onClick = { expanded = true ***REMOVED***,
             modifier = Modifier
                 .align(Alignment.TopEnd)
+                .semantics { contentDescription = accessibilityLabel ***REMOVED***
                 .padding(bottom = 6.dp)
         ) {
             FaIcon(faIcon = FaIcons.EllipsisV, tint = Color.Black)
@@ -576,6 +581,7 @@ fun DropDownGeneral(
                     selectedItem,
                     modifier = Modifier.padding(start = 6.dp),
                     fontSize = 13.sp,
+                    maxLines = 1,
                     color = Color.Black,
                     overflow = TextOverflow.Ellipsis
 
@@ -1145,4 +1151,17 @@ fun encodeImageToBase64(context: Context, imageUri: Uri): String? { // Encode an
         null
 
     ***REMOVED***
+***REMOVED***
+
+fun translateType(text: String, context: Context): String { // Translate a string to the user's language
+when(text) {
+    "Text" -> return context.getString(R.string.text)
+    "Date" -> return context.getString(R.string.date)
+    "Number" -> return context.getString(R.string.number)
+    "Boolean" -> return context.getString(R.string.boolean1)
+    "Float" -> return context.getString(R.string.float1)
+    "date" -> return context.getString(R.string.date)
+    "title" -> return context.getString(R.string.title)
+***REMOVED***
+    return text
 ***REMOVED***

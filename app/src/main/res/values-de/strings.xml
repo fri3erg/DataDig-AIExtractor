@@ -153,7 +153,7 @@
             <string name="camera">Kamera</string>
             <string name="settings">Einstellungen</string>
             <string name="templates">Vorlagen</string>
-            <string name="taken">%1$s aufgenommen</string>
+            <string name="taken">%1$s \n aufgenommen</string>
 
             <string name="an_error_occurred_while_capturing_the_photo">Beim Aufnehmen des Fotos ist ein Fehler aufgetreten.</string>
             <string name="camera_closed_unexpectedly">Kamera unerwartet geschlossen.</string>
@@ -246,4 +246,39 @@
     <string name="no_table_found">Keine Tabelle gefunden</string>
 
     <string name="add"> %1$s hinzufügen</string>
+    <string name="capture_photo_button">Foto aufnehmen</string>
+    <string name="save_button">Speichern</string>
+    <string name="open_input">Eingabe öffnen</string>
+    <string name="hide_input">Eingabe ausblenden</string>
+    <string name="get_more_information">Mehr Informationen erhalten</string>
+    <string name="open_options">Optionen öffnen</string>
+    <string name="api_key_is_invalid">API-Schlüssel ist ungültig</string>
+    <string name="check_your_openai_api_key_on_the_openai_platform_and_reinsert_it">Überprüfen Sie Ihren OpenAI-API-Schlüssel auf der OpenAI-Plattform und geben Sie ihn erneut ein</string>
+    <string name="azure_api_key_is_invalid">Azure-API-Schlüssel ist ungültig</string>
+    <string name="azure_error">Azure-Fehler</string>
+    <string name="an_error_occurred_with_azure_check_your_key_and_endpoint">Ein Fehler ist mit Azure aufgetreten. Überprüfen Sie Ihren Schlüssel und Endpunkt</string>
+    <string name="tag_failed_because_of_weird_characters">Tag-Erstellung fehlgeschlagen aufgrund ungewöhnlicher Zeichen</string>
+    <string name="tag_failed_because_of_weird_characters_this_will_be_fixed_in_the_next_update">Tag-Erstellung fehlgeschlagen aufgrund ungewöhnlicher Zeichen. Dies wird im nächsten Update behoben</string>
+    <string name="call_rate_limit_exceeded">Anrufrate überschritten</string>
+    <string name="call_rate_limit_exceeded_azure_was_not_able_to_scan_all_images">Anrufrate überschritten, Azure konnte nicht alle Bilder scannen</string>
+    <string name="azure_pricing_tier">Azure-Preisstufe</string>
+    <string name="limit_reached_on_azure_pricing_tier_please_upgrade_your_pricing_tier_or_wait_for_new_credits">Limit auf der Azure-Preisstufe erreicht. Bitte aktualisieren Sie Ihre Preisstufe oder warten Sie auf neue Credits</string>
+    <string name="connection_error_please_check_your_connection">Verbindungsfehler, bitte überprüfen Sie Ihre Verbindung</string>
+    <string name="connection">Verbindung</string>
+    <string name="connection_error">Verbindungsfehler</string>
+    <string name="no_internet_connection">Keine Internetverbindung</string>
+    <string name="no_internet_connection_please_check_your_connection">Keine Internetverbindung, bitte überprüfen Sie Ihre Verbindung</string>
+    <string name="no_text_was_found">Kein Text gefunden</string>
+    <string name="no_text_was_found_in_the_image">Kein Text im Bild gefunden</string>
+    <string name="text">Text</string>
+    <string name="this_is_the_settings_screen_the_first_thing_you_need_to_do_is_to_insert_your_own_openai_key_to_use_for_the_extraction_please_head_to_the_openai_platform_by_clicking_on_the_blue_undescored_text_to_create_your_own_key_remember_to_also_insert_your_billing_information_as_the_extractor_required_at_least_a_tier_1_account_to_use_the_api_after_you_have_inserted_your_key_you_can_also_insert_your_azure_api_key_and_endpoint_in_the_same_way_to_access_table_extraction_for_more_information_on_the_keys_click_on_the_information_icon_next_to_the_key_name">Willkommen im Einstellungsbildschirm\n\nAls Erstes müssen Sie Ihren eigenen OpenAI-Schlüssel eingeben, um ihn für die Extraktionen zu verwenden. \nGehen Sie zur OpenAI-Plattform, indem Sie auf den blau unterstrichenen Text klicken, um Ihren eigenen Schlüssel zu erstellen.\nDenken Sie daran, auch Ihre Rechnungsinformationen einzugeben, da der Extraktor mindestens ein Konto der Stufe 1 benötigt, um die API nutzen zu können. \nNachdem Sie Ihren Schlüssel eingegeben haben, können Sie auch Ihren Azure-API-Schlüssel und den Endpunkt auf die gleiche Weise eingeben, um auf die Tabellenextraktion zuzugreifen. \nFür weitere Informationen zu den Schlüsseln klicken Sie auf die Informationssymbole neben dem Schlüsselnamen</string>
+    <string name="you_have_exceeded_your_current_quota_please_check_that_you_added_billing_information_to_your_openai_account_and_that_you_have_not_reached_your_tier_limits_on_requests_per_day">Sie haben Ihr aktuelles Kontingent überschritten. Bitte überprüfen Sie, ob Sie Ihrem OpenAI-Konto Rechnungsinformationen hinzugefügt haben und ob Sie Ihre Stufenlimits für Anfragen pro Tag nicht erreicht haben.</string>
+    <string name="you_have_exceeded_your_current_quota">Sie haben Ihr aktuelles Kontingent überschritten</string>
+    <string name="you_do_not_have_access_to_gpt_4_please_check_that_you_added_billing_information_to_your_openai_account">Sie haben keinen Zugriff auf GPT-4. Bitte überprüfen Sie, ob Sie Ihrem OpenAI-Konto Rechnungsinformationen hinzugefügt haben.</string>
+    <string name="you_do_not_have_access_to_gpt_4">Sie haben keinen Zugriff auf GPT-4</string>
+    <string name="template_title">Modellname</string>
+    <string name="number">Zahl</string>
+    <string name="boolean1">wahr/falsch</string>
+    <string name="float1">Dezimalzahl</string>
+    <string name="title">Titel</string>
 </resources>

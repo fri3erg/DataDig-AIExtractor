@@ -168,7 +168,7 @@
     <string name="camera">Camera</string>
     <string name="settings">Settings</string>
     <string name="templates">Templates</string>
-    <string name="taken">%1$s taken</string>
+    <string name="taken">%1$s \n taken</string>
 
     <string name="an_error_occurred_while_capturing_the_photo">An error occurred while capturing the photo.</string>
     <string name="camera_closed_unexpectedly">Camera closed unexpectedly.</string>
@@ -229,7 +229,7 @@
     <string name="file_already_downloaded">File already downloaded</string>
     <string name="error_downloading_file">Error downloading file</string>
     <string name="no_app_found_to_open_the_file_downloading_instead">No app found to open the file, downloading instead</string>
-    <string name="delete_text">Delete %1$s?</string>
+    <string name="delete_text">Delete %1$s</string>
     <string name="are_you_sure_you_want_to_delete_this">Are you sure you want to delete this %1$s?</string>
     <string name="search">Search</string>
     <string name="search_icon">Search Icon</string>
@@ -249,6 +249,7 @@
     <string name="file_recreated_to_fit_format">File recreated to fit format: %1$s</string>
     <string name="model">Model</string>
     <string name="format">Format\n</string>
+    <string name="tagging" translatable="false">Tagging</string>
     <string name="enter_date_manually">Parsing went bad, please put this in a formattable state(anything with / works)\n</string>
     <string name="file_not_found" >File not found</string>
     <string name="you_can_cut_and_add_column_and_rows_at_will_only_the_specified_columns_and_rows_will_be_extracted_if_the_table_is_bi_dimensional_or_you_can_choose_to_leave_one_of_the_two_empty_in_that_case_everything_found_in_the_rows_column_will_be_extracted_leaving_both_empty_or_toggling_the_find_everything_button_will_return_everything_found">
@@ -258,9 +259,46 @@
         Delete both or toggle "Everything you find" to extract all table data we can find.\n\n
         In essence, specifying rows and columns will extract only what is asked, is more reliable and will return less data, while not specifying will return all that is found of what is left unspecified (rows or column).
     </string>
+    <string name="azure" translatable="false">Azure</string>
+    <string name="openai" translatable="false">OpenAI</string>
     <string name="table_usage">Table Usage</string>
     <string name="no_table_found">This Table is empty</string>
     <string name="add">Add %1$s</string>
+    <string name="capture_photo_button">Capture Photo Button</string>
+    <string name="save_button">Save Button</string>
+    <string name="open_input">Open Input</string>
+    <string name="hide_input">Hide Input</string>
+    <string name="get_more_information">Get More Information</string>
+    <string name="open_options">Open options</string>
+    <string name="api_key_is_invalid">API key is invalid</string>
+    <string name="check_your_openai_api_key_on_the_openai_platform_and_reinsert_it">Check your OpenAI API key on the openai platform and reinsert it</string>
+    <string name="azure_api_key_is_invalid">Azure API key is invalid</string>
+    <string name="azure_error">Azure Error</string>
+    <string name="an_error_occurred_with_azure_check_your_key_and_endpoint">An error occurred with Azure, check your key and endpoint</string>
+    <string name="tag_failed_because_of_weird_characters">Tag failed because of weird characters</string>
+    <string name="tag_failed_because_of_weird_characters_this_will_be_fixed_in_the_next_update">Tag failed because of weird characters, this will be fixed in the next update</string>
+    <string name="call_rate_limit_exceeded">Call rate limit exceeded</string>
+    <string name="call_rate_limit_exceeded_azure_was_not_able_to_scan_all_images">Call rate limit exceeded, azure was not able to scan all images</string>
+    <string name="azure_pricing_tier">Azure pricing tier</string>
+    <string name="limit_reached_on_azure_pricing_tier_please_upgrade_your_pricing_tier_or_wait_for_new_credits">limit reached on Azure pricing tier, please upgrade your pricing tier or wait for new credits</string>
+    <string name="connection_error_please_check_your_connection">Connection error, please check your connection</string>
+    <string name="connection">Connection</string>
+    <string name="connection_error">Connection error</string>
+    <string name="no_internet_connection">No internet connection</string>
+    <string name="no_internet_connection_please_check_your_connection">No internet connection, please check your connection</string>
+    <string name="no_text_was_found">No text was found</string>
+    <string name="no_text_was_found_in_the_image">No text was found in the image</string>
+    <string name="text">Text</string>
+    <string name="this_is_the_settings_screen_the_first_thing_you_need_to_do_is_to_insert_your_own_openai_key_to_use_for_the_extraction_please_head_to_the_openai_platform_by_clicking_on_the_blue_undescored_text_to_create_your_own_key_remember_to_also_insert_your_billing_information_as_the_extractor_required_at_least_a_tier_1_account_to_use_the_api_after_you_have_inserted_your_key_you_can_also_insert_your_azure_api_key_and_endpoint_in_the_same_way_to_access_table_extraction_for_more_information_on_the_keys_click_on_the_information_icon_next_to_the_key_name">Welcome to the settings screen\n\nThe first thing you need to do is to insert your own OpenAI key to use for the extractions. \nPlease head to the OpenAI platform by clicking on the blue undescored text to create your own key.\nRemember to also insert your billing information as the extractor requires at least a tier 1 account. \nAfter you have inserted your key, you can also insert your Azure API key and endpoint in the same way to access table extraction. \nFor more information on the keys, click on the information icons</string>
+    <string name="you_have_exceeded_your_current_quota_please_check_that_you_added_billing_information_to_your_openai_account_and_that_you_have_not_reached_your_tier_limits_on_requests_per_day">you have exceeded your current quota, please check that you added billing information to your OpenAI account and that you have not reached your tier limits on requests per day</string>
+    <string name="you_have_exceeded_your_current_quota">you have exceeded your current quota</string>
+    <string name="you_do_not_have_access_to_gpt_4_please_check_that_you_added_billing_information_to_your_openai_account">you do not have access to GPT 4,please check that you added billing information to your OpenAI account</string>
+    <string name="you_do_not_have_access_to_gpt_4">you do not have access to GPT 4</string>
+    <string name="template_title">Template Title</string>
+    <string name="number">number</string>
+    <string name="boolean1">boolean</string>
+    <string name="float1">float</string>
+    <string name="title">Title</string>
 
 
 </resources>

@@ -46,6 +46,7 @@ import com.friberg.dataDig.ui.theme.light_gray
 import com.friberg.dataDig.ui.theme.base_card_color
 import com.friberg.dataDig.utils.SearchBar
 import com.friberg.dataDig.utils.isFirstTimeVisit
+import com.friberg.dataDig.utils.translateType
 import com.friberg.dataDig.viewmodels.ExtractionViewModel
 import com.friberg.dataDig.viewmodels.SortOrder
 import com.guru.fontawesomecomposelib.FaIcon
@@ -97,10 +98,9 @@ fun StorageScreen(navController: NavHostController, extractionViewModel: Extract
                             border = BorderStroke(1.dp, cyan_custom),
                             modifier = Modifier
                                 .height(40.dp)
-                                .width(100.dp)
                                 .padding(start = 10.dp), // Add padding only to the first button
                             onClick = { extractionViewModel.updateSortOrder(option) ***REMOVED***) {
-                            Text(text = option.name.removePrefix("BY_").lowercase())
+                            Text(text = translateType(option.name.removePrefix("BY_").lowercase(), LocalContext.current))
                         ***REMOVED***
                     ***REMOVED***
                 ***REMOVED***

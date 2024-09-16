@@ -109,6 +109,7 @@ fun NavBar(navController: NavHostController) {
     ***REMOVED***
             ***REMOVED***,
             label = { Text(stringResource(R.string.settings),
+                maxLines = 1,
                 overflow = TextOverflow.Ellipsis) ***REMOVED***,
             selected = settingsSelected,
             onClick = {

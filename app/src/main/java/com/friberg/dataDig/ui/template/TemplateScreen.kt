@@ -43,6 +43,7 @@ import com.friberg.dataDig.ui.theme.base_card_color
 import com.friberg.dataDig.utils.DropdownWithNavigation
 import com.friberg.dataDig.utils.SearchBar
 import com.friberg.dataDig.utils.isFirstTimeVisit
+import com.friberg.dataDig.utils.translateType
 import com.friberg.dataDig.viewmodels.ServiceViewModel
 import com.friberg.dataDig.viewmodels.SortOrder
 import com.friberg.dataDig.viewmodels.TemplateViewModel
@@ -101,12 +102,11 @@ fun TemplateScreen(
                                 border= BorderStroke(1.dp, cyan_custom),
                                 modifier = Modifier
                                     .height(40.dp)
-                                    .width(100.dp)
                                     .padding(start = 10.dp),
                                 onClick = {
                                     templateViewModel.updateSortOrder(option) ***REMOVED***
                 ***REMOVED*** {
-                                Text(text = option.name.removePrefix("BY_").lowercase())
+                                Text(text = translateType(option.name.removePrefix("BY_").lowercase(), LocalContext.current))
                             ***REMOVED***
                         ***REMOVED***
                     ***REMOVED***

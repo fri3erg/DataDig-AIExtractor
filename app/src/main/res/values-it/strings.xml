@@ -35,7 +35,7 @@
     <string name="are_you_sure_you_want_to_delete_this_extraction">Sei sicuro di voler eliminare questa estrazione?</string>
     <string name="delete">Elimina</string>
     <string name="cancel">Annulla</string>
-    <string name="field_default">Valore predefinito del campo</string>
+    <string name="field_default">Valore predefinito</string>
     <string name="this_is_the_default_value_for_the_field_if_the_extraction_does_not_find_anything_or_something_goes_wrong_this_will_be_the_value_returned_default_values_are_not_available_for_lists">
     Questo è il valore predefinito per il campo. Se l\'estrazione non trova nulla o qualcosa va storto,
     questo sarà il valore restituito. \n
@@ -155,7 +155,7 @@
         <string name="camera">Fotocamera</string>
         <string name="settings">Impostazioni</string>
         <string name="templates">Modelli</string>
-        <string name="taken">%1$s acquisite</string>
+        <string name="taken">%1$s \n foto</string>
 
         <string name="an_error_occurred_while_capturing_the_photo">Si è verificato un errore durante l\'acquisizione della foto.</string>
         <string name="camera_closed_unexpectedly">Fotocamera chiusa inaspettatamente.</string>
@@ -163,7 +163,7 @@
         <string name="photo_capture_failed">Acquisizione foto non riuscita: %1$s</string>
         <string name="image_capture_failed">Acquisizione immagine non riuscita: %1$s</string>
         <string name="use_case_binding_failed">Associazione caso d\'uso non riuscita</string>
-        <string name="go_to_extraction">Vai all\'Estrazione</string>
+        <string name="go_to_extraction">Estrazione</string>
         <string name="extraction_result">Risultato dell\'estrazione:</string>
         <string name="progress">Progresso: %1$d%%</string>
         <string name="select_the_language_to_use_for_the_extraction">
@@ -248,4 +248,39 @@
     <string name="table_usage">Utilizzo della Tabella</string>
     <string name="no_table_found">Nessuna tabella trovata</string>
     <string name="add">Aggiungi %1$s</string>
+    <string name="capture_photo_button">Scatta Foto</string>
+    <string name="save_button">Salva</string>
+    <string name="open_input">Apri Input</string>
+    <string name="hide_input">Nascondi Input</string>
+    <string name="get_more_information">Maggiori Informazioni</string>
+    <string name="open_options">Apri opzioni</string>
+    <string name="api_key_is_invalid">La chiave API non è valida</string>
+    <string name="check_your_openai_api_key_on_the_openai_platform_and_reinsert_it">Controlla la tua chiave API OpenAI sulla piattaforma openai e reinseriscila</string>
+    <string name="azure_api_key_is_invalid">La chiave API Azure non è valida</string>
+    <string name="azure_error">Errore Azure</string>
+    <string name="an_error_occurred_with_azure_check_your_key_and_endpoint">Si è verificato un errore con Azure, controlla la tua chiave e l\'endpoint</string>
+    <string name="tag_failed_because_of_weird_characters">Tag fallito a causa di caratteri strani</string>
+    <string name="tag_failed_because_of_weird_characters_this_will_be_fixed_in_the_next_update">Tag fallito a causa di caratteri strani, questo verrà risolto nel prossimo aggiornamento</string>
+    <string name="call_rate_limit_exceeded">Limite di chiamate superato</string>
+    <string name="call_rate_limit_exceeded_azure_was_not_able_to_scan_all_images">Limite di chiamate superato, azure non è stato in grado di scansionare tutte le immagini</string>
+    <string name="azure_pricing_tier">Piano tariffario Azure</string>
+    <string name="limit_reached_on_azure_pricing_tier_please_upgrade_your_pricing_tier_or_wait_for_new_credits">limite raggiunto sul piano tariffario Azure, aggiorna il tuo piano o attendi nuovi crediti</string>
+    <string name="connection_error_please_check_your_connection">Errore di connessione, controlla la tua connessione</string>
+    <string name="connection">Connessione</string>
+    <string name="connection_error">Errore di connessione</string>
+    <string name="no_internet_connection">Nessuna connessione internet</string>
+    <string name="no_internet_connection_please_check_your_connection">Nessuna connessione internet, controlla la tua connessione</string>
+    <string name="no_text_was_found">Nessun testo trovato</string>
+    <string name="no_text_was_found_in_the_image">Nessun testo trovato nell\'immagine</string>
+    <string name="text">Testo</string>
+    <string name="this_is_the_settings_screen_the_first_thing_you_need_to_do_is_to_insert_your_own_openai_key_to_use_for_the_extraction_please_head_to_the_openai_platform_by_clicking_on_the_blue_undescored_text_to_create_your_own_key_remember_to_also_insert_your_billing_information_as_the_extractor_required_at_least_a_tier_1_account_to_use_the_api_after_you_have_inserted_your_key_you_can_also_insert_your_azure_api_key_and_endpoint_in_the_same_way_to_access_table_extraction_for_more_information_on_the_keys_click_on_the_information_icon_next_to_the_key_name">Benvenuto nella schermata delle impostazioni\nLa prima cosa da fare è inserire la tua chiave OpenAI personale da utilizzare per le estrazioni. \nVai alla piattaforma OpenAI cliccando sul testo blu sottolineato per creare la tua chiave.\nRicorda di inserire anche i tuoi dati di fatturazione poiché l\'estrattore richiede almeno un account di livello 1 per utilizzare l\'API. \nDopo aver inserito la tua chiave, puoi anche inserire la tua chiave API Azure e l\'endpoint nello stesso modo per accedere all\'estrazione delle tabelle. \nPer ulteriori informazioni sulle chiavi, clicca sulle icone informative accanto al nome della chiave</string>
+    <string name="you_have_exceeded_your_current_quota_please_check_that_you_added_billing_information_to_your_openai_account_and_that_you_have_not_reached_your_tier_limits_on_requests_per_day">Hai superato la tua quota attuale, assicurati di aver aggiunto le informazioni di fatturazione al tuo account OpenAI e di non aver raggiunto i limiti del tuo piano per le richieste giornaliere</string>
+    <string name="you_have_exceeded_your_current_quota">Hai superato la tua quota attuale</string>
+    <string name="you_do_not_have_access_to_gpt_4_please_check_that_you_added_billing_information_to_your_openai_account">Non hai accesso a GPT-4, assicurati di aver aggiunto le informazioni di fatturazione al tuo account OpenAI</string>
+    <string name="you_do_not_have_access_to_gpt_4">Non hai accesso a GPT-4</string>
+    <string name="template_title">Nome Modello</string>
+    <string name="number">numero</string>
+    <string name="boolean1">vero/falso</string>
+    <string name="float1">decimale</string>
+    <string name="title">Titolo</string>
 </resources>

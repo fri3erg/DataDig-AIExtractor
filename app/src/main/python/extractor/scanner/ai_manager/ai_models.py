@@ -1,9 +1,10 @@
 # import instructor.exceptions
 
+import time
 from ...scanner.extractors.extractor_utils import num_tokens_from_string
 import threading
 from ...configs.cost_config import cost_per_token
-from openai import OpenAI, AuthenticationError
+from openai import OpenAI, AuthenticationError, RateLimitError
 from typing import List, Optional, Any, Dict
 from ...classes.Extracted import ExtractionCosts
 from langchain.prompts import PromptTemplate
@@ -17,7 +18,6 @@ from langchain.llms.base import LLM
 
 # from pydantic_core import ValidationError
 from langchain.chat_models import ChatOpenAI  # use ChatOpenAI from the core library
-from langchain.llms.base import LLM
 
 # from langchain_openai.chat_models.base import ChatOpenAI # use ChatOpenAI from the core library
 from langchain.schema import BaseMessage
@@ -155,14 +155,13 @@ class Models(LLM):
         llm: ChatOpenAI = cls(model, temperature)._models[model][temperature][hash(os.getenv("OPENAI_API_KEY"))]  # Get the singleton instance
         try:
             chain = LLMChain(llm=llm, prompt=prompt)
+            output = chain.run(context= pages, template=template)
         except AuthenticationError as auth_err:
             print("Authentication Error (Invalid API key?):", auth_err)
             raise ValueError("invalid OpenAI key")
         except Exception as e:
             print("Error in extract:", e)
             raise e
-
-        output = chain.run(context= pages, template=template)
         cls.calc_costs(file_id, model, inputs=[pages, str(prompt)], outputs=[output])
         return output
 
