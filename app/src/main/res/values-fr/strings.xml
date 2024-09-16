@@ -135,7 +135,7 @@
     <string name="added_images">Images ajoutées :</string>
     <string name="no_connected_template_found">Aucun modèle connecté trouvé</string>
     <string name="permission_denied_cannot_access_images">Autorisation refusée. Impossible d\'accéder aux images.</string>
-    <string name="extraction_costs">Coûts d\'extraction</string>
+    <string name="extraction_costs">Coûts d\'extraction </string>
     <string name="no_exceptions_occurred">Aucune exception ne s\'est produite.</string>
     <string name="exceptions_occurred">Exceptions survenues</string>
     <string name="send">Envoyer</string>
@@ -280,4 +280,6 @@
     <string name="boolean1">vrai/faux</string>
     <string name="float1">décimal</string>
     <string name="title">Titre</string>
+    <string name="copied_to_clipboard">Copié dans le presse-papiers</string>
+    <string name="copy_value">Copier la valeur</string>
 </resources>

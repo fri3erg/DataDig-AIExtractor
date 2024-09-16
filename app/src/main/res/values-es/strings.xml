@@ -285,4 +285,7 @@
     <string name="boolean1">verdadero/falso</string>
     <string name="float1">decimal</string>
     <string name="title">Título</string>
+    <string name="copied_to_clipboard">Copiado al portapapeles</string>
+    <string name="copy_value">Copiar valor</string>
+
 </resources>

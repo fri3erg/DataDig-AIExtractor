@@ -137,7 +137,7 @@
         <string name="added_images">Immagini aggiunte:</string>
         <string name="no_connected_template_found">Nessun modello collegato trovato</string>
         <string name="permission_denied_cannot_access_images">Permesso negato. Impossibile accedere alle immagini.</string>
-        <string name="extraction_costs">Costi di estrazione</string>
+        <string name="extraction_costs">Costi di estrazione (approssimati)</string>
         <string name="no_exceptions_occurred">Nessun errore si è verificato.</string>
         <string name="exceptions_occurred">Errori verificatesi</string>
         <string name="send">Invia</string>
@@ -283,4 +283,6 @@
     <string name="boolean1">vero/falso</string>
     <string name="float1">decimale</string>
     <string name="title">Titolo</string>
+    <string name="copied_to_clipboard">Copiato negli appunti</string>
+    <string name="copy_value">Copia valore</string>
 </resources>

@@ -80,7 +80,11 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -1039,7 +1043,9 @@ fun Picker(
     text: String,
     changeText: (String) -> Unit,
 ) {
+    val context = LocalContext.current
     var editableText by remember { mutableStateOf(text) ***REMOVED***
+    val clipboardManager = LocalClipboardManager.current
     when (type) {
         "Text" -> { //normal text field
             OutlinedTextField(value = editableText, onValueChange = { newText ->
@@ -1049,7 +1055,20 @@ fun Picker(
                 unfocusedBorderColor = Color.Black,
                 unfocusedLabelColor = Color.Black,
 
-    ***REMOVED***, label = { Text(stringResource(R.string.field_value)) ***REMOVED***)
+    ***REMOVED***,
+                trailingIcon = {
+                    IconButton(onClick = {
+                        clipboardManager.setText(AnnotatedString(editableText))
+                        Toast.makeText(context,
+                            context.getString(R.string.copied_to_clipboard), Toast.LENGTH_SHORT).show()
+                    ***REMOVED***) {
+                        FaIcon(FaIcons.CopyRegular, tint = Color.Black,
+                            modifier = Modifier.semantics { contentDescription =
+                                context.getString(R.string.copy_value) ***REMOVED***
+            ***REMOVED***
+                    ***REMOVED***
+                ***REMOVED***,
+                label = { Text(stringResource(R.string.field_value)) ***REMOVED***)
         ***REMOVED***
 
         "Number" -> { //keyboard type number
@@ -1058,6 +1077,18 @@ fun Picker(
                 onValueChange = { newText ->
                     editableText = newText
                     changeText(newText)
+                ***REMOVED***,
+                trailingIcon = {
+                    IconButton(onClick = {
+                        clipboardManager.setText(AnnotatedString(editableText))
+                        Toast.makeText(context,
+                            context.getString(R.string.copied_to_clipboard), Toast.LENGTH_SHORT).show()
+                    ***REMOVED***) {
+                        FaIcon(FaIcons.CopyRegular, tint = Color.Black,
+                            modifier = Modifier.semantics { contentDescription =
+                                context.getString(R.string.copy_value) ***REMOVED***
+            ***REMOVED***
+                    ***REMOVED***
                 ***REMOVED***,
                 label = { Text(stringResource(R.string.field_value_number)) ***REMOVED***,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -1196,6 +1227,18 @@ fun Picker(
                 onValueChange = { newText: String ->
                     editableText = newText
                     changeText(newText)
+                ***REMOVED***,
+                trailingIcon = {
+                    IconButton(onClick = {
+                        clipboardManager.setText(AnnotatedString(editableText))
+                        Toast.makeText(context,
+                            context.getString(R.string.copied_to_clipboard), Toast.LENGTH_SHORT).show()
+                    ***REMOVED***) {
+                        FaIcon(FaIcons.CopyRegular, tint = Color.Black,
+                            modifier = Modifier.semantics { contentDescription =
+                                context.getString(R.string.copy_value) ***REMOVED***
+            ***REMOVED***
+                    ***REMOVED***
                 ***REMOVED***,
                 label = { Text(stringResource(R.string.field_value_float)) ***REMOVED***,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)

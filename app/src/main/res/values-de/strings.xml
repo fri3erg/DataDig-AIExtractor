@@ -281,4 +281,7 @@
     <string name="boolean1">wahr/falsch</string>
     <string name="float1">Dezimalzahl</string>
     <string name="title">Titel</string>
+    <string name="copied_to_clipboard"> In die Zwischenablage kopiert </string>
+    <string name="copy_value"> Wert kopieren </string>
+
 </resources>

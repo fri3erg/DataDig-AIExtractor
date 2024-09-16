@@ -145,7 +145,7 @@
     <string name="added_images">Added Images:</string>
     <string name="no_connected_template_found">No connected template found</string>
     <string name="permission_denied_cannot_access_images">Permission denied. Cannot access images.</string>
-    <string name="extraction_costs">Extraction Costs</string>
+    <string name="extraction_costs">Extraction Costs (Approximated)</string>
     <string name="no_exceptions_occurred">No errors occurred.</string>
     <string name="exceptions_occurred">Errors Occurred</string>
     <string name="send">Send</string>
@@ -299,6 +299,8 @@
     <string name="boolean1">boolean</string>
     <string name="float1">float</string>
     <string name="title">Title</string>
+    <string name="copied_to_clipboard">Copied to clipboard</string>
+    <string name="copy_value">copy value</string>
 
 
 </resources>
