@@ -301,6 +301,8 @@
     <string name="title">Title</string>
     <string name="copied_to_clipboard">Copied to clipboard</string>
     <string name="copy_value">copy value</string>
+    <string name="service_is_running">Extraction started in the background</string>
+    <string name="service">Extraction</string>
 
 
 </resources>

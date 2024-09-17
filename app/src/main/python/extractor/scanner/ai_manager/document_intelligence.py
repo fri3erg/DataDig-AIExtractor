@@ -34,13 +34,15 @@ def analyze_general_documents(
     language_locale = language_locale_config[language]
 
     # Get variables form environment
-    endpoint = os.getenv("AZURE_FORM_RECOGNIZER_ENDPOINT")
-    key = os.getenv("AZURE_FORM_RECOGNIZER_KEY")
+    endpoint = os.getenv("AZURE_FORM_RECOGNIZER_ENDPOINT") or "no_endpoint"
+    key = os.getenv("AZURE_FORM_RECOGNIZER_KEY") or "no_key"
 
     # create your `DocumentIntelligenceClient` instance and `AzureKeyCredential` variable
-    
+
     document_analysis_client = DocumentAnalysisClient(
-        endpoint=endpoint, credential=AzureKeyCredential(key), api_version=api_version,
+        endpoint=endpoint,
+        credential=AzureKeyCredential(key),
+        api_version=api_version,
     )
     features_chosen: list[str] = ["ocrHighResolution"]
     if query_list is not None:

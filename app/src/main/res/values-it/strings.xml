@@ -139,7 +139,7 @@
         <string name="permission_denied_cannot_access_images">Permesso negato. Impossibile accedere alle immagini.</string>
         <string name="extraction_costs">Costi di estrazione (approssimati)</string>
         <string name="no_exceptions_occurred">Nessun errore si è verificato.</string>
-        <string name="exceptions_occurred">Errori verificatesi</string>
+        <string name="exceptions_occurred">Errori </string>
         <string name="send">Invia</string>
         <string name="skip">Salta</string>
 
@@ -214,7 +214,7 @@
     <string name="file_already_downloaded">File già scaricato</string>
     <string name="error_downloading_file">Errore durante il download del file</string>
     <string name="no_app_found_to_open_the_file_downloading_instead">Nessuna app trovata per aprire il file, scaricandolo invece</string>
-    <string name="delete_text">Eliminare %1$s?</string>
+    <string name="delete_text">Eliminare %1$s</string>
     <string name="are_you_sure_you_want_to_delete_this">Sei sicuro di voler eliminare questo %1$s?</string>
     <string name="search">Cerca</string>
     <string name="search_icon">Icona di ricerca</string>
@@ -285,4 +285,6 @@
     <string name="title">Titolo</string>
     <string name="copied_to_clipboard">Copiato negli appunti</string>
     <string name="copy_value">Copia valore</string>
+    <string name="service_is_running">Estrazione avviata in background</string>
+    <string name="service">Estrazione</string>
 </resources>

@@ -335,7 +335,8 @@ fun RatingModal(onDismiss: () -> Unit, viewModel: ExtractionViewModel, extractio
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Optional Comment Textbox
-                OutlinedTextField(value = review.comment,
+                OutlinedTextField(
+                    value = review.comment,
                     onValueChange = { newComment ->
                         review = review.copy(comment = newComment)
                     ***REMOVED***,
@@ -407,7 +408,7 @@ fun ExtractionExceptions(exceptionsOccurred: List<ExceptionOccurred>) {
                         text = exception.errorType,
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.weight(1f),
-            ***REMOVED***
+        ***REMOVED***
                 ***REMOVED***
                 Text(
                     text = exception.errorDescription,
@@ -497,17 +498,17 @@ fun TemplateInfo(
 
 
     // Launcher for cropping the image for the extra images
-    val cropImageLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult(),
-        onResult = { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val resultUri =
-                    result.data?.getParcelableExtra<CropImage.ActivityResult>(CropImage.CROP_IMAGE_EXTRA_RESULT)?.uriContent
-                if (resultUri != null) {
-                    viewModel.addExtraImage(extraction, resultUri)
+    val cropImageLauncher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult(),
+            onResult = { result ->
+                if (result.resultCode == Activity.RESULT_OK) {
+                    val resultUri =
+                        result.data?.getParcelableExtra<CropImage.ActivityResult>(CropImage.CROP_IMAGE_EXTRA_RESULT)?.uriContent
+                    if (resultUri != null) {
+                        viewModel.addExtraImage(extraction, resultUri)
+                    ***REMOVED***
                 ***REMOVED***
-            ***REMOVED***
-        ***REMOVED***)
+            ***REMOVED***)
 
     // Function to create the crop intent using CropImageContract
     fun createCropIntent(imageUri: Uri, context: Context): Intent {
@@ -517,15 +518,15 @@ fun TemplateInfo(
     ***REMOVED***
 
 
-    val pickImageLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickVisualMedia(),
-        onResult = { uri ->
-            if (uri != null) {
-                cropImageLauncher.launch(createCropIntent(uri, context))
-            ***REMOVED*** else {
-                Log.d("PhotoPicker", "No media selected")
-            ***REMOVED***
-        ***REMOVED***)
+    val pickImageLauncher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia(),
+            onResult = { uri ->
+                if (uri != null) {
+                    cropImageLauncher.launch(createCropIntent(uri, context))
+                ***REMOVED*** else {
+                    Log.d("PhotoPicker", "No media selected")
+                ***REMOVED***
+            ***REMOVED***)
     // legacy image picker launcher
     val imagePickerLauncherLegacy = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
@@ -537,39 +538,39 @@ fun TemplateInfo(
     ***REMOVED***
 
 
-    val requestPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-        onResult = { isGranted: Boolean ->
-            if (isGranted) {
+    val requestPermissionLauncher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission(),
+            onResult = { isGranted: Boolean ->
+                if (isGranted) {
 
-                pickImageLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                    pickImageLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
 
-            ***REMOVED*** else {
-                Toast.makeText(
-                    context,
-                    context.getString(R.string.permission_denied_cannot_access_images),
-                    Toast.LENGTH_SHORT
-    ***REMOVED***.show()
-            ***REMOVED***
-        ***REMOVED***)
-    // Legacy image picker launcher
-    val requestPermissionLauncherLegacy = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-        onResult = { isGranted: Boolean ->
-            if (isGranted) {
-                // Launch the image picker using the legacy intent
-                val pickIntent = Intent(Intent.ACTION_PICK).apply {
-                    setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
+                ***REMOVED*** else {
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.permission_denied_cannot_access_images),
+                        Toast.LENGTH_SHORT
+        ***REMOVED***.show()
                 ***REMOVED***
-                imagePickerLauncherLegacy.launch(pickIntent)
-            ***REMOVED*** else {
-                Toast.makeText(
-                    context,
-                    context.getString(R.string.permission_denied_cannot_access_images),
-                    Toast.LENGTH_SHORT
-    ***REMOVED***.show()
-            ***REMOVED***
-        ***REMOVED***)
+            ***REMOVED***)
+    // Legacy image picker launcher
+    val requestPermissionLauncherLegacy =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission(),
+            onResult = { isGranted: Boolean ->
+                if (isGranted) {
+                    // Launch the image picker using the legacy intent
+                    val pickIntent = Intent(Intent.ACTION_PICK).apply {
+                        setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
+                    ***REMOVED***
+                    imagePickerLauncherLegacy.launch(pickIntent)
+                ***REMOVED*** else {
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.permission_denied_cannot_access_images),
+                        Toast.LENGTH_SHORT
+        ***REMOVED***.show()
+                ***REMOVED***
+            ***REMOVED***)
 
     val onPhotoGalleryClick = {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13+
@@ -819,7 +820,8 @@ fun ExtractionTableDisplay(extractionTable: ExtractionTable, viewModel: Extracti
                         .padding(8.dp)
     ***REMOVED*** {
                     // Add an empty cell for the row index header
-                    ExtractionTableCell(text = "",
+                    ExtractionTableCell(
+                        text = "",
                         modifier = Modifier.weight(1f),
                         onValueChange = {***REMOVED***,
                         onDelete = {***REMOVED***,
@@ -938,7 +940,8 @@ fun FormatSection(extraction: Extraction, viewModel: ExtractionViewModel) {
     val context = LocalContext.current
 
     ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded ***REMOVED***) {
-        TextField(value = selectedFormat,
+        TextField(
+            value = selectedFormat,
             onValueChange = {***REMOVED***,
             readOnly = true,
             label = { Text("Format") ***REMOVED***,
@@ -1055,20 +1058,23 @@ fun Picker(
                 unfocusedBorderColor = Color.Black,
                 unfocusedLabelColor = Color.Black,
 
-    ***REMOVED***,
-                trailingIcon = {
-                    IconButton(onClick = {
-                        clipboardManager.setText(AnnotatedString(editableText))
-                        Toast.makeText(context,
-                            context.getString(R.string.copied_to_clipboard), Toast.LENGTH_SHORT).show()
-                    ***REMOVED***) {
-                        FaIcon(FaIcons.CopyRegular, tint = Color.Black,
-                            modifier = Modifier.semantics { contentDescription =
-                                context.getString(R.string.copy_value) ***REMOVED***
-            ***REMOVED***
-                    ***REMOVED***
-                ***REMOVED***,
-                label = { Text(stringResource(R.string.field_value)) ***REMOVED***)
+    ***REMOVED***, trailingIcon = {
+                IconButton(onClick = {
+                    clipboardManager.setText(AnnotatedString(editableText))
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.copied_to_clipboard),
+                        Toast.LENGTH_SHORT
+        ***REMOVED***.show()
+                ***REMOVED***) {
+                    FaIcon(
+                        FaIcons.CopyRegular,
+                        tint = Color.Black,
+                        modifier = Modifier.semantics {
+                            contentDescription = context.getString(R.string.copy_value)
+                        ***REMOVED***)
+                ***REMOVED***
+            ***REMOVED***, label = { Text(stringResource(R.string.field_value)) ***REMOVED***)
         ***REMOVED***
 
         "Number" -> { //keyboard type number
@@ -1081,13 +1087,18 @@ fun Picker(
                 trailingIcon = {
                     IconButton(onClick = {
                         clipboardManager.setText(AnnotatedString(editableText))
-                        Toast.makeText(context,
-                            context.getString(R.string.copied_to_clipboard), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.copied_to_clipboard),
+                            Toast.LENGTH_SHORT
+            ***REMOVED***.show()
                     ***REMOVED***) {
-                        FaIcon(FaIcons.CopyRegular, tint = Color.Black,
-                            modifier = Modifier.semantics { contentDescription =
-                                context.getString(R.string.copy_value) ***REMOVED***
-            ***REMOVED***
+                        FaIcon(
+                            FaIcons.CopyRegular,
+                            tint = Color.Black,
+                            modifier = Modifier.semantics {
+                                contentDescription = context.getString(R.string.copy_value)
+                            ***REMOVED***)
                     ***REMOVED***
                 ***REMOVED***,
                 label = { Text(stringResource(R.string.field_value_number)) ***REMOVED***,
@@ -1223,7 +1234,8 @@ fun Picker(
         ***REMOVED***
         // Float field
         "Float" -> {
-            OutlinedTextField(value = text,
+            OutlinedTextField(
+                value = text,
                 onValueChange = { newText: String ->
                     editableText = newText
                     changeText(newText)
@@ -1231,13 +1243,18 @@ fun Picker(
                 trailingIcon = {
                     IconButton(onClick = {
                         clipboardManager.setText(AnnotatedString(editableText))
-                        Toast.makeText(context,
-                            context.getString(R.string.copied_to_clipboard), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.copied_to_clipboard),
+                            Toast.LENGTH_SHORT
+            ***REMOVED***.show()
                     ***REMOVED***) {
-                        FaIcon(FaIcons.CopyRegular, tint = Color.Black,
-                            modifier = Modifier.semantics { contentDescription =
-                                context.getString(R.string.copy_value) ***REMOVED***
-            ***REMOVED***
+                        FaIcon(
+                            FaIcons.CopyRegular,
+                            tint = Color.Black,
+                            modifier = Modifier.semantics {
+                                contentDescription = context.getString(R.string.copy_value)
+                            ***REMOVED***)
                     ***REMOVED***
                 ***REMOVED***,
                 label = { Text(stringResource(R.string.field_value_float)) ***REMOVED***,

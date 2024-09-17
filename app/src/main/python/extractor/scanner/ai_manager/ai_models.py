@@ -23,8 +23,6 @@ from langchain.chat_models import ChatOpenAI  # use ChatOpenAI from the core lib
 from langchain.schema import BaseMessage
 
 
-
-
 from typing import Any
 
 
@@ -61,12 +59,13 @@ class Models(LLM):
             self._models[model_name] = {***REMOVED***
         if temperature not in self._models[model_name]:
             self._models[model_name][temperature] = {***REMOVED***
-        api_key= os.getenv("OPENAI_API_KEY")
+        api_key = os.getenv("OPENAI_API_KEY")
         if hash(api_key) not in self._models[model_name][temperature]:
-            print(f"creating model {model_name***REMOVED*** with apikey: {api_key***REMOVED***")
             self._models[model_name][temperature][hash(api_key)] = ChatOpenAI(
-            openai_api_key=api_key,
-            model=model_name, temperature=temperature, **kwargs  # Include any additional keyword arguments
+                openai_api_key=api_key,
+                model=model_name,
+                temperature=temperature,
+                **kwargs  # Include any additional keyword arguments
 ***REMOVED***
         if self._openAI_instance is None:
             self._openAI_instance = OpenAI()
@@ -152,10 +151,12 @@ class Models(LLM):
     def extract(cls, file_id, model, prompt: PromptTemplate, pages, template, temperature=0) -> str:
         if model == "smart_mix":
             model = "gpt-3.5-turbo"
-        llm: ChatOpenAI = cls(model, temperature)._models[model][temperature][hash(os.getenv("OPENAI_API_KEY"))]  # Get the singleton instance
+        llm: ChatOpenAI = cls(model, temperature)._models[model][temperature][
+            hash(os.getenv("OPENAI_API_KEY"))
+        ]  # Get the singleton instance
         try:
             chain = LLMChain(llm=llm, prompt=prompt)
-            output = chain.run(context= pages, template=template)
+            output = chain.run(context=pages, template=template)
         except AuthenticationError as auth_err:
             print("Authentication Error (Invalid API key?):", auth_err)
             raise ValueError("invalid OpenAI key")

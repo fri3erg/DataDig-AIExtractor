@@ -117,7 +117,7 @@
     {
       "title": "Cualquier tabla",
       "description": "Cualquier tabla presente en el artículo",
-      "keywords": ["Table"],
+      "keywords": ["Tabla", "Datos", "Información"],
       "all": true,
       "rows": [],
       "columns": []

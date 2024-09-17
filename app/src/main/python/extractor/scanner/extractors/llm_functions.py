@@ -58,7 +58,7 @@ def general_table_inspection(
         add_text = f"{desc_tabella[options.language or 'en']***REMOVED*** {add_text***REMOVED*** " if add_text else ""
         table = f"{sanitize_text(add_text)***REMOVED*** TABLE-> {table***REMOVED***"
         prompt = create_language_tag_messages(text=table, language=options.language or "it", is_table=True)
-        print("table",table)
+        print("table", table)
         extraction_adapted, errors_occurred = Models.tag(prompt, pydantic_class, file_id, options.model)
 
     except Exception as error:

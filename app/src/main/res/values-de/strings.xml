@@ -211,7 +211,7 @@
     <string name="file_already_downloaded">Datei bereits heruntergeladen</string>
     <string name="error_downloading_file">Fehler beim Herunterladen der Datei</string>
     <string name="no_app_found_to_open_the_file_downloading_instead">Keine App zum Öffnen der Datei gefunden, stattdessen wird heruntergeladen</string>
-    <string name="delete_text">%1$s löschen?</string>
+    <string name="delete_text">%1$s löschen</string>
     <string name="are_you_sure_you_want_to_delete_this">Sind Sie sicher, dass Sie dieses %1$s löschen möchten?</string>
     <string name="search">Suche</string>
     <string name="search_icon">Suchsymbol</string>
@@ -284,4 +284,6 @@
     <string name="copied_to_clipboard"> In die Zwischenablage kopiert </string>
     <string name="copy_value"> Wert kopieren </string>
 
+    <string name="service_is_running">Extraktion im Hintergrund gestartet</string>
+    <string name="service">Extraktion</string>
 </resources>

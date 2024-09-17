@@ -37,7 +37,7 @@
     {
       "title": "Farmaci",
       "description": "Elenco dei farmaci prescritti con dettagli",
-      "keywords": ["medication", "dosage", "instructions"],
+      "keywords": ["medicazione", "dosaggio", "istruzioni"],
       "all": false,
       "rows": [],
       "columns": [

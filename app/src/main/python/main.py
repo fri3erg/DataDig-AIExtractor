@@ -25,7 +25,7 @@ def main(encoded_images: list, text: list[str], template: Template, options: Opt
         doc_folder (str): folder containing the pdf files
     """
     exceptions_occurred: List[ExceptionsExtracted] = []
-    tags : List[str] =[]
+    tags: List[str] = []
     try:
         images: list[bytes] = [base64.b64decode(image) for image in list(encoded_images)]
 
@@ -66,20 +66,19 @@ def main(encoded_images: list, text: list[str], template: Template, options: Opt
             extraction.add_exceptions(exceptions_occurred)
         else:
             if extractor:
-                tags=extractor.get_tags()
+                tags = extractor.get_tags()
             if exceptions_occurred:
-                tags+=["errors occurred"]
+                tags += ["errors occurred"]
 
             extraction = Extracted(template, exceptions=exceptions_occurred, tags=tags)
-        
+
         for table in extraction.extracted_tables:
             for key, value in table.fields.items():
                 print("row: ", key)
                 for key1, value1 in value.items():
                     print("column: ", key1)
                     print("value:", value1.value)
-                
-            
+
         return extraction
 
     except Exception as error:
@@ -96,7 +95,7 @@ def create_test() -> tuple[Template, Options]:
         title="title",
         description="",
         type="Text",
-        list= False,
+        list=False,
         default="N/A",
         required=True,
         intelligent_extraction=False,
@@ -106,7 +105,7 @@ def create_test() -> tuple[Template, Options]:
         title="year of the setting",
         description="",
         type="Number",
-        list= False,
+        list=False,
         default="-1",
         required=True,
         intelligent_extraction=False,
@@ -116,7 +115,7 @@ def create_test() -> tuple[Template, Options]:
         title="probability of the uprising",
         description="",
         type="Float",
-        list= False,
+        list=False,
         default="30",
         required=True,
         intelligent_extraction=False,
@@ -126,7 +125,7 @@ def create_test() -> tuple[Template, Options]:
         title="date( precise) of the revealing of AGI 1",
         description="full date",
         type="Date",
-        list= False,
+        list=False,
         default="08/12/2024",
         required=True,
         intelligent_extraction=False,
@@ -136,7 +135,7 @@ def create_test() -> tuple[Template, Options]:
         title="if there is potential for the uprising",
         description="",
         type="Boolean",
-        list= False,
+        list=False,
         default="False",
         required=True,
         intelligent_extraction=False,
@@ -146,7 +145,7 @@ def create_test() -> tuple[Template, Options]:
         title="book suggestion",
         description="",
         type="Text",
-        list= True,
+        list=True,
         default="[]",
         required=True,
         intelligent_extraction=False,
@@ -156,7 +155,7 @@ def create_test() -> tuple[Template, Options]:
         title="possible",
         description="is the uprising possible?",
         type="Text",
-        list= False,
+        list=False,
         default="N/A",
         required=True,
         intelligent_extraction=True,
@@ -164,7 +163,13 @@ def create_test() -> tuple[Template, Options]:
 
     # Create sample TemplateTable objects
     table1 = TemplateTable(
-        "1", "Personal Information", ["ciao", "dd"], "table that describes personal info", [field1, field2, field3], [], True
+        "1",
+        "Personal Information",
+        ["ciao", "dd"],
+        "table that describes personal info",
+        [field1, field2, field3],
+        [],
+        True,
     )
     table2 = TemplateTable("2", "Contact Information", ["contact", "info"], "", [], [field1, field2, field3], True)
 
@@ -206,13 +211,15 @@ def main_kotlin(base64_images: list, text: list[str], template: Template, option
 
     for key, item in keys_config.items():
         os.environ[key] = options.get_api_key(item) or ""
-        print(f"{key***REMOVED***={os.environ[key]***REMOVED***")
     if options.resize:
-        base64_images= [reduce_image_size(image) for image in base64_images]
+        base64_images = [reduce_image_size(image) for image in base64_images]
 
     return main(base64_images, text, template, options)
 
-def reduce_image_size(base64_str, target_size_mb=4, initial_quality=100, min_quality=20, max_width=4200, max_height=4200):
+
+def reduce_image_size(
+    base64_str, target_size_mb=4, initial_quality=100, min_quality=20, max_width=4200, max_height=4200
+):
     """
     Reduces the size of an image to fit within a target size in megabytes.
     Dynamically calculates scaling factor and quality at each step.
@@ -249,13 +256,16 @@ def reduce_image_size(base64_str, target_size_mb=4, initial_quality=100, min_qua
     image_data = buffer.getvalue()
     current_size_mb = len(image_data) / (1024 * 1024)
 
-
     while current_size_mb > target_size_mb:
         # Estimate the required quality to reach the target size (conservative)
-        estimated_quality = min(0.9,max(min_quality, int(initial_quality * (target_size_mb / current_size_mb) * 0.9)))  # 0.9 factor for conservatism
+        estimated_quality = min(
+            0.9, max(min_quality, int(initial_quality * (target_size_mb / current_size_mb) * 0.9))
+        )  # 0.9 factor for conservatism
 
         # Calculate scaling factor to further reduce size if needed
-        scaling_factor = min(0.9,max(0.5, (target_size_mb / current_size_mb) ** 0.5))  # Square root for area-based scaling
+        scaling_factor = min(
+            0.9, max(0.5, (target_size_mb / current_size_mb) ** 0.5)
+        )  # Square root for area-based scaling
 
         width, height = image.size
         new_width = int(width * scaling_factor)
@@ -266,7 +276,9 @@ def reduce_image_size(base64_str, target_size_mb=4, initial_quality=100, min_qua
         image.save(buffer, format=image_format, quality=estimated_quality)
         image_data = buffer.getvalue()
         current_size_mb = len(image_data) / (1024 * 1024)
-        print(f"Reducing size with quality={estimated_quality***REMOVED*** and dimensions=({new_width***REMOVED***, {new_height***REMOVED***), size={current_size_mb***REMOVED*** MB")
+        print(
+            f"Reducing size with quality={estimated_quality***REMOVED*** and dimensions=({new_width***REMOVED***, {new_height***REMOVED***), size={current_size_mb***REMOVED*** MB"
+        )
 
     return base64.b64encode(image_data).decode()
 
@@ -279,9 +291,8 @@ def reduce_image_size(base64_str, target_size_mb=4, initial_quality=100, min_qua
     with open("extractor\\test\\table.jpg", "rb") as image_file:  # Open in binary mode
         image_data = image_file.read()
         base64_image = [base64.b64encode(image_data).decode("utf-8")]
-        
-    base64_image= [reduce_image_size(image) for image in base64_image]
 
+    base64_image = [reduce_image_size(image) for image in base64_image]
 
     logging.basicConfig(filename="logging.log", encoding="utf-8", level=logging.DEBUG)
 
@@ -290,4 +301,3 @@ def reduce_image_size(base64_str, target_size_mb=4, initial_quality=100, min_qua
     # if any(file.endswith(".pdf") for file in files):
     # Call your existing function to process PDFs in the folder
     main(base64_image, text, template, option)
-

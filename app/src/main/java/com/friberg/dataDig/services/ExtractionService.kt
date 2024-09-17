@@ -113,7 +113,8 @@ class ExtractionService : Service() {
         ***REMOVED*** catch (e: Exception) {
             Log.e("TestService", "Error processing image", e)
             Handler(Looper.getMainLooper()).post {
-                Toast.makeText(this, "Error processing image, please try again", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Error processing image, please try again", Toast.LENGTH_SHORT)
+                    .show()
             ***REMOVED***
             stopSelf()
         ***REMOVED***
@@ -125,8 +126,9 @@ class ExtractionService : Service() {
 
 
     private fun createNotification(): Notification {
-        return NotificationCompat.Builder(this, "extracting_data").setContentTitle("Service")
-            .setContentText("Service is running").setSmallIcon(R.drawable.ic_launcher_foreground)
+        return NotificationCompat.Builder(this, "extracting_data")
+            .setContentTitle(getString(R.string.service))
+            .setContentText(getString(R.string.service_is_running)).setSmallIcon(R.mipmap.logo_vale)
             .build()
     ***REMOVED***
 
@@ -150,7 +152,9 @@ class ExtractionService : Service() {
 
         // Callback to update the result in the repository
         val onResult: (PyObject) -> Unit = { result ->
-            serviceRepository.updateResult(extractResult(result, template, imageUris, localContext), localContext)
+            serviceRepository.updateResult(
+                extractResult(result, template, imageUris, localContext), localContext
+***REMOVED***
             val isAppInForeground =
                 (localContext.applicationContext as MyApp).lifecycleObserver.isInForeground
 
@@ -383,87 +387,85 @@ private fun extractResult(
 fun filterErrors(errorFound: String, context: Context): ExceptionOccurred? {
     //if error string contains certain recognized words it rewords it for the user
     return when {
-        errorFound.contains("Incorrect API key")&& errorFound.contains("openai") ->
-            ExceptionOccurred().apply{
-                error= context.getString(R.string.api_key_is_invalid)
-                errorType= context.getString(R.string.openai)
-                errorDescription =
-                    context.getString(R.string.check_your_openai_api_key_on_the_openai_platform_and_reinsert_it)
-            ***REMOVED***
-        errorFound.contains("Incorrect API key")&& errorFound.contains("azure") ->
-            ExceptionOccurred().apply{
-                error=context.getString(R.string.api_key_is_invalid)
-                errorType= context.getString(R.string.azure)
-                errorDescription= context.getString(R.string.azure_api_key_is_invalid)
-            ***REMOVED***
-        /*errorFound.contains("Language") ->
+        errorFound.contains("Incorrect API key") && errorFound.contains("openai") -> ExceptionOccurred().apply {
+            error = context.getString(R.string.api_key_is_invalid)
+            errorType = context.getString(R.string.openai)
+            errorDescription =
+                context.getString(R.string.check_your_openai_api_key_on_the_openai_platform_and_reinsert_it)
+        ***REMOVED***
+
+        errorFound.contains("Incorrect API key") && errorFound.contains("azure") -> ExceptionOccurred().apply {
+            error = context.getString(R.string.api_key_is_invalid)
+            errorType = context.getString(R.string.azure)
+            errorDescription = context.getString(R.string.azure_api_key_is_invalid)
+        ***REMOVED***/*errorFound.contains("Language") ->
             ExceptionOccurred().apply{
                 error="Language not supported"
                 errorType="OpenAI"
                 errorDescription= "The language you have selected is not supported by OpenAI"
             ***REMOVED****/
-        errorFound.contains("Azure") || errorFound.contains("No connection adapters were found") ->
-            ExceptionOccurred().apply{
-                error= context.getString(R.string.azure_error)
-                errorType=context.getString(R.string.azure)
-                errorDescription=
-                    context.getString(R.string.an_error_occurred_with_azure_check_your_key_and_endpoint)
-            ***REMOVED***
-        errorFound.contains("PromptTemplate")  ->
-            ExceptionOccurred().apply{
-                error= context.getString(R.string.tag_failed_because_of_weird_characters)
-                errorType= context.getString(R.string.tagging)
-                errorDescription=
-                    context.getString(R.string.tag_failed_because_of_weird_characters_this_will_be_fixed_in_the_next_update)
-            ***REMOVED***
-        errorFound.contains("exceeded call rate limit")  ->
-            ExceptionOccurred().apply{
-                error= context.getString(R.string.call_rate_limit_exceeded)
-                errorType=context.getString(R.string.azure)
-                errorDescription=
-                    context.getString(R.string.call_rate_limit_exceeded_azure_was_not_able_to_scan_all_images)
-            ***REMOVED***
-        errorFound.contains("F0 pricing tier")  ->
-            ExceptionOccurred().apply{
-                error= context.getString(R.string.azure_pricing_tier)
-                errorType=context.getString(R.string.azure)
-                errorDescription=
-                    context.getString(R.string.limit_reached_on_azure_pricing_tier_please_upgrade_your_pricing_tier_or_wait_for_new_credits)
-            ***REMOVED***
-        errorFound.contains("Connection error")  ->
-            ExceptionOccurred().apply{
-                error= context.getString(R.string.connection_error)
-                errorType= context.getString(R.string.connection)
-                errorDescription=
-                    context.getString(R.string.connection_error_please_check_your_connection)
-            ***REMOVED***
-        errorFound.contains("internet")  ->
-            ExceptionOccurred().apply{
-                error= context.getString(R.string.no_internet_connection)
-                errorType=context.getString(R.string.connection)
-                errorDescription=
-                    context.getString(R.string.no_internet_connection_please_check_your_connection)
-            ***REMOVED***
-        errorFound.contains("No text was found")  ->
-            ExceptionOccurred().apply{
-                error= context.getString(R.string.no_text_was_found)
-                errorType= context.getString(R.string.text)
-                errorDescription= context.getString(R.string.no_text_was_found_in_the_image)
-            ***REMOVED***
-        errorFound.contains("does not exist or you do not have access to it")  ->
-            ExceptionOccurred().apply{
-                error= context.getString(R.string.you_do_not_have_access_to_gpt_4)
-                errorType= context.getString(R.string.openai)
-                errorDescription=
-                    context.getString(R.string.you_do_not_have_access_to_gpt_4_please_check_that_you_added_billing_information_to_your_openai_account)
-            ***REMOVED***
-        errorFound.contains("exceeded your current quota")  ->
-            ExceptionOccurred().apply{
-                error= context.getString(R.string.you_have_exceeded_your_current_quota)
-                errorType= context.getString(R.string.openai)
-                errorDescription=
-                    context.getString(R.string.you_have_exceeded_your_current_quota_please_check_that_you_added_billing_information_to_your_openai_account_and_that_you_have_not_reached_your_tier_limits_on_requests_per_day)
-            ***REMOVED***
+        errorFound.contains("Azure") || errorFound.contains("No connection adapters were found") -> ExceptionOccurred().apply {
+            error = context.getString(R.string.azure_error)
+            errorType = context.getString(R.string.azure)
+            errorDescription =
+                context.getString(R.string.an_error_occurred_with_azure_check_your_key_and_endpoint)
+        ***REMOVED***
+
+        errorFound.contains("PromptTemplate") -> ExceptionOccurred().apply {
+            error = context.getString(R.string.tag_failed_because_of_weird_characters)
+            errorType = context.getString(R.string.tagging)
+            errorDescription =
+                context.getString(R.string.tag_failed_because_of_weird_characters_this_will_be_fixed_in_the_next_update)
+        ***REMOVED***
+
+        errorFound.contains("exceeded call rate limit") -> ExceptionOccurred().apply {
+            error = context.getString(R.string.call_rate_limit_exceeded)
+            errorType = context.getString(R.string.azure)
+            errorDescription =
+                context.getString(R.string.call_rate_limit_exceeded_azure_was_not_able_to_scan_all_images)
+        ***REMOVED***
+
+        errorFound.contains("F0 pricing tier") -> ExceptionOccurred().apply {
+            error = context.getString(R.string.azure_pricing_tier)
+            errorType = context.getString(R.string.azure)
+            errorDescription =
+                context.getString(R.string.limit_reached_on_azure_pricing_tier_please_upgrade_your_pricing_tier_or_wait_for_new_credits)
+        ***REMOVED***
+
+        errorFound.contains("Connection error") -> ExceptionOccurred().apply {
+            error = context.getString(R.string.connection_error)
+            errorType = context.getString(R.string.connection)
+            errorDescription =
+                context.getString(R.string.connection_error_please_check_your_connection)
+        ***REMOVED***
+
+        errorFound.contains("internet") -> ExceptionOccurred().apply {
+            error = context.getString(R.string.no_internet_connection)
+            errorType = context.getString(R.string.connection)
+            errorDescription =
+                context.getString(R.string.no_internet_connection_please_check_your_connection)
+        ***REMOVED***
+
+        errorFound.contains("No text was found") -> ExceptionOccurred().apply {
+            error = context.getString(R.string.no_text_was_found)
+            errorType = context.getString(R.string.text)
+            errorDescription = context.getString(R.string.no_text_was_found_in_the_image)
+        ***REMOVED***
+
+        errorFound.contains("does not exist or you do not have access to it") -> ExceptionOccurred().apply {
+            error = context.getString(R.string.you_do_not_have_access_to_gpt_4)
+            errorType = context.getString(R.string.openai)
+            errorDescription =
+                context.getString(R.string.you_do_not_have_access_to_gpt_4_please_check_that_you_added_billing_information_to_your_openai_account)
+        ***REMOVED***
+
+        errorFound.contains("exceeded your current quota") -> ExceptionOccurred().apply {
+            error = context.getString(R.string.you_have_exceeded_your_current_quota)
+            errorType = context.getString(R.string.openai)
+            errorDescription =
+                context.getString(R.string.you_have_exceeded_your_current_quota_please_check_that_you_added_billing_information_to_your_openai_account_and_that_you_have_not_reached_your_tier_limits_on_requests_per_day)
+        ***REMOVED***
+
         else -> null
     ***REMOVED***
 

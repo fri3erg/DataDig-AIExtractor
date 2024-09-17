@@ -379,3 +379,38 @@ desc_tabella = {
     "fr": "description de la table=-> ",
     "de": "beschreibung der tabelle=-> ",
 ***REMOVED***
+
+
+language_dict={
+    "it": {
+        "error": "Errori",
+        "table": "Tabelle",
+        "complex_info":"Informazioni complesse",
+        "intelligent_info":"Informazioni interpretate",
+    
+    ***REMOVED***,
+    "en": {
+        "error": "Errors",
+        "table": "Tables",
+        "complex_info":"Complex Information",
+        "intelligent_info":"Interpreted Information",
+    ***REMOVED***,
+    "es": {
+        "error": "Errores",
+        "table": "Tablas",
+        "complex_info":"Información Compleja",
+        "intelligent_info":"Información Interpretada",
+    ***REMOVED***,
+    "de": {
+        "error": "Fehler",
+        "table": "Tabellen",
+        "complex_info":"Komplexe Informationen",
+        "intelligent_info":"Interpretierte Informationen",
+    ***REMOVED***,
+    "fr": {
+        "error": "Erreurs",
+        "table": "Tableaux",
+        "complex_info":"Informations Complexes",
+        "intelligent_info":"Informations Interprétées",
+    ***REMOVED***,
+***REMOVED***

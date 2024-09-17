@@ -180,10 +180,8 @@ fun BooleanFieldWithLabel(
     title: String = label,
     enabled: Boolean = true
 ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically, modifier = modifier
-            .semantics { contentDescription = label ***REMOVED***
-    ) {
+    Row(verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier.semantics { contentDescription = label ***REMOVED***) {
         Text(text = label, fontSize = 16.sp, fontWeight = FontWeight.Bold)
         if (help.isNotEmpty()) {
             Spacer(modifier = Modifier.width(4.dp))
@@ -323,7 +321,7 @@ fun AlertTableExtraction(
 ) {
     var editableText by remember { mutableStateOf(text) ***REMOVED***
     val context = LocalContext.current
-    val clipboardManager =LocalClipboardManager.current
+    val clipboardManager = LocalClipboardManager.current
     AlertDialog(containerColor = Color.White,
         onDismissRequest = { changeShowDialog(false) ***REMOVED***,
         title = { Text(stringResource(R.string.edit_value)) ***REMOVED***,
@@ -337,13 +335,17 @@ fun AlertTableExtraction(
                     trailingIcon = {
                         IconButton(onClick = {
                             clipboardManager.setText(AnnotatedString(editableText))
-                            Toast.makeText(context,
-                                context.getString(R.string.copied_to_clipboard), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.copied_to_clipboard),
+                                Toast.LENGTH_SHORT
+                ***REMOVED***.show()
                         ***REMOVED***) {
-                            FaIcon(FaIcons.CopyRegular, tint = Color.Black,
-                                modifier = Modifier.semantics { contentDescription =
-                                    context.getString(R.string.copy_value) ***REMOVED***
-                ***REMOVED***
+                            FaIcon(FaIcons.CopyRegular,
+                                tint = Color.Black,
+                                modifier = Modifier.semantics {
+                                    contentDescription = context.getString(R.string.copy_value)
+                                ***REMOVED***)
                         ***REMOVED***
                     ***REMOVED***,
                     onValueChange = { editableText = it ***REMOVED***,
@@ -436,15 +438,13 @@ fun HelpIconButton(
 ) {
     var showDialog by remember { mutableStateOf(false) ***REMOVED***
     val accessibilityLabel = stringResource(R.string.get_more_information)
-    IconButton(
-        onClick = { showDialog = true ***REMOVED***,
+    IconButton(onClick = { showDialog = true ***REMOVED***,
         modifier = modifier
             .semantics { contentDescription = accessibilityLabel ***REMOVED***
             .size(20.dp),
         colors = IconButtonDefaults.filledIconButtonColors(
             contentColor = Color.Black, containerColor = Color.Black
-        )
-    ) {
+        )) {
 
         Icon(
             imageVector = Icons.Default.Info,
@@ -483,13 +483,11 @@ fun DropdownWithNavigation(onUse: () -> Unit, onEdit: () -> Unit, onDelete: () -
     var showDeleteDialog by remember { mutableStateOf(false) ***REMOVED***
     val accessibilityLabel = stringResource(R.string.open_options)
     Box {
-        IconButton(
-            onClick = { expanded = true ***REMOVED***,
+        IconButton(onClick = { expanded = true ***REMOVED***,
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .semantics { contentDescription = accessibilityLabel ***REMOVED***
-                .padding(bottom = 6.dp)
-        ) {
+                .padding(bottom = 6.dp)) {
             FaIcon(faIcon = FaIcons.EllipsisV, tint = Color.Black)
         ***REMOVED***
 
@@ -873,9 +871,7 @@ fun FileCard(
     fun downloadFile(uri: Uri?, failedOpen: Boolean = false) {
         if (uri == null || uri.path == null) return
         val contentUri = FileProvider.getUriForFile(
-            context,
-            context.getString(R.string.fileprovider),
-            File(uri.path!!)
+            context, context.getString(R.string.fileprovider), File(uri.path!!)
         )
 
         // Get the filename from the content URI
@@ -1169,15 +1165,17 @@ fun encodeImageToBase64(context: Context, imageUri: Uri): String? { // Encode an
     ***REMOVED***
 ***REMOVED***
 
-fun translateType(text: String, context: Context): String { // Translate a string to the user's language
-when(text) {
-    "Text" -> return context.getString(R.string.text)
-    "Date" -> return context.getString(R.string.date)
-    "Number" -> return context.getString(R.string.number)
-    "Boolean" -> return context.getString(R.string.boolean1)
-    "Float" -> return context.getString(R.string.float1)
-    "date" -> return context.getString(R.string.date)
-    "title" -> return context.getString(R.string.title)
-***REMOVED***
+fun translateType(
+    text: String, context: Context
+): String { // Translate a string to the user's language
+    when (text) {
+        "Text" -> return context.getString(R.string.text)
+        "Date" -> return context.getString(R.string.date)
+        "Number" -> return context.getString(R.string.number)
+        "Boolean" -> return context.getString(R.string.boolean1)
+        "Float" -> return context.getString(R.string.float1)
+        "date" -> return context.getString(R.string.date)
+        "title" -> return context.getString(R.string.title)
+    ***REMOVED***
     return text
 ***REMOVED***

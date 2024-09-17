@@ -216,7 +216,7 @@
     <string name="file_already_downloaded">El archivo ya ha sido descargado</string>
     <string name="error_downloading_file">Error al descargar el archivo</string>
     <string name="no_app_found_to_open_the_file_downloading_instead">No se encontró ninguna aplicación para abrir el archivo, se descargará en su lugar</string>
-    <string name="delete_text">¿Eliminar %1$s?</string>
+    <string name="delete_text">¿Eliminar %1$s</string>
     <string name="are_you_sure_you_want_to_delete_this">¿Estás seguro de que quieres eliminar este %1$s?</string>
     <string name="search">Buscar</string>
     <string name="search_icon">Icono de búsqueda</string>
@@ -287,5 +287,6 @@
     <string name="title">Título</string>
     <string name="copied_to_clipboard">Copiado al portapapeles</string>
     <string name="copy_value">Copiar valor</string>
-
+    <string name="service_is_running">La extracción ha comenzado en segundo plano</string>
+    <string name="service">Extracción</string>
 </resources>

@@ -117,7 +117,7 @@
     {
       "title": "Qualsiasi tabella",
       "description": "Qualsiasi tabella presente nell'articolo",
-      "keywords": ["Table"],
+      "keywords": ["Tabella", "Dati", "Informazioni"],
       "all": true,
       "rows": [],
       "columns": []

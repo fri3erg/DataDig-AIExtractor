@@ -118,12 +118,12 @@ class TemplateViewModel : ViewModel() {
         println(jsonString)
 
         val gson = GsonBuilder().registerTypeAdapter(
-                object : TypeToken<RealmList<String>>() {***REMOVED***.type, RealmListStringAdapter()
-***REMOVED***.registerTypeAdapter(
-                object : TypeToken<RealmList<TemplateField>>() {***REMOVED***.type, TemplateFieldListAdapter()
-***REMOVED***.registerTypeAdapter(
-                object : TypeToken<RealmList<TemplateTable>>() {***REMOVED***.type, TemplateTableListAdapter()
-***REMOVED***.create()
+            object : TypeToken<RealmList<String>>() {***REMOVED***.type, RealmListStringAdapter()
+        ).registerTypeAdapter(
+            object : TypeToken<RealmList<TemplateField>>() {***REMOVED***.type, TemplateFieldListAdapter()
+        ).registerTypeAdapter(
+            object : TypeToken<RealmList<TemplateTable>>() {***REMOVED***.type, TemplateTableListAdapter()
+        ).create()
 
         return gson.fromJson(jsonString, Template::class.java)
     ***REMOVED***
@@ -267,7 +267,7 @@ class TemplateViewModel : ViewModel() {
             fields = realmListOf(newField)
         ***REMOVED***
         viewModelScope.launch {
-            realm.write {
+            realm.writeBlocking {
                 copyToRealm(newTemplate)
 
             ***REMOVED***

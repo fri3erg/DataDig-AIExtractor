@@ -243,9 +243,9 @@ fun ApiKeyInput(
                 tint = if (apiKey) dark_green else dark_red // Checkmark icon green if key exists, red if not
 ***REMOVED***
             Spacer(modifier = Modifier.weight(1f))
-            val accessibilityLabel = if (showInput) stringResource(R.string.hide_input) else stringResource(R.string.open_input)
-            FaIcon(
-                faIcon = if (showInput) FaIcons.ArrowUp else FaIcons.ArrowDown,
+            val accessibilityLabel =
+                if (showInput) stringResource(R.string.hide_input) else stringResource(R.string.open_input)
+            FaIcon(faIcon = if (showInput) FaIcons.ArrowUp else FaIcons.ArrowDown,
                 modifier = Modifier
                     .semantics { contentDescription = accessibilityLabel ***REMOVED***
                     .clickable {

@@ -100,7 +100,12 @@ fun StorageScreen(navController: NavHostController, extractionViewModel: Extract
                                 .height(40.dp)
                                 .padding(start = 10.dp), // Add padding only to the first button
                             onClick = { extractionViewModel.updateSortOrder(option) ***REMOVED***) {
-                            Text(text = translateType(option.name.removePrefix("BY_").lowercase(), LocalContext.current))
+                            Text(
+                                text = translateType(
+                                    option.name.removePrefix("BY_").lowercase(),
+                                    LocalContext.current
+                    ***REMOVED***
+                ***REMOVED***
                         ***REMOVED***
                     ***REMOVED***
                 ***REMOVED***

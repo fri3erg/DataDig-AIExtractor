@@ -393,7 +393,12 @@ fun ChooseTemplate(
                                 .height(40.dp)
                                 .padding(start = 10.dp),
                             onClick = { templateViewModel.updateSortOrder(option) ***REMOVED***) {
-                            Text(text = translateType(option.name.removePrefix("BY_").lowercase(), LocalContext.current))
+                            Text(
+                                text = translateType(
+                                    option.name.removePrefix("BY_").lowercase(),
+                                    LocalContext.current
+                    ***REMOVED***
+                ***REMOVED***
                         ***REMOVED***
                     ***REMOVED***
                 ***REMOVED***
@@ -559,9 +564,9 @@ fun ExtractionDetails(
                 colors = ButtonDefaults.buttonColors(dark_green),
                 onClick = onExtractionClick
 ***REMOVED*** {
-                Text(text = stringResource(R.string.extract),
-                    fontSize = 15.sp,
-                    color = Color.White)
+                Text(
+                    text = stringResource(R.string.extract), fontSize = 15.sp, color = Color.White
+    ***REMOVED***
             ***REMOVED***
         ***REMOVED*** else { //extraction ongoing or complete
             ExtractedBar(serviceViewModel, changeId)
@@ -891,7 +896,7 @@ fun ShownExtraction(
     ***REMOVED***
                 Button(modifier = Modifier
                     .padding(16.dp)
-                    .size(150.dp, 70.dp),
+                    .height(70.dp),
 
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(dark_green),
@@ -900,7 +905,11 @@ fun ShownExtraction(
                             navController.navigate(Screen.SingleExtraction.withArgs("extractionId" to extractionId.toHexString()))
                         ***REMOVED***
                     ***REMOVED***) {
-                    Text(stringResource(R.string.go_to_extraction))
+                    Text(
+                        stringResource(R.string.go_to_extraction),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+        ***REMOVED***
                 ***REMOVED***
             ***REMOVED***
             // Show the extraction result file
@@ -964,32 +973,32 @@ fun CameraPreview(
                     ***REMOVED***
                 ***REMOVED***
             ***REMOVED***)
-    val requestPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-        onResult = { isGranted: Boolean ->
-            if (isGranted) {
-                // Launch the image picker
-                imagePickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-            ***REMOVED***
-        ***REMOVED***)
-    val filePickerLauncher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult(),
-            onResult = { result ->
-                val data: Intent? = result.data
-                val clipData = data?.clipData
-                if (clipData != null) {
-                    for (i in 0 until clipData.itemCount) {
-                        val uri: Uri = clipData.getItemAt(i).uri
-                        onSetUri(uri)
-                    ***REMOVED***
-                    changeActivePhoto()
-                ***REMOVED*** else {
-                    data?.data?.let { uri ->
-                        onSetUri(uri)
-                        changeActivePhoto()
-                    ***REMOVED***
+    val requestPermissionLauncher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission(),
+            onResult = { isGranted: Boolean ->
+                if (isGranted) {
+                    // Launch the image picker
+                    imagePickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                 ***REMOVED***
             ***REMOVED***)
+    val filePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult(),
+        onResult = { result ->
+            val data: Intent? = result.data
+            val clipData = data?.clipData
+            if (clipData != null) {
+                for (i in 0 until clipData.itemCount) {
+                    val uri: Uri = clipData.getItemAt(i).uri
+                    onSetUri(uri)
+                ***REMOVED***
+                changeActivePhoto()
+            ***REMOVED*** else {
+                data?.data?.let { uri ->
+                    onSetUri(uri)
+                    changeActivePhoto()
+                ***REMOVED***
+            ***REMOVED***
+        ***REMOVED***)
     val onFilePickerClick = {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             type = "*/*"
@@ -1130,7 +1139,9 @@ fun CameraPreview(
         ***REMOVED***
         // Capture Button
         Button(modifier = Modifier
-            .semantics { contentDescription = context.getString(R.string.capture_photo_button) ***REMOVED***
+            .semantics {
+                contentDescription = context.getString(R.string.capture_photo_button)
+            ***REMOVED***
             .padding(bottom = 20.dp)
             .size(80.dp)
             .clip(CircleShape)

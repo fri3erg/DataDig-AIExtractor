@@ -117,7 +117,7 @@
     {
       "title": "Beliebige Tabelle",
       "description": "Jede im Artikel vorhandene Tabelle",
-      "keywords": ["Table"],
+      "keywords": ["Tabelle", "Daten", "Zahlen", "Informationen"],
       "all": true,
       "rows": [],
       "columns": []

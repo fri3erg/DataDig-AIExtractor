@@ -21,7 +21,7 @@ from ...scanner.ai_manager.document_intelligence import get_tables_from_doc
 from ...scanner.extractors.llm_functions import general_table_inspection
 import threading
 from ...classes.Template import Template, TemplateTable
-from ...configs.configs_dict import prompts, prompts_intelligent
+from ...configs.configs_dict import prompts, prompts_intelligent, language_dict
 
 
 class ThreadFunction(threading.Thread):
@@ -371,11 +371,12 @@ class GeneralScanner:
 
     def get_tags(self) -> List[str]:
         """returns the tags of the document"""
+        language: str= self.options.language or "it"
         tags = []
         if len(self.exceptions_occurred) != 0:
-            tags.append("errors occurred")
+            tags.append(language_dict[language]["error"])
         if len(self.extracted_tables) != 0:
-            tags.append("tables extracted")
+            tags.append(language_dict[language]["table"])
         if self.options.language:
             tags.append(self.options.language)
         if self.options.format:
@@ -385,9 +386,9 @@ class GeneralScanner:
         if self.options.model:
             tags.append(self.options.model)
         if self.complex_info_present:
-            tags.append("complex_info")
+            tags.append(language_dict[language]["complex_info"])
         if self.intelligent_present:
-            tags.append("intelligent_info")
+            tags.append(language_dict[language]["intelligent_info"])
 
         return tags
 

@@ -154,19 +154,16 @@ fun EditTemplateScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
 ***REMOVED*** {
-                    Text(
-                        text = title ?: "",
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier
-                            .weight(1f)
-                            .semantics {
-                                contentDescription =
-                                    context.getString(R.string.template_title)
-                            ***REMOVED***
-                            .align(Alignment.CenterVertically)
-        ***REMOVED***
+                Text(text = title ?: "",
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+                        .weight(1f)
+                        .semantics {
+                            contentDescription = context.getString(R.string.template_title)
+                        ***REMOVED***
+                        .align(Alignment.CenterVertically))
 
                 template?.let { //Use template button
                     Button(modifier = Modifier.align(Alignment.CenterVertically),
@@ -215,43 +212,45 @@ fun EditTemplateScreen(
                 // Template Title Section
                 item {
                     title?.let {
-                        OutlinedTextField(value = it,
-                            colors = OutlinedTextFieldDefaults.colors(
-                                unfocusedBorderColor = Color.Black,
-                                unfocusedLabelColor = Color.Black,
-                ***REMOVED***,
-                            onValueChange = { newValue ->
-                                templateViewModel.updateTemplateTitle(template!!, newValue)
-                                title = newValue
-                            ***REMOVED***,
-                            label = { Text(stringResource(R.string.template_title), color = Color.Black) ***REMOVED***,
-                            modifier = Modifier.fillMaxWidth(),
-                            trailingIcon = {
-                                HelpIconButton(helpText = stringResource(R.string.this_is_the_title_of_the_template_this_is_irrelevant_for_the_extraction_just_for_your_own_reference),title = stringResource(R.string.template_title))
-                            ***REMOVED***)
+                        OutlinedTextField(value = it, colors = OutlinedTextFieldDefaults.colors(
+                            unfocusedBorderColor = Color.Black,
+                            unfocusedLabelColor = Color.Black,
+            ***REMOVED***, onValueChange = { newValue ->
+                            templateViewModel.updateTemplateTitle(template!!, newValue)
+                            title = newValue
+                        ***REMOVED***, label = {
+                            Text(
+                                stringResource(R.string.template_title), color = Color.Black
+                ***REMOVED***
+                        ***REMOVED***, modifier = Modifier.fillMaxWidth(), trailingIcon = {
+                            HelpIconButton(
+                                helpText = stringResource(R.string.this_is_the_title_of_the_template_this_is_irrelevant_for_the_extraction_just_for_your_own_reference),
+                                title = stringResource(R.string.template_title)
+                ***REMOVED***
+                        ***REMOVED***)
                     ***REMOVED***
                 ***REMOVED***
                 item {
                     description?.let {
-                        OutlinedTextField(value = it,
-                            colors = OutlinedTextFieldDefaults.colors(
-                                unfocusedBorderColor = Color.Black,
-                                unfocusedLabelColor = Color.Black,
-                ***REMOVED***,
-                            onValueChange = { newValue ->
-                                templateViewModel.updateTemplateDescription(template!!, newValue)
-                                description = newValue
-                            ***REMOVED***,
-                            label = { Text(stringResource(R.string.template_description), color = Color.Black) ***REMOVED***,
-                            modifier = Modifier.fillMaxWidth(),
-                            trailingIcon = {
-                                HelpIconButton(
-                                    helpText = stringResource(R.string.this_is_the_description_of_the_template_this_will_be_used_for_the_extraction_but_it_is_highly_optional_and_can_be_left_empty_use_it_if_you_need_to_pass_more_context),
-                                    title = stringResource(
-                                        R.string.template_description
-                        ***REMOVED***
+                        OutlinedTextField(value = it, colors = OutlinedTextFieldDefaults.colors(
+                            unfocusedBorderColor = Color.Black,
+                            unfocusedLabelColor = Color.Black,
+            ***REMOVED***, onValueChange = { newValue ->
+                            templateViewModel.updateTemplateDescription(template!!, newValue)
+                            description = newValue
+                        ***REMOVED***, label = {
+                            Text(
+                                stringResource(R.string.template_description),
+                                color = Color.Black
+                ***REMOVED***
+                        ***REMOVED***, modifier = Modifier.fillMaxWidth(), trailingIcon = {
+                            HelpIconButton(
+                                helpText = stringResource(R.string.this_is_the_description_of_the_template_this_will_be_used_for_the_extraction_but_it_is_highly_optional_and_can_be_left_empty_use_it_if_you_need_to_pass_more_context),
+                                title = stringResource(
+                                    R.string.template_description
                     ***REMOVED***
-                            ***REMOVED***)
+                ***REMOVED***
+                        ***REMOVED***)
                     ***REMOVED***
                 ***REMOVED***
 
@@ -529,7 +528,8 @@ fun TemplateFieldComposable(
                             expanded = expanded,
                             onExpandedChange = { expanded = !expanded ***REMOVED***) {
                             type?.let {
-                                TextField(value = translateType(it, LocalContext.current),
+                                TextField(
+                                    value = translateType(it, LocalContext.current),
                                     onValueChange = {***REMOVED***,
                                     readOnly = true,
                                     label = { Text(stringResource(id = R.string.type)) ***REMOVED***,
@@ -556,7 +556,13 @@ fun TemplateFieldComposable(
                                 expanded = expanded,
                                 onDismissRequest = { expanded = false ***REMOVED***) {
                                 typeOptions.forEach { newType ->
-                                    DropdownMenuItem(text = { Text(translateType(newType, LocalContext.current)) ***REMOVED***, onClick = {
+                                    DropdownMenuItem(text = {
+                                        Text(
+                                            translateType(
+                                                newType, LocalContext.current
+                                ***REMOVED***
+                            ***REMOVED***
+                                    ***REMOVED***, onClick = {
                                         type = newType
                                         when (newType) {
                                             "Text" -> {
@@ -1269,7 +1275,13 @@ fun AlertTable(
                         expanded = expanded,
                         onDismissRequest = { expanded = false ***REMOVED***) {
                         typeOptions.forEach { type ->
-                            DropdownMenuItem(text = { Text(translateType(type, LocalContext.current)) ***REMOVED***, onClick = {
+                            DropdownMenuItem(text = {
+                                Text(
+                                    translateType(
+                                        type, LocalContext.current
+                        ***REMOVED***
+                    ***REMOVED***
+                            ***REMOVED***, onClick = {
                                 selectedType = type
                                 expanded = false
                             ***REMOVED***)

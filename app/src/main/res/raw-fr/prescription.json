@@ -37,7 +37,7 @@
     {
       "title": "Médicaments",
       "description": "Liste des médicaments prescrits avec leurs détails",
-      "keywords": ["medication", "dosage", "instructions"],
+      "keywords": ["médicament", "dosage", "quantité", "instructions"],
       "all": false,
       "rows": [],
       "columns": [

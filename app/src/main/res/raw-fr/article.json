@@ -117,7 +117,7 @@
     {
       "title": "N'importe quel tableau",
       "description": "N'importe quel tableau présent dans l'article",
-      "keywords": ["Table"],
+      "keywords": ["Tableau", "Données", "Chiffres", "Informations"],
       "all": true,
       "rows": [],
       "columns": []
