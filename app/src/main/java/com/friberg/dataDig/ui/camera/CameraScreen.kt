@@ -147,8 +147,25 @@ fun CameraScreen(
         ***REMOVED***
 
     ***REMOVED***
+    val requestPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+
+    onResult = { isGranted: Boolean ->
+        if (!isGranted)
+        {
+            Toast.makeText(context, "Permission denied. Cannot access camera.", Toast.LENGTH_SHORT).show()
+        ***REMOVED***
+    ***REMOVED***
+    )
     LaunchedEffect(template) {
         template?.let { serviceViewModel.setTemplate(it) ***REMOVED***
+        if (ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.CAMERA
+***REMOVED*** != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+        ***REMOVED***
     ***REMOVED***
 
     Scaffold(
@@ -176,7 +193,7 @@ fun CameraScreen(
 
                 //after that, if the template is not selected, show the template selection
             ***REMOVED*** else if (template == null) {
-                ChooseTemplate(navController, templateViewModel, serviceViewModel)
+                ChooseTemplate( templateViewModel, serviceViewModel)
                 // if the template is selected, show the extraction details, with the option to extract and the progress bar and result
             ***REMOVED*** else {
                 ExtractionDetails(template?.title ?: "",
@@ -351,13 +368,11 @@ fun GptKeysDialog(function: () -> Unit, navController: NavHostController) {
 /**
  * Screen to choose a template to start use in the extraction
  *
- * @param navController  The navigation controller
  * @param templateViewModel The template view model to access the templates
  * @param serviceViewModel The service view model to set the template
  */
 @Composable
 fun ChooseTemplate(
-    navController: NavHostController,
     templateViewModel: TemplateViewModel,
     serviceViewModel: ServiceViewModel
 ) {

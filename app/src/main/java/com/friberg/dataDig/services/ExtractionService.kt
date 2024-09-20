@@ -404,7 +404,7 @@ fun filterErrors(errorFound: String, context: Context): ExceptionOccurred? {
                 errorType="OpenAI"
                 errorDescription= "The language you have selected is not supported by OpenAI"
             ***REMOVED****/
-        errorFound.contains("Azure") || errorFound.contains("No connection adapters were found") -> ExceptionOccurred().apply {
+        errorFound.contains("Azure") || errorFound.contains("No connection adapters were found") || errorFound.contains("No address associated with hostname") -> ExceptionOccurred().apply {
             error = context.getString(R.string.azure_error)
             errorType = context.getString(R.string.azure)
             errorDescription =
@@ -446,7 +446,7 @@ fun filterErrors(errorFound: String, context: Context): ExceptionOccurred? {
                 context.getString(R.string.no_internet_connection_please_check_your_connection)
         ***REMOVED***
 
-        errorFound.contains("No text was found") -> ExceptionOccurred().apply {
+        errorFound.contains("No text was found")|| errorFound.contains("text to analyze is not provided") -> ExceptionOccurred().apply {
             error = context.getString(R.string.no_text_was_found)
             errorType = context.getString(R.string.text)
             errorDescription = context.getString(R.string.no_text_was_found_in_the_image)
@@ -465,6 +465,7 @@ fun filterErrors(errorFound: String, context: Context): ExceptionOccurred? {
             errorDescription =
                 context.getString(R.string.you_have_exceeded_your_current_quota_please_check_that_you_added_billing_information_to_your_openai_account_and_that_you_have_not_reached_your_tier_limits_on_requests_per_day)
         ***REMOVED***
+
 
         else -> null
     ***REMOVED***

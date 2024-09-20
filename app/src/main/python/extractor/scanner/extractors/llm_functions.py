@@ -23,7 +23,8 @@ def get_doc_language(text, file_id, options: Options):
         str: language of the document
     """
     # Analyze first page
-    prompt = create_language_tag_messages(text=text[0][:300], language="en")
+    
+    prompt = create_language_tag_messages(text=" ".join(text)[:300], language="en")
     language, error_occurred = Models.tag(prompt, DocLanguage, file_id, options.model)
     if error_occurred:
         raise error_occurred
