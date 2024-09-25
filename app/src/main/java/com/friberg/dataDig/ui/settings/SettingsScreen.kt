@@ -249,6 +249,10 @@ fun ApiKeyInput(
                 modifier = Modifier
                     .semantics { contentDescription = accessibilityLabel ***REMOVED***
                     .clickable {
+                        if (showInput && newKey.isNotBlank()) {
+                            viewModel.storeApiKey(key, newKey)
+                            apiKey = true
+                        ***REMOVED***
                         showInput = !showInput
                     ***REMOVED***,
                 tint = Color.Black

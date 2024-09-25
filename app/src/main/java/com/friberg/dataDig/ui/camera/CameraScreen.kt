@@ -896,11 +896,12 @@ fun ShownExtraction(
         Column(
             modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            /*
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
-***REMOVED*** {
+***REMOVED*** {*/
                 Text(
                     stringResource(R.string.extraction_result),
                     modifier = Modifier.padding(16.dp),
@@ -928,13 +929,13 @@ fun ShownExtraction(
                 ***REMOVED***
             ***REMOVED***
             // Show the extraction result file
-            if (it.fileUri != null) {
+            /*if (it.fileUri != null) {
                 FileCard(it, extractionViewModel = extractionViewModel)
-            ***REMOVED***
+            ***REMOVED****/
             if (errorOccurred) {
                 ExceptionsDialog({ errorOccurred = false ***REMOVED***, it.exceptionsOccurred)
             ***REMOVED***
-        ***REMOVED***
+        //***REMOVED***
     ***REMOVED*** ?: run {
 
         HorizontalDivider()
