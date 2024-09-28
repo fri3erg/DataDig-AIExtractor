@@ -55,7 +55,6 @@ class GeneralScanner:
         self.images = images
         self.options = options
         self.text: List[str] = [sanitize_text(text) for text in text]
-        #print all values in env
         all_text = ''.join(self.text)  # Concatenate all strings in the list
         if len(all_text) <5:
             raise ValueError("No text was found") 
@@ -156,6 +155,7 @@ class GeneralScanner:
 
         extraction_fields = []
         try:
+            print("intelligent info: " + self.text[0][0:20] +self.options.language)
             # extract and clean
             extraction, optional_error = llm_extraction_and_tag(
                 self.text,
@@ -183,6 +183,7 @@ class GeneralScanner:
             List[ExtractedField]: extracted data
         """
         extraction_fields = []
+        print("language"+ self.options.language)
         try:
             # extract and clean
             extraction, optional_error = llm_extraction_and_tag(
@@ -229,7 +230,7 @@ class GeneralScanner:
                         ExceptionsExtracted(errors_occurred, "extracting from tables 1", repr(errors_occurred))
         ***REMOVED***
                 extracted_fields, title = extracted_from_pydantic_table(extraction, template)
-
+                print("title:" + title)
                 extracted_table.append(
                     ExtractedTable(title=title, template_table=template, fields=extracted_fields, dataframe=table)
     ***REMOVED***

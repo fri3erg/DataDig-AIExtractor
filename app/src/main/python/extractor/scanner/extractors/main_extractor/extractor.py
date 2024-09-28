@@ -1,3 +1,4 @@
+from attr import field, fields
 from ....classes.Extracted import Extracted, ExceptionsExtracted
 from ....classes.Options import Options
 from ....scanner.ai_manager.ai_models import Models
@@ -35,7 +36,10 @@ class MainExtractor(GeneralScanner):
             intelligent_template, basic_template = self.template.split_template()
 
             functions_parameters = {
+                **({
                 "basic_info": {"function": self.extract_basic_info, "args": {"template": basic_template***REMOVED******REMOVED***,
+                ***REMOVED***if basic_template.fields else {***REMOVED***
+    ***REMOVED***,
                 **(
                     {
                         "intelligent_info": {

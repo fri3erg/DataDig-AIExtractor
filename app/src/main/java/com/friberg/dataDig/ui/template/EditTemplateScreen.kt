@@ -630,7 +630,7 @@ fun TemplateFieldComposable(
                         changeDefault = { newDefault ->
                             default = newDefault
                         ***REMOVED***,
-                        isList = list ?: true,
+                        isList = list ?: false || intelligentExtraction ?: false,
                         type = type ?: "Text",
                         viewModel = viewModel,
                         template = template,
@@ -668,6 +668,11 @@ fun TemplateFieldComposable(
                                 intelligentExtraction = newValue
                                 viewModel.updateTemplateItem(
                                     template, "intelligentExtraction" to newValue, index
+                    ***REMOVED***
+
+                                default = ""
+                                viewModel.updateTemplateItem(
+                                    template, "default" to "", index
                     ***REMOVED***
                             ***REMOVED***,
             ***REMOVED***

@@ -33,6 +33,7 @@ def get_doc_language(text, file_id, options: Options):
     # Check if language is mapped
     # NOTE: need to add more languages
     doc_language = getattr(language, "language", "it")
+    print("doc_language", doc_language)
 
     return doc_language
 
@@ -57,7 +58,7 @@ def general_table_inspection(
 
         # First normal extraction, then tagging
         add_text = f"{desc_tabella[options.language or 'en']***REMOVED*** {add_text***REMOVED*** " if add_text else ""
-        table = f"{sanitize_text(add_text)***REMOVED*** TABLE-> {table***REMOVED***"
+        table =sanitize_text( f"{add_text***REMOVED*** TABLE-> {table.to_string()***REMOVED***")
         prompt = create_language_tag_messages(text=table, language=options.language or "it", is_table=True)
         print("table", table)
         extraction_adapted, errors_occurred = Models.tag(prompt, pydantic_class, file_id, options.model)

@@ -72,7 +72,8 @@ class Template:
         output_str += "Fields:\n  "
         for field in self.fields:
             required_str = "Required" if field.required else "Optional"
-            output_str += f"- {field.title***REMOVED*** ({field.type***REMOVED***): {field.description***REMOVED*** ({required_str***REMOVED***)(Default: {field.default***REMOVED***)\n  "
+            optional_default = f"(Default: {field.default***REMOVED***)" if getattr(field, "default", None) else ""
+            output_str += f"- {field.title***REMOVED*** ({field.type***REMOVED***): {field.description***REMOVED*** ({required_str***REMOVED***) {optional_default***REMOVED***\n  "
         return output_str
 
     def split_template(self):

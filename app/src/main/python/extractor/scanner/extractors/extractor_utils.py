@@ -451,10 +451,9 @@ def create_intelligent_pydantic_class(template: Template):
             description = "(required)"
         if template_field.type == "date":
             description += " (format: YYYY-MM-DD)"
-        default = get_typed_default(template_field.default, field_type)
         if template_field.list:
             field_type = List[field_type]
-        fields[template_field.title] = (Optional[field_type], Field(description=description, default=default))
+        fields[template_field.title] = (Optional[field_type], Field(description=description))
 
     model = create_model("DynamicModel", **fields)  # Use create_model for dynamic creation
     return model
@@ -632,11 +631,11 @@ def extracted_from_pydantic_table(
 
     result_matrix: Dict[str, Dict[str, ExtractedField]] = {***REMOVED***
 
-    title = getattr(tagged_data, "title", "title")
+    title = getattr(template, "title", None) or getattr(tagged_data, "title", "title")
     if getattr(tagged_data, "title", None) is not None:
         del tagged_data.title
     # Initialize empty dicts for each row
-    if template.all:
+    if template.all or (template.rows == [] and template.columns == []):
         return extracted_from_all(tagged_data), title
 
     if getattr(getattr(tagged_data, "__class__", None), "__name__", None) == "DynamicModelTableRows":
@@ -690,49 +689,44 @@ def extracted_from_all(tagged_data: ExtractedTable) -> Dict[str, Dict[str, Extra
 def extracted_from_rows(tagged_data, template: TemplateTable) -> Dict[str, Dict[str, ExtractedField]]:
     result_matrix: Dict[str, Dict[str, ExtractedField]] = {***REMOVED***
 
-    for field_name, value in tagged_data.__dict__.items():
-        # Extract row and column names from field name
-        row_name = field_name[4:]
-        result_matrix[row_name] = {***REMOVED***
+    # Get maximum list length to determine number of columns
+    max_length = max(len(value) for value in tagged_data.__dict__.values())
 
-        # Find matching row and column in template
+    # Initialize rows with default values
+    for row in template.rows:
+        result_matrix[row.title] = {"col_" + str(idx + 1): ExtractedField(template_field=row, value="N/A") for idx in range(max_length)***REMOVED***
+
+    for field_name, value in tagged_data.__dict__.items():
+        row_name = field_name[4:]
         matching_row = next((r for r in template.rows if r.title in row_name), None)
         if matching_row:
-            # Create ExtractedField instance
             for idx, val in enumerate(value):
-                result_matrix[row_name].update(
-                    {
-                        "col_ "
-                        + str(idx + 1): ExtractedField(
-                            template_field=matching_row,  # Use the column as the template field
-                            value=val,
-            ***REMOVED***
-                    ***REMOVED***
+                result_matrix[row_name]["col_" + str(idx + 1)] = ExtractedField(
+                    template_field=matching_row,
+                    value=val,
     ***REMOVED***
+
     return result_matrix
 
 
 def extracted_from_columns(tagged_data, template: TemplateTable) -> Dict[str, Dict[str, ExtractedField]]:
-
     result_matrix: Dict[str, Dict[str, ExtractedField]] = {***REMOVED***
 
-    # Initialize rows in the result_matrix
-    first_column_values = next(iter(tagged_data.__dict__.values()))
-    for idx in range(len(first_column_values)):
-        result_matrix["row_" + str(idx + 1)] = {***REMOVED***
+    # Get maximum list length to determine number of columns
+    max_length = max(len(value) for value in tagged_data.__dict__.values())
+
+    # Initialize rows with default values
+    for idx in range(max_length):
+        result_matrix["row_" + str(idx + 1)] = {col.title: ExtractedField(template_field=col, value="N/A") for col in template.columns***REMOVED***
 
     for field_name, value in tagged_data.__dict__.items():
         col_name = field_name[7:]
         matching_col = next((c for c in template.columns if c.title in col_name), None)
         if matching_col:
             for idx, val in enumerate(value):
-                result_matrix["row_" + str(idx + 1)].update(
-                    {
-                        col_name: ExtractedField(
-                            template_field=matching_col,
-                            value=val,
-            ***REMOVED***
-                    ***REMOVED***
+                result_matrix["row_" + str(idx + 1)][col_name] = ExtractedField(
+                    template_field=matching_col,
+                    value=val,
     ***REMOVED***
 
     return result_matrix

@@ -103,7 +103,7 @@ class ExtractionService : Service() {
                 @Suppress("DEPRECATION") intent?.getParcelableArrayListExtra("imageUris")
             ***REMOVED***
             if (imageUri != null) {
-                val template = serviceRepository.getTemplate() ?: return
+                val template = serviceRepository.getTemplate() ?:return
                 val options = serviceRepository.getOptions()
                 // Process the image using a Coroutine
                 CoroutineScope(Dispatchers.IO).launch {
@@ -193,24 +193,19 @@ class ExtractionService : Service() {
                 val module = py.getModule("main")
                 val builtinModule = py.getModule("builtins")
                 val pyListImages = builtinModule.callAttr("list") // Create an empty Python list
-                val bitmapList = mutableListOf<Bitmap>()
+                val pyListText = builtinModule.callAttr("list") // Create an empty Python list
 
                 // Process each image and add to the list
                 imageUris.forEach { imageUri ->
-                    val bitmaps = processUri(localContext.contentResolver, imageUri, pyListImages)
-                    bitmapList.addAll(bitmaps)
+                    val text = processUri(localContext.contentResolver, imageUri, pyListImages, localContext)
+                    text.forEach { text1 ->
+                        pyListText.callAttr("append",text1)
+                    ***REMOVED***
+
                 ***REMOVED***
 
                 progressCallback(0.15f)
-                val imageUriOcr = ImageOCR()
-                val pyListText = builtinModule.callAttr("list") // Create an empty Python list
 
-                // Extract text from each bitmap and add to the list
-                bitmapList.forEach { bitmap ->
-                    pyListText.callAttr(
-                        "append", imageUriOcr.extractTextFromBitmap(bitmap)
-        ***REMOVED***
-                ***REMOVED***
 
 
                 val classesOptionModule =
@@ -439,12 +434,6 @@ fun filterErrors(errorFound: String, context: Context): ExceptionOccurred? {
                 context.getString(R.string.connection_error_please_check_your_connection)
         ***REMOVED***
 
-        errorFound.contains("internet") -> ExceptionOccurred().apply {
-            error = context.getString(R.string.no_internet_connection)
-            errorType = context.getString(R.string.connection)
-            errorDescription =
-                context.getString(R.string.no_internet_connection_please_check_your_connection)
-        ***REMOVED***
 
         errorFound.contains("No text was found")|| errorFound.contains("text to analyze is not provided") -> ExceptionOccurred().apply {
             error = context.getString(R.string.no_text_was_found)
@@ -466,8 +455,14 @@ fun filterErrors(errorFound: String, context: Context): ExceptionOccurred? {
                 context.getString(R.string.you_have_exceeded_your_current_quota_please_check_that_you_added_billing_information_to_your_openai_account_and_that_you_have_not_reached_your_tier_limits_on_requests_per_day)
         ***REMOVED***
 
+        errorFound.contains("internet") -> ExceptionOccurred().apply {
+            error = context.getString(R.string.no_internet_connection)
+            errorType = context.getString(R.string.connection)
+            errorDescription =
+                context.getString(R.string.no_internet_connection_please_check_your_connection)
+        ***REMOVED***
 
-        else -> null
+            else -> null
     ***REMOVED***
 
 ***REMOVED***
@@ -690,16 +685,18 @@ fun sendNotification(context: Context, title: String, content: String) {
  * @param pyListImages The python list to append the base64 image to
  * @return List<Bitmap>
  */
-fun processUri(contentResolver: ContentResolver, uri: Uri, pyListImages: PyObject): List<Bitmap> {
-    val bitmaps = mutableListOf<Bitmap>()
+fun processUri(contentResolver: ContentResolver, uri: Uri, pyListImages: PyObject, context: Context): List< String> {
+    val text = mutableListOf<String>()
+    val imageUriOcr = ImageOCR()
+
 
     when (val mimeType = getMimeType(uri, contentResolver)) {
         "application/pdf" -> {
-            val base64Images = pdfToBase64Images(contentResolver, uri)
-            base64Images.forEach { base64Image ->
-                pyListImages.callAttr("append", base64Image)
-                val bitmap = base64ToBitmap(base64Image)
-                bitmaps.add(bitmap)
+
+            val base64ImagesText = pdfToBase64Images(contentResolver, uri, imageUriOcr, context)
+            base64ImagesText.forEach { base64Image ->
+                pyListImages.callAttr("append", base64Image.first)
+                text.add(base64Image.second)
             ***REMOVED***
         ***REMOVED***
 
@@ -717,14 +714,16 @@ fun processUri(contentResolver: ContentResolver, uri: Uri, pyListImages: PyObjec
             ***REMOVED***
             if (base64Image != null) {
                 pyListImages.callAttr("append", base64Image)
-                bitmap.let { bitmaps.add(it) ***REMOVED***
+                bitmap.let {
+                    text.add(imageUriOcr.extractTextFromBitmap(it))
+                ***REMOVED***
             ***REMOVED***
         ***REMOVED***
 
         else -> throw IllegalArgumentException("Unsupported file format: $mimeType")
     ***REMOVED***
 
-    return bitmaps
+    return text
 ***REMOVED***
 
 fun getMimeType(uri: Uri, contentResolver: ContentResolver): String? {
@@ -739,8 +738,8 @@ fun getMimeType(uri: Uri, contentResolver: ContentResolver): String? {
     return mimeType
 ***REMOVED***
 
-fun pdfToBase64Images(contentResolver: ContentResolver, uri: Uri): List<String> {
-    val base64Images = mutableListOf<String>()
+fun pdfToBase64Images(contentResolver: ContentResolver, uri: Uri, imageOCR: ImageOCR, context: Context): List<Pair<String, String>>{
+    val imageAndTextList = mutableListOf<Pair<String, String>>()
 
     try {
         val parcelFileDescriptor: ParcelFileDescriptor? =
@@ -761,8 +760,9 @@ fun pdfToBase64Images(contentResolver: ContentResolver, uri: Uri): List<String> 
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
                 val base64Image =
                     Base64.encodeToString(byteArrayOutputStream.toByteArray(), Base64.DEFAULT)
+                val pageText = imageOCR.extractTextFromPdf(context, uri, pageIndex) // Call the modified extraction function
 
-                base64Images.add(base64Image)
+                imageAndTextList.add(Pair(base64Image, pageText))
 
                 page.close()
             ***REMOVED***
@@ -775,10 +775,6 @@ fun pdfToBase64Images(contentResolver: ContentResolver, uri: Uri): List<String> 
         e.printStackTrace()
     ***REMOVED***
 
-    return base64Images
+    return imageAndTextList
 ***REMOVED***
 
-fun base64ToBitmap(base64Str: String): Bitmap {
-    val decodedBytes = Base64.decode(base64Str, Base64.DEFAULT)
-    return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
-***REMOVED***

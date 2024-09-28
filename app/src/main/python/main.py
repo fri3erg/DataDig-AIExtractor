@@ -54,7 +54,6 @@ def main(encoded_images: list, text: list[str], template: Template, options: Opt
                 extractor.second_stage()
                 progress_callback(0.95)
                 extraction = extractor.end_phase()
-                progress_callback(0.99)
 
         except Exception as error:
             exceptions_occurred.append(

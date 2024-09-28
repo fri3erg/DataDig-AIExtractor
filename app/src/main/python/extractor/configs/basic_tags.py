@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 
 class DocLanguage(BaseModel):
     language: Literal["it", "en", "fr", "de", "es"] = Field(
-        description="language the document is written in", default="it"
+        description="what language the document is written in?", default="it"
     )
 
 

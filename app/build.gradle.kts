@@ -222,7 +222,7 @@ dependencies {
     runtimeOnly(libs.ktor.client.serialization.jvm) // Or the latest version
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.androidx.ui.tooling.preview)
-
+    implementation ("com.tom-roush:pdfbox-android:2.0.27.0")
     androidTestImplementation("androidx.test:monitor:1.7.1")
     androidTestImplementation(libs.junit)
     implementation("androidx.activity:activity:1.9.1")

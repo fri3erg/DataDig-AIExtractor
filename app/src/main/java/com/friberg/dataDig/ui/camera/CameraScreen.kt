@@ -70,6 +70,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.friberg.dataDig.Screen
 import com.friberg.dataDig.models.ExceptionOccurred
@@ -83,7 +84,6 @@ import com.friberg.dataDig.ui.theme.dark_green
 import com.friberg.dataDig.ui.theme.base_card_color
 import com.friberg.dataDig.ui.theme.white_transparent
 import com.friberg.dataDig.utils.DropDownGeneral
-import com.friberg.dataDig.utils.FileCard
 import com.friberg.dataDig.utils.HelpIconButton
 import com.friberg.dataDig.utils.LabeledSwitch
 import com.friberg.dataDig.utils.MyImageArea
@@ -97,7 +97,9 @@ import com.guru.fontawesomecomposelib.FaIcon
 import com.guru.fontawesomecomposelib.FaIcons
 import io.realm.kotlin.types.RealmList
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -122,14 +124,21 @@ fun CameraScreen(
     extractionViewModel: ExtractionViewModel
 ) {
 
-    var id = templateId
+    var id by remember { mutableStateOf(templateId) ***REMOVED*** // Make 'id' reactive and mutable
     val context = LocalContext.current
     val imageUris by serviceViewModel.imageUris.collectAsState()
-    val combinedTemplate: State<Template?> = combine(
-        templateViewModel.queryTemplate(id ?: ""), serviceViewModel.template
-    ) { templateFromQuery, serviceTemplate ->
-        templateFromQuery
-            ?: serviceTemplate // If templateFromQuery is null, fallback to serviceTemplate
+    val combinedTemplate: State<Template?> = remember(id) {
+        combine(
+            templateViewModel.queryTemplate(id ?: ""),
+            serviceViewModel.template
+        ) { templateFromQuery, serviceTemplate ->
+            templateFromQuery
+                ?: serviceTemplate // If templateFromQuery is null, fallback to serviceTemplate
+        ***REMOVED***.stateIn(
+            scope = serviceViewModel.viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = null
+        )
     ***REMOVED***.collectAsState(initial = null)
     val template by combinedTemplate
 
@@ -147,6 +156,7 @@ fun CameraScreen(
         ***REMOVED***
 
     ***REMOVED***
+
     val requestPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
 
@@ -567,7 +577,7 @@ fun ExtractionDetails(
             ***REMOVED***)
         ***REMOVED***
         if (!activeExtraction) { //choosing what goes under the images
-            ButtonBar(serviceViewModel, sharedPrefs)
+            ButtonBar(serviceViewModel, sharedPrefs, changeId)
             HorizontalDivider()
 
             Button(
@@ -617,6 +627,7 @@ fun ExtractedBar(serviceViewModel: ServiceViewModel, changeId: () -> Unit) {
                 serviceViewModel.setActiveExtraction(false)
                 serviceViewModel.setActivePhoto(true)
                 serviceViewModel.setActiveTemplate(null)
+                changeId()
                 serviceViewModel.setProgress(0f)
                 serviceViewModel.clearResult()
             ***REMOVED***
@@ -691,7 +702,7 @@ fun ExtractedBar(serviceViewModel: ServiceViewModel, changeId: () -> Unit) {
  */
 @Composable
 fun ButtonBar(
-    serviceViewModel: ServiceViewModel, sharedPrefs: SharedPreferences
+    serviceViewModel: ServiceViewModel, sharedPrefs: SharedPreferences, changeId: () -> Unit
 ) {
     val options by serviceViewModel.options.collectAsState()
 
@@ -720,6 +731,7 @@ fun ButtonBar(
         ***REMOVED***
         // Clear Template
         IconButton(onClick = {
+            changeId()
             serviceViewModel.setActiveTemplate(null)
             serviceViewModel.setActiveExtraction(false)
 

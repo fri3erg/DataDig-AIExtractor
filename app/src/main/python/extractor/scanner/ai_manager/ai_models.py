@@ -155,6 +155,8 @@ class Models(LLM):
             hash(os.getenv("OPENAI_API_KEY"))
         ]  # Get the singleton instance
         try:
+            print("prompt", prompt)
+            print("schema", template)
             chain = LLMChain(llm=llm, prompt=prompt)
             output = chain.run(context=pages, template=template)
         except AuthenticationError as auth_err:

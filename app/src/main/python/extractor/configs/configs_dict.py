@@ -83,163 +83,146 @@ prompts = {
 ***REMOVED***
 
 prompts_intelligent = {
-    "it": """
-Il tuo compito è estrarre i campi specificati nel TEMPLATE E ISTRUZIONI dal DOCUMENTO fornito.
+"it": """
+Il tuo compito: Estrarre i campi specificati nel TEMPLATE dal DOCUMENTO fornito.
 
-**Linee guida:**
+Linee guida:
 
-L'obiettivo è restituire i campi richiesti se sono presenti nel documento OPPURE, se non esplicitamente indicati, dedurre o interpretare in modo intelligente i loro valori in base al contesto e alle istruzioni fornite per ciascun campo.
+1. ** Priorità all'Estrazione Letterale:
 
-Giustifica le tue risposte in modo conciso.
+2. ** La tua prima priorità è trovare i valori dei campi direttamente nel testo del DOCUMENTO. Se un campo è menzionato esplicitamente, riporta il suo valore esatto.
+Presenze Multiple:
 
-1. **Valori Esatti**: Se il campo richiesto è menzionato direttamente nel DOCUMENTO, riporta il suo valore esatto così come appare. Leggi attentamente le istruzioni per capire cosa cercare e come estrarlo.
+3. ** Se un campo appare più volte nel DOCUMENTO, restituisci tutti i valori rilevanti, spiegando brevemente il contesto di ciascuna occorrenza.
+Campi Obbligatori:
 
-2. **Presenze Multiple**: Se un campo appare più volte nel DOCUMENTO, restituisci tutti i valori rilevanti nella stringa, spiegando brevemente il contesto in cui si trova ciascun valore.
+4. ** Se il valore non è esplicitamente dichiarato nel testo:
+semplicemente prova a indovinare, il contesto e le istruzioni dovrebbero essere usati per dedurre il valore, puoi anche usare le tue conoscenze,
 
-3. **Campi Obbligatori**: Tutti i campi obbligatori devono essere presenti nell'output.
-   * Se il valore di un campo obbligatorio non è esplicitamente dichiarato nel DOCUMENTO, utilizza la tua comprensione del contesto e le istruzioni del campo per fare un'ipotesi o un'interpretazione plausibile del suo valore più probabile. 
-   * Utilizza il valore (Default) solo se non hai assolutamente idea di cosa fare.
+**  Ricorda: **
+L'obiettivo principale è estrarre informazioni dal DOCUMENTO, anche se richiede una certa interpretazione.
+Utilizza il contesto e le istruzioni per dedurre i valori quando necessario.
+Non aver paura di fare inferenze ragionevoli basate sulle informazioni disponibili.
+TEMPLATE:
 
-4. **Campi Opzionali**: I campi opzionali non sono obbligatori.
-   * Se il valore di un campo opzionale non è presente o non può essere dedotto dal DOCUMENTO, indica chiaramente che non è presente o, se applicabile, utilizza il valore (Default).
-
-5. **Istruzioni come Contesto**: Le istruzioni per ciascun campo (titolo e descrizione) forniscono un contesto cruciale per l'interpretazione. Utilizza questo contesto per prendere decisioni informate sul valore del campo, anche se non è direttamente dichiarato nel testo.
-
-**Ricorda, l'obiettivo non è solo estrarre informazioni letterali, ma comprendere il significato generale del DOCUMENTO e fornire interpretazioni approfondite dove necessario.**
-
-**Inizia l'estrazione! Credo in te!**
-
-TEMPLATE E ISTRUZIONI:
 {template***REMOVED***
+
 DOCUMENTO:
+
 {context***REMOVED***
 """,
     "en": """
-Your task is to extract the fields specified in the TEMPLATE AND INSTRUCTIONS from the provided DOCUMENT.
+Your Task: Extract the fields specified in the TEMPLATE from the provided DOCUMENT.
 
-**Guidelines:**
+Guidelines:
 
-The goal is to return the requested fields if they are found in the document OR, if not explicitly stated, intelligently deduce or interpret their values based on the context and the instructions provided for each field.
+1. ** Prioritize Literal Extraction:
 
-Justify your answers concisely.
+2. ** Your first priority is to find the field values directly within the text of the DOCUMENT. If a field is explicitly mentioned, report its exact value.
+Multiple Occurrences:
 
-1. **Exact Values**: If the requested field is directly mentioned in the DOCUMENT, report its exact value as it appears. Carefully read the instructions to understand what to look for and how to extract it.
+3. ** If a field appears multiple times in the DOCUMENT, return all relevant values, briefly explaining the context of each occurrence.
+Required Fields:
 
-2. **Multiple Occurrences**: If a field appears multiple times in the DOCUMENT, return all relevant values in the string, briefly explaining the context in which each value is found.
+4. ** If the value is not explicitly stated in the text:
+just guess, context and instructions should be used to deduce the value, you can also use your own knowledge,
 
-3. **Required Fields**: All required fields must be present in the output. 
-   * If a required field's value is not explicitly stated in the DOCUMENT, use your understanding of the context and the field's instructions to make an educated guess or interpretation of its most likely value. 
-   * Only if there's absolutely no basis for inference, use the provided (Default) value.
+**  Remember: **
+The primary goal is to extract information from the DOCUMENT, even if it requires some interpretation.
+Use the context and instructions to deduce values when necessary.
+Don't be afraid to make reasonable inferences based on the available information.
+TEMPLATE:
 
-4. **Optional Fields**: Optional fields are not mandatory. 
-   * If an optional field's value is not present or cannot be inferred from the DOCUMENT, clearly state that it's not present or, if applicable, use the (Default) value.
-
-5. **Instructions as Context**: The instructions for each field (title and description) provide crucial context for interpretation. Utilize this context to make informed decisions about the field's value, even if it's not directly stated in the text. 
-
-**Remember, the goal is not just to extract verbatim information but to understand the DOCUMENT's overall meaning and provide insightful interpretations where necessary.** 
-
-**Start the extraction! I believe in you!**
-
-TEMPLATE AND INSTRUCTIONS:
 {template***REMOVED***
+
 DOCUMENT:
+
 {context***REMOVED***
 """,
     "es": """
-Tu tarea es extraer los campos especificados en la PLANTILLA E INSTRUCCIONES del DOCUMENTO proporcionado.
+Tu tarea: Extraer los campos especificados en la PLANTILLA del DOCUMENTO proporcionado.
 
-**Directrices:**
+Pautas:
 
-El objetivo es devolver los campos solicitados si se encuentran en el documento O, si no se indican explícitamente, deducir o interpretar de forma inteligente sus valores en función del contexto y las instrucciones proporcionadas para cada campo.
+1. ** Priorizar la extracción literal:
 
-Justifica tus respuestas de manera concisa.
+2. ** Tu primera prioridad es encontrar los valores de los campos directamente en el texto del DOCUMENTO. Si un campo se menciona explícitamente, informa su valor exacto.
+Múltiples ocurrencias:
 
-1. **Valores Exactos**: Si el campo solicitado se menciona directamente en el DOCUMENTO, informa su valor exacto tal como aparece. Lee atentamente las instrucciones para comprender qué buscar y cómo extraerlo.
+3. ** Si un campo aparece varias veces en el DOCUMENTO, devuelve todos los valores relevantes, explicando brevemente el contexto de cada ocurrencia.
+Campos obligatorios:
 
-2. **Múltiples Ocurrencias**: Si un campo aparece varias veces en el DOCUMENTO, devuelve todos los valores relevantes en la cadena, explicando brevemente el contexto en el que se encuentra cada valor.
+4. ** Si el valor no se indica explícitamente en el texto:
+simplemente adivina, el contexto y las instrucciones deben usarse para deducir el valor, también puedes usar tu propio conocimiento,
 
-3. **Campos Obligatorios**: Todos los campos obligatorios deben estar presentes en la salida.
-   * Si el valor de un campo obligatorio no se indica explícitamente en el DOCUMENTO, utiliza tu comprensión del contexto y las instrucciones del campo para hacer una suposición o interpretación fundamentada de su valor más probable. 
-   * Utiliza el valor (Por Defecto) solo si no tienes absolutamente ninguna idea de qué hacer.
+**  Recuerda: **
+El objetivo principal es extraer información del DOCUMENTO, incluso si requiere cierta interpretación.
+Utiliza el contexto y las instrucciones para deducir los valores cuando sea necesario.
+No tengas miedo de hacer inferencias razonables basadas en la información disponible.
+PLANTILLA:
 
-4. **Campos Opcionales**: Los campos opcionales no son obligatorios.
-   * Si el valor de un campo opcional no está presente o no se puede inferir del DOCUMENTO, indica claramente que no está presente o, si corresponde, utiliza el valor (Por Defecto).
-
-5. **Instrucciones como Contexto**: Las instrucciones para cada campo (título y descripción) proporcionan un contexto crucial para la interpretación. Utiliza este contexto para tomar decisiones informadas sobre el valor del campo, incluso si no está directamente indicado en el texto.
-
-**Recuerda, el objetivo no es solo extraer información literal, sino comprender el significado general del DOCUMENTO y proporcionar interpretaciones perspicaces cuando sea necesario.**
-
-**¡Comienza la extracción! ¡Creo en ti!**
-
-PLANTILLA E INSTRUCCIONES:
 {template***REMOVED***
+
 DOCUMENTO:
+
 {context***REMOVED***
 """,
-    "de": """
-Deine Aufgabe ist es, die im TEMPLATE UND ANWEISUNGEN angegebenen Felder aus dem bereitgestellten DOKUMENT zu extrahieren.
+"de": """
+Deine Aufgabe: Extrahiere die im TEMPLATE angegebenen Felder aus dem bereitgestellten DOKUMENT.
 
-**Richtlinien:**
+Richtlinien:
 
-Das Ziel ist es, die angeforderten Felder zurückzugeben, wenn sie im Dokument gefunden werden ODER, falls nicht explizit angegeben, ihre Werte intelligent basierend auf dem Kontext und den für jedes Feld bereitgestellten Anweisungen abzuleiten oder zu interpretieren.
+1. ** Priorisiere die wörtliche Extraktion:
 
-Begründe deine Antworten präzise.
+2. ** Deine erste Priorität ist es, die Feldwerte direkt im Text des DOKUMENTS zu finden. Wenn ein Feld explizit erwähnt wird, gib seinen genauen Wert an.
+Mehrfaches Vorkommen:
 
-1. **Exakte Werte**: Wenn das angeforderte Feld direkt im DOKUMENT erwähnt wird, gib seinen genauen Wert so an, wie er erscheint. Lies die Anweisungen sorgfältig durch, um zu verstehen, wonach du suchen musst und wie du es extrahieren kannst.
+3. ** Wenn ein Feld mehrmals im DOKUMENT erscheint, gib alle relevanten Werte zurück und erkläre kurz den Kontext jedes Vorkommens.
+Erforderliche Felder:
 
-2. **Mehrfaches Vorkommen**: Wenn ein Feld mehrmals im DOKUMENT erscheint, gib alle relevanten Werte in der Zeichenkette zurück und erkläre kurz den Kontext, in dem jeder Wert gefunden wird.
+4. ** Wenn der Wert nicht explizit im Text angegeben ist:
+rate einfach, Kontext und Anweisungen sollten verwendet werden, um den Wert abzuleiten, du kannst auch dein eigenes Wissen verwenden,
 
-3. **Erforderliche Felder**: Alle erforderlichen Felder müssen in der Ausgabe vorhanden sein.
-   * Wenn der Wert eines erforderlichen Feldes im DOKUMENT nicht explizit angegeben ist, verwende dein Verständnis des Kontexts und der Feldanweisungen, um eine fundierte Vermutung oder Interpretation seines wahrscheinlichsten Wertes abzugeben.
-   * Verwende den Wert (Standard) nur, wenn du absolut keine Ahnung hast, was zu tun ist.
+**  Denke daran: **
+Das Hauptziel ist es, Informationen aus dem DOKUMENT zu extrahieren, auch wenn dies eine gewisse Interpretation erfordert.
+Verwende den Kontext und die Anweisungen, um Werte abzuleiten, wenn nötig.
+Scheue dich nicht, vernünftige Schlussfolgerungen auf der Grundlage der verfügbaren Informationen zu ziehen.
+TEMPLATE:
 
-4. **Optionale Felder**: Optionale Felder sind nicht obligatorisch.
-   * Wenn der Wert eines optionalen Feldes nicht vorhanden ist oder nicht aus dem DOKUMENT abgeleitet werden kann, gib klar an, dass er nicht vorhanden ist oder verwende gegebenenfalls den Wert (Standard).
-
-5. **Anweisungen als Kontext**: Die Anweisungen für jedes Feld (Titel und Beschreibung) liefern einen entscheidenden Kontext für die Interpretation. Nutze diesen Kontext, um fundierte Entscheidungen über den Wert des Feldes zu treffen, auch wenn er nicht direkt im Text angegeben ist.
-
-**Denke daran, das Ziel ist nicht nur, wörtliche Informationen zu extrahieren, sondern die Gesamtbedeutung des DOKUMENTS zu verstehen und bei Bedarf aufschlussreiche Interpretationen zu geben, wenn noetig.**
-
-**Beginne mit der Extraktion!**
-
-**Ich bin dir dabei!**
-
-VORLAGE UND ANWEISUNGEN:
 {template***REMOVED***
+
 DOKUMENT:
+
 {context***REMOVED***
 """,
     
     
     "fr": """
-Votre tâche consiste à extraire les champs spécifiés dans le MODÈLE ET LES INSTRUCTIONS à partir du DOCUMENT fourni.
+Votre tâche : Extraire les champs spécifiés dans le TEMPLATE à partir du DOCUMENT fourni.
 
-**Directives:**
+Directives :
 
-L'objectif est de renvoyer les champs demandés s'ils sont présents dans le document OU, s'ils ne sont pas explicitement indiqués, de déduire ou d'interpréter intelligemment leurs valeurs en fonction du contexte et des instructions fournies pour chaque champ.
+1. ** Priorité à l'extraction littérale :
 
-Justifiez vos réponses de manière concise.
+2. ** Votre première priorité est de trouver les valeurs des champs directement dans le texte du DOCUMENT. Si un champ est mentionné explicitement, indiquez sa valeur exacte.
+Occurrences multiples :
 
-1. **Valeurs Exactes** : Si le champ demandé est directement mentionné dans le DOCUMENT, indiquez sa valeur exacte telle qu'elle apparaît. Lisez attentivement les instructions pour comprendre ce qu'il faut chercher et comment l'extraire.
+3. ** Si un champ apparaît plusieurs fois dans le DOCUMENT, retournez toutes les valeurs pertinentes, en expliquant brièvement le contexte de chaque occurrence.
+Champs obligatoires :
 
-2. **Occurrences Multiples** : Si un champ apparaît plusieurs fois dans le DOCUMENT, renvoyez toutes les valeurs pertinentes dans la chaîne, en expliquant brièvement le contexte dans lequel chaque valeur se trouve.
+4. ** Si la valeur n'est pas explicitement indiquée dans le texte :
+devinez simplement, le contexte et les instructions doivent être utilisés pour déduire la valeur, vous pouvez également utiliser vos propres connaissances,
 
-3. **Champs Obligatoires** : Tous les champs obligatoires doivent être présents dans la sortie.
-   * Si la valeur d'un champ obligatoire n'est pas explicitement indiquée dans le DOCUMENT, utilisez votre compréhension du contexte et les instructions du champ pour faire une supposition ou une interprétation éclairée de sa valeur la plus probable. 
-   * Utilisez la valeur (Par Défaut) uniquement si vous n'avez absolument aucune idée de quoi faire.
+**  Rappelez-vous : **
+L'objectif principal est d'extraire des informations du DOCUMENT, même si cela nécessite une certaine interprétation.
+Utilisez le contexte et les instructions pour déduire les valeurs si nécessaire.
+N'ayez pas peur de faire des inférences raisonnables basées sur les informations disponibles.
+TEMPLATE :
 
-4. **Champs Facultatifs** : Les champs facultatifs ne sont pas obligatoires.
-   * Si la valeur d'un champ facultatif n'est pas présente ou ne peut pas être déduite du DOCUMENT, indiquez clairement qu'elle n'est pas présente ou, si applicable, utilisez la valeur (Par Défaut).
-
-5. **Instructions comme Contexte** : Les instructions pour chaque champ (titre et description) fournissent un contexte crucial pour l'interprétation. Utilisez ce contexte pour prendre des décisions éclairées sur la valeur du champ, même si elle n'est pas directement indiquée dans le texte.
-
-**N'oubliez pas que l'objectif n'est pas seulement d'extraire des informations textuelles, mais de comprendre le sens global du DOCUMENT et de fournir des interprétations pertinentes si nécessaire.**
-
-**Commencez l'extraction ! Je crois en vous !**
-
-MODÈLE ET INSTRUCTIONS :
 {template***REMOVED***
+
 DOCUMENT :
+
 {context***REMOVED***
 """,
 ***REMOVED***
@@ -368,7 +351,7 @@ def create_language_tag_messages(text: str, language: str, is_table=False) -> Pr
     template = (table_prompt[language] if is_table else system_prompt[language]) + user_prompt[language].format(
         text=sanitize_text(text)
     )
-    print("template" ,template)
+    print("template:" ,template)
     return PromptTemplate(input_variables=["schema"], template=template)
 
 
