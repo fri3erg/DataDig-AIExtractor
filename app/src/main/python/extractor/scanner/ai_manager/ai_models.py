@@ -125,8 +125,6 @@ class Models(LLM):
         except Exception as e:
             print("Error in tag (GPT-4):", e)
             raise e
-            
-           else: 
         """
         # PydanticOutputParser for other models
         output_parser = PydanticOutputParser(pydantic_object=schema)
@@ -148,7 +146,7 @@ class Models(LLM):
 
     # Updated extract() method
     @classmethod
-    def extract(cls, file_id, model, prompt: PromptTemplate, pages, template, temperature=0) -> str:
+    def extract(cls, file_id, model, prompt: PromptTemplate, pages, template, temperature:float=0.0) -> str:
         if model == "smart_mix":
             model = "gpt-3.5-turbo"
         llm: ChatOpenAI = cls(model, temperature)._models[model][temperature][

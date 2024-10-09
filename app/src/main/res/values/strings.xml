@@ -275,7 +275,7 @@
     <string name="azure_api_key_is_invalid">Azure API key is invalid</string>
     <string name="azure_error">Azure Error</string>
     <string name="an_error_occurred_with_azure_check_your_key_and_endpoint">An error occurred with Azure, check your key and endpoint</string>
-    <string name="tag_failed_because_of_weird_characters">Tag failed because of weird characters</string>
+    <string name="tag_failed_because_of_weird_characters">Tag failed because of weird characters or the input being too long</string>
     <string name="tag_failed_because_of_weird_characters_this_will_be_fixed_in_the_next_update">Tag failed because of weird characters, this will be fixed in the next update</string>
     <string name="call_rate_limit_exceeded">Call rate limit exceeded</string>
     <string name="call_rate_limit_exceeded_azure_was_not_able_to_scan_all_images">Call rate limit exceeded, azure was not able to scan all images</string>
@@ -303,6 +303,8 @@
     <string name="copy_value">copy value</string>
     <string name="service_is_running">Extraction started in the background</string>
     <string name="service">Extraction</string>
+    <string name="request_too_large">The input is too big</string>
+    <string name="request_too_large_azure_was_not_able_to_process_the_request">Request was too large and gpt was not able to process it</string>
 
 
 </resources>

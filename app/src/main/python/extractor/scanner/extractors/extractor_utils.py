@@ -82,8 +82,8 @@ def num_tokens_from_string(string: str | List[str], encoding_name: str = "gpt-4"
     buffer = 0.1
     if isinstance(string, list):
         tokens = [int(len(s) * (1 + buffer) / average_token_length) for s in string]
-        return sum(tokens)
-    return int(len(string) * (1 + buffer) / average_token_length)
+        return sum(tokens)*4
+    return int(len(string) * (1 + buffer) / average_token_length)*4
 
 
 

@@ -406,7 +406,7 @@ fun filterErrors(errorFound: String, context: Context): ExceptionOccurred? {
                 context.getString(R.string.an_error_occurred_with_azure_check_your_key_and_endpoint)
         ***REMOVED***
 
-        errorFound.contains("PromptTemplate") -> ExceptionOccurred().apply {
+        errorFound.contains("PromptTemplate")|| errorFound.contains("Failed to parse") -> ExceptionOccurred().apply {
             error = context.getString(R.string.tag_failed_because_of_weird_characters)
             errorType = context.getString(R.string.tagging)
             errorDescription =
@@ -460,6 +460,12 @@ fun filterErrors(errorFound: String, context: Context): ExceptionOccurred? {
             errorType = context.getString(R.string.connection)
             errorDescription =
                 context.getString(R.string.no_internet_connection_please_check_your_connection)
+        ***REMOVED***
+        errorFound.contains("Request too large") -> ExceptionOccurred().apply {
+            error = context.getString(R.string.request_too_large)
+            errorType = context.getString(R.string.openai)
+            errorDescription =
+                context.getString(R.string.request_too_large_azure_was_not_able_to_process_the_request)
         ***REMOVED***
 
             else -> null

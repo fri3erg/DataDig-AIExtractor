@@ -232,7 +232,7 @@ class GeneralScanner:
                 extracted_fields, title = extracted_from_pydantic_table(extraction, template)
                 print("title:" + title)
                 extracted_table.append(
-                    ExtractedTable(title=title, template_table=template, fields=extracted_fields, dataframe=table)
+                    ExtractedTable(title=title, template_table=template, fields=extracted_fields, dataframe=table.to_string())
     ***REMOVED***
 
             except Exception as error:

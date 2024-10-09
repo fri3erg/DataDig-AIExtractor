@@ -259,7 +259,7 @@
     <string name="azure_api_key_is_invalid">La chiave API Azure non è valida</string>
     <string name="azure_error">Errore Azure</string>
     <string name="an_error_occurred_with_azure_check_your_key_and_endpoint">Si è verificato un errore con Azure, controlla la tua chiave e l\'endpoint</string>
-    <string name="tag_failed_because_of_weird_characters">Tag fallito a causa di caratteri strani</string>
+    <string name="tag_failed_because_of_weird_characters">Tag fallito a causa di caratteri strani o per la lunghezza dell\'input</string>
     <string name="tag_failed_because_of_weird_characters_this_will_be_fixed_in_the_next_update">Tag fallito a causa di caratteri strani, questo verrà risolto nel prossimo aggiornamento</string>
     <string name="call_rate_limit_exceeded">Limite di chiamate superato</string>
     <string name="call_rate_limit_exceeded_azure_was_not_able_to_scan_all_images">Limite di chiamate superato, azure non è stato in grado di scansionare tutte le immagini</string>
@@ -287,4 +287,6 @@
     <string name="copy_value">Copia valore</string>
     <string name="service_is_running">Estrazione avviata in background</string>
     <string name="service">Estrazione</string>
+    <string name="request_too_large">L\'input è troppo grande</string>
+    <string name="request_too_large_azure_was_not_able_to_process_the_request">La richiesta era troppo grande e GPT non è stato in grado di elaborarla</string>
 </resources>
