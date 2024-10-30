@@ -287,4 +287,6 @@
     <string name="service">Extraction</string>
     <string name="request_too_large">L\'entrée est trop grande</string>
     <string name="request_too_large_azure_was_not_able_to_process_the_request">La requête était trop volumineuse et gpt n\'a pas pu la traiter</string>
+    <string name="you_haven_t_extracted_anything_yet">Vous n\'avez encore rien extrait</string>
+
 </resources>

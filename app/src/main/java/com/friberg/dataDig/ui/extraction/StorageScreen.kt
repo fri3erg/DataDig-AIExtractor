@@ -2,9 +2,11 @@ package com.friberg.dataDig.ui.extraction
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -139,12 +141,35 @@ fun StorageScreen(navController: NavHostController, extractionViewModel: Extract
         LazyColumn(
             modifier = Modifier.padding(innerPadding)
         ) {
-            items(extractions) { extraction ->
-                ExtractionItem(
-                    extraction = extraction,
-                    viewModel = extractionViewModel,
-                    navController = navController
-    ***REMOVED***
+            if (extractions.isEmpty()) {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        contentAlignment = Alignment.TopCenter // Aligns content at the top
+        ***REMOVED*** {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.fillMaxWidth()
+            ***REMOVED*** {
+                            Spacer(modifier = Modifier.height( 24.dp))
+                            Text(
+                                text = stringResource(R.string.you_haven_t_extracted_anything_yet),
+                                color = Color.Gray,
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold
+                ***REMOVED***
+                        ***REMOVED***
+                    ***REMOVED***
+                ***REMOVED***
+            ***REMOVED*** else {
+                items(extractions) { extraction ->
+                    ExtractionItem(
+                        extraction = extraction,
+                        viewModel = extractionViewModel,
+                        navController = navController
+        ***REMOVED***
+                ***REMOVED***
             ***REMOVED***
         ***REMOVED***
         if (firstTimeModal) { // First time visit modal

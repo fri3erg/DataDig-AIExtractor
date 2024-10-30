@@ -287,4 +287,6 @@
     <string name="request_too_large_azure_was_not_able_to_process_the_request">Die Anfrage war zu groß und gpt konnte sie nicht verarbeiten</string>
     <string name="service_is_running">Extraktion im Hintergrund gestartet</string>
     <string name="service">Extraktion</string>
+    <string name="you_haven_t_extracted_anything_yet">Du hast noch nichts extrahiert</string>
+
 </resources>
