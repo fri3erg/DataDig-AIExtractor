@@ -19,4 +19,4 @@ app/src/main/assets/*
 *.jpeg
 *.pdf
 google-services.json
-clean_repo/
+full_history_clean_repo/
