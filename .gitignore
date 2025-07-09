@@ -19,3 +19,4 @@ app/src/main/assets/*
 *.jpeg
 *.pdf
 google-services.json
+clean_repo/

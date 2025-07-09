@@ -39,12 +39,12 @@ android {
         buildConfigField(
             "String",
             "EXPO_PUBLIC_SUPABASE_URL",
-            localProperties.getProperty("EXPO_PUBLIC_SUPABASE_URL")
+            localProperties.getProperty("EXPO_PUBLIC_SUPABASE_URL", "\"DEFAULT_SUPABASE_URL_IF_NOT_FOUND\"") // Provide a default or fail build
         )
         buildConfigField(
             "String",
             "EXPO_PUBLIC_SUPABASE_ANON_KEY",
-            localProperties.getProperty("EXPO_PUBLIC_SUPABASE_ANON_KEY")
+            localProperties.getProperty("EXPO_PUBLIC_SUPABASE_ANON_KEY", "\"DEFAULT_SUPABASE_ANON_KEY_IF_NOT_FOUND\"") // Provide a default or fail build
         )
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -81,20 +81,17 @@ android {
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
 ***REMOVED***
-
-            // Load properties from local.properties
-            val props = java.util.Properties()
-            file("local.properties").inputStream().use { props.load(it) ***REMOVED***
-
-***REMOVED***
-***REMOVED***
-***REMOVED***
-                "\"${props.getProperty("SUPABASE_URL")***REMOVED***\""
 ***REMOVED***
 ***REMOVED***
 ***REMOVED***
 ***REMOVED***
-                "\"${props.getProperty("SUPABASE_ANON_KEY")***REMOVED***\""
+***REMOVED***
+***REMOVED***
+***REMOVED***
+***REMOVED***
+***REMOVED***
+***REMOVED***
+***REMOVED***
 ***REMOVED***
         ***REMOVED***
     ***REMOVED***
