@@ -81,13 +81,20 @@ android {
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
 ***REMOVED***
+
+            // Load properties from local.properties
+            val props = java.util.Properties()
+            file("local.properties").inputStream().use { props.load(it) ***REMOVED***
+
 ***REMOVED***
-***REMOVED*** "EXPO_PUBLIC_SUPABASE_URL", "\"https://evxuxenxmtadutqpunue.supabase.co\""
+***REMOVED***
+***REMOVED***
+                "\"${props.getProperty("SUPABASE_URL")***REMOVED***\""
 ***REMOVED***
 ***REMOVED***
 ***REMOVED***
 ***REMOVED***
-                "\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV2eHV4ZW54bXRhZHV0cXB1bnVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjMzODg1MDYsImV4cCI6MjAzODk2NDUwNn0.o_kS_WFx5PsmuO9Jb51T_ytPjSqOZzicdQxPJXJpvFg\""
+                "\"${props.getProperty("SUPABASE_ANON_KEY")***REMOVED***\""
 ***REMOVED***
         ***REMOVED***
     ***REMOVED***
