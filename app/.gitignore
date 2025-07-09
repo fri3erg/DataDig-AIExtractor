@@ -10,4 +10,4 @@ venv.bak
 *.aab
 *.apk
 google-services.json
-full_history_clean_repo/
+full_history_repo_clean/
